@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Appi'Field</title>
+  <meta name="description" content="Application de carnet de champ électronique gratuite développé par l'ASBL Corder. Inscrivez-vous et commencez à encoder vos traitements phyto, vos travaux au champ, ... ">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="image/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1976d2">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HDTG9MVCB6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HDTG9MVCB6');
+</script>
+<body class="mat-typography">
+  <app-root></app-root>
+  <script src="js/index.js"></script>
+  <script src="js/pop.js"></script>
+  <script src="js/boutonFlotant.js"></script>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
+  <!-- carte -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- chartjs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

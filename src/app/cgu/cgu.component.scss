@@ -1,0 +1,152 @@
+// Page CGU : même conteneur (.dashboard), même en-tête (.dashboard-header) et même encadré
+// (.dashboard-card) que l'accueil, Parcelles et Mon compte.
+@use '../../styles/dashboard-cards' as *;
+
+a { text-decoration: none; }
+
+.cgu-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 991.98px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// ─── Sommaire ──────────────────────────────────────────────────────────────
+// Masqué sous 992px (voir media query plus bas) : la place manque à côté du texte sur
+// tablette/mobile, et les 15 entrées y seraient de toute façon peu lisibles en colonne étroite.
+.cgu-toc-col {
+  position: sticky;
+  top: 24px;
+
+  @media (max-width: 991.98px) {
+    display: none;
+  }
+}
+
+.cgu-toc {
+  // Materialize (chargé globalement dans l'app) impose height:56px/line-height:56px à tout
+  // élément <nav> nu (même piège déjà rencontré et corrigé pour .sidebar-nav) — sans ce
+  // correctif, la boîte se limite à ~56px de haut (seul le titre visible), les 15 liens
+  // débordant hors de la boîte sans lui appartenir visuellement.
+  height: auto !important;
+  line-height: normal !important;
+  width: auto !important;
+  display: flex;
+  flex-direction: column;
+  // Même encadré que .dashboard-card
+  background: #ffffff !important;
+  border: 1px solid #edf0f3;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06) !important;
+  padding: 8px 0;
+  // Plafonne la hauteur du sommaire à la fenêtre visible : sans ça, sur un aussi long document
+  // (15 sections), le sticky "décroche" du haut en approchant le bas de sa colonne, laissant
+  // voir uniquement les dernières entrées avec du vide en dessous. Défilement interne à la
+  // place — le sommaire reste entièrement visible du début à la fin de la lecture.
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.cgu-toc-title {
+  padding: 10px 20px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.cgu-toc a {
+  padding: 9px 20px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #374151;
+  border-left: 3px solid transparent;
+  line-height: 1.35;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #f0faf9;
+    color: #03918a;
+    border-left-color: #05b1af;
+  }
+}
+
+// Les <h1> de section (voir cgu.component.html, id="cgu-section-N") ont besoin d'un peu
+// d'air au-dessus une fois ciblés par une ancre du sommaire, sinon ils collent au bord haut
+// du viewport après le scroll.
+[id^="cgu-section-"] {
+  scroll-margin-top: 24px;
+}
+
+// ─── Texte ─────────────────────────────────────────────────────────────────
+.cgu-content {
+  padding: 28px 36px 32px;
+  margin-bottom: 0;
+
+  @media (max-width: 575.98px) {
+    padding: 18px 16px 20px;
+  }
+}
+
+.cgu-text {
+  line-height: 1.7;
+
+  // Le contenu (collé depuis Word) force police, tailles et marges en style inline sur chaque
+  // élément — l'inline ne cède qu'à un !important externe, d'où les !important ci-dessous.
+  * {
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+  }
+
+  p {
+    font-size: 0.95rem !important;
+    color: #374151;
+    margin: 0 0 10px !important;
+  }
+
+  // Correctif de numérotation : chaque section ("Objet", "Définitions"...) est encapsulée
+  // dans son propre <ol><li><h1>...</h1></li></ol> séparé (artefact du copier-coller Word),
+  // donc la numérotation native du navigateur redémarre à "1." à chaque section au lieu
+  // d'aller de 1 à 15. Compteur CSS posé sur ce conteneur commun : incrémenté une fois par
+  // <ol> (un par section), lu dans le ::before du <h1> qu'il contient — aucune modification
+  // du texte juridique lui-même.
+  counter-reset: cgu-section;
+
+  ol {
+    counter-increment: cgu-section;
+    list-style: none !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+
+    li { margin: 0 !important; }
+  }
+
+  // Titres de section : même style que les titres d'encadré de l'app (gras, bleu foncé),
+  // sans le retrait de 36pt hérité de Word.
+  h1 {
+    font-family: "Panton", sans-serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #12103c !important;
+    text-indent: 0 !important;
+    margin: 28px 0 12px 0 !important;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+
+    &::before {
+      content: counter(cgu-section) ". ";
+      color: #03918a;
+    }
+  }
+
+  // Première section : pas de séparateur ni d'espace au-dessus
+  > div:first-child h1 {
+    margin-top: 0 !important;
+    padding-top: 0;
+    border-top: none;
+  }
+}

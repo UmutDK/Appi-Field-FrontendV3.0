@@ -1,0 +1,33 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card auth-card--narrow">
+            <span class="auth-icon"><i class="bi bi-key"></i></span>
+            <h1>Mot de passe oublié ?</h1>
+            <p>Entrez l'adresse mail associée à votre compte : nous vous enverrons un lien de réinitialisation (code) pour réinitialiser votre mot de passe.</p>
+
+            <form [formGroup]="mail" (ngSubmit)="onvalider()">
+                <div class="auth-field">
+                    <label for="mailOublie">Adresse mail</label>
+                    <input id="mailOublie" type="email" class="form-control" placeholder="nom@exemple.be"
+                           formControlName="mail" name="adresseMail" required>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="button" class="auth-btn auth-btn-secondary" (click)="onAnnuler()" [disabled]="isLoading">Annuler</button>
+                    <button type="submit" class="auth-btn auth-btn-primary" [disabled]="mail.invalid || isLoading">
+                        @if (isLoading) {
+                            Envoi en cours...
+                        } @else {
+                            Envoyer le lien
+                        }
+                    </button>
+                </div>
+            </form>
+
+            <p class="auth-switch">
+                Vous vous en souvenez ?
+                <a routerLink="/connexion">Retour à la connexion</a>
+            </p>
+        </section>
+    </div>
+</main>

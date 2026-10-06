@@ -1,0 +1,140 @@
+// Bouton "Ajouter ▾" + liste déroulante d'options (convention : toujours en haut à droite de
+// son encadré). Utilisé par la page Parcelles et la carte des parcelles.
+//
+// Usage : @use '../../../../styles/add-menu' as *; (adapter le chemin relatif).
+// Structure : .add-menu[.open] > button.add-menu-btn + .add-menu-list > .add-menu-item
+//             (> .add-menu-icon + .add-menu-text > .add-menu-title + .add-menu-desc)
+
+.add-menu {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.add-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: #05b1af;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: "Panton", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-transform: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover { background: #049694; }
+
+    &:focus-visible {
+        outline: 2px solid rgba(5, 177, 175, 0.4);
+        outline-offset: 2px;
+    }
+
+    .add-menu-chevron {
+        font-size: 0.8rem;
+        transition: transform 0.2s ease;
+    }
+}
+
+.add-menu.open .add-menu-chevron { transform: rotate(180deg); }
+
+.add-menu-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1100;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(18, 16, 60, 0.14);
+    animation: addMenuIn 0.15s ease;
+}
+
+.add-menu-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    color: #12103c;
+    font-family: "Panton", sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover:not(:disabled),
+    &:focus-visible {
+        background: #f0faf9;
+        outline: none;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+    }
+
+    // Action destructive (ex. retirer des éléments affichés)
+    &--danger {
+        color: #dc3545;
+
+        .add-menu-icon {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        &:hover:not(:disabled) { background: rgba(220, 53, 69, 0.06); }
+    }
+}
+
+.add-menu-separator {
+    height: 1px;
+    margin: 6px 4px;
+    background: #edf0f3;
+}
+
+.add-menu-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #e3f6f3;
+    color: #03918a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+}
+
+.add-menu-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.add-menu-title {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.add-menu-desc {
+    font-size: 0.8rem;
+    color: #6b7280;
+    line-height: 1.35;
+}
+
+@keyframes addMenuIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}

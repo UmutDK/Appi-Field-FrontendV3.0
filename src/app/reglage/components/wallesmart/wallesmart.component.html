@@ -1,0 +1,34 @@
+<div class="wallesmart-section">
+  <div class="wallesmart-card">
+    <h2 class="wallesmart-card__title">
+      <i class="bi bi-link-45deg me-2"></i>WalleSmart
+    </h2>
+
+    @if (isLoading()) {
+      <div class="text-center py-3">
+        <span class="spinner-border spinner-border-sm text-primary"></span>
+      </div>
+    } @else if (hasError()) {
+      <div class="wallesmart-status wallesmart-status--error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Impossible de vérifier le statut de liaison WalleSmart pour le moment. Réessayez plus tard.</span>
+      </div>
+    } @else if (isLinked()) {
+      <div class="wallesmart-status wallesmart-status--linked">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Votre compte est déjà lié à un compte WalleSmart.</span>
+      </div>
+    } @else {
+      <div class="wallesmart-status wallesmart-status--unlinked">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>
+          Votre compte n'est pas encore lié à un compte WalleSmart. En liant votre compte Appi'Field à
+          votre compte WES, vous pourrez directement vous connecter à Appi'Field depuis votre dashboard WES.
+        </span>
+      </div>
+      <a class="btn btn-wallesmart-link" [href]="connectUrl" target="_blank" rel="noopener noreferrer">
+        <i class="bi bi-box-arrow-up-right me-2"></i>Lier mon compte WalleSmart
+      </a>
+    }
+  </div>
+</div>

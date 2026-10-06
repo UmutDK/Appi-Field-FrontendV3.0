@@ -1,0 +1,92 @@
+.wallesmart-section {
+  padding: 0.25rem 0;
+}
+
+.wallesmart-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  padding: 1.25rem 1.5rem;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2a3a;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.wallesmart-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+
+  i {
+    font-size: 1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  &--linked {
+    background: #e9f9f1;
+    color: #10743f;
+
+    i { color: #10b981; }
+  }
+
+  &--unlinked {
+    background: #f2f6fb;
+    color: #33507a;
+
+    i { color: #3b6fb6; }
+  }
+
+  &--error {
+    background: #fdeeee;
+    color: #a3312a;
+
+    i { color: #e04b42; }
+  }
+}
+
+.btn-wallesmart-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8384f;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 12px 20px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background-color: #d92e45;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+  &:focus-visible {
+    outline: 2px solid rgba(232, 56, 79, 0.4);
+    outline-offset: 2px;
+  }
+}
+
+// Refonte v2 : casse normale comme tous les boutons de l'app (Materialize force les majuscules sur .btn)
+.btn-wallesmart-link {
+    text-transform: none !important;
+    font-family: "Panton", sans-serif;
+    font-weight: 600;
+    letter-spacing: normal;
+}

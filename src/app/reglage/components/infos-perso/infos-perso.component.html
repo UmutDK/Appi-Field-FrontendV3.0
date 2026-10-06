@@ -1,0 +1,91 @@
+<div class="main">
+    <div class="connexion">
+        <section class="row">
+            <article class="col-lg-12">
+                <h2>Informations personnelles</h2>
+                @if (errorMsg) {
+                    <p class="error-message">{{ errorMsg }}</p>
+                }
+                @if (successMsg) {
+                    <p class="success-message">{{ successMsg }}</p>
+                }
+            </article>
+            <hr>
+
+            @if (user) {
+                <article class="col-12 col-md-6">
+                    <p style="color: #0e103c;"><b>Adresse mail</b></p>
+                    <div class="readonly-field">
+                        <i class="bi bi-envelope"></i>{{ user.Mail }}
+                    </div>
+                </article>
+                <article class="col-12 col-md-6">
+                    <p style="color: #0e103c;"><b>Date d'enregistrement</b></p>
+                    <div class="readonly-field">
+                        <i class="bi bi-calendar-date"></i>
+                        @if (dateEnregistrement) {
+                            {{ dateEnregistrement | date:'longDate' }}
+                        } @else {
+                            <span class="readonly-empty">Non disponible</span>
+                        }
+                    </div>
+                </article>
+
+                <article class="col-12 col-md-6">
+                    <p style="color: #0e103c;"><b>Nom</b><sup>*</sup></p>
+                    <input type="text" class="form-control validate" placeholder="Votre nom" [(ngModel)]="user.Nom" required
+                           (blur)="touched.nom = true" [class.input-error]="touched.nom && isEmpty(user.Nom)">
+                    @if (touched.nom && isEmpty(user.Nom)) {
+                        <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                    }
+                </article>
+                <article class="col-12 col-md-6">
+                    <p style="color: #0e103c;"><b>Prénom</b><sup>*</sup></p>
+                    <input type="text" class="form-control validate" placeholder="Votre prénom" [(ngModel)]="user.Prenom" required
+                           (blur)="touched.prenom = true" [class.input-error]="touched.prenom && isEmpty(user.Prenom)">
+                    @if (touched.prenom && isEmpty(user.Prenom)) {
+                        <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                    }
+                </article>
+
+                <article class="col-12 col-md-6">
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                        <p style="color: #0e103c; margin:0;"><b>Numéro de phytolicence</b></p>
+                        <i class="bi bi-info-circle-fill"
+                           style="font-size:13px; color:#6c8ebf; cursor:help; vertical-align:middle;"
+                           matTooltip="Si vous êtes professionnel et utilisez exclusivement des produits phytos ne nécessitant pas de phytolicence, vous pouvez laisser ce champ vide. Dans le cas contraire, le numéro de phytolicence est une information à mentionner dans le cadre du registre électronique."
+                           matTooltipPosition="above">
+                        </i>
+                    </div>
+                    <input type="text" class="form-control validate" placeholder="XX.X.XXXX" [(ngModel)]="userInfos.phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)">
+                </article>
+                <article class="col-12 col-md-6">
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                        <p style="color: #0e103c; margin:0;"><b>Numéro d'exploitant</b></p>
+                        <i class="bi bi-info-circle-fill"
+                           style="font-size:13px; color:#6c8ebf; cursor:help; vertical-align:middle;"
+                           matTooltip="Dans le cas où vous en avez un."
+                           matTooltipPosition="above">
+                        </i>
+                    </div>
+                    <input type="text" class="form-control validate" placeholder="Numéro d'exploitant" [(ngModel)]="userInfos.exploitingNumber">
+                </article>
+
+                <hr>
+                <article class="col-lg-12">
+                    <p><button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="saving || !canSave()">
+                        @if (saving) {
+                            <span>Enregistrement en cours...</span>
+                        } @else {
+                            <span>Enregistrer les informations</span>
+                        }
+                    </button></p>
+                </article>
+            } @else {
+                <article class="col-12">
+                    <div class="alert alert-info"><i class="bi bi-arrow-clockwise"></i> Chargement en cours...</div>
+                </article>
+            }
+        </section>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+// Tokens de hauteur de bouton — 4 paliers reels (voir normesResponsive.md a la racine du
+// projet). Meme pattern que _typography-tokens.scss : variables Sass + custom property CSS
+// (--btn-height), qui change de valeur a chaque palier via des @media sur :root.
+//
+// normesResponsive.md donne des plages par palier (ex. 44-48px) plutot qu'une valeur unique —
+// contrairement a la typographie, sm-md et lg n'ont pas exactement la meme plage ici (44-48px
+// vs 40-44px) : 4 paliers distincts sont donc necessaires (pas 3 comme pour la typo), avec la
+// valeur mediane de chaque plage retenue.
+
+$bp-btn-sm: 576px;  // debut tablette (sm/md)
+$bp-btn-lg: 992px;  // debut PC (lg)
+$bp-btn-xl: 1200px; // debut PC large (xl)
+
+$btn-height-xs: 44px; // 0-575,99 (smartphone)
+$btn-height-sm: 46px; // 576-991,99 (tablette) — plage normesResponsive 44-48px
+$btn-height-lg: 42px; // 992-1199,99 (PC) — plage normesResponsive 40-44px
+$btn-height-xl: 40px; // >=1200 (PC large + grand ecran)
+
+:root {
+  --btn-height: #{$btn-height-xs};
+}
+
+@media (min-width: #{$bp-btn-sm}) {
+  :root { --btn-height: #{$btn-height-sm}; }
+}
+
+@media (min-width: #{$bp-btn-lg}) {
+  :root { --btn-height: #{$btn-height-lg}; }
+}
+
+@media (min-width: #{$bp-btn-xl}) {
+  :root { --btn-height: #{$btn-height-xl}; }
+}

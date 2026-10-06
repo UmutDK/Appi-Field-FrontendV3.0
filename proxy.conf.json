@@ -1,0 +1,38 @@
+{
+  "/api/*": {
+    "target": "https://appifield.corderapp.be",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    }
+  },
+  "/export/*": {
+    "target": "https://appifield.corderapp.be",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/export": ""
+    }
+  },
+  "/get_doses_phytoweb.php": {
+    "target": "https://server.appifield.be/",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/userkey/*": {
+    "target": "https://userkey.corderapp.be",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/userkey": ""
+    }
+  }
+}

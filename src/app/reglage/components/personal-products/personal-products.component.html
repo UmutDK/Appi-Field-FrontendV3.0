@@ -1,0 +1,114 @@
+<div class="main">
+    <div class="connexion">
+        <section class="row">
+            <article class="col-lg-12 card-header-row">
+                <h2>Fertilisants personnels</h2>
+                <button class="btn-add-product" (click)="openProductForm()">
+                    <i class="bi bi-plus-lg"></i> Nouveau fertilisant
+                </button>
+            </article>
+            <hr>
+            <article class="col-lg-12">
+                <h3 style="color: #0f113b; font-weight: 600; margin: 20px 0 0;">Mes fertilisants personnels</h3>
+
+                @if (isLoading) {
+                    <div class="loading-state">
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        Chargement...
+                    </div>
+                } @else {
+                    <div class="products-grid">
+                        @for (product of products; track product.product_id) {
+                            <div class="product-card">
+                                <div class="product-avatar">
+                                    <i class="bi bi-droplet-fill"></i>
+                                </div>
+                                <div class="product-info">
+                                    <span class="product-name">{{ product.product_name }}</span>
+                                    <span class="product-type">
+                                        <i class="bi bi-tag"></i>{{ product.product_type || '—' }}
+                                    </span>
+                                </div>
+                                <div class="product-actions">
+                                    <button class="btn-icon btn-edit" (click)="editProduct(product)" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn-icon btn-delete" (click)="deleteProduct(product)" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                        @empty {
+                            <p class="products-empty">Aucun fertilisant personnel enregistré.</p>
+                        }
+                    </div>
+                }
+            </article>
+        </section>
+    </div>
+
+    <!-- Modal formulaire produit -->
+    @if (showProductForm) {
+        <div class="modal-overlay popup-overlay" (click)="closeProductForm()">
+            <div class="modal-product popup-container" (click)="$event.stopPropagation()">
+                <div class="modal-header popup-header">
+                    <div class="header-title">
+                        <i class="bi bi-droplet-fill"></i>
+                        <h4>{{ editingProduct ? 'Modifier le fertilisant' : 'Nouveau fertilisant' }}</h4>
+                    </div>
+                    <button class="btn-close-modal btn-close-popup" (click)="closeProductForm()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body popup-body">
+                    <div class="form-group">
+                        <label>Nom du produit*</label>
+                        <input
+                            type="text"
+                            class="form-control popup-text-input"
+                            [(ngModel)]="productForm.product_name"
+                            placeholder="Nom de votre fertilisant"
+                        />
+                    </div>
+                    <div class="form-group type-group">
+                        <label>Type de produit</label>
+                        <input
+                            type="text"
+                            class="form-control popup-text-input"
+                            [(ngModel)]="productForm.product_type"
+                            (input)="onTypeInput($event)"
+                            (focus)="onTypeFocus()"
+                            (blur)="onTypeBlur()"
+                            placeholder="Ex : Engrais, Amendement..."
+                            autocomplete="off"
+                        />
+                        @if (showTypeSuggestions && filteredTypeOptions.length > 0) {
+                            <ul class="type-suggestions dropdown-panel dropdown-list">
+                                @for (type of filteredTypeOptions; track type) {
+                                    <li class="dropdown-list-item" (mousedown)="selectType(type)">{{ type }}</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                    @if (productError) {
+                        <p class="form-error">{{ productError }}</p>
+                    }
+                </div>
+                <div class="modal-footer popup-footer">
+                    <button class="btn-cancel btn-secondary" (click)="closeProductForm()">Annuler</button>
+                    <button
+                        class="btn-save btn-primary"
+                        (click)="saveProduct()"
+                        [disabled]="productSaving"
+                    >
+                        @if (productSaving) {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        {{ editingProduct ? 'Mettre à jour' : 'Enregistrer' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

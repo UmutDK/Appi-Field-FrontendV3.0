@@ -1,0 +1,27 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card error-card">
+            <span class="error-icon"><i class="bi bi-signpost-split"></i></span>
+
+            <p class="error-code">404</p>
+            <h1>Page introuvable</h1>
+            <p class="error-text">
+                La page que vous recherchez n'existe pas ou a été déplacée.<br>
+                Vérifiez l'adresse ou revenez à l'accueil.
+            </p>
+
+            <div class="error-actions">
+                <button type="button" class="error-btn error-btn-secondary" (click)="onBack()">
+                    <i class="bi bi-arrow-left"></i> Page précédente
+                </button>
+                <button type="button" class="error-btn error-btn-primary" (click)="onAccueil()">
+                    <i class="bi bi-house-door"></i> Retour à l'accueil
+                </button>
+            </div>
+
+            <a routerLink="/faq" class="error-help">
+                <i class="bi bi-question-circle"></i> Besoin d'aide ?
+            </a>
+        </section>
+    </div>
+</main>

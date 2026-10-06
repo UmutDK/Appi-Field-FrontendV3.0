@@ -1,0 +1,77 @@
+// Tokens typographiques — 5 paliers (voir normesResponsive.md à la racine du projet).
+// Même pattern que _popup-tokens.scss : variables Sass + custom properties CSS
+// (--font-size-h1/h2/h3/h4/body, --line-height-body). Les custom properties changent de
+// valeur à chaque palier via des @media sur :root — tout sélecteur qui lit var(--font-size-h1)
+// devient donc responsive automatiquement, sans dupliquer de @media localement.
+//
+// normesResponsive.md donne 5 lignes (xs/sm-md/lg/xl/xxl) mais les tailles H1-H4/corps sont
+// identiques entre sm-md et lg (576-1199,99px) et entre xl et xxl (>=1200px) : seuls 2 seuils
+// réels distinguent la typographie (576px et 1200px), d'où 3 jeux de valeurs ci-dessous.
+
+$bp-typo-sm: 576px;  // début tablette (sm/md)
+$bp-typo-xl: 1200px; // début PC large (xl)
+
+// xs : 0–575,99 (smartphone)
+$font-h1-xs: 34px;
+$font-h2-xs: 27px;
+$font-h3-xs: 22px;
+$font-h4-xs: 18px;
+$font-body-xs: 14px;
+$line-height-body-xs: 1.4;
+
+// sm/md (576–991,99, tablette) + lg (992–1199,99, PC) : même échelle typographique
+$font-h1-sm: 39px;
+$font-h2-sm: 31px;
+$font-h3-sm: 25px;
+$font-h4-sm: 20px;
+$font-body-sm: 16px;
+$line-height-body-sm: 1.5;
+
+// xl (1200–1399,99, PC large) + xxl (>=1400, grand écran) : même échelle typographique
+$font-h1-xl: 44px;
+$font-h2-xl: 35px;
+$font-h3-xl: 28px;
+$font-h4-xl: 23px;
+$font-body-xl: 18px;
+$line-height-body-xl: 1.6;
+
+:root {
+  --font-size-h1: #{$font-h1-xs};
+  --font-size-h2: #{$font-h2-xs};
+  --font-size-h3: #{$font-h3-xs};
+  --font-size-h4: #{$font-h4-xs};
+  --font-size-body: #{$font-body-xs};
+  --line-height-body: #{$line-height-body-xs};
+}
+
+@media (min-width: #{$bp-typo-sm}) {
+  :root {
+    --font-size-h1: #{$font-h1-sm};
+    --font-size-h2: #{$font-h2-sm};
+    --font-size-h3: #{$font-h3-sm};
+    --font-size-h4: #{$font-h4-sm};
+    --font-size-body: #{$font-body-sm};
+    --line-height-body: #{$line-height-body-sm};
+  }
+}
+
+@media (min-width: #{$bp-typo-xl}) {
+  :root {
+    --font-size-h1: #{$font-h1-xl};
+    --font-size-h2: #{$font-h2-xl};
+    --font-size-h3: #{$font-h3-xl};
+    --font-size-h4: #{$font-h4-xl};
+    --font-size-body: #{$font-body-xl};
+    --line-height-body: #{$line-height-body-xl};
+  }
+}
+
+// Classes utilitaires — pour les éléments non sémantiques utilisés visuellement comme des
+// titres (ex. .section-title, .filter-popup-mobile-title, concentrés dans registre/* et
+// parcelles/*) : héritent de la même échelle que les vrais h1-h4, sans dupliquer les @media
+// ci-dessus. À utiliser lors du retaggage domaine par domaine (Phase B2).
+.text-h1 { font-size: var(--font-size-h1); }
+.text-h2 { font-size: var(--font-size-h2); }
+.text-h3 { font-size: var(--font-size-h3); }
+.text-h4 { font-size: var(--font-size-h4); }
+.text-body { font-size: var(--font-size-body); line-height: var(--line-height-body); }

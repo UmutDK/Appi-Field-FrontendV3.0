@@ -1,0 +1,136 @@
+<section class="row">
+    <article class="col-lg-12">
+        <div class="cadre vue-globale-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- En-tête avec information -->
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <h3>Vue globale des événements</h3>
+                            <p class="text-muted mb-0">
+                                <small>
+                                    Tableau combiné des traitements phytosanitaires et travaux au champ 
+                                    (@if (loading) { Chargement... } @else { {{filteredEvents.length}} événements affichés })
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tableau des événements -->
+                    <section class="row">
+                        <article class="col-lg-12">
+                            @if (loading) {
+                                <div class="d-flex justify-content-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Chargement...</span>
+                                    </div>
+                                </div>
+                            } @else {
+                                <div class="tableau">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Culture</th>
+                                                <th>Catégorie Phytoweb</th>
+                                                <th>BBCH</th>
+                                                <th>Parcelle</th>
+                                                <th>Type</th>
+                                                <th>Cible</th>
+                                                <th>Opérateur</th>
+                                                <th>Détails</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (filteredEvents.length === 0) {
+                                                <tr>
+                                                    <td colspan="11" class="text-center py-4">
+                                                        <i class="bi bi-info-circle me-2"></i>
+                                                        Aucun événement trouvé avec les filtres appliqués
+                                                    </td>
+                                                </tr>
+                                            } @else {
+                                                @for (event of filteredEvents; track event.originalData.event_id || event.originalData.travaux_aux_champs_id; let i = $index) {
+                                                    <tr [class]="event.eventType === 'traitement' ? 'table-row-traitement' : 'table-row-travail'">
+                                                        <td>
+                                                            {{event.date}}
+                                                        </td>
+                                                        <td>{{event.culture}}</td>
+                                                        <td>{{event.categoriePhyToweb}}</td>
+                                                        <td>{{event.bbch}}</td>
+                                                        <td>{{event.parcelle}}</td>
+                                                        <td>
+                                                            <span class="type-tag"
+                                                                  [class]="event.eventType === 'traitement' ? 'bg-primary' : 'bg-success'">
+                                                                <i class="bi" 
+                                                                   [class]="event.eventType === 'traitement' ? 'bi-droplet-fill' : 'bi-tools'"></i>
+                                                                {{event.type}}
+                                                            </span>
+                                                        </td>
+                                                        <td>{{event.cible}}</td>
+                                                        <td>{{event.operateur}}</td>
+                                                        <td>
+                                                            @if (event.details && event.details !== 'N/A') {
+                                                                <span class="details-text" 
+                                                                      [title]="event.details"
+                                                                      data-bs-toggle="tooltip">
+                                                                    {{event.details.length > 50 ? (event.details | slice:0:50) + '...' : event.details}}
+                                                                </span>
+                                                            } @else {
+                                                                <span class="text-muted">N/A</span>
+                                                            }
+                                                        </td>
+                                                        <td class="action-cell">
+                                                            <button type="button" 
+                                                                    class="icon-btn" 
+                                                                    (click)="onModifyEvent(event)"
+                                                                    title="Modifier cet événement">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Statistiques en bas du tableau -->
+                                <div class="row mt-3">
+                                    <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="stats-info">
+                                                <small class="text-muted">
+                                                    @if (getTotalTraitements() > 0) {
+                                                        <span class="badge badge-traitement me-2">
+                                                            <i class="bi bi-droplet-fill"></i> {{getTotalTraitements()}} traitements
+                                                        </span>
+                                                    }
+                                                    @if (getTotalTravaux() > 0) {
+                                                        <span class="badge badge-travail">
+                                                            <i class="bi bi-tools"></i> {{getTotalTravaux()}} travaux
+                                                        </span>
+                                                    }
+                                                </small>
+                                            </div>
+                                            <div class="refresh-info">
+                                                <button type="button" 
+                                                        class="btn-refresh" 
+                                                        (click)="loadAllEvents()"
+                                                        [disabled]="loading">
+                                                    <i class="bi bi-arrow-clockwise me-1"></i>
+                                                    Actualiser
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </article>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </article>
+</section>

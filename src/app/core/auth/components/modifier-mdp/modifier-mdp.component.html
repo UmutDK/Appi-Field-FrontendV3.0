@@ -1,0 +1,74 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card auth-card--narrow">
+            <span class="auth-icon"><i class="bi bi-shield-lock"></i></span>
+            <h1>Nouveau mot de passe</h1>
+            <p>Choisissez votre nouveau mot de passe pour finaliser la réinitialisation.</p>
+
+            <form [formGroup]="form" (ngSubmit)="onModif()">
+                <div class="auth-stack">
+                    <!-- Nouveau mot de passe -->
+                    <div class="auth-field">
+                        <label for="nouveauMdp">Nouveau mot de passe<sup>*</sup></label>
+                        <div class="password-container">
+                            <div *ngIf="passwordTouched" class="password-hints">
+                                <div class="password-hint" [style.color]="passwordHasLength ? '#28a745' : '#dc3545'">
+                                    <i class="material-icons">{{passwordHasLength ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 8 caractères</span>
+                                </div>
+                                <div class="password-hint" [style.color]="passwordHasDigit ? '#28a745' : '#dc3545'">
+                                    <i class="material-icons">{{passwordHasDigit ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 1 chiffre</span>
+                                </div>
+                                <div class="password-hint" [style.color]="passwordHasSpecial ? '#28a745' : '#dc3545'">
+                                    <i class="material-icons">{{passwordHasSpecial ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 2 caractères spéciaux</span>
+                                </div>
+                            </div>
+                            <input
+                                id="nouveauMdp"
+                                [type]="showPassword ? 'text' : 'password'"
+                                class="form-control"
+                                placeholder="Nouveau mot de passe"
+                                formControlName="mdp"
+                                autocomplete="new-password"
+                                (focus)="passwordTouched = true"
+                                (blur)="passwordTouched = false"
+                            >
+                            <i class="material-icons password-toggle" (click)="showPassword = !showPassword">
+                                {{showPassword ? 'visibility_off' : 'visibility'}}
+                            </i>
+                        </div>
+                    </div>
+
+                    <!-- Confirmer mot de passe -->
+                    <div class="auth-field">
+                        <label for="confirmationMdp">Confirmer le mot de passe<sup>*</sup></label>
+                        <div class="password-container">
+                            <input
+                                id="confirmationMdp"
+                                [type]="showConfirmPassword ? 'text' : 'password'"
+                                class="form-control"
+                                placeholder="Confirmer le nouveau mot de passe"
+                                formControlName="confirmation_mdp"
+                                autocomplete="new-password"
+                                [ngClass]="{'input-error': !passwordMatch && form.get('confirmation_mdp')?.touched}"
+                            >
+                            <i class="material-icons password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+                                {{showConfirmPassword ? 'visibility_off' : 'visibility'}}
+                            </i>
+                        </div>
+                        @if (!passwordMatch && form.get('confirmation_mdp')?.touched) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Les deux mots de passe ne correspondent pas.</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="button" class="auth-btn auth-btn-secondary" (click)="onAnnuler()">Annuler</button>
+                    <button type="submit" class="auth-btn auth-btn-primary" [disabled]="form.invalid || !passwordMatch">Enregistrer</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>

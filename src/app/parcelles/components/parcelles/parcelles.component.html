@@ -1,0 +1,581 @@
+<main class="dashboard parcelles-page">
+    <!-- Message de succès -->
+    @if (showSuccessMessage()) {
+        <div class="success-toast">
+            <div class="success-toast-content">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>{{ successMessageText }}</span>
+            </div>
+        </div>
+    }
+
+    <div class="dashboard-container">
+
+        <!-- En-tête : titre à gauche, bouton "Ajouter une parcelle" (liste déroulante) en haut à droite -->
+        <header class="parcelles-header">
+            <div class="dashboard-header">
+                <h1>Mes parcelles</h1>
+                <p class="dashboard-subtitle">Gérez, localisez et importez vos parcelles agricoles.</p>
+            </div>
+
+            <div class="add-menu" [class.open]="isAddMenuOpen" (click)="$event.stopPropagation()">
+                <button type="button" class="add-menu-btn" (click)="toggleAddMenu($event)"
+                        aria-haspopup="menu" [attr.aria-expanded]="isAddMenuOpen">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Ajouter une parcelle</span>
+                    <i class="bi bi-chevron-down add-menu-chevron"></i>
+                </button>
+                @if (isAddMenuOpen) {
+                    <div class="add-menu-list" role="menu">
+                        <a class="add-menu-item" role="menuitem" routerLink="/parcelles/voir-parcelles" (click)="closeAddMenu()">
+                            <span class="add-menu-icon"><i class="bi bi-map"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Dessiner sur ma carte</span>
+                                <span class="add-menu-desc">Tracez le contour de la parcelle sur la carte.</span>
+                            </span>
+                        </a>
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="afficher(); closeAddMenu()">
+                            <span class="add-menu-icon"><i class="bi bi-house-add"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Par adresse</span>
+                                <span class="add-menu-desc">Localisez la parcelle à partir de son adresse.</span>
+                            </span>
+                        </button>
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="onImportGML(); closeAddMenu()">
+                            <span class="add-menu-icon"><i class="bi bi-upload"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Importer mes parcelles</span>
+                                <span class="add-menu-desc">Fichier .GML de votre déclaration PAC.</span>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </header>
+
+        <!-- Tuiles de chiffres clés -->
+        <section class="stats-row">
+            <div class="stat-tile stat-tile-teal">
+                <span class="stat-label">Parcelles</span>
+                @if (isLoading) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ parcellesSignal().length }}</span>
+                    <span class="stat-sub">enregistrée{{ parcellesSignal().length > 1 ? 's' : '' }}</span>
+                }
+            </div>
+            <div class="stat-tile stat-tile-purple">
+                <span class="stat-label">Superficie totale</span>
+                @if (isLoading) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ getTotalAreaHa() | number:'1.0-2' }} ha</span>
+                    <span class="stat-sub">toutes parcelles confondues</span>
+                }
+            </div>
+            <div class="stat-tile stat-tile-lime">
+                <span class="stat-label">Catégories</span>
+                @if (isLoading) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ getCategoryCounts().length }}</span>
+                    <span class="stat-sub">
+                        @for (c of getCategoryCounts(); track c.name; let last = $last) {
+                            {{ c.count }} {{ c.name | lowercase }}{{ last ? '' : ' · ' }}
+                        } @empty {
+                            Aucune catégorie
+                        }
+                    </span>
+                }
+            </div>
+        </section>
+
+        <section class="parcelles-grid">
+            <!-- Liste des parcelles -->
+            <div class="dashboard-card parcelles-list-card">
+                <div class="dashboard-card-header">
+                    <div class="dashboard-card-header-text">
+                        <h2>Liste des parcelles</h2>
+                    </div>
+                    <button type="button" class="btn-delete-selection"
+                            (click)="deleteSelectedParcelles()"
+                            [disabled]="getSelectedCount() === 0 || isDeletingSelection">
+                        @if (isDeletingSelection) {
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            Suppression...
+                        } @else {
+                            <i class="bi bi-trash"></i>
+                            Supprimer la sélection
+                            @if (getSelectedCount() > 0) {
+                                <span class="selection-count">{{ getSelectedCount() }}</span>
+                            }
+                        }
+                    </button>
+                </div>
+
+                <!-- Recherche + filtres catégorie -->
+                <div class="list-toolbar">
+                    <div class="search-field">
+                        <i class="bi bi-search search-field-icon"></i>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Rechercher une parcelle..."
+                               [(ngModel)]="searchParcelName"
+                               (input)="applyParcelNameFilter()">
+                        @if (searchParcelName) {
+                            <button type="button" class="search-clear" (click)="clearParcelNameSearch()" title="Effacer la recherche">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        }
+                    </div>
+                    @if (getCategoryCounts().length > 0) {
+                        <div class="category-chips">
+                            <button type="button" class="filter-chip" [class.active]="!selectedCategory" (click)="clearCategoryFilter()">Toutes</button>
+                            @for (c of getCategoryCounts(); track c.name) {
+                                <button type="button" class="filter-chip" [class.active]="selectedCategory === c.name" (click)="applyCategoryFilter(c.name)">
+                                    {{ c.name }}
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="table-container">
+                    <div class="table-scroll">
+                        <table class="parcelles-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-col">
+                                        <div class="checkbox-wrapper">
+                                            <input type="checkbox"
+                                                   class="custom-checkbox"
+                                                   id="selectAllCheckbox"
+                                                   [checked]="selectAll"
+                                                   (change)="toggleSelectAll()">
+                                            <label for="selectAllCheckbox" class="checkbox-label" title="Sélectionner tout"></label>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <button type="button" class="sort-btn" [class.active]="sortColumn === 'parcel_name'"
+                                                (click)="toggleSort('parcel_name')" title="Trier A-Z / Z-A">
+                                            Parcelle <i class="bi" [ngClass]="getSortIcon('parcel_name')"></i>
+                                        </button>
+                                    </th>
+                                    <th class="category-col">Catégorie</th>
+                                    <th class="area-col">
+                                        <button type="button" class="sort-btn" [class.active]="sortColumn === 'parcel_area'"
+                                                (click)="toggleSort('parcel_area')" title="Trier croissant / décroissant">
+                                            Superficie <i class="bi" [ngClass]="getSortIconArea()"></i>
+                                        </button>
+                                    </th>
+                                    <th class="localisation-col">Localisation</th>
+                                    <th class="action-col"><span class="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (isLoading) {
+                                    <tr>
+                                        <td [attr.colspan]="getVisibleColumnCount()" class="state-cell">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Chargement...</span>
+                                            </div>
+                                            <p>Chargement des parcelles...</p>
+                                        </td>
+                                    </tr>
+                                } @else if (isEmpty) {
+                                    <tr>
+                                        <td [attr.colspan]="getVisibleColumnCount()" class="state-cell">
+                                            <div class="empty-state">
+                                                <span class="empty-icon"><i class="bi bi-geo-alt"></i></span>
+                                                <h3>Aucune parcelle n'a été détectée</h3>
+                                                <p>Pour commencer à utiliser votre carnet de champ, créez d'abord vos parcelles puis ajoutez vos premières cultures.</p>
+                                                <button type="button" class="btn-first-parcel" (click)="createFirstParcel()">
+                                                    <i class="bi bi-plus-lg"></i> Créer ma première parcelle
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                } @else if (getFilteredAndSortedParcelles().length === 0) {
+                                    <tr>
+                                        <td [attr.colspan]="getVisibleColumnCount()" class="state-cell">
+                                            <i class="bi bi-search state-icon"></i>
+                                            <p>Aucune parcelle ne correspond à vos critères de recherche.</p>
+                                        </td>
+                                    </tr>
+                                } @else {
+                                    @for (item of getPaginatedParcelles(); track item.osm_id || item.id_parcel || $index) {
+                                        <tr [class.selected-row]="isParcelSelected(item)">
+                                            <td class="checkbox-col">
+                                                <div class="checkbox-wrapper">
+                                                    <input type="checkbox"
+                                                           class="custom-checkbox"
+                                                           [id]="'rowCheckbox_' + $index"
+                                                           [checked]="isParcelSelected(item)"
+                                                           (change)="toggleParcelSelection(item)">
+                                                    <label [for]="'rowCheckbox_' + $index" class="checkbox-label"></label>
+                                                </div>
+                                            </td>
+                                            <td class="name-col">{{ item.parcel_name || item.name || 'Sans nom' }}</td>
+                                            <td class="category-col">
+                                                @if (item.parcel_category && item.parcel_category !== '' && item.parcel_category !== 'null') {
+                                                    <span class="category-badge">{{ item.parcel_category }}</span>
+                                                } @else {
+                                                    <span class="category-badge category-badge--none">Non définie</span>
+                                                }
+                                            </td>
+                                            <td class="area-col">
+                                                @if (item.parcel_area && item.parcel_area !== '' && item.parcel_area !== 'null') {
+                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr : '' }}
+                                                } @else {
+                                                    <span class="muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td class="localisation-col">
+                                                <span class="location">
+                                                    <i class="bi bi-geo-alt"></i>
+                                                    @if (item.parcel_address && item.parcel_address !== '' && item.parcel_address !== 'null' &&
+                                                         item.parcel_address !== 'Parcelle Pac On Web' && item.parcel_address !== 'Parcelle GML importée') {
+                                                        {{ item.parcel_address }}
+                                                    } @else if (item.display_name && item.display_name !== '' && item.display_name !== 'null' &&
+                                                                item.display_name !== 'Parcelle Pac On Web' && item.display_name !== 'Parcelle GML importée') {
+                                                        {{ item.display_name }}
+                                                    } @else if (item.lat && item.lon && item.lat !== '0' && item.lon !== '0' && item.lat !== 'null' && item.lon !== 'null') {
+                                                        {{ item.lat }}, {{ item.lon }}
+                                                    } @else {
+                                                        <span class="muted">Localisation non définie</span>
+                                                    }
+                                                </span>
+                                            </td>
+                                            <td class="action-col">
+                                                <button type="button" class="icon-btn"
+                                                        (click)="onUpdate(item.id_parcel || item.osm_id)"
+                                                        title="Modifier la parcelle" aria-label="Modifier la parcelle">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Version tablette/mobile : cartes au lieu du tableau -->
+                    <div class="parcelles-cards-mobile">
+                        @if (isLoading) {
+                            <div class="state-cell">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <p>Chargement des parcelles...</p>
+                            </div>
+                        } @else if (isEmpty) {
+                            <div class="state-cell">
+                                <div class="empty-state">
+                                    <span class="empty-icon"><i class="bi bi-geo-alt"></i></span>
+                                    <h3>Aucune parcelle n'a été détectée</h3>
+                                    <p>Pour commencer à utiliser votre carnet de champ, créez d'abord vos parcelles puis ajoutez vos premières cultures.</p>
+                                    <button type="button" class="btn-first-parcel" (click)="createFirstParcel()">
+                                        <i class="bi bi-plus-lg"></i> Créer ma première parcelle
+                                    </button>
+                                </div>
+                            </div>
+                        } @else if (getFilteredAndSortedParcelles().length === 0) {
+                            <div class="state-cell">
+                                <i class="bi bi-search state-icon"></i>
+                                <p>Aucune parcelle ne correspond à vos critères de recherche.</p>
+                            </div>
+                        } @else {
+                            @for (item of getPaginatedParcelles(); track item.osm_id || item.id_parcel || $index) {
+                                <div class="parcelle-card-item" [class.selected-row]="isParcelSelected(item)" (click)="toggleParcelSelection(item)">
+                                    <div class="pci-top">
+                                        <div class="checkbox-wrapper" (click)="$event.stopPropagation()">
+                                            <input type="checkbox"
+                                                   class="custom-checkbox"
+                                                   [id]="'cardCheckbox_' + $index"
+                                                   [checked]="isParcelSelected(item)"
+                                                   (change)="toggleParcelSelection(item)">
+                                            <label [for]="'cardCheckbox_' + $index" class="checkbox-label"></label>
+                                        </div>
+                                        <div class="pci-name">{{ item.parcel_name || item.name || 'Sans nom' }}</div>
+                                        <button type="button" class="icon-btn"
+                                                (click)="$event.stopPropagation(); onUpdate(item.id_parcel || item.osm_id)"
+                                                title="Modifier la parcelle" aria-label="Modifier la parcelle">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                    <div class="pci-body">
+                                        <div class="pci-row">
+                                            @if (item.parcel_category && item.parcel_category !== '' && item.parcel_category !== 'null') {
+                                                <span class="category-badge">{{ item.parcel_category }}</span>
+                                            } @else {
+                                                <span class="category-badge category-badge--none">Non définie</span>
+                                            }
+                                            <span class="pci-area">
+                                                @if (item.parcel_area && item.parcel_area !== '' && item.parcel_area !== 'null') {
+                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr : '' }}
+                                                } @else {
+                                                    <span class="muted">N/A</span>
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="location">
+                                            <i class="bi bi-geo-alt"></i>
+                                            @if (item.parcel_address && item.parcel_address !== '' && item.parcel_address !== 'null' &&
+                                                 item.parcel_address !== 'Parcelle Pac On Web' && item.parcel_address !== 'Parcelle GML importée') {
+                                                {{ item.parcel_address }}
+                                            } @else if (item.display_name && item.display_name !== '' && item.display_name !== 'null' &&
+                                                        item.display_name !== 'Parcelle Pac On Web' && item.display_name !== 'Parcelle GML importée') {
+                                                {{ item.display_name }}
+                                            } @else if (item.lat && item.lon && item.lat !== '0' && item.lon !== '0' && item.lat !== 'null' && item.lon !== 'null') {
+                                                {{ item.lat }}, {{ item.lon }}
+                                            } @else {
+                                                Localisation non définie
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    @if (totalPages > 1) {
+                        <div class="pagination-wrapper">
+                            <button type="button" class="page-link" (click)="previousPage()" [disabled]="currentPage === 1" aria-label="Page précédente">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <div class="pagination-info">
+                                {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, totalItems) }} sur {{ totalItems }}
+                            </div>
+                            <button type="button" class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages" aria-label="Page suivante">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Carte -->
+            <aside class="parcelles-map-col">
+                <h2 class="dashboard-section-label">Ma carte</h2>
+                <div class="map-card">
+                    <div id="map" #mapContainer></div>
+                </div>
+                <a routerLink="/parcelles/voir-parcelles" class="btn-view-map">
+                    Voir ma carte <i class="bi bi-arrow-right"></i>
+                </a>
+            </aside>
+        </section>
+    </div>
+
+    <!-- Popups ajout / modification (inchangées) -->
+    <div class="parcelles-popups">
+                @if (afficherCachet) {
+                    <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? cachet() : null">
+                        <div class="popup-container">
+                            <!-- Header avec titre dynamique -->
+                            <div class="popup-header">
+                                <div class="header-title">
+                                    @if (editMode) {
+                                        <i class="bi bi-pencil-fill"></i>
+                                        <h3>Modifier la parcelle</h3>
+                                    } @else {
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        <h3>Ajouter une parcelle par adresse</h3>
+                                    }
+                                </div>
+                                <button type="button" class="btn-close-popup" (click)="cachet()" aria-label="Fermer">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+
+                            <!-- Contenu scrollable -->
+                            <div class="popup-body">
+                                    <form [formGroup]="form" *ngIf="form">
+                                        <div class="row g-3">
+                                        <div class="col-lg-6">
+                                            <label class="simple-label" for="parcel_name">Nom de la parcelle<sup>*</sup></label>
+                                            <input
+                                                type="text"
+                                                class="form-control popup-text-input"
+                                                id="parcel_name"
+                                                placeholder="Ex : Champ du Nord"
+                                                formControlName="parcel_name"
+                                                required
+                                                [class.input-error]="form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')"
+                                            >
+                                            @if (form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')) {
+                                                <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                            }
+                                        </div>
+
+                                        <div class="col-lg-3">
+                                            <label class="simple-label" for="parcel_area">Superficie<sup>*</sup></label>
+                                            <input
+                                                type="text"
+                                                inputmode="decimal"
+                                                class="form-control popup-text-input"
+                                                id="parcel_area"
+                                                placeholder="Ex : 2.5"
+                                                formControlName="parcel_area"
+                                                appNumericInput
+                                                required
+                                                [class.input-error]="form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')"
+                                            >
+                                            @if (form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')) {
+                                                <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                            }
+                                        </div>
+                                        
+                                        <div class="col-lg-3">
+                                            <label class="simple-label">Unité<sup>*</sup></label>
+                                            <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+                                                <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+                                                    <span class="dropdown-value">{{ getAreaUnitLabel() }}</span>
+                                                    <i class="bi bi-chevron-down dropdown-icon"></i>
+                                                </button>
+                                                @if (isUnitDropdownOpen) {
+                                                    <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                                        <div class="dropdown-list">
+                                                            @for (opt of areaUnitOptions; track opt.value) {
+                                                                <div class="dropdown-list-item" (click)="selectAreaUnit(opt.value)">
+                                                                    {{ opt.label }}
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Champ adresse - masqué pour les parcelles GML, PAC et créées par point GPS -->
+                                        @if (!editMode || (!selectedParcelForEdit?.imported_from_gml && 
+                                             !selectedParcelForEdit?.imported_from_paconweb && 
+                                             selectedParcelForEdit?.record_type !== 'Point_parcel' && 
+                                             selectedParcelForEdit?.record_type !== 'PAC_parcel')) {
+                                            <div class="col-lg-12">
+                                                <label class="simple-label" for="parcel_address">Adresse de la parcelle<sup>*</sup></label>
+                                                <div class="address-field-wrapper" [class.has-suggestions]="showSuggestions && addressSuggestions.length > 0">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control popup-text-input"
+                                                        id="parcel_address"
+                                                        placeholder="Ex : Rue de la Ferme 12, 5000 Namur"
+                                                        formControlName="parcel_address"
+                                                        (input)="onAddressInput($event)"
+                                                        (focus)="onAddressFocus()"
+                                                        (blur)="onAddressBlur()"
+                                                        autocomplete="off"
+                                                        [class.input-error]="form.get('parcel_address')?.touched && form.get('parcel_address')?.hasError('required')"
+                                                    >
+                                                    @if (form.get('parcel_address')?.touched && form.get('parcel_address')?.hasError('required')) {
+                                                        <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                                    }
+
+                                                    @if (addressSuggestions && addressSuggestions.length > 0 && showSuggestions) {
+                                                        <div class="address-suggestions">
+                                                            <ul class="list-group">
+                                                                @for (suggestion of addressSuggestions; track suggestion.place_id) {
+                                                                    <li 
+                                                                        class="list-group-item list-group-item-action address-suggestion-item" 
+                                                                        (click)="selectAddressSuggestion(suggestion)"
+                                                                        (mousedown)="$event.preventDefault()"
+                                                                    >
+                                                                        <i class="bi bi-geo-alt"></i>
+                                                                        <span class="suggestion-text">{{ suggestion.display_name }}</span>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (form.get('parcel_address')?.errors?.['addressNotSelected'] && !showSuggestions) {
+                                                    <small class="text-danger">
+                                                        Veuillez sélectionner une adresse dans la liste proposée.
+                                                    </small>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Champ Code SIGEC - toujours visible -->
+                                        <div class="col-lg-12">
+                                            <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
+                                            <input
+                                                type="text"
+                                                class="form-control popup-text-input"
+                                                id="sigec_code"
+                                                placeholder="Ex : 12345A"
+                                                formControlName="sigec_code"
+                                            >
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="category-section">
+                                                <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                                <div class="category-options">
+                                                    @for (cat of availableParcelCategories(); track cat) {
+                                                        <div class="form-check">
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="radio"
+                                                                [id]="'cat_' + cat"
+                                                                formControlName="parcel_category"
+                                                                [value]="cat"
+                                                            >
+                                                            <label class="form-check-label" [for]="'cat_' + cat">
+                                                                <i class="bi bi-tag-fill"></i>
+                                                                {{ cat }}
+                                                            </label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Footer avec boutons dynamiques -->
+                            <div class="popup-footer">
+                                @if (!form.valid) {
+                                    <p class="popup-required-hint">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span>À compléter :
+                                            @if (form.get('parcel_name')?.invalid) { <b>nom</b> }
+                                            @if (form.get('parcel_area')?.invalid) { <b>superficie</b> }
+                                            @if (form.get('parcel_area_unit_fr')?.invalid) { <b>unité</b> }
+                                            @if (form.get('parcel_address')?.hasError('required')) { <b>adresse</b> }
+                                            @if (form.get('parcel_address')?.hasError('addressNotSelected')) { <b>adresse à choisir dans la liste</b> }
+                                            @if (form.get('parcel_category')?.invalid) { <b>catégorie</b> }
+                                        </span>
+                                    </p>
+                                }
+                                <button type="submit" class="btn-primary" (click)="onSubmit()" [disabled]="!form.valid || isSaving">
+                                    @if (isSaving) {
+                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                        Enregistrement...
+                                    } @else if (editMode) {
+                                        <i class="bi bi-arrow-up-circle"></i>
+                                        Mettre à jour
+                                    } @else {
+                                        <i class="bi bi-check-circle"></i>
+                                        Enregistrer
+                                    }
+                                </button>
+                                @if (editMode) {
+                                    <button type="button" class="btn-primary danger" (click)="deleteEditedParcel()" [disabled]="isDeleting">
+                                        @if (isDeleting) {
+                                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                            Suppression...
+                                        } @else {
+                                            <i class="bi bi-trash"></i>
+                                            Supprimer la parcelle
+                                        }
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+    </div>
+</main>

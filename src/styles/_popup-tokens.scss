@@ -1,0 +1,70 @@
+// Design tokens partagés par le système de popups unifié (voir le plan de migration
+// "Unification du style des popups"). Exposés en variables Sass (pour les calculs/darken()
+// dans _popup-system.scss et _popup-mixins.scss) ET en custom properties CSS, pour que le
+// SCSS scopé de chaque composant popup individuel puisse les référencer (ex. var(--popup-accent))
+// sans avoir à écrire un chemin relatif @use vers ce fichier depuis des dossiers profonds.
+
+$popup-primary: #0e103c;
+$popup-accent: #05b1af;
+$popup-success: #198754;
+$popup-danger: #dc3545;
+
+$popup-gray-100: #f8f9fa;
+$popup-gray-200: #e9ecef;
+$popup-gray-300: #dee2e6;
+$popup-gray-400: #ced4da;
+$popup-gray-500: #adb5bd;
+// Couleur dédiée au texte placeholder (::placeholder) — #adb5bd ci-dessus ne fait que ~2,07:1
+// de contraste sur fond blanc, sous le minimum WCAG 4,5:1 exigé par normesResponsive.md §92-99
+// (même pour un placeholder porteur d'information). #767676 est la valeur donnée en exemple par
+// la norme elle-même. Variable séparée de $popup-gray-500 : ce dernier reste utilisé ailleurs
+// (bordures hover, texte disabled, icônes) où ce changement de teinte ne serait pas voulu.
+$popup-placeholder-color: #767676;
+$popup-gray-600: #6c757d;
+$popup-gray-700: #495057;
+$popup-gray-800: #343a40;
+$popup-gray-900: #212529;
+$popup-white: #fff;
+
+$popup-radius-sm: 6px;
+$popup-radius-md: 8px;
+$popup-radius-lg: 12px;
+
+$popup-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$popup-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$popup-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+$popup-transition: all 0.2s ease;
+
+// Backdrop : rgba(0,0,0,.5) + blur(5px), repris de l'overlay de traitement-phyto
+// (registre.component.scss), pas de l'overlay local d'export-popup.
+$popup-backdrop-color: rgba(0, 0, 0, 0.5);
+$popup-backdrop-blur: 5px;
+
+$popup-scrollbar-thumb: #03918a;
+$popup-scrollbar-thumb-hover: #027269;
+
+$popup-font: "Panton", sans-serif;
+
+:root {
+  --popup-primary: #{$popup-primary};
+  --popup-accent: #{$popup-accent};
+  --popup-success: #{$popup-success};
+  --popup-danger: #{$popup-danger};
+  --popup-gray-100: #{$popup-gray-100};
+  --popup-gray-200: #{$popup-gray-200};
+  --popup-gray-300: #{$popup-gray-300};
+  --popup-gray-400: #{$popup-gray-400};
+  --popup-gray-500: #{$popup-gray-500};
+  --popup-placeholder-color: #{$popup-placeholder-color};
+  --popup-gray-600: #{$popup-gray-600};
+  --popup-gray-700: #{$popup-gray-700};
+  --popup-gray-800: #{$popup-gray-800};
+  --popup-gray-900: #{$popup-gray-900};
+  --popup-radius-sm: #{$popup-radius-sm};
+  --popup-radius-md: #{$popup-radius-md};
+  --popup-radius-lg: #{$popup-radius-lg};
+  --popup-scrollbar-thumb: #{$popup-scrollbar-thumb};
+  --popup-scrollbar-thumb-hover: #{$popup-scrollbar-thumb-hover};
+  --popup-font: #{$popup-font};
+}

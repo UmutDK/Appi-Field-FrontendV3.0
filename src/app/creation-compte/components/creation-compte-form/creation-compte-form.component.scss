@@ -1,0 +1,66 @@
+// Même gabarit que la connexion / création de compte : voir src/styles/_auth-form.scss
+@use '../../../../styles/auth-form' as *;
+
+// Sous-titre de groupe de champs (« Informations personnelles », « … de l'entreprise »)
+.form-section-title {
+    font-family: "Panton", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #12103c;
+    margin: 4px 0 12px;
+    padding-top: 16px;
+    border-top: 1px solid #edf0f3;
+
+    &:first-of-type {
+        padding-top: 0;
+        border-top: none;
+    }
+}
+
+form .auth-grid + .form-section-title {
+    margin-top: 24px;
+}
+
+// Libellé avec icône d'aide (infobulle Material)
+.auth-field .label-with-help {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.help-icon {
+    font-size: 0.8rem;
+    color: #6b7280;
+    cursor: help;
+
+    &:hover { color: #03918a; }
+}
+
+.loading-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    background: #f0faf9;
+    color: #03918a;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+// Erreur d'enregistrement (serveur injoignable ou refus) au-dessus du bouton « Suivant »
+.submit-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 0.9rem;
+
+    i { margin-top: 2px; }
+}

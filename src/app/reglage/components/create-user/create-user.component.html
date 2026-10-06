@@ -1,0 +1,98 @@
+<div class="main">
+    <div class="connexion">
+        <section class="row">
+            <article class="col-lg-12 card-header-row">
+                <h2>Gestion de mon équipe</h2>
+                <button class="btn-add-operateur" (click)="openOperateurForm()">
+                    <i class="bi bi-plus-lg"></i> Nouvel opérateur
+                </button>
+            </article>
+            <hr>
+            <article class="col-lg-12">
+                <h3 style="color: #0f113b; font-weight: 600; margin: 20px 0 0;">Mon équipe actuelle</h3>
+                <div class="operateurs-grid">
+                    @for (op of signalGet(); track op.operatorId) {
+                        <div class="operateur-card">
+                            <div class="operateur-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="operateur-info">
+                                <span class="operateur-nom">{{ op.operatorName }}</span>
+                                <span class="operateur-phyto">
+                                    <i class="bi bi-hash"></i>{{ op.operatorPhytolicence || '—' }}
+                                </span>
+                            </div>
+                            <div class="operateur-actions">
+                                <button class="btn-icon btn-edit" (click)="editOperateur(op)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-icon btn-delete" (click)="onDEl(op.operatorId)" title="Supprimer">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    @empty {
+                        <p class="equipe-empty">Aucun opérateur enregistré.</p>
+                    }
+                </div>
+            </article>
+        </section>
+    </div>
+
+    <!-- Modal formulaire opérateur -->
+    @if (showOperateurForm) {
+        <div class="modal-overlay popup-overlay" (click)="closeOperateurForm()">
+            <div class="modal-operateur popup-container" (click)="$event.stopPropagation()">
+                <div class="modal-header popup-header">
+                    <div class="header-title">
+                        <i class="bi bi-person-badge"></i>
+                        <h4>{{ editingOperateur ? 'Modifier l\'opérateur' : 'Nouvel opérateur' }}</h4>
+                    </div>
+                    <button class="btn-close-modal btn-close-popup" (click)="closeOperateurForm()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body popup-body">
+                    <div class="form-group">
+                        <label for="operateurName">Nom et prénom*</label>
+                        <input
+                            id="operateurName"
+                            type="text"
+                            class="form-control popup-text-input"
+                            [(ngModel)]="operateurForm.name"
+                            placeholder="Ex : Dupont Marie"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="operateurPhytolicence">Numéro de phytolicence</label>
+                        <input
+                            id="operateurPhytolicence"
+                            type="text"
+                            class="form-control popup-text-input"
+                            [(ngModel)]="operateurForm.phytolicence"
+                            placeholder="Ex : 23.2.00445"
+                            (input)="onPhytolicenceInput($event)"
+                        />
+                    </div>
+                    @if (operateurError) {
+                        <p class="form-error">{{ operateurError }}</p>
+                    }
+                </div>
+                <div class="modal-footer popup-footer">
+                    <button class="btn-cancel btn-secondary" (click)="closeOperateurForm()">Annuler</button>
+                    <button
+                        class="btn-save btn-primary"
+                        (click)="saveOperateur()"
+                        [disabled]="operateurSaving"
+                    >
+                        @if (operateurSaving) {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        {{ editingOperateur ? 'Mettre à jour' : 'Enregistrer' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,48 @@
+<main>
+    <div class="container">
+        <section class="row">
+            <article class="col-lg-12">
+                <h1 class="text-center">Gestion des utilisateurs</h1>
+                <p class="text-center">Vous pouvez gérer les utilisateurs de votre application ici.</p>
+            </article>
+            <article class="col-lg-12">
+                <samp>
+                    <ul class="nav nav-tabs" id="userTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="utilisateurs-tab" data-bs-toggle="tab" data-bs-target="#utilisateurs" type="button" role="tab" aria-controls="utilisateurs" aria-selected="true">
+                                Utilisateurs
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="administrateur-tab" data-bs-toggle="tab" data-bs-target="#administrateur" type="button" role="tab" aria-controls="administrateur" aria-selected="false">
+                                Administrateur
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="super-administrateur-tab" data-bs-toggle="tab" data-bs-target="#super-administrateur" type="button" role="tab" aria-controls="super-administrateur" aria-selected="false">
+                                Super-administrateur
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="userTabsContent">
+                        <div class="tab-pane fade show active" id="utilisateurs" role="tabpanel" aria-labelledby="utilisateurs-tab">
+                            <div class="compte">
+                                <app-users></app-users>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="administrateur" role="tabpanel" aria-labelledby="administrateur-tab">
+                            <div class="compte">
+                                <app-super-user></app-super-user>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="super-administrateur" role="tabpanel" aria-labelledby="super-administrateur-tab">
+                            <div class="compte">
+                                <app-all-user></app-all-user>
+                            </div>
+                        </div>
+                    </div>
+                </samp>
+            </article>
+        </section>
+    </div>
+</main>

@@ -1,0 +1,64 @@
+@use '../../../../../styles/auth-form' as *;
+
+// Bulle des règles du mot de passe (.password-hints) : voir src/styles/_auth-form.scss
+
+// Case CGU
+.acceptCGU {
+    margin-top: 20px;
+}
+
+.acceptCGU-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.acceptCGU-box {
+    position: relative;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.acceptCGU-text {
+    color: #12103c;
+    font-size: 15px;
+    font-weight: 500;
+    user-select: none;
+
+    a {
+        color: #03918a;
+        text-decoration: underline;
+        font-weight: 700;
+    }
+
+    sup {
+        color: #dc3545;
+        font-size: 16px;
+    }
+}
+
+// Materialize masque les checkbox natives (opacity:0, left:-9999px) : on force la case visible.
+#acceptCGU {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    accent-color: #05b1af;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox !important;
+    -moz-appearance: checkbox !important;
+    appearance: checkbox !important;
+}

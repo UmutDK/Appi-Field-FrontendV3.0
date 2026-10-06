@@ -1,0 +1,1847 @@
+﻿<main>
+
+
+    <!-- Contenu scrollable -->
+    <div class="scrollable-content" #scrollableContent>
+    <div class="body" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+        @switch (traitement) {
+            @case ("type de traitement") {
+                @if (isEditMode) {
+                    <div class="alert alert-info" role="alert">
+                        <h6><strong>Informations générales du traitement</strong></h6>
+                        <p class="mb-0">Vous pouvez modifier les informations ci-dessous.</p>
+                    </div>
+                } @else {
+                    <p class="step-intro">Mentionnez les informations sur votre traitement : </p>
+                }
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom: 5px;">
+                    <label class="simple-label" style="margin:0;">Type d'encodage<sup>*</sup></label>
+                    <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                       matTooltip="Choisissez un type de traitement. Le mode Surface permet d'encoder des traitements dont les doses sont exprimées en quantité/surface, et le mode Bouillie en quantité/100L ou /10L. Finalement, le mode quantité propose d'encoder des produits en fonction de leur quantité concentée."
+                       matTooltipPosition="above">
+                    </i>
+                </div>
+                <form [formGroup]="formTraitement">
+                    <section class="row">
+                        <!-- Masquer le choix de type en mode modification -->
+                        @if (!isEditMode) {
+                            <article class="col-lg-12">
+                                <div class="toggle-radio compact format-choice" [class.disabled]="hasProductsInComposition()">
+                                    <input type="radio"
+                                           id="surface"
+                                           name="type"
+                                           formControlName="type"
+                                           value="phyto_surface_treatment"
+                                           [disabled]="hasProductsInComposition()"
+                                           checked>
+                                    <label for="surface" class="format-btn" [class.active]="formTraitement.value.type === 'phyto_surface_treatment'" [class.disabled]="hasProductsInComposition()">
+                                        <i class="bi bi-rulers"></i>
+                                        <span class="format-label">Surface</span>
+                                    </label>
+
+                                    <input type="radio"
+                                           id="bouillie"
+                                           name="type"
+                                           formControlName="type"
+                                           value="phyto_porridge_treatment"
+                                           [disabled]="hasProductsInComposition()">
+                                    <label for="bouillie" class="format-btn" [class.active]="formTraitement.value.type === 'phyto_porridge_treatment'" [class.disabled]="hasProductsInComposition()">
+                                        <i class="bi bi-droplet-half"></i>
+                                        <span class="format-label">Bouillie</span>
+                                    </label>
+
+                                    <input type="radio"
+                                           id="quantite"
+                                           name="type"
+                                           formControlName="type"
+                                           value="phyto_quantity_treatment"
+                                           [disabled]="hasProductsInComposition()">
+                                    <label for="quantite" class="format-btn" [class.active]="formTraitement.value.type === 'phyto_quantity_treatment'" [class.disabled]="hasProductsInComposition()">
+                                        <i class="bi bi-speedometer2"></i>
+                                        <span class="format-label">Quantité</span>
+                                    </label>
+                                </div>
+                                @if (hasProductsInComposition()) {
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="bi bi-lock-fill me-1"></i>
+                                        Le type de traitement ne peut pas être modifié car des produits sont déjà ajoutés.
+                                    </small>
+                                }
+                                <div class="mode-explanation">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    @if (formTraitement.value.type === 'phyto_surface_treatment') {
+                                        <span><strong>Surface</strong> : les doses des produits sont exprimées par unité de surface traitée (L/ha, kg/ha...).</span>
+                                    } @else if (formTraitement.value.type === 'phyto_porridge_treatment') {
+                                        <span><strong>Bouillie</strong> : les doses des produits sont exprimées par volume de bouillie préparée (L/100L, L/10L...).</span>
+                                    } @else {
+                                        <span><strong>Quantité</strong> : les produits sont encodés directement selon la quantité totale utilisée, sans calcul de dose par surface ou par volume.</span>
+                                    }
+                                </div>
+                            </article>
+                        } @else {
+                            <!-- En mode modification, afficher le type sans possibilité de modification -->
+                            <article class="col-lg-12">
+                                <p><strong>Type de traitement : </strong>
+                                    @if (formTraitement.get('type')?.value === 'phyto_surface_treatment') {
+                                        Surface
+                                    } @else if (formTraitement.get('type')?.value === 'phyto_quantity_treatment') {
+                                        Quantité
+                                    } @else {
+                                        Bouillie
+                                    }
+                                </p>
+                            </article>
+                        }
+
+                        <article class="col-lg-6">
+                            <p></p>
+                            <label class="simple-label" for="traitementDate">Date de traitement<sup>*</sup></label>
+                            <input type="date" id="traitementDate" name="date" class="form-control popup-text-input" formControlName="date"  >
+                        </article>
+
+                        <!-- Champ opérateur avec style amélioré -->
+                        <article class="col-lg-6">
+                            <p></p>
+                            <label class="simple-label" id="traitementOperatorLabel">Opérateur</label>
+                            <div class="operator-dropdown-container">
+                                <!-- Bouton déclencheur -->
+                                <button type="button"
+                                        class="operator-select-btn"
+                                        aria-labelledby="traitementOperatorLabel"
+                                        [class.has-value]="getSelectedOperator()"
+                                        (click)="toggleOperatorDropdown()"
+                                        (blur)="closeOperatorDropdown()">
+                                    <span class="operator-btn-text">
+                                        @if (getSelectedOperator()) {
+                                            <span class="operator-name">{{ getSelectedOperator().operatorName }}</span>
+                                        } @else {
+                                            <span class="operator-placeholder">Sélectionner un opérateur</span>
+                                        }
+                                    </span>
+                                    <span class="operator-btn-icons">
+                                        @if (getSelectedOperator()) {
+                                            <i class="bi bi-x-circle-fill operator-clear-icon"
+                                               (mousedown)="$event.preventDefault(); $event.stopPropagation(); clearOperator()"
+                                               title="Effacer"></i>
+                                        }
+                                        <i class="bi" [class.bi-chevron-down]="!showOperatorDropdown" [class.bi-chevron-up]="showOperatorDropdown"></i>
+                                    </span>
+                                </button>
+
+                                <!-- Liste déroulante -->
+                                @if (showOperatorDropdown) {
+                                    <ul class="operator-dropdown-list">
+                                        @for (operator of operators; track operator.operatorId) {
+                                            <li>
+                                                <button type="button"
+                                                        class="operator-option"
+                                                        [class.selected]="getSelectedOperator()?.operatorId === operator.operatorId"
+                                                        (mousedown)="$event.preventDefault(); selectOperator(operator)">
+                                                    <strong>{{ operator.operatorName }}</strong>
+                                                    <small>Phytolicence : {{ operator.operatorPhytolicence || 'non renseignée' }}</small>
+                                                </button>
+                                            </li>
+                                        }
+                                        @if (operators.length === 0) {
+                                            <li class="operator-empty">Aucun opérateur disponible</li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </article>
+
+                        <!-- Efficacité du traitement -->
+                        <article class="col-lg-6">
+                            <p></p>
+                            <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                                <label class="simple-label" id="traitementEfficaciteLabel" style="margin:0;">Efficacité du traitement</label>
+                                <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                   matTooltip="Plus d'informations dans la FAQ"
+                                   matTooltipPosition="above">
+                                </i>
+                            </div>
+                            <div class="operator-dropdown-container">
+                                <button type="button"
+                                        class="operator-select-btn has-value"
+                                        aria-labelledby="traitementEfficaciteLabel"
+                                        (click)="toggleEfficaciteDropdown()"
+                                        (blur)="closeEfficaciteDropdown()">
+                                    <span class="operator-btn-text">
+                                        <span class="simple-option-name">{{ selectedEfficacite }}</span>
+                                    </span>
+                                    <span class="operator-btn-icons">
+                                        <i class="bi" [class.bi-chevron-down]="!showEfficaciteDropdown" [class.bi-chevron-up]="showEfficaciteDropdown"></i>
+                                    </span>
+                                </button>
+                                @if (showEfficaciteDropdown) {
+                                    <ul class="operator-dropdown-list">
+                                        @for (opt of EFFICACITE_OPTIONS; track opt) {
+                                            <li>
+                                                <button type="button"
+                                                        class="operator-option"
+                                                        [class.selected]="selectedEfficacite === opt"
+                                                        (mousedown)="$event.preventDefault(); selectEfficacite(opt)">
+                                                    {{ opt }}
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </article>
+
+                        <!-- Base décisionnelle -->
+                        <article class="col-lg-6">
+                            <p></p>
+                            <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                                <label class="simple-label" id="traitementBaseDecisionLabel" style="margin:0;">Base décisionnelle</label>
+                                <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                   matTooltip="Plus d'informations dans la FAQ"
+                                   matTooltipPosition="above">
+                                </i>
+                            </div>
+                            <div class="operator-dropdown-container">
+                                <button type="button"
+                                        class="operator-select-btn has-value"
+                                        aria-labelledby="traitementBaseDecisionLabel"
+                                        (click)="toggleBaseDecisionDropdown()"
+                                        (blur)="closeBaseDecisionDropdown()">
+                                    <span class="operator-btn-text">
+                                        <span class="simple-option-name">{{ selectedBaseDecision }}</span>
+                                    </span>
+                                    <span class="operator-btn-icons">
+                                        <i class="bi" [class.bi-chevron-down]="!showBaseDecisionDropdown" [class.bi-chevron-up]="showBaseDecisionDropdown"></i>
+                                    </span>
+                                </button>
+                                @if (showBaseDecisionDropdown) {
+                                    <ul class="operator-dropdown-list">
+                                        @for (opt of BASE_DECISION_OPTIONS; track opt) {
+                                            <li>
+                                                <button type="button"
+                                                        class="operator-option"
+                                                        [class.selected]="selectedBaseDecision === opt"
+                                                        (mousedown)="$event.preventDefault(); selectBaseDecision(opt)">
+                                                    {{ opt }}
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </article>
+
+                        <article class="col-lg-12">
+                            <p></p>
+                            <label class="simple-label" for="traitementRemark">Remarque</label>
+                            <textarea id="traitementRemark"
+                                      name="remark"
+                                      formControlName="remark"
+                                      placeholder="Remarque"
+                                      class="form-control textarea-compact popup-text-input"
+                                      (input)="onRemarqueInputChange($event)"></textarea>
+                        </article>
+
+                        <article class="col-lg-6">
+                            <p></p>
+                            <label class="simple-label">S'agit-il d'un traitement localisé ?</label>
+                            <div class="yes-no-toggle">
+                                <input type="radio" id="localized-oui" value="Oui" name="localized_treatment" formControlName="localized_treatment" />
+                                <label for="localized-oui" [class.active]="formTraitement.value.localized_treatment === 'Oui'">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Oui</span>
+                                </label>
+                                <input type="radio" id="localized-non" value="Non" name="localized_treatment" formControlName="localized_treatment" />
+                                <label for="localized-non" [class.active]="formTraitement.value.localized_treatment === 'Non'">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </article>
+
+                        <article class="col-lg-6" style="display:none;">
+                            <p></p>
+                            <p> <strong>Nettoyage externe de votre cuve ?</strong> </p>
+                            <div class="valeur"style="margin-bottom: 70px;">
+                                <p></p>
+                                <label>
+                                    <input  type="radio" value="Oui" name="clean_flag" formControlName="clean_flag"  />
+                                    <span>Oui</span>
+                                </label>
+                                <label>
+                                    <input  type="radio" value="Non"  name="clean_flag" formControlName="clean_flag"  />
+                                    <span style="margin-left: 10px;">Non</span>
+                                </label>
+                            </div>
+                        </article>
+                    </section>
+                </form>
+            }
+            @case ("composition de mon traitement") {
+                @if (getSignalDose() && getSignalDose().length > 0) {
+                    <p> <strong class="section-subheading">Composition de mon traitement :</strong> </p>
+                }
+                <section class="row">
+
+                    @if (getSignalDose() && getSignalDose().length > 0) {
+                        @if (getProductsMissingTarget().length > 0) {
+                            <article class="col-lg-12">
+                                <div class="target-missing-warning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    Merci de renseigner une cible pour : {{ getProductsMissingTarget().join(', ') }}.
+                                </div>
+                            </article>
+                        }
+                        <article class="col-lg-12">
+                            <div class="composition-table-wrapper">
+                                <div class="composition-table-header">
+                                    <span class="ctab-col ctab-col-product">Produit</span>
+                                    <span class="ctab-col ctab-col-dose">@if (getTreatmentType() === 'phyto_quantity_treatment') { Quantité } @else { Dose }</span>
+                                    <span class="ctab-col ctab-col-target">Cible</span>
+                                    <span class="ctab-col ctab-col-actions"></span>
+                                </div>
+                                @for (item of getSignalDose(); track $index) {
+                                    <div class="composition-table-row">
+                                        <div class="ctab-col ctab-col-product">
+                                            <strong class="ctab-product-name">{{ item.component_name }}</strong>
+                                            @if (item.component_numaut) {
+                                                <small class="ctab-product-num">{{ item.component_numaut }}</small>
+                                            }
+                                        </div>
+                                        <div class="ctab-col ctab-col-dose">
+                                            <span class="ctab-dose-val">
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') {
+                                                    {{ item.component_quantity }} <em class="ctab-unit">{{ item.component_quantity_unity }}</em>
+                                                } @else {
+                                                    {{ item.component_dose }} <em class="ctab-unit">{{ item.component_dose_unit }}</em>
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="ctab-col ctab-col-target">
+                                            <span class="ctab-target">{{ item.target || '—' }}</span>
+                                        </div>
+                                        <div class="ctab-col ctab-col-actions">
+                                            <button type="button" class="ctab-btn-edit"
+                                                    (click)="editProductFromComposition(item, 'surface')"
+                                                    title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="ctab-btn-delete"
+                                                    (click)="removeProductFromTreatment(item.component_id)"
+                                                    title="Supprimer">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </article>
+                    }
+
+                    @if (!currentEditingProductId) {
+                    <article class="col-lg-12">
+                        <strong class="add-product-heading">Ajoutez un ou plusieurs produit(s) :</strong>
+
+                        <!-- Toggle PPP / Produits personnalisés -->
+                        <div class="product-mode-toggle-row">
+                            <!-- Ligne 1 : toggle -->
+                            <div class="format-choice">
+                                <button type="button" class="format-btn"
+                                        [class.active]="productMode === 'phyto'"
+                                        (click)="toggleProductMode('phyto')"
+                                        matTooltip="Rechercher des produits phytosanitaires, adjuvants, substances de bases sur base de leur nom ou de leur numéro d'autorisation"
+                                        matTooltipPosition="above">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span class="format-label">Produits phytos</span>
+                                </button>
+                                <button type="button" class="format-btn"
+                                        [class.active]="productMode === 'personal'"
+                                        (click)="toggleProductMode('personal')"
+                                        matTooltip="Rechercher et enregistrer vos propres fertilisants"
+                                        matTooltipPosition="above">
+                                    <i class="bi bi-person-gear"></i>
+                                    <span class="format-label">Fertilisants personnalisés</span>
+                                </button>
+                            </div>
+                            <!-- Ligne 2 : recherche + bouton -->
+                            <div class="search-action-row">
+                                @if (productMode === 'phyto') {
+                                    <label class="simple-label" for="traitementProductSearch">Produit phytosanitaire</label>
+                                    <input type="search" id="traitementProductSearch" [formControl]="searchControl" placeholder="Rechercher un produit (phytoweb)" class="form-control form-control-sm product-search-input popup-text-input">
+                                } @else {
+                                    <label class="simple-label" for="traitementPersonalProductSearch">Fertilisant personnel</label>
+                                    <input type="search" id="traitementPersonalProductSearch" [formControl]="personalProductSearchControl"
+                                           placeholder="Rechercher un fertilisant personnel"
+                                           class="form-control form-control-sm product-search-input popup-text-input"
+                                           (input)="filterPersonalProducts()">
+                                    <button type="button" class="btn-add-personal"
+                                            (click)="showNewPersonalProductForm = true">
+                                        <i class="bi bi-plus-circle"></i> Enregistrer un nouveau fertilisant
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        @if (productMode === 'phyto') {
+                            <div class="status-legend">
+                                <span class="status-legend-tag status-legend-tag--authorized">Autorisé</span>
+                                <span class="status-legend-tag status-legend-tag--withdrawing">En cours de retrait</span>
+                                <span class="status-legend-tag status-legend-tag--forbidden">Interdit</span>
+                            </div>
+                            <!-- ?? Message d'information pour la recherche -->
+                            @if (showSearchHint) {
+                            <div class="search-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Commencez à taper au moins 2 caractères pour voir les produits disponibles
+                            </div>
+                            }
+
+                            <!-- Produits récemment utilisés -->
+                            @if (showSearchHint && isLoadingRecentProducts) {
+                            <div class="recently-used-section">
+                                <div class="recently-used-header">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Récemment utilisés</span>
+                                    <div class="spinner-border spinner-border-sm ms-2" role="status"><span class="visually-hidden">Chargement...</span></div>
+                                </div>
+                            </div>
+                            }
+                            @if (showSearchHint && !isLoadingRecentProducts && recentlyUsedProducts.length > 0) {
+                            <div class="recently-used-section">
+                                <div class="recently-used-header">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Récemment utilisés</span>
+                                </div>
+                                <div class="row g-2">
+                                @for (item of recentlyUsedProducts; track item.product_id) {
+                                    <div class="col-lg-4">
+                                        <div class="volumeDeBouille"
+                                             [class.product-akk-status]="item.authorization_status === 'authorized'"
+                                             [class.product-toint-status]="item.authorization_status === 'withdrawing'"
+                                             [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                            <div (click)="onAddDose(item.product_id)" class="product-card-clickable">
+                                                @if (item.bio == true) {
+                                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
+                                                }
+                                                <strong>{{item.product_name}}</strong>
+                                                <span class="product-meta">
+                                                    {{item.product_numaut}}<br>
+                                                    {{item.user_group}}
+                                                </span>
+                                                @if (item.bio == true) {
+                                                    <p style="color:#22bf76;">Autorisé en agriculture biologique</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                            </div>
+                            }
+
+                            <!-- ?? Animation de chargement -->
+                            @if (isLoadingProducts && !showSearchHint) {
+                            <div class="loading-products">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <span class="loading-text">Recherche dans la base de données Phytoweb...</span>
+                            </div>
+                            }
+                        }
+                    </article>
+                    } <!-- /!currentEditingProductId -->
+
+                    <!-- Formulaire de création d'un produit personnel -->
+                    @if (productMode === 'personal' && showNewPersonalProductForm && !currentEditingProductId) {
+                    <article class="col-lg-12">
+                        <form [formGroup]="personalProductForm" (ngSubmit)="saveNewPersonalProduct()" class="personal-product-form">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label form-label-sm" for="personalProductNameSurface">Nom du produit<sup>*</sup></label>
+                                    <input type="text" id="personalProductNameSurface" formControlName="product_name" class="form-control form-control-sm popup-text-input" placeholder="Ex : Engrais NPK 12-12-17">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label form-label-sm" for="personalProductTypeSurface">Type<sup>*</sup></label>
+                                    <input type="text" id="personalProductTypeSurface" formControlName="product_type" class="form-control form-control-sm popup-text-input"
+                                           placeholder="Engrais, Amendement..."
+                                           (input)="onPersonalTypeInput($event)"
+                                           list="personal-type-options">
+                                    <datalist id="personal-type-options">
+                                        @for (opt of filteredTypeOptions; track opt) {
+                                            <option [value]="opt"></option>
+                                        }
+                                    </datalist>
+                                </div>
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm flex-fill"
+                                            [disabled]="personalProductForm.invalid || isSavingPersonalProduct">
+                                        @if (isSavingPersonalProduct) {
+                                            <span class="spinner-border spinner-border-sm me-1"></span>
+                                        }
+                                        Enregistrer
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm flex-fill"
+                                            (click)="cancelNewPersonalProduct()">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+                    }
+
+                    <!-- ?? Mode édition : Formulaire pleine largeur (remplace la grille) -->
+                    @if (currentEditingProductId && getProductById(currentEditingProductId); as editingProduct) {
+                        <article class="col-lg-12">
+                            <form [formGroup]="getProductForm(currentEditingProductId)">
+                                <div class="product-edit-compact">
+
+                                    <!-- Nom du produit -->
+                                    <div class="product-header">
+                                        <strong class="product-name">{{editingProduct.product_name}}</strong>
+                                        @if (editingProduct.bio == true) {
+                                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
+                                        }
+                                        <small class="product-number">{{editingProduct.product_numaut}}</small>
+                                        @if (getProductAuthorizationStatus(currentEditingProductId); as authStatus) {
+                                            @if (authStatus !== 'unknown') {
+                                                <span class="status-badge status-badge-{{authStatus}}">{{ getProductAuthorizationLabel(authStatus) }}</span>
+                                            }
+                                        }
+                                    </div>
+
+                                    <!-- Info-boxes (entre le nom et la ligne d'encodage) -->
+                                    @if (getProductAuthorizationStatus(currentEditingProductId) === 'forbidden') {
+                                        <div class="info-box forbidden-box">
+                                            <div class="info-header"><i class="bi bi-x-octagon-fill"></i> Ce produit n'est plus autorisé (statut : Retrait)</div>
+                                        </div>
+                                    }
+                                    @if (getUnauthorizedCrops(currentEditingProductId).length > 0) {
+                                        <div class="info-box warning-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Attention ce produit ne semble autorisé sur : {{ getUnauthorizedCrops(currentEditingProductId).join(', ') }}</div>
+                                        </div>
+                                    }
+                                    @if (getDosesPhytoweb(currentEditingProductId) | async; as doses) {
+                                        @if (doses.length > 0) {
+                                            <div class="info-box doses-box">
+                                                <div class="info-header"><i class="bi bi-clipboard-data"></i> Doses Phytoweb recommandées</div>
+                                                <div class="doses-table-wrapper">
+                                                    <table class="doses-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Culture</th>
+                                                                <th>Cible</th>
+                                                                <th class="text-center">Dose min</th>
+                                                                <th class="text-center">Dose max</th>
+                                                                <th class="text-center">Unité</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (dose of doses; track trackByDoseEnemyName($index, dose)) {
+                                                                <tr>
+                                                                    <td class="cell-culture">{{ dose.crop_name || '—' }}</td>
+                                                                    <td class="cell-target">{{ dose.enemy_name }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.target_rate_min || dose.min_dose || '—' }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.target_rate_max || dose.max_dose || '—' }}</td>
+                                                                    <td class="text-center cell-unit">{{ dose.target_rate_unit || dose.unit || '—' }}</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    @if (getProductAuthorizationStatus(currentEditingProductId) === 'withdrawing' && getProductToleranceDate(currentEditingProductId); as toleratedDate) {
+                                        <div class="info-box tolerated-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Autorisation en cours de retrait — usage toléré jusqu'au :</div>
+                                            <div class="info-content"><strong>{{ toleratedDate }}</strong></div>
+                                        </div>
+                                    }
+
+                                    <!-- Ligne d'encodage -->
+                                    <div class="encoding-row">
+                                        <!-- Dose / Quantité -->
+                                        <div class="field-col">
+                                            <label class="field-label" for="doseSurfaceInput">
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') { Quantité } @else { Dose }<sup>*</sup>
+                                            </label>
+                                            <input type="number" id="doseSurfaceInput" class="field-input" placeholder="0.00"
+                                                   formControlName="dose" step="0.01" min="0"
+                                                   (input)="onDoseInputChange(currentEditingProductId, $any($event.target).value)">
+                                        </div>
+
+                                        <!-- Unité -->
+                                        <div class="field-col field-col-unit">
+                                            <label class="field-label" for="uniteSurfaceSelect">Unité<sup>*</sup></label>
+                                            <select id="uniteSurfaceSelect" class="field-select" formControlName="littre"
+                                                    (change)="selectUnit(currentEditingProductId, $any($event.target).value, 'surface')">
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') {
+                                                    <optgroup label="Quantité totale">
+                                                        <option value="L">L</option>
+                                                        <option value="Kg">Kg</option>
+                                                    </optgroup>
+                                                } @else {
+                                                    <optgroup label="Par hectare">
+                                                        <option value="L/ha">L/ha</option>
+                                                        <option value="kg/ha">kg/ha</option>
+                                                        <option value="g/ha">g/ha</option>
+                                                        <option value="ml/ha">ml/ha</option>
+                                                    </optgroup>
+                                                    <optgroup label="Par are">
+                                                        <option value="L/a">L/a</option>
+                                                        <option value="kg/a">kg/a</option>
+                                                        <option value="g/a">g/a</option>
+                                                        <option value="ml/a">ml/a</option>
+                                                    </optgroup>
+                                                    <optgroup label="Par m²">
+                                                        <option value="L/m2">L/m²</option>
+                                                        <option value="kg/m2">kg/m²</option>
+                                                        <option value="g/m2">g/m²</option>
+                                                        <option value="ml/m2">ml/m²</option>
+                                                    </optgroup>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <!-- Champ dérivé -->
+                                        <div class="field-col">
+                                            <label class="field-label" for="quantiteDeriveeSurfaceInput">
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') { Dose (L/ha ou kg/ha) } @else { Quantité (L ou Kg) }
+                                            </label>
+                                            <input type="number" id="quantiteDeriveeSurfaceInput" class="field-input field-input-derived" placeholder="0.00"
+                                                   formControlName="quantity" step="0.01" min="0"
+                                                   (input)="onQuantityInputChange(currentEditingProductId, $any($event.target).value)">
+                                        </div>
+
+                                        <!-- Cible -->
+                                        <div class="field-col field-col-target">
+                                            <label class="field-label" id="cibleSurfaceLabel">Cible<sup>*</sup></label>
+                                            @if (!isTargetFreeText(currentEditingProductId)) {
+                                                <div class="dropdown-container target-dropdown" [class.open]="isTargetDropdownOpen">
+                                                    <button type="button" class="dropdown-btn" aria-labelledby="cibleSurfaceLabel" (click)="toggleTargetDropdown(); $event.stopPropagation()">
+                                                        <span class="dropdown-value">{{ getProductForm(currentEditingProductId).value.target || '-- sélectionner --' }}</span>
+                                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                                    </button>
+                                                    @if (isTargetDropdownOpen) {
+                                                        <div class="dropdown-panel target-dropdown-panel" (click)="$event.stopPropagation()">
+                                                            <div class="dropdown-list">
+                                                                @for (opt of getTargetOptionsForProduct(currentEditingProductId); track opt) {
+                                                                    <div class="dropdown-list-item" (click)="selectTargetFromDropdown(currentEditingProductId, opt)">{{ opt }}</div>
+                                                                }
+                                                                <div class="dropdown-list-item" (click)="selectTargetFromDropdown(currentEditingProductId, '__free__')">Autre (cible 1, cible 2, ...)</div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            } @else {
+                                                <div class="free-text-target">
+                                                    <input type="text" class="field-input" placeholder="Saisir la cible..."
+                                                           aria-labelledby="cibleSurfaceLabel"
+                                                           formControlName="target">
+                                                    <button type="button" class="btn-back-list"
+                                                            (click)="setTargetFreeText(currentEditingProductId, false)">
+                                                        <i class="bi bi-arrow-left-short"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Boutons -->
+                                        <div class="field-col field-col-actions">
+                                            <label class="field-label">&nbsp;</label>
+                                            <div class="action-buttons">
+                                                <button type="button" class="btn-ec-cancel"
+                                                        (click)="onAnnulerAddDose(currentEditingProductId)">Annuler</button>
+                                                <button type="button" class="btn-ec-confirm"
+                                                        (click)="onRemoveAddDose(currentEditingProductId)"
+                                                        [disabled]="!getProductForm(currentEditingProductId).valid">Valider</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </article>
+                    } @else {
+                        <!-- ?? Mode grille : Affichage des cartes produits -->
+                        @if (productMode === 'phyto') {
+                        @for (item of VolumeDeBouilliepreparerFiltered | async; track item.product_id) {
+                        <article class="col-lg-4">
+                            <p></p>
+                            <!-- Carte produit simple -->
+                            <div class="volumeDeBouille" 
+                                 [class.product-akk-status]="item.authorization_status === 'authorized'"
+                                 [class.product-toint-status]="item.authorization_status === 'withdrawing'"
+                                 [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                
+                                <div (click)="onAddDose(item.product_id)" class="product-card-clickable">
+                                    @if (item.bio == true) {
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="" width="15px">
+                                    }
+                                    <strong>{{item.product_name}}</strong>
+                                    @if (item.product_numaut) {
+                                        {{item.product_numaut}} <br>
+                                    }
+                                    {{item.user_group }}
+                                    @if (item.bio == true) {
+                                        <p style="color: #22bf76;">Autorisé en agriculture biologique</p>
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                        }
+                        } @else {
+                            <!-- Cartes produits personnels -->
+                            @for (item of filteredPersonalProducts; track item.product_id) {
+                            <article class="col-lg-4">
+                                <p></p>
+                                <div class="volumeDeBouille product-personal-status">
+                                    <div (click)="onAddDosePersonal(item.product_id)" class="product-card-clickable">
+                                        <strong>{{item.product_name}}</strong>
+                                        <small class="text-muted">{{item.product_type}}</small>
+                                        <div class="text-end mt-1">
+                                            <button type="button" class="btn btn-link btn-sm text-danger p-0"
+                                                    (click)="$event.stopPropagation(); deletePersonalProduct(item.product_id)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            }
+                            @if (filteredPersonalProducts.length === 0) {
+                            <article class="col-lg-12">
+                                <p class="text-muted fst-italic mt-2">Aucun fertilisant personnel trouvé. Cliquez sur "Enregistrer un nouveau fertilisant" pour en ajouter un.</p>
+                            </article>
+                            }
+                        }
+                    }
+                    
+                    <!-- ?? Carte "Ajouter un produit personnalisé" temporairement masquée -->
+                    @if (false) {
+                    <article class="col-lg-4">
+                        <p></p>
+                        <div class="volumeDeBouille">
+                            <i class="bi bi-plus-circle-fill"></i> Ajouter un produit personnalisé
+                        </div>
+                    </article>
+                    }
+
+                </section>
+            }
+            @case ("volument de bouillie utilisee") {
+                <!-- Volume de bouillie - Masqué en mode modification -->
+                @if (!isEditMode) {
+                    <!-- Nouveau design pour les volumes de bouillie -->
+                    <div class="volume-bouillie-container">
+                        <h5><strong>Volume de bouillie :</strong></h5>
+                        <div class="volume-inputs-wrapper">
+                            <div class="volume-input-group">
+                                <label class="volume-label" for="volumePreparee">Préparée</label>
+                                <div class="input-with-unit">
+                                    <input type="number"
+                                           id="volumePreparee"
+                                           placeholder="0"
+                                           class="volume-input"
+                                           min="0"
+                                           step="0.01"
+                                           [formControl]="treatment_total_quantity">
+                                    <span class="unit-label">L</span>
+                                </div>
+                            </div>
+                            <div class="volume-input-group">
+                                <label class="volume-label" for="volumeUtilisee">Utilisée</label>
+                                <div class="input-with-unit">
+                                    <input type="number"
+                                           id="volumeUtilisee"
+                                           placeholder="0"
+                                           class="volume-input"
+                                           min="0"
+                                           step="0.01"
+                                           [formControl]="treatment_total_quantity_used">
+                                    <span class="unit-label">L</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <section class="row">
+
+                    @if (getProductsMissingTarget().length > 0) {
+                        <article class="col-lg-12">
+                            <div class="target-missing-warning">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Merci de renseigner une cible pour : {{ getProductsMissingTarget().join(', ') }}.
+                            </div>
+                        </article>
+                    }
+                    @if (getSignalDose() && getSignalDose().length > 0) {
+                        <article class="col-lg-12">
+                            <p></p>
+                            <div class="composition-table-wrapper">
+                                <div class="composition-table-header">
+                                    <span class="ctab-col ctab-col-product">Produit</span>
+                                    <span class="ctab-col ctab-col-dose">@if (getTreatmentType() === 'phyto_quantity_treatment') { Quantité } @else { Dose }</span>
+                                    <span class="ctab-col ctab-col-target">Cible</span>
+                                    <span class="ctab-col ctab-col-actions"></span>
+                                </div>
+                                @for (item of getSignalDose(); track $index) {
+                                    <div class="composition-table-row">
+                                        <div class="ctab-col ctab-col-product">
+                                            <strong class="ctab-product-name">{{ item.component_name }}</strong>
+                                            @if (item.component_numaut) {
+                                                <small class="ctab-product-num">{{ item.component_numaut }}</small>
+                                            }
+                                        </div>
+                                        <div class="ctab-col ctab-col-dose">
+                                            <span class="ctab-dose-val">
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') {
+                                                    {{ item.component_quantity }} <em class="ctab-unit">{{ item.component_quantity_unity }}</em>
+                                                } @else {
+                                                    {{ item.component_dose }} <em class="ctab-unit">{{ item.component_dose_unit }}</em>
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="ctab-col ctab-col-target">
+                                            <span class="ctab-target">{{ item.target || '—' }}</span>
+                                        </div>
+                                        <div class="ctab-col ctab-col-actions">
+                                            <button type="button" class="ctab-btn-edit"
+                                                    (click)="editProductFromComposition(item, 'bouillie')"
+                                                    title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="ctab-btn-delete"
+                                                    (click)="removeProductFromTreatment(item.component_id)"
+                                                    title="Supprimer">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </article>
+                    }
+
+                    @if (!currentEditingProductIdBouillie) {
+                    <article class="col-lg-12">
+                        <p></p>
+                        <strong class="add-product-heading">Ajoutez un ou plusieurs produit(s) :</strong>
+
+                        <!-- Toggle PPP / Produits personnalisés -->
+                        <div class="product-mode-toggle-row">
+                            <!-- Ligne 1 : toggle -->
+                            <div class="format-choice">
+                                <button type="button" class="format-btn"
+                                        [class.active]="productMode === 'phyto'"
+                                        (click)="toggleProductMode('phyto')"
+                                        matTooltip="Rechercher des produits phytosanitaires, adjuvants, substances de bases sur base de leur nom ou de leur numéro d'autorisation"
+                                        matTooltipPosition="above">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span class="format-label">Produits phytos</span>
+                                </button>
+                                <button type="button" class="format-btn"
+                                        [class.active]="productMode === 'personal'"
+                                        (click)="toggleProductMode('personal')"
+                                        matTooltip="Rechercher et enregistrer vos propres fertilisants"
+                                        matTooltipPosition="above">
+                                    <i class="bi bi-person-gear"></i>
+                                    <span class="format-label">Fertilisants personnalisés</span>
+                                </button>
+                            </div>
+                            <!-- Ligne 2 : recherche + bouton -->
+                            <div class="search-action-row">
+                                @if (productMode === 'phyto') {
+                                    <label class="simple-label" for="traitementProductSearchBouillie">Produit phytosanitaire</label>
+                                    <input type="search" id="traitementProductSearchBouillie" [formControl]="searchControlBouillie" placeholder="Rechercher un produit (phytoweb)" class="form-control form-control-sm product-search-input popup-text-input">
+                                } @else {
+                                    <label class="simple-label" for="traitementPersonalProductSearchBouillie">Fertilisant personnel</label>
+                                    <input type="search" id="traitementPersonalProductSearchBouillie" [formControl]="personalProductSearchControl"
+                                           placeholder="Rechercher un fertilisant personnel"
+                                           class="form-control form-control-sm product-search-input popup-text-input"
+                                           (input)="filterPersonalProducts()">
+                                    <button type="button" class="btn-add-personal"
+                                            (click)="showNewPersonalProductForm = true">
+                                        <i class="bi bi-plus-circle"></i> Enregistrer un nouveau fertilisant
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        @if (productMode === 'phyto') {
+                            <div class="status-legend">
+                                <span class="status-legend-tag status-legend-tag--authorized">Autorisé</span>
+                                <span class="status-legend-tag status-legend-tag--withdrawing">En cours de retrait</span>
+                                <span class="status-legend-tag status-legend-tag--forbidden">Interdit</span>
+                            </div>
+                            <!-- ?? Message d'information pour la recherche -->
+                            @if (showSearchHint) {
+                            <div class="search-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Commencez à taper au moins 2 caractères pour voir les produits disponibles
+                            </div>
+                            }
+
+                            <!-- Produits récemment utilisés (mode bouillie) -->
+                            @if (showSearchHint && isLoadingRecentProducts) {
+                            <div class="recently-used-section">
+                                <div class="recently-used-header">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Récemment utilisés</span>
+                                    <div class="spinner-border spinner-border-sm ms-2" role="status"><span class="visually-hidden">Chargement...</span></div>
+                                </div>
+                            </div>
+                            }
+                            @if (showSearchHint && !isLoadingRecentProducts && recentlyUsedProducts.length > 0) {
+                            <div class="recently-used-section">
+                                <div class="recently-used-header">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Récemment utilisés</span>
+                                </div>
+                                <div class="row g-2">
+                                @for (item of recentlyUsedProducts; track item.product_id) {
+                                    <div class="col-lg-4">
+                                        <div class="volumeDeBouille"
+                                             [class.product-akk-status]="item.authorization_status === 'authorized'"
+                                             [class.product-toint-status]="item.authorization_status === 'withdrawing'"
+                                             [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                            <div (click)="onAddDoseBouillie(item.product_id)" class="product-card-clickable">
+                                                @if (item.bio == true) {
+                                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
+                                                }
+                                                <strong>{{item.product_name}}</strong>
+                                                <span class="product-meta">
+                                                    {{item.product_numaut}}<br>
+                                                    {{item.user_group}}
+                                                </span>
+                                                @if (item.bio == true) {
+                                                    <p style="color:#22bf76;">Autorisé en agriculture biologique</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                            </div>
+                            }
+
+                            <!-- ?? Animation de chargement -->
+                            @if (isLoadingProducts && !showSearchHint) {
+                            <div class="loading-products">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <span class="loading-text">Recherche dans la base de données Phytoweb...</span>
+                            </div>
+                            }
+                        }
+                    </article>
+                    } <!-- /!currentEditingProductIdBouillie -->
+
+                    <!-- Formulaire de création d'un produit personnel (bouillie) -->
+                    @if (productMode === 'personal' && showNewPersonalProductForm && !currentEditingProductIdBouillie) {
+                    <article class="col-lg-12">
+                        <form [formGroup]="personalProductForm" (ngSubmit)="saveNewPersonalProduct()" class="personal-product-form">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label form-label-sm" for="personalProductNameBouillie">Nom du produit<sup>*</sup></label>
+                                    <input type="text" id="personalProductNameBouillie" formControlName="product_name" class="form-control form-control-sm popup-text-input" placeholder="Ex : Engrais NPK 12-12-17">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label form-label-sm" for="personalProductTypeBouillie">Type<sup>*</sup></label>
+                                    <input type="text" id="personalProductTypeBouillie" formControlName="product_type" class="form-control form-control-sm popup-text-input"
+                                           placeholder="Engrais, Amendement..."
+                                           (input)="onPersonalTypeInput($event)"
+                                           list="personal-type-options-bouillie">
+                                    <datalist id="personal-type-options-bouillie">
+                                        @for (opt of filteredTypeOptions; track opt) {
+                                            <option [value]="opt"></option>
+                                        }
+                                    </datalist>
+                                </div>
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm flex-fill"
+                                            [disabled]="personalProductForm.invalid || isSavingPersonalProduct">
+                                        @if (isSavingPersonalProduct) {
+                                            <span class="spinner-border spinner-border-sm me-1"></span>
+                                        }
+                                        Enregistrer
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm flex-fill"
+                                            (click)="cancelNewPersonalProduct()">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+                    }
+
+                    <!-- ?? Mode edition : Formulaire compact pour Bouillie -->
+                    @if (currentEditingProductIdBouillie && getProductById(currentEditingProductIdBouillie); as editingProduct) {
+                        <article class="col-lg-12">
+                            <form [formGroup]="getProductForm(currentEditingProductIdBouillie)">
+                                <div class="product-edit-compact">
+                                    <div class="product-header">
+                                        <strong class="product-name">{{editingProduct.product_name}}</strong>
+                                        @if (editingProduct.bio == true) {
+                                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
+                                        }
+                                        <small class="product-number">{{editingProduct.product_numaut}}</small>
+                                        @if (getProductAuthorizationStatus(currentEditingProductIdBouillie); as authStatus) {
+                                            @if (authStatus !== 'unknown') {
+                                                <span class="status-badge status-badge-{{authStatus}}">{{ getProductAuthorizationLabel(authStatus) }}</span>
+                                            }
+                                        }
+                                    </div>
+                                    @if (getProductAuthorizationStatus(currentEditingProductIdBouillie) === 'forbidden') {
+                                        <div class="info-box forbidden-box">
+                                            <div class="info-header"><i class="bi bi-x-octagon-fill"></i> Ce produit n'est plus autorisé (statut : Retrait)</div>
+                                        </div>
+                                    }
+                                    @if (getUnauthorizedCrops(currentEditingProductIdBouillie).length > 0) {
+                                        <div class="info-box warning-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Attention ce produit ne semble pas autorisé sur : {{ getUnauthorizedCrops(currentEditingProductIdBouillie).join(', ') }}</div>
+                                        </div>
+                                    }
+                                    @if (getDosesPhytoweb(currentEditingProductIdBouillie) | async; as doses) {
+                                        @if (doses.length > 0) {
+                                            <div class="info-box doses-box">
+                                                <div class="info-header"><i class="bi bi-clipboard-data"></i> Doses Phytoweb recommandées</div>
+                                                <div class="doses-table-wrapper">
+                                                    <table class="doses-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Culture</th>
+                                                                <th>Cible</th>
+                                                                <th class="text-center">Dose min</th>
+                                                                <th class="text-center">Dose max</th>
+                                                                <th class="text-center">Unité</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (dose of doses; track trackByDoseEnemyName($index, dose)) {
+                                                                <tr>
+                                                                    <td class="cell-culture">{{ dose.crop_name || '—' }}</td>
+                                                                    <td class="cell-target">{{ dose.enemy_name }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.target_rate_min || dose.min_dose || '—' }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.target_rate_max || dose.max_dose || '—' }}</td>
+                                                                    <td class="text-center cell-unit">{{ dose.target_rate_unit || dose.unit || '—' }}</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    @if (getProductAuthorizationStatus(currentEditingProductIdBouillie) === 'withdrawing' && getProductToleranceDate(currentEditingProductIdBouillie); as toleratedDate) {
+                                        <div class="info-box tolerated-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Autorisation en cours de retrait — usage toléré jusqu'au :</div>
+                                            <div class="info-content"><strong>{{ toleratedDate }}</strong></div>
+                                        </div>
+                                    }
+                                    <div class="encoding-row">
+                                        <!-- Dose -->
+                                        <div class="field-col">
+                                            <label class="field-label" for="doseBouillieInput">Dose<sup>*</sup></label>
+                                            <input type="number" id="doseBouillieInput" class="field-input" placeholder="0.00"
+                                                   formControlName="dose" step="0.01" min="0"
+                                                   (input)="onDoseInputChange(currentEditingProductIdBouillie, $any($event.target).value)">
+                                        </div>
+
+                                        <!-- Unité -->
+                                        <div class="field-col field-col-unit">
+                                            <label class="field-label" for="uniteBouillieSelect">Unité<sup>*</sup></label>
+                                            <select id="uniteBouillieSelect" class="field-select" formControlName="littre"
+                                                    (change)="selectUnit(currentEditingProductIdBouillie, $any($event.target).value, 'bouillie')">
+                                                <optgroup label="Par 100L">
+                                                    <option value="L/100L">L/100L</option>
+                                                    <option value="kg/100L">kg/100L</option>
+                                                    <option value="g/100L">g/100L</option>
+                                                    <option value="ml/100L">ml/100L</option>
+                                                </optgroup>
+                                                <optgroup label="Par 10L">
+                                                    <option value="L/10L">L/10L</option>
+                                                    <option value="kg/10L">kg/10L</option>
+                                                    <option value="g/10L">g/10L</option>
+                                                    <option value="ml/10L">ml/10L</option>
+                                                </optgroup>
+                                                <optgroup label="Par L">
+                                                    <option value="ml/L">ml/L</option>
+                                                    <option value="g/L">g/L</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+
+                                        <!-- Quantité -->
+                                        <div class="field-col">
+                                            <label class="field-label" for="quantiteDeriveeBouillieInput">Quantité (L ou Kg)</label>
+                                            <input type="number" id="quantiteDeriveeBouillieInput" class="field-input field-input-derived" placeholder="0.00"
+                                                   formControlName="quantity" step="0.01" min="0"
+                                                   (input)="onQuantityInputChange(currentEditingProductIdBouillie, $any($event.target).value)">
+                                        </div>
+
+                                        <!-- Cible -->
+                                        <div class="field-col field-col-target">
+                                            <label class="field-label" id="cibleBouillieLabel">Cible<sup>*</sup></label>
+                                            @if (!isTargetFreeText(currentEditingProductIdBouillie)) {
+                                                <div class="dropdown-container target-dropdown" [class.open]="isTargetDropdownOpen">
+                                                    <button type="button" class="dropdown-btn" aria-labelledby="cibleBouillieLabel" (click)="toggleTargetDropdown(); $event.stopPropagation()">
+                                                        <span class="dropdown-value">{{ getProductForm(currentEditingProductIdBouillie).value.target || '-- sélectionner --' }}</span>
+                                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                                    </button>
+                                                    @if (isTargetDropdownOpen) {
+                                                        <div class="dropdown-panel target-dropdown-panel" (click)="$event.stopPropagation()">
+                                                            <div class="dropdown-list">
+                                                                @for (opt of getTargetOptionsForProduct(currentEditingProductIdBouillie); track opt) {
+                                                                    <div class="dropdown-list-item" (click)="selectTargetFromDropdown(currentEditingProductIdBouillie, opt)">{{ opt }}</div>
+                                                                }
+                                                                <div class="dropdown-list-item" (click)="selectTargetFromDropdown(currentEditingProductIdBouillie, '__free__')">Autre (cible 1, cible 2, ...)</div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            } @else {
+                                                <div class="free-text-target">
+                                                    <input type="text" class="field-input" placeholder="Saisir la cible..."
+                                                           aria-labelledby="cibleBouillieLabel"
+                                                           formControlName="target">
+                                                    <button type="button" class="btn-back-list"
+                                                            (click)="setTargetFreeText(currentEditingProductIdBouillie, false)">
+                                                        <i class="bi bi-arrow-left-short"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Boutons -->
+                                        <div class="field-col field-col-actions">
+                                            <label class="field-label">&nbsp;</label>
+                                            <div class="action-buttons">
+                                                <button type="button" class="btn-ec-cancel"
+                                                        (click)="onAnnulerAddDoseBouillie(currentEditingProductIdBouillie)">Annuler</button>
+                                                <button type="button" class="btn-ec-confirm"
+                                                        (click)="onRemoveAddDose(currentEditingProductIdBouillie)"
+                                                        [disabled]="!getProductForm(currentEditingProductIdBouillie).valid">Valider</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </article>
+
+                    } @else {
+                        <!-- ?? Mode grille : Affichage des cartes produits pour Bouillie -->
+                        @if (productMode === 'phyto') {
+                        @for (item of VolumeDeBouilliepreparerFiltered | async; track item.product_id) {
+                        <article class="col-lg-4">
+                            <p></p>
+                            <!-- Carte produit simple -->
+                            <div class="volumeDeBouille" 
+                                 [class.product-akk-status]="item.authorization_status === 'authorized'"
+                                 [class.product-toint-status]="item.authorization_status === 'withdrawing'"
+                                 [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                
+                                <div (click)="onAddDoseBouillie(item.product_id)" class="product-card-clickable">
+                                    @if (item.bio == true) {
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="" width="15px">
+                                    }
+                                    <strong>{{item.product_name}}</strong> <br>
+                                    {{item.product_numaut}} <br>
+                                    {{item.user_group }} <br>
+                                    @if (item.bio == true) {
+                                        <p style="color: #22bf76;">Autorisé en agriculture biologique</p>
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                        }
+                        } @else {
+                            <!-- Cartes produits personnels (bouillie) -->
+                            @for (item of filteredPersonalProducts; track item.product_id) {
+                            <article class="col-lg-4">
+                                <p></p>
+                                <div class="volumeDeBouille product-personal-status" (click)="onAddDosePersonalBouillie(item.product_id)">
+                                    <strong>{{item.product_name}}</strong><br>
+                                    <small class="text-muted">{{item.product_type}}</small>
+                                    <div class="text-end mt-1">
+                                        <button type="button" class="btn btn-link btn-sm text-danger p-0"
+                                                (click)="$event.stopPropagation(); deletePersonalProduct(item.product_id)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                            }
+                            @if (filteredPersonalProducts.length === 0) {
+                            <article class="col-lg-12">
+                                <p class="text-muted fst-italic mt-2">Aucun produit personnel trouvé. Cliquez sur "Enregistrer un nouveau fertilisant" pour en ajouter un.</p>
+                            </article>
+                            }
+                        }
+                    }
+
+                </section>
+            }
+            @case ("autre produits litre") {
+                autre_produits
+            }
+            @case ("repartition de mon traitement") {
+                <div class="repartition-section-wrapper">
+                    <!-- ?? Avertissements BBCH -->
+                    @if (getBbchWarningsForDraft().length > 0) {
+                        <div class="warning-box bbch-warning-box" [class.expanded]="isBbchWarningExpanded()">
+                            <div class="warning-header-compact" (click)="toggleBbchWarning()">
+                                <span class="warning-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                                <span class="warning-title">Des indications de stades phénologiques ont été détectées sur Phytoweb :</span>
+                                <button class="toggle-btn" type="button">
+                                    @if (isBbchWarningExpanded()) {
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                    } @else {
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    }
+                                </button>
+                            </div>
+                            
+                            @if (isBbchWarningExpanded()) {
+                                <div class="warning-content" [@expandCollapse]>
+                                    <ul class="warning-list">
+                                        @for (warning of getBbchWarningsForDraft(); track warning.productName + warning.cropName + warning.stage) {
+                                            <li>
+                                                <strong>{{ warning.productName }}</strong> ({{ warning.cropName }}) : {{ warning.stage }}
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- ? Recommandations d'heures d'application -->
+                    @if (getApplicationHoursForDraft().length > 0) {
+                        <div class="info-box application-hour-box" [class.expanded]="isApplicationHourExpanded()">
+                            <div class="info-header-compact" (click)="toggleApplicationHour()">
+                                <span class="info-icon"><i class="bi bi-clock-fill"></i></span>
+                                <span class="info-title">Des indications sur l'heure de traitement ont été détectées sur Phytoweb :</span>
+                                <button class="toggle-btn" type="button">
+                                    @if (isApplicationHourExpanded()) {
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                    } @else {
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    }
+                                </button>
+                            </div>
+                            
+                            @if (isApplicationHourExpanded()) {
+                                <div class="info-content" [@expandCollapse]>
+                                    <ul class="warning-list">
+                                        @for (recommendation of getApplicationHoursForDraft(); track recommendation.productName) {
+                                            <li>
+                                                <strong>{{ recommendation.productName }}</strong> ({{ recommendation.productNumAut }}) : l'heure de début de traitement doit être mentionnée
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Informations complémentaires en premier -->
+                    <form [formGroup]="formTraitement">
+                      <section class="row">
+                          <article class="col-lg-12">
+                              <p></p>
+                              <strong class="section-subheading">Informations complémentaires (le cas échéant)</strong>
+                          </article>
+
+                          <article class="col-lg-6">
+                              <p></p>
+                              <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                                  <label class="simple-label" id="eventHourLabel" style="margin:0;">Mentionnez une heure de traitement</label>
+                                  <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                     matTooltip="Si votre traitement est effectué à moins de 50 m des espaces d'accueil de l'enfance (écoles, crèches, internats...) ou dans des espaces privés fréquentés par le public où une durée d'éviction doit être indiquée, l'heure de début de traitement doit être mentionnée."
+                                     matTooltipPosition="above">
+                                  </i>
+                              </div>
+                              <input type="time"
+                                     id="eventHour"
+                                     aria-labelledby="eventHourLabel"
+                                     name="event_hour"
+                                     formControlName="event_hour"
+                                     placeholder="Heure de traitement"
+                                     class="form-control popup-text-input"
+                                     (input)="saveEventHour($event)">
+                          </article>
+
+                          <article class="col-lg-6">
+                              <p></p>
+                              <label class="simple-label" for="bbchInput">Mentionnez un stade phénologique</label>
+                              <input type="text"
+                                     id="bbchInput"
+                                     name="bbch"
+                                     formControlName="bbch"
+                                     placeholder="Ex : BBCH 31"
+                                     class="form-control popup-text-input"
+                                     (input)="saveBbch($event)">
+                          </article>
+                      </section>
+                    </form>
+
+                    <p><strong class="section-subheading">Répartition de mon traitement :</strong></p>
+                    
+                    <!-- ?? CONDITION DE REFRESH FORCÉ - Empêche l'affichage pendant le refresh -->
+                    @if (!forceTemplateRefresh) {
+                    
+                    <article class="col-lg-12" style="margin-bottom: 10px;">
+                        <div class="rep-header-bar">
+                            <div class="rep-header-row">
+                                <span class="rep-header-item">
+                                    <span class="rep-header-label">Quantité totale utilisée</span>
+                                    <span class="rep-header-value primary">{{formatToTwoDecimals(getTotalQuantityUsed())}} {{getDisplayUnit()}}</span>
+                                </span>
+                                @if (getTreatmentType() !== 'phyto_surface_treatment') {
+                                    @for (comp of getComponentDosesForDisplay(); track comp.name) {
+                                        <span class="rep-header-sep">·</span>
+                                        <span class="rep-header-item">
+                                            <span class="rep-header-label">{{ comp.name }}</span>
+                                            <span class="rep-header-value">{{ comp.dose }} {{ comp.unit }}</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            @if (getTreatmentType() !== 'phyto_surface_treatment') {
+                                <div class="rep-header-row">
+                                    <button type="button" class="rep-switch" [class.active]="isTotalQuantityLocked()"
+                                        title="Empêche la quantité totale de changer : modifier une parcelle ajuste automatiquement les autres"
+                                        (click)="onToggleTotalQuantityLocked(!isTotalQuantityLocked())">
+                                        <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                        <span class="rep-switch-label">Fixer la quantité totale</span>
+                                    </button>
+                                    @if (isTotalQuantityLocked() && getRemainingToAllocate() > 0.001) {
+                                        <span class="rep-remaining-text">{{ formatToTwoDecimals(getRemainingToAllocate()) }} {{ getDisplayUnit() }} restants à répartir</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </article>
+
+                    @if (getTreatmentType() !== 'phyto_surface_treatment' && isVolumeMismatched()) {
+                        <article class="col-lg-12" style="margin-bottom: 10px;">
+                            <div class="rep-overallocation-warning">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                {{ getVolumeMismatchMessage() }}
+                            </div>
+                        </article>
+                    }
+
+                    <div class="repartition-table-compact">
+                        @for (item of getCurrentTreatment(); track item.event_id) {
+                            @for (items of item.parcels_concerned; track items.parcel_id + '_' + items.crop_id) {
+                                <div class="rep-row">
+                                    <div class="rep-row-header">
+                                        <span class="rep-parcel">{{ items.parcel_name || items.parcels }}</span>
+                                        <span class="rep-crop">{{ items.crop_name }}</span>
+                                        @if (getTreatmentType() === 'phyto_surface_treatment') {
+                                            <span class="rep-vol-badge">
+                                                <i class="bi bi-droplet-half"></i>
+                                                {{ getParcelVolumeForDisplay(items) }}&nbsp;L
+                                            </span>
+                                        }
+                                    </div>
+
+                                    @if (getTreatmentType() === 'phyto_surface_treatment') {
+                                        <!-- MODE SURFACE -->
+                                        <div class="rep-row-body">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Superficie traitée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getParcelTotalSurface(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_surface_treated || 0)"
+                                                        (input)="onSurfaceChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.surface_unit }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label rep-label--spacer">&nbsp;</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" max="100" step="1"
+                                                        [value]="getParcelSurfacePct(items)"
+                                                        (input)="onParcelSurfacePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider">
+                                                    <span class="rep-pct-badge">{{ getParcelSurfacePct(items) }}%</span>
+                                                </div>
+                                                <small class="rep-total-hint">/ {{ formatToTwoDecimals(getParcelTotalSurface(items)) }} {{ items.surface_unit }} total</small>
+                                            </div>
+                                        </div>
+                                    } @else if (getTreatmentType() === 'phyto_quantity_treatment') {
+                                        <!-- MODE QUANTITÉ -->
+                                        <div class="rep-row-body rep-row-body-volume" [class.locked]="isParcelVolumeLocked(items)">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Quantité appliquée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getMaxAllowedVolume(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_quantity_applied || 0)"
+                                                        (input)="onQuantityChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.parcel_quantity_unit || getDisplayUnit() }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">% de la quantité totale</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" [max]="getMaxAllowedVolumePct(items)" step="1"
+                                                        [value]="getParcelVolumePct(items)"
+                                                        [style.background]="getVolumeSliderBackground(items)"
+                                                        (input)="onParcelVolumePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider rep-slider-volume">
+                                                    <span class="rep-pct-badge">{{ getParcelVolumePct(items) }}%</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Superficie traitée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getParcelTotalSurface(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_surface_treated || 0)"
+                                                        (input)="onSurfaceChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.surface_unit }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">Surface traitée</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" max="100" step="1"
+                                                        [value]="getParcelSurfacePct(items)"
+                                                        (input)="onParcelSurfacePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider">
+                                                    <span class="rep-pct-badge">{{ getParcelSurfacePct(items) }}%</span>
+                                                </div>
+                                                <small class="rep-total-hint">{{ formatToTwoDecimals(items.parcel_surface_treated || 0) }} / {{ formatToTwoDecimals(getParcelTotalSurface(items)) }} {{ items.surface_unit }}</small>
+                                            </div>
+                                            <button type="button" class="rep-switch rep-switch-row" [class.active]="isParcelVolumeLocked(items)"
+                                                title="Cette parcelle ne sera jamais ajustée automatiquement quand une autre parcelle change"
+                                                (click)="onToggleParcelVolumeLocked(items, !isParcelVolumeLocked(items))">
+                                                <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                                <span class="rep-switch-label">Verrouiller cette parcelle</span>
+                                            </button>
+                                        </div>
+                                    } @else {
+                                        <!-- MODE BOUILLIE -->
+                                        <div class="rep-row-body rep-row-body-volume" [class.locked]="isParcelVolumeLocked(items)">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Volume appliqué</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getMaxAllowedVolume(items)"
+                                                        [(ngModel)]="items.treatment_volume_applied"
+                                                        (ngModelChange)="onQuantityChange(items.parcel_id, $event, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">L</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">% du volume total</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" [max]="getMaxAllowedVolumePct(items)" step="1"
+                                                        [value]="getParcelVolumePct(items)"
+                                                        [style.background]="getVolumeSliderBackground(items)"
+                                                        (input)="onParcelVolumePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider rep-slider-volume">
+                                                    <span class="rep-pct-badge">{{ getParcelVolumePct(items) }}%</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="rep-switch rep-switch-row" [class.active]="isParcelVolumeLocked(items)"
+                                                title="Cette parcelle ne sera jamais ajustée automatiquement quand une autre parcelle change"
+                                                (click)="onToggleParcelVolumeLocked(items, !isParcelVolumeLocked(items))">
+                                                <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                                <span class="rep-switch-label">Verrouiller cette parcelle</span>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    } <!-- ?? FIN DE LA CONDITION forceTemplateRefresh -->
+                </div> <!-- Ferme repartition-section-wrapper -->
+            }
+            @case ("repartition de mon traitement littre") {
+                <div class="repartition-section-wrapper">
+                    <!-- ?? Avertissements BBCH -->
+                    @if (getBbchWarningsForDraft().length > 0) {
+                        <div class="warning-box bbch-warning-box" [class.expanded]="isBbchWarningExpanded()">
+                            <div class="warning-header-compact" (click)="toggleBbchWarning()">
+                                <span class="warning-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                                <span class="warning-title">Des indications de stades phénologiques ont été détectées sur Phytoweb :</span>
+                                <button class="toggle-btn" type="button">
+                                    @if (isBbchWarningExpanded()) {
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                    } @else {
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    }
+                                </button>
+                            </div>
+                            
+                            @if (isBbchWarningExpanded()) {
+                                <div class="warning-content" [@expandCollapse]>
+                                    <ul class="warning-list">
+                                        @for (warning of getBbchWarningsForDraft(); track warning.productName + warning.cropName + warning.stage) {
+                                            <li>
+                                                <strong>{{ warning.productName }}</strong> ({{ warning.cropName }}) : {{ warning.stage }}
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- ? Recommandations d'heures d'application -->
+                    @if (getApplicationHoursForDraft().length > 0) {
+                        <div class="info-box application-hour-box" [class.expanded]="isApplicationHourExpanded()">
+                            <div class="info-header-compact" (click)="toggleApplicationHour()">
+                                <span class="info-icon"><i class="bi bi-clock-fill"></i></span>
+                                <span class="info-title">Des indications sur l'heure de traitement ont été détectées sur Phytoweb :</span>
+                                <button class="toggle-btn" type="button">
+                                    @if (isApplicationHourExpanded()) {
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                    } @else {
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    }
+                                </button>
+                            </div>
+                            
+                            @if (isApplicationHourExpanded()) {
+                                <div class="info-content" [@expandCollapse]>
+                                    <ul class="warning-list">
+                                        @for (recommendation of getApplicationHoursForDraft(); track recommendation.productName) {
+                                            <li>
+                                                <strong>{{ recommendation.productName }}</strong> ({{ recommendation.productNumAut }}) : l'heure de début de traitement doit être mentionnée
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Informations complémentaires en premier -->
+                    <form [formGroup]="formTraitement">
+                      <section class="row">
+                          <article class="col-lg-12">
+                              <p></p>
+                              <strong class="section-subheading">Informations complémentaires (le cas échéant)</strong>
+                          </article>
+
+                          <article class="col-lg-6">
+                              <p></p>
+                              <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                                  <label class="simple-label" id="eventHourLabel" style="margin:0;">Mentionnez une heure de traitement</label>
+                                  <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                     matTooltip="Si votre traitement est effectué à moins de 50 m des espaces d'accueil de l'enfance (écoles, crèches, internats...) ou dans des espaces privés fréquentés par le public où une durée d'éviction doit être indiquée, l'heure de début de traitement doit être mentionnée."
+                                     matTooltipPosition="above">
+                                  </i>
+                              </div>
+                              <input type="time"
+                                     id="eventHour"
+                                     aria-labelledby="eventHourLabel"
+                                     name="event_hour"
+                                     formControlName="event_hour"
+                                     placeholder="Heure de traitement"
+                                     class="form-control popup-text-input"
+                                     (input)="saveEventHour($event)">
+                          </article>
+
+                          <article class="col-lg-6">
+                              <p></p>
+                              <label class="simple-label" for="bbchInput">Mentionnez un stade phénologique</label>
+                              <input type="text"
+                                     id="bbchInput"
+                                     name="bbch"
+                                     formControlName="bbch"
+                                     placeholder="Ex : BBCH 31"
+                                     class="form-control popup-text-input"
+                                     (input)="saveBbch($event)">
+                          </article>
+                      </section>
+                    </form>
+
+                    <p><strong class="section-subheading">Répartition de mon traitement :</strong></p>
+                    
+                    <!-- ?? CONDITION DE REFRESH FORCÉ - Empêche l'affichage pendant le refresh -->
+                    @if (!forceTemplateRefresh) {
+                    
+                    <article class="col-lg-12" style="margin-bottom: 10px;">
+                        <div class="rep-header-bar">
+                            <div class="rep-header-row">
+                                <span class="rep-header-item">
+                                    <span class="rep-header-label">Quantité totale utilisée</span>
+                                    <span class="rep-header-value primary">{{formatToTwoDecimals(getTotalQuantityUsed())}} {{getDisplayUnit()}}</span>
+                                </span>
+                                @if (getTreatmentType() !== 'phyto_surface_treatment') {
+                                    @for (comp of getComponentDosesForDisplay(); track comp.name) {
+                                        <span class="rep-header-sep">·</span>
+                                        <span class="rep-header-item">
+                                            <span class="rep-header-label">{{ comp.name }}</span>
+                                            <span class="rep-header-value">{{ comp.dose }} {{ comp.unit }}</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            @if (getTreatmentType() !== 'phyto_surface_treatment') {
+                                <div class="rep-header-row">
+                                    <button type="button" class="rep-switch" [class.active]="isTotalQuantityLocked()"
+                                        title="Empêche la quantité totale de changer : modifier une parcelle ajuste automatiquement les autres"
+                                        (click)="onToggleTotalQuantityLocked(!isTotalQuantityLocked())">
+                                        <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                        <span class="rep-switch-label">Fixer la quantité totale</span>
+                                    </button>
+                                    @if (isTotalQuantityLocked() && getRemainingToAllocate() > 0.001) {
+                                        <span class="rep-remaining-text">{{ formatToTwoDecimals(getRemainingToAllocate()) }} {{ getDisplayUnit() }} restants à répartir</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </article>
+
+                    @if (getTreatmentType() !== 'phyto_surface_treatment' && isVolumeMismatched()) {
+                        <article class="col-lg-12" style="margin-bottom: 10px;">
+                            <div class="rep-overallocation-warning">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                {{ getVolumeMismatchMessage() }}
+                            </div>
+                        </article>
+                    }
+
+                    <div class="repartition-table-compact">
+                        @for (item of getCurrentTreatment(); track item.event_id) {
+                            @for (items of item.parcels_concerned; track items.parcel_id + '_' + items.crop_id) {
+                                <div class="rep-row">
+                                    <div class="rep-row-header">
+                                        <span class="rep-parcel">{{ items.parcel_name || items.parcels }}</span>
+                                        <span class="rep-crop">{{ items.crop_name }}</span>
+                                        @if (getTreatmentType() === 'phyto_surface_treatment') {
+                                            <span class="rep-vol-badge">
+                                                <i class="bi bi-droplet-half"></i>
+                                                {{ getParcelVolumeForDisplay(items) }}&nbsp;L
+                                            </span>
+                                        }
+                                    </div>
+
+                                    @if (getTreatmentType() === 'phyto_surface_treatment') {
+                                        <!-- MODE SURFACE -->
+                                        <div class="rep-row-body">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Superficie traitée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getParcelTotalSurface(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_surface_treated || 0)"
+                                                        (input)="onSurfaceChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.surface_unit }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label rep-label--spacer">&nbsp;</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" max="100" step="1"
+                                                        [value]="getParcelSurfacePct(items)"
+                                                        (input)="onParcelSurfacePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider">
+                                                    <span class="rep-pct-badge">{{ getParcelSurfacePct(items) }}%</span>
+                                                </div>
+                                                <small class="rep-total-hint">/ {{ formatToTwoDecimals(getParcelTotalSurface(items)) }} {{ items.surface_unit }} total</small>
+                                            </div>
+                                        </div>
+                                    } @else if (getTreatmentType() === 'phyto_quantity_treatment') {
+                                        <!-- MODE QUANTITÉ -->
+                                        <div class="rep-row-body rep-row-body-volume" [class.locked]="isParcelVolumeLocked(items)">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Quantité appliquée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getMaxAllowedVolume(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_quantity_applied || 0)"
+                                                        (input)="onQuantityChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.parcel_quantity_unit || getDisplayUnit() }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">% de la quantité totale</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" [max]="getMaxAllowedVolumePct(items)" step="1"
+                                                        [value]="getParcelVolumePct(items)"
+                                                        [style.background]="getVolumeSliderBackground(items)"
+                                                        (input)="onParcelVolumePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider rep-slider-volume">
+                                                    <span class="rep-pct-badge">{{ getParcelVolumePct(items) }}%</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Superficie traitée</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getParcelTotalSurface(items)"
+                                                        [value]="formatToTwoDecimals(items.parcel_surface_treated || 0)"
+                                                        (input)="onSurfaceChange(items.parcel_id, $any($event.target).value, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">{{ items.surface_unit }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">Surface traitée</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" max="100" step="1"
+                                                        [value]="getParcelSurfacePct(items)"
+                                                        (input)="onParcelSurfacePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider">
+                                                    <span class="rep-pct-badge">{{ getParcelSurfacePct(items) }}%</span>
+                                                </div>
+                                                <small class="rep-total-hint">{{ formatToTwoDecimals(items.parcel_surface_treated || 0) }} / {{ formatToTwoDecimals(getParcelTotalSurface(items)) }} {{ items.surface_unit }}</small>
+                                            </div>
+                                            <button type="button" class="rep-switch rep-switch-row" [class.active]="isParcelVolumeLocked(items)"
+                                                title="Cette parcelle ne sera jamais ajustée automatiquement quand une autre parcelle change"
+                                                (click)="onToggleParcelVolumeLocked(items, !isParcelVolumeLocked(items))">
+                                                <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                                <span class="rep-switch-label">Verrouiller cette parcelle</span>
+                                            </button>
+                                        </div>
+                                    } @else {
+                                        <!-- MODE BOUILLIE -->
+                                        <div class="rep-row-body rep-row-body-volume" [class.locked]="isParcelVolumeLocked(items)">
+                                            <div class="rep-inline-field">
+                                                <span class="rep-label">Volume appliqué</span>
+                                                <div class="rep-input-unit">
+                                                    <input type="number" step="0.01" min="0"
+                                                        [max]="getMaxAllowedVolume(items)"
+                                                        [(ngModel)]="items.treatment_volume_applied"
+                                                        (ngModelChange)="onQuantityChange(items.parcel_id, $event, item.event_id, items.crop_id)"
+                                                        class="rep-number-input">
+                                                    <span class="rep-unit">L</span>
+                                                </div>
+                                            </div>
+                                            <div class="rep-slider-col">
+                                                <span class="rep-label">% du volume total</span>
+                                                <div class="rep-slider-row">
+                                                    <input type="range" min="0" [max]="getMaxAllowedVolumePct(items)" step="1"
+                                                        [value]="getParcelVolumePct(items)"
+                                                        [style.background]="getVolumeSliderBackground(items)"
+                                                        (input)="onParcelVolumePctChange(items, +$any($event.target).value, item.event_id)"
+                                                        class="rep-slider rep-slider-volume">
+                                                    <span class="rep-pct-badge">{{ getParcelVolumePct(items) }}%</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="rep-switch rep-switch-row" [class.active]="isParcelVolumeLocked(items)"
+                                                title="Cette parcelle ne sera jamais ajustée automatiquement quand une autre parcelle change"
+                                                (click)="onToggleParcelVolumeLocked(items, !isParcelVolumeLocked(items))">
+                                                <span class="rep-switch-track"><span class="rep-switch-thumb"></span></span>
+                                                <span class="rep-switch-label">Verrouiller cette parcelle</span>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    } <!-- ?? FIN DE LA CONDITION forceTemplateRefresh pour repartition littre -->
+                </div> <!-- Ferme repartition-section-wrapper -->
+            }
+            @case ("selection parcelles") {
+                <form [formGroup]="form">
+                    @if (isEditMode) {
+                        <p><strong>Modification du traitement</strong> - Vérifiez et modifiez la sélection des cultures traitées</p>
+                    } @else {
+                        <h3 class="step-heading">Sélectionnez les parcelles et cultures concernées</h3>
+                    }    
+                    
+                    <!-- Indicateur de chargement -->
+                    @if (isLoadingParcelCultures) {
+                        <div class="loading-state">
+                            <div class="d-flex justify-content-center align-items-center py-5">
+                                <div class="spinner-border text-primary me-3" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">Chargement des parcelles et cultures...</h5>
+                                    <p class="text-muted mb-0">Veuillez patienter pendant que nous récupérons vos données.</p>
+                                </div>
+                            </div>
+                        </div>
+                    } @else {
+                        <!-- LOGIQUE ULTRA SIMPLE : soit des données, soit état vide -->
+                        @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+                            <!-- Données disponibles -->
+                            <div class="group-by-tags">
+                              <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+                              <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+                              <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+                            </div>
+                            <div class="culture-selection-grid">
+                                @for (group of parcelCultureGroupsData; track group.groupKey) {
+                                  <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                                    <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                                      <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                                      <h4>{{ group.groupTitle }}</h4>
+                                      <label class="group-select-all" (click)="$event.stopPropagation()">
+                                        <input type="checkbox"
+                                               [checked]="isGroupFullySelected(group)"
+                                               (change)="toggleGroupSelection(group, $event)">
+                                        <span class="select-all-label">Tout sélectionner</span>
+                                      </label>
+                                    </div>
+                                    
+                                    <div class="parcel-cards-grid">
+                                      @for (association of group.associations; track association.uniqueId) {
+                                        <label class="parcel-card" 
+                                               [class.selected]="isParcelCultureSelected(association.uniqueId)">
+                                          <input type="checkbox" 
+                                                 [value]="association.uniqueId" 
+                                                 [checked]="isParcelCultureSelected(association.uniqueId)"
+                                                 (change)="onCheckedParcelCulture($event, association)"
+                                                 name="parcels_culture_id">
+                                          <div class="card-icon">
+                                            <i class="bi bi-flower1"></i>
+                                          </div>
+                                          <div class="card-content">
+                                            @if (groupByMode === 'parcelle') {
+                                              <div class="parcel-name">{{ association.crop_name }}</div>
+                                              <div class="crop-name">{{ association.parcel_name }}</div>
+                                            } @else {
+                                              <div class="parcel-name">{{ association.parcel_name }}</div>
+                                              <div class="crop-name">{{ association.crop_name }}</div>
+                                            }
+                                          </div>
+                                          <i class="bi bi-check-circle-fill card-check"></i>
+                                        </label>
+                                      }
+                                    </div>
+                                  </div>
+                                }
+                            </div>
+                        } @else if (shouldShowEmptyState) {
+                            <!-- État vide - avec condition appropriée -->
+                            <div class="empty-state">
+                                <i class="bi bi-exclamation-circle"></i>
+                                <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+                            </div>
+                        }
+                    }
+                </form>
+            }
+        }
+    </div>
+    </div> <!-- Ferme scrollable-content -->
+    
+    <!-- Bouton de validation maintenant géré par le composant parent pour être fixe à la popup -->
+
+</main>

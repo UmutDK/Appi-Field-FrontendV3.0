@@ -1,0 +1,66 @@
+.mandats-section {
+  padding: 0.25rem 0;
+}
+
+.mandats-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  padding: 1.25rem 1.5rem;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2a3a;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.mandats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mandat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: #f7f9fb;
+  border-radius: 8px;
+  flex-wrap: wrap;
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__mail,
+  &__date {
+    font-size: 0.78rem;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+
+// Refonte v2 : casse normale comme tous les boutons de l'app (Materialize force les majuscules sur .btn)
+.btn {
+    text-transform: none !important;
+    font-family: "Panton", sans-serif;
+    letter-spacing: normal;
+}

@@ -1,0 +1,18 @@
+{
+    "name": "appi-field/export-carnet",
+    "description": "Script d'export Excel et PDF pour le carnet de champ",
+    "type": "project",
+    "require": {
+        "php": "^8.0",
+        "phpoffice/phpspreadsheet": "^2.0",
+        "tecnickcom/tcpdf": "^6.6",
+        "proj4php/proj4php": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AppiField\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,872 @@
+[
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "mm",
+        "numeroDePhytolicence": "kl",
+        "mentionnerEmail": "dsqd@sds.dd",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "d328e746-52af-4330-ba5a-a3073b370579",
+        "datee": "2025-08-26T09:52:49.408Z",
+        "succes": true
+    },
+    {
+        "id_user": "c05a53c4-7846-4ef3-b936-e46fbf109b16",
+        "nomEtPrenom": "Op���rateur test",
+        "numeroDePhytolicence": "7853124681532",
+        "mentionnerEmail": "a@a.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "97fd41bc-adb7-4e11-b690-01e5d3324820",
+        "datee": "2025-08-26T10:28:45.748Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "yves",
+        "numeroDePhytolicence": "254555458",
+        "mentionnerEmail": "yvesmak@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "75291011-b6bc-452e-b630-6dab3ed0d91b",
+        "datee": "2025-08-27T09:13:24.303Z",
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "nomEtPrenom": "Arthur Vansteenwinckel",
+        "numeroDePhytolicence": "7890780",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "e9e5e3be-f350-46ac-9346-0971e853f991",
+        "datee": "2025-08-29T09:54:12.017Z",
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "nomEtPrenom": "Yves Makwambala",
+        "numeroDePhytolicence": "20.2.123789",
+        "mentionnerEmail": "yves.makwambala@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "493e07a9-fab0-4476-b80f-648196c348d4",
+        "datee": "2025-09-03T06:21:22.123Z",
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "nomEtPrenom": "Yves Makwambala",
+        "numeroDePhytolicence": "20.2.12345",
+        "mentionnerEmail": "yves.makwabala@corder.be",
+        "autorisation": null,
+        "idGestionDesOperations": "00bbc6b9-4227-438f-aefc-8ded3a0b697e",
+        "datee": "2025-09-11T06:30:27.171Z",
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "nomEtPrenom": "Arthur Vansteenwinckel",
+        "numeroDePhytolicence": "1111111111",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ec1ae0da-7315-44da-a812-931db0754a92",
+        "datee": "2025-09-11T07:18:39.193Z",
+        "succes": true
+    },
+    {
+        "id_user": "c38bc2c2-ae39-46db-a1c4-434cd4bc7fda",
+        "nomEtPrenom": "Eug���nie  Coninck",
+        "numeroDePhytolicence": "17.2.00716",
+        "mentionnerEmail": "eugenie.coninck@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ccc45db9-3863-4dba-b5ec-62f6c0e00a59",
+        "datee": "2025-09-11T11:38:18.618Z",
+        "succes": true
+    },
+    {
+        "id_user": "62048719-470c-43d9-9630-122205de8c90",
+        "nomEtPrenom": "Gaspard Nihorimbere",
+        "numeroDePhytolicence": "G100",
+        "mentionnerEmail": "nihorimbereg@yahoo.fr",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "166c1059-b823-4eec-88d2-5a716deedcd3",
+        "datee": "2025-09-11T12:22:04.822Z",
+        "succes": true
+    },
+    {
+        "id_user": "ce0b9987-cc91-4243-ae1d-c9d0b89708b2",
+        "nomEtPrenom": "Jean-Baptiste de Maere",
+        "numeroDePhytolicence": "2005",
+        "mentionnerEmail": "jb.demaere@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "d8bef5e9-5ce2-458c-8650-d2b228b010a8",
+        "datee": "2025-09-11T12:37:06.605Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "arthur vansteenwinckel",
+        "numeroDePhytolicence": "54647635435",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "c3d15403-037a-4da6-b2ae-f285327c4774",
+        "datee": "2025-09-11T12:48:15.994Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "4ce6fa4e-58ac-42a5-ad9b-4c9f9678c876",
+        "datee": "2025-09-11T12:48:59.321Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "rtj(eyt",
+        "numeroDePhytolicence": "errthjzy(j��zyu",
+        "mentionnerEmail": "tyjte'kuyk@.com",
+        "autorisation": null,
+        "idGestionDesOperations": "40e126b1-f7b2-4a4c-9394-1ffa9b0a0da3",
+        "datee": "2025-09-11T12:49:20.220Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": null,
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "9098d3eb-1e03-457e-9ce5-c4f25f4673e3",
+        "datee": "2025-09-11T12:49:23.005Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": null,
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "ad6640bb-0ade-4f57-bde6-70abf407a116",
+        "datee": "2025-09-11T12:49:23.421Z",
+        "succes": true
+    },
+    {
+        "id_user": "0f3a1611-8fd6-40a6-beab-eaef4c336185",
+        "nomEtPrenom": "Test Lo���c",
+        "numeroDePhytolicence": "11.1.1111",
+        "mentionnerEmail": "293sgp@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "15028236-e54b-4794-86de-31224ab394a2",
+        "datee": "2025-09-12T08:09:05.857Z",
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "nomEtPrenom": "Tom Laridant",
+        "numeroDePhytolicence": "22.2.2222",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "0c879118-6020-4225-b688-f19e190a40c2",
+        "datee": "2025-09-12T19:48:30.650Z",
+        "succes": true
+    },
+    {
+        "id_user": "874334ea-ce80-4586-bceb-9a889d8321e8",
+        "nomEtPrenom": "Francois Bertholet",
+        "numeroDePhytolicence": "14.2.3115",
+        "mentionnerEmail": "hello@appartman.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "096cdcfd-e631-43f6-8eca-5099a97492dd",
+        "datee": "2025-09-15T06:25:29.199Z",
+        "succes": true
+    },
+    {
+        "id_user": "ba3c7f10-0d4a-49eb-9565-7110a5375b59",
+        "nomEtPrenom": "Christel Houtet",
+        "numeroDePhytolicence": "25.5.5222",
+        "mentionnerEmail": "christel.houtet@yahoo.fr",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "5c8f3e9e-b7f6-4dcc-989b-ebc2ed107f8d",
+        "datee": "2025-09-15T06:32:11.603Z",
+        "succes": true
+    },
+    {
+        "id_user": "80a5b535-8eae-468f-a857-6a2444726680",
+        "nomEtPrenom": "Val���ry Bastin",
+        "numeroDePhytolicence": "19.3.0012",
+        "mentionnerEmail": "valery.bastin@protecteau.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "cdb0ba5f-1eff-4b7c-9100-f2f2779f5633",
+        "datee": "2025-09-15T06:33:12.870Z",
+        "succes": true
+    },
+    {
+        "id_user": "3634e9ec-025d-41d7-a966-e46d411dc2e7",
+        "nomEtPrenom": "COLLEGE MATHIEU",
+        "numeroDePhytolicence": "13.2.0060",
+        "mentionnerEmail": "michel.mathieu01@hotmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "bafacd06-7eae-4b80-8a56-eb9e23ca331b",
+        "datee": "2025-09-15T06:52:22.575Z",
+        "succes": true
+    },
+    {
+        "id_user": "cd1d0556-e723-4171-893d-50a4e9b06ad8",
+        "nomEtPrenom": "Christian Havelange",
+        "numeroDePhytolicence": "00.0.0000",
+        "mentionnerEmail": "chavelange@agricall.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "0aff8637-ad55-4e73-8c71-48dda8f1f609",
+        "datee": "2025-09-15T07:10:40.577Z",
+        "succes": true
+    },
+    {
+        "id_user": "737119ae-7093-4026-aae1-438e51fc9444",
+        "nomEtPrenom": "Francois Godefroid",
+        "numeroDePhytolicence": "14.2.2952",
+        "mentionnerEmail": "francois.godefroid@hotmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "1e644e62-b8e7-48fa-ba17-464ea6cfb05c",
+        "datee": "2025-09-15T08:35:40.773Z",
+        "succes": true
+    },
+    {
+        "id_user": "53ee0434-1927-4a01-9604-bbb42194a7c2",
+        "nomEtPrenom": "Jean-Yves Engelborghs",
+        "numeroDePhytolicence": "14.2.3072",
+        "mentionnerEmail": "jy.engelborghs@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "da855703-398b-4783-9fe7-f4f4b157c229",
+        "datee": "2025-09-15T09:26:32.291Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e3d41e5-6ff3-4a01-b906-b519c2dd87af",
+        "nomEtPrenom": "jean-michel fortemps",
+        "numeroDePhytolicence": "13.2.0439",
+        "mentionnerEmail": "fortempsjeanmichel@acenet.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "82ad3c99-3e94-466d-97d3-c7ca8c6c13db",
+        "datee": "2025-09-15T15:20:04.955Z",
+        "succes": true
+    },
+    {
+        "id_user": "9da4ed6a-42d6-4e41-ac9d-b8102c9c68b7",
+        "nomEtPrenom": "Dominique Wayembercg",
+        "numeroDePhytolicence": "14.2.3406",
+        "mentionnerEmail": "fermedupetitstrepy@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "0e7574ad-a046-45f3-b344-ee7a61fd4e4d",
+        "datee": "2025-09-15T17:16:56.281Z",
+        "succes": true
+    },
+    {
+        "id_user": "bef1fa9e-278b-4e6a-905b-9377c623145d",
+        "nomEtPrenom": "David Havelange",
+        "numeroDePhytolicence": "19.20119",
+        "mentionnerEmail": "havelangedavid@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "f5d6eff7-18ea-4649-a802-b0d396273cac",
+        "datee": "2025-09-16T08:05:09.621Z",
+        "succes": true
+    },
+    {
+        "id_user": "a1b3fe1d-8d04-49d0-9142-bf49969672bf",
+        "nomEtPrenom": "Sylvie Spinoit",
+        "numeroDePhytolicence": "21.2.0054",
+        "mentionnerEmail": "sylvie.spinoit@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "c8a60c9c-ff47-4a49-b7e7-2611a3df129e",
+        "datee": "2025-09-16T08:01:22.355Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e4209a9-125e-488c-b054-9763a8861157",
+        "nomEtPrenom": "Gabrielle Dubois",
+        "numeroDePhytolicence": "24.3.0007",
+        "mentionnerEmail": "gabrielle.dubois@arvesta.eu",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ce5b26b0-4e39-48ec-b753-0b9dc4f89112",
+        "datee": "2025-09-16T10:07:50.359Z",
+        "succes": true
+    },
+    {
+        "id_user": "6c14456e-f726-4608-b5d4-36c6d67e179e",
+        "nomEtPrenom": "Robin Hannoteau",
+        "numeroDePhytolicence": "24.3.0027",
+        "mentionnerEmail": "robin.hannoteau@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "8ee1206d-bc91-49d4-8440-cac16d988db2",
+        "datee": "2025-09-16T10:22:18.772Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5d90193-79f0-45c4-9a2a-f6a720934dd6",
+        "nomEtPrenom": "ISTAS Benoit",
+        "numeroDePhytolicence": "14.2.0302",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "3807f357-15c7-4ab9-a1ed-bc1b2f780037",
+        "datee": "2025-09-16T12:20:19.563Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5d90193-79f0-45c4-9a2a-f6a720934dd6",
+        "nomEtPrenom": "ISTAS Baudouin",
+        "numeroDePhytolicence": "24.3.0027",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "b8667e35-4983-4e8a-97b9-fe76c1862cce",
+        "datee": "2025-09-16T12:20:33.148Z",
+        "succes": true
+    },
+    {
+        "id_user": "d87b1beb-7bf4-4626-b61a-5a15ba52ec1f",
+        "nomEtPrenom": "Bernard",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "b9788b9b-3188-48f5-9abc-ea98e8b0088c",
+        "datee": "2025-09-16T19:53:10.886Z",
+        "succes": true
+    },
+    {
+        "id_user": "d87b1beb-7bf4-4626-b61a-5a15ba52ec1f",
+        "nomEtPrenom": "Guillaume",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "a212095d-1192-4c4b-89c1-26226476bfaf",
+        "datee": "2025-09-16T19:53:20.347Z",
+        "succes": true
+    },
+    {
+        "id_user": "97ea72df-30bb-47c1-81ad-3122583c7648",
+        "nomEtPrenom": "Maxime Englebert",
+        "numeroDePhytolicence": "21.3.0019",
+        "mentionnerEmail": "maxime.engle@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "14a7d318-9dee-4978-98e9-e26d313cc960",
+        "datee": "2025-09-17T06:21:17.745Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "szdrfezr",
+        "numeroDePhytolicence": "zerezr",
+        "mentionnerEmail": "zerzerezr@dfgedfrg.dfgd",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "4b00b3e3-ef81-4c01-9c0f-e35b71be0c54",
+        "datee": "2025-09-17T06:44:25.304Z",
+        "succes": true
+    },
+    {
+        "id_user": "fd7ea78d-41f5-41ee-a380-326b3fecbc38",
+        "nomEtPrenom": "Vermeulen Matthieu",
+        "numeroDePhytolicence": "15.2.0265",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "97fe9b08-330f-4355-8fbc-60373c8b8300",
+        "datee": "2025-09-17T08:16:07.828Z",
+        "succes": true
+    },
+    {
+        "id_user": "edc54929-fd3e-4cdb-8aed-750e7c64e8c1",
+        "nomEtPrenom": "Frederic Alexandre",
+        "numeroDePhytolicence": "25.2.0086",
+        "mentionnerEmail": "fredericalexandre17@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "f78e7a0a-512c-4c8c-9526-3470295cb7a8",
+        "datee": "2025-09-17T10:10:11.311Z",
+        "succes": true
+    },
+    {
+        "id_user": "edc54929-fd3e-4cdb-8aed-750e7c64e8c1",
+        "nomEtPrenom": "frederic alexandre",
+        "numeroDePhytolicence": "25.2.0861",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "fed136bd-6465-48b3-a2d6-e3830de36c40",
+        "datee": "2025-09-17T13:19:29.623Z",
+        "succes": true
+    },
+    {
+        "id_user": "b2f87fd0-8374-4916-bb57-4da6322f4dda",
+        "nomEtPrenom": "V���ronique Galet",
+        "numeroDePhytolicence": "14.2.2481",
+        "mentionnerEmail": "verogalet@skynet.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "670fa2dd-3209-4e0c-af4d-2da4344e5399",
+        "datee": "2025-09-18T06:22:06.650Z",
+        "succes": true
+    },
+    {
+        "id_user": "a88657a2-7d8a-4cc2-8e1d-0c87d96109be",
+        "nomEtPrenom": "Dieudonn��� K���senne",
+        "numeroDePhytolicence": "1",
+        "mentionnerEmail": "dieudonne_kesenne@hotmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "0d0709e4-158a-4eca-8113-1818d7b1ef5d",
+        "datee": "2025-09-19T10:30:54.739Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "mm",
+        "numeroDePhytolicence": "kl",
+        "mentionnerEmail": "dsqd@sds.dd",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "d328e746-52af-4330-ba5a-a3073b370579",
+        "datee": "2025-08-26T09:52:49.408Z",
+        "succes": true
+    },
+    {
+        "id_user": "c05a53c4-7846-4ef3-b936-e46fbf109b16",
+        "nomEtPrenom": "Opérateur test",
+        "numeroDePhytolicence": "7853124681532",
+        "mentionnerEmail": "a@a.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "97fd41bc-adb7-4e11-b690-01e5d3324820",
+        "datee": "2025-08-26T10:28:45.748Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "yves",
+        "numeroDePhytolicence": "254555458",
+        "mentionnerEmail": "yvesmak@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "75291011-b6bc-452e-b630-6dab3ed0d91b",
+        "datee": "2025-08-27T09:13:24.303Z",
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "nomEtPrenom": "Arthur Vansteenwinckel",
+        "numeroDePhytolicence": "7890780",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "e9e5e3be-f350-46ac-9346-0971e853f991",
+        "datee": "2025-08-29T09:54:12.017Z",
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "nomEtPrenom": "Yves Makwambala",
+        "numeroDePhytolicence": "20.2.123789",
+        "mentionnerEmail": "yves.makwambala@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "493e07a9-fab0-4476-b80f-648196c348d4",
+        "datee": "2025-09-03T06:21:22.123Z",
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "nomEtPrenom": "Yves Makwambala",
+        "numeroDePhytolicence": "20.2.12345",
+        "mentionnerEmail": "yves.makwabala@corder.be",
+        "autorisation": null,
+        "idGestionDesOperations": "00bbc6b9-4227-438f-aefc-8ded3a0b697e",
+        "datee": "2025-09-11T06:30:27.171Z",
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "nomEtPrenom": "Arthur Vansteenwinckel",
+        "numeroDePhytolicence": "1111111111",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ec1ae0da-7315-44da-a812-931db0754a92",
+        "datee": "2025-09-11T07:18:39.193Z",
+        "succes": true
+    },
+    {
+        "id_user": "c38bc2c2-ae39-46db-a1c4-434cd4bc7fda",
+        "nomEtPrenom": "Eugénie  Coninck",
+        "numeroDePhytolicence": "17.2.00716",
+        "mentionnerEmail": "eugenie.coninck@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ccc45db9-3863-4dba-b5ec-62f6c0e00a59",
+        "datee": "2025-09-11T11:38:18.618Z",
+        "succes": true
+    },
+    {
+        "id_user": "62048719-470c-43d9-9630-122205de8c90",
+        "nomEtPrenom": "Gaspard Nihorimbere",
+        "numeroDePhytolicence": "G100",
+        "mentionnerEmail": "nihorimbereg@yahoo.fr",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "166c1059-b823-4eec-88d2-5a716deedcd3",
+        "datee": "2025-09-11T12:22:04.822Z",
+        "succes": true
+    },
+    {
+        "id_user": "ce0b9987-cc91-4243-ae1d-c9d0b89708b2",
+        "nomEtPrenom": "Jean-Baptiste de Maere",
+        "numeroDePhytolicence": "2005",
+        "mentionnerEmail": "jb.demaere@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "d8bef5e9-5ce2-458c-8650-d2b228b010a8",
+        "datee": "2025-09-11T12:37:06.605Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "arthur vansteenwinckel",
+        "numeroDePhytolicence": "54647635435",
+        "mentionnerEmail": "arthur.vansteenwinckel@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "c3d15403-037a-4da6-b2ae-f285327c4774",
+        "datee": "2025-09-11T12:48:15.994Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "4ce6fa4e-58ac-42a5-ad9b-4c9f9678c876",
+        "datee": "2025-09-11T12:48:59.321Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": "rtj(eyt",
+        "numeroDePhytolicence": "errthjzy(j§zyu",
+        "mentionnerEmail": "tyjte'kuyk@.com",
+        "autorisation": null,
+        "idGestionDesOperations": "40e126b1-f7b2-4a4c-9394-1ffa9b0a0da3",
+        "datee": "2025-09-11T12:49:20.220Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": null,
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "9098d3eb-1e03-457e-9ce5-c4f25f4673e3",
+        "datee": "2025-09-11T12:49:23.005Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "nomEtPrenom": null,
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "ad6640bb-0ade-4f57-bde6-70abf407a116",
+        "datee": "2025-09-11T12:49:23.421Z",
+        "succes": true
+    },
+    {
+        "id_user": "0f3a1611-8fd6-40a6-beab-eaef4c336185",
+        "nomEtPrenom": "Test Loïc",
+        "numeroDePhytolicence": "11.1.1111",
+        "mentionnerEmail": "293sgp@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "15028236-e54b-4794-86de-31224ab394a2",
+        "datee": "2025-09-12T08:09:05.857Z",
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "nomEtPrenom": "Tom Laridant",
+        "numeroDePhytolicence": "22.2.2222",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "0c879118-6020-4225-b688-f19e190a40c2",
+        "datee": "2025-09-12T19:48:30.650Z",
+        "succes": true
+    },
+    {
+        "id_user": "874334ea-ce80-4586-bceb-9a889d8321e8",
+        "nomEtPrenom": "Francois Bertholet",
+        "numeroDePhytolicence": "14.2.3115",
+        "mentionnerEmail": "hello@appartman.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "096cdcfd-e631-43f6-8eca-5099a97492dd",
+        "datee": "2025-09-15T06:25:29.199Z",
+        "succes": true
+    },
+    {
+        "id_user": "ba3c7f10-0d4a-49eb-9565-7110a5375b59",
+        "nomEtPrenom": "Christel Houtet",
+        "numeroDePhytolicence": "25.5.5222",
+        "mentionnerEmail": "christel.houtet@yahoo.fr",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "5c8f3e9e-b7f6-4dcc-989b-ebc2ed107f8d",
+        "datee": "2025-09-15T06:32:11.603Z",
+        "succes": true
+    },
+    {
+        "id_user": "80a5b535-8eae-468f-a857-6a2444726680",
+        "nomEtPrenom": "Valéry Bastin",
+        "numeroDePhytolicence": "19.3.0012",
+        "mentionnerEmail": "valery.bastin@protecteau.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "cdb0ba5f-1eff-4b7c-9100-f2f2779f5633",
+        "datee": "2025-09-15T06:33:12.870Z",
+        "succes": true
+    },
+    {
+        "id_user": "3634e9ec-025d-41d7-a966-e46d411dc2e7",
+        "nomEtPrenom": "COLLEGE MATHIEU",
+        "numeroDePhytolicence": "13.2.0060",
+        "mentionnerEmail": "michel.mathieu01@hotmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "bafacd06-7eae-4b80-8a56-eb9e23ca331b",
+        "datee": "2025-09-15T06:52:22.575Z",
+        "succes": true
+    },
+    {
+        "id_user": "cd1d0556-e723-4171-893d-50a4e9b06ad8",
+        "nomEtPrenom": "Christian Havelange",
+        "numeroDePhytolicence": "00.0.0000",
+        "mentionnerEmail": "chavelange@agricall.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "0aff8637-ad55-4e73-8c71-48dda8f1f609",
+        "datee": "2025-09-15T07:10:40.577Z",
+        "succes": true
+    },
+    {
+        "id_user": "737119ae-7093-4026-aae1-438e51fc9444",
+        "nomEtPrenom": "Francois Godefroid",
+        "numeroDePhytolicence": "14.2.2952",
+        "mentionnerEmail": "francois.godefroid@hotmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "1e644e62-b8e7-48fa-ba17-464ea6cfb05c",
+        "datee": "2025-09-15T08:35:40.773Z",
+        "succes": true
+    },
+    {
+        "id_user": "53ee0434-1927-4a01-9604-bbb42194a7c2",
+        "nomEtPrenom": "Jean-Yves Engelborghs",
+        "numeroDePhytolicence": "14.2.3072",
+        "mentionnerEmail": "jy.engelborghs@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "da855703-398b-4783-9fe7-f4f4b157c229",
+        "datee": "2025-09-15T09:26:32.291Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e3d41e5-6ff3-4a01-b906-b519c2dd87af",
+        "nomEtPrenom": "jean-michel fortemps",
+        "numeroDePhytolicence": "13.2.0439",
+        "mentionnerEmail": "fortempsjeanmichel@acenet.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "82ad3c99-3e94-466d-97d3-c7ca8c6c13db",
+        "datee": "2025-09-15T15:20:04.955Z",
+        "succes": true
+    },
+    {
+        "id_user": "9da4ed6a-42d6-4e41-ac9d-b8102c9c68b7",
+        "nomEtPrenom": "Dominique Wayembercg",
+        "numeroDePhytolicence": "14.2.3406",
+        "mentionnerEmail": "fermedupetitstrepy@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "0e7574ad-a046-45f3-b344-ee7a61fd4e4d",
+        "datee": "2025-09-15T17:16:56.281Z",
+        "succes": true
+    },
+    {
+        "id_user": "bef1fa9e-278b-4e6a-905b-9377c623145d",
+        "nomEtPrenom": "David Havelange",
+        "numeroDePhytolicence": "19.20119",
+        "mentionnerEmail": "havelangedavid@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "f5d6eff7-18ea-4649-a802-b0d396273cac",
+        "datee": "2025-09-16T08:05:09.621Z",
+        "succes": true
+    },
+    {
+        "id_user": "a1b3fe1d-8d04-49d0-9142-bf49969672bf",
+        "nomEtPrenom": "Sylvie Spinoit",
+        "numeroDePhytolicence": "21.2.0054",
+        "mentionnerEmail": "sylvie.spinoit@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "c8a60c9c-ff47-4a49-b7e7-2611a3df129e",
+        "datee": "2025-09-16T08:01:22.355Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e4209a9-125e-488c-b054-9763a8861157",
+        "nomEtPrenom": "Gabrielle Dubois",
+        "numeroDePhytolicence": "24.3.0007",
+        "mentionnerEmail": "gabrielle.dubois@arvesta.eu",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "ce5b26b0-4e39-48ec-b753-0b9dc4f89112",
+        "datee": "2025-09-16T10:07:50.359Z",
+        "succes": true
+    },
+    {
+        "id_user": "6c14456e-f726-4608-b5d4-36c6d67e179e",
+        "nomEtPrenom": "Robin Hannoteau",
+        "numeroDePhytolicence": "24.3.0027",
+        "mentionnerEmail": "robin.hannoteau@corder.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "8ee1206d-bc91-49d4-8440-cac16d988db2",
+        "datee": "2025-09-16T10:22:18.772Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5d90193-79f0-45c4-9a2a-f6a720934dd6",
+        "nomEtPrenom": "ISTAS Benoit",
+        "numeroDePhytolicence": "14.2.0302",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "3807f357-15c7-4ab9-a1ed-bc1b2f780037",
+        "datee": "2025-09-16T12:20:19.563Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5d90193-79f0-45c4-9a2a-f6a720934dd6",
+        "nomEtPrenom": "ISTAS Baudouin",
+        "numeroDePhytolicence": "24.3.0027",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "b8667e35-4983-4e8a-97b9-fe76c1862cce",
+        "datee": "2025-09-16T12:20:33.148Z",
+        "succes": true
+    },
+    {
+        "id_user": "d87b1beb-7bf4-4626-b61a-5a15ba52ec1f",
+        "nomEtPrenom": "Bernard",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "b9788b9b-3188-48f5-9abc-ea98e8b0088c",
+        "datee": "2025-09-16T19:53:10.886Z",
+        "succes": true
+    },
+    {
+        "id_user": "d87b1beb-7bf4-4626-b61a-5a15ba52ec1f",
+        "nomEtPrenom": "Guillaume",
+        "numeroDePhytolicence": null,
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "a212095d-1192-4c4b-89c1-26226476bfaf",
+        "datee": "2025-09-16T19:53:20.347Z",
+        "succes": true
+    },
+    {
+        "id_user": "97ea72df-30bb-47c1-81ad-3122583c7648",
+        "nomEtPrenom": "Maxime Englebert",
+        "numeroDePhytolicence": "21.3.0019",
+        "mentionnerEmail": "maxime.engle@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "14a7d318-9dee-4978-98e9-e26d313cc960",
+        "datee": "2025-09-17T06:21:17.745Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "nomEtPrenom": "szdrfezr",
+        "numeroDePhytolicence": "zerezr",
+        "mentionnerEmail": "zerzerezr@dfgedfrg.dfgd",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "4b00b3e3-ef81-4c01-9c0f-e35b71be0c54",
+        "datee": "2025-09-17T06:44:25.304Z",
+        "succes": true
+    },
+    {
+        "id_user": "fd7ea78d-41f5-41ee-a380-326b3fecbc38",
+        "nomEtPrenom": "Vermeulen Matthieu",
+        "numeroDePhytolicence": "15.2.0265",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "97fe9b08-330f-4355-8fbc-60373c8b8300",
+        "datee": "2025-09-17T08:16:07.828Z",
+        "succes": true
+    },
+    {
+        "id_user": "edc54929-fd3e-4cdb-8aed-750e7c64e8c1",
+        "nomEtPrenom": "Frederic Alexandre",
+        "numeroDePhytolicence": "25.2.0086",
+        "mentionnerEmail": "fredericalexandre17@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "f78e7a0a-512c-4c8c-9526-3470295cb7a8",
+        "datee": "2025-09-17T10:10:11.311Z",
+        "succes": true
+    },
+    {
+        "id_user": "edc54929-fd3e-4cdb-8aed-750e7c64e8c1",
+        "nomEtPrenom": "frederic alexandre",
+        "numeroDePhytolicence": "25.2.0861",
+        "mentionnerEmail": null,
+        "autorisation": null,
+        "idGestionDesOperations": "fed136bd-6465-48b3-a2d6-e3830de36c40",
+        "datee": "2025-09-17T13:19:29.623Z",
+        "succes": true
+    },
+    {
+        "id_user": "b2f87fd0-8374-4916-bb57-4da6322f4dda",
+        "nomEtPrenom": "Véronique Galet",
+        "numeroDePhytolicence": "14.2.2481",
+        "mentionnerEmail": "verogalet@skynet.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "670fa2dd-3209-4e0c-af4d-2da4344e5399",
+        "datee": "2025-09-18T06:22:06.650Z",
+        "succes": true
+    },
+    {
+        "id_user": "3dab788a-2275-449c-93cb-31c8fa59c1bb",
+        "nomEtPrenom": "Christophe Losseau",
+        "numeroDePhytolicence": "14.2.1956.",
+        "mentionnerEmail": "bedoretlosseau@outlook.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "f7aa07cb-6cf6-49b1-8a9e-f723f48a8280",
+        "datee": "2025-09-23T18:47:39.181Z",
+        "succes": true
+    },
+    {
+        "id_user": "c4e68518-3d5e-4966-bab5-32af45cd12ed",
+        "nomEtPrenom": "Arnaud Duterne",
+        "numeroDePhytolicence": "19.3.00262",
+        "mentionnerEmail": "arnaud.duterne@outlook.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "e1794ab7-769d-4381-9e6f-f84ceff6ad49",
+        "datee": "2025-09-24T11:56:40.313Z",
+        "succes": true
+    },
+    {
+        "id_user": "029d1bc2-7365-4a52-b42c-f43365d8cc0e",
+        "nomEtPrenom": "Gauthier Amant",
+        "numeroDePhytolicence": "14.2.18321",
+        "mentionnerEmail": "gauthieramant@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "6a852372-7a4e-4671-88a2-c42c03956520",
+        "datee": "2025-09-24T12:38:57.301Z",
+        "succes": true
+    },
+    {
+        "id_user": "92e32a5e-123c-46eb-b562-78a96fa0c6ee",
+        "nomEtPrenom": "Siroke Group Terres et Saveurs",
+        "numeroDePhytolicence": "14.2.36910",
+        "mentionnerEmail": "info@terresetsaveurs.be",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "a2f5a14e-9626-48b6-b912-083afa1b645c",
+        "datee": "2025-09-26T09:01:04.484Z",
+        "succes": true
+    },
+    {
+        "id_user": "f703c3ff-137e-4268-b684-bc856839c958",
+        "nomEtPrenom": "Martin Ladeuze",
+        "numeroDePhytolicence": "14.2.17907",
+        "mentionnerEmail": "martinladeuze@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "60118f57-3135-4df7-82bb-ffa53261db47",
+        "datee": "2025-09-26T09:03:54.412Z",
+        "succes": true
+    },
+    {
+        "id_user": "1d7339e0-32c0-4d22-93ab-077a372777d5",
+        "nomEtPrenom": "Kathleen Planckaert",
+        "numeroDePhytolicence": "24.2.01011",
+        "mentionnerEmail": "fermeplanckaertneufvilles@gmail.com",
+        "autorisation": "Editer le registre",
+        "idGestionDesOperations": "b75718cf-8a06-4a63-a707-08b565de3c89",
+        "datee": "2025-09-26T09:17:56.127Z",
+        "succes": true
+    }
+]

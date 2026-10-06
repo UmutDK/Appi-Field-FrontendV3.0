@@ -1,0 +1,22 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card auth-card--narrow">
+            <span class="auth-icon"><i class="bi bi-envelope-check"></i></span>
+            <h1>Confirmez votre inscription</h1>
+            <p>Pour finaliser votre inscription, saisissez le code de validation que nous venons de vous envoyer par mail.</p>
+            <p class="auth-note"><i class="bi bi-info-circle"></i> Pensez à vérifier vos mails indésirables (spams).</p>
+
+            <div class="auth-field">
+                <label for="codeValidation">Code de validation</label>
+                <input id="codeValidation" type="text" class="form-control" placeholder="Code reçu par mail"
+                       [formControl]="formCTRL" autocomplete="one-time-code"
+                       (keydown.enter)="!formCTRL.invalid && onValider()">
+            </div>
+
+            <div class="auth-actions">
+                <button type="button" class="auth-btn auth-btn-secondary" (click)="onAnnuler()">Annuler</button>
+                <button type="button" class="auth-btn auth-btn-primary" (click)="onValider()" [disabled]="formCTRL.invalid">Valider mon compte</button>
+            </div>
+        </section>
+    </div>
+</main>

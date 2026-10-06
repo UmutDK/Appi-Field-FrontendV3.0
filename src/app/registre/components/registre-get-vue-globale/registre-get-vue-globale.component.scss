@@ -1,0 +1,231 @@
+// Vue globale du Carnet de champ — même encadré (.dashboard-card) et même tableau que
+// Parcelles / Inventaire. Structure HTML et comportement inchangés.
+
+// Les .row Bootstrap internes : pas de marges négatives parasites
+.row {
+  margin-left: 0;
+  margin-right: 0;
+
+  > [class*="col-"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+// Carte (.card Bootstrap) → même encadré que .dashboard-card
+.card {
+  background: #ffffff;
+  border: 1px solid #edf0f3 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+
+  .card-body {
+    padding: 20px 24px;
+
+    @media (max-width: 575.98px) {
+      padding: 16px;
+    }
+  }
+
+  h3 {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #12103c;
+    margin: 0 0 4px;
+  }
+
+  .text-muted small {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-style: normal;
+  }
+}
+
+// ─── Tableau ─────────────────────────────────────────────────────────────────
+.tableau {
+  border: 1px solid #edf0f3;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+    border-radius: 0;
+  }
+
+  // Materialize ajoute une bordure basse sur tout <tr>
+  tr { border: none; }
+
+  thead th {
+    background: #f8f9fa;
+    border-bottom: 1px solid #edf0f3;
+    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    background: #ffffff;
+    transition: background 0.15s ease;
+
+    &:hover { background: #f8fbfb; }
+
+    &:not(:last-child) td { border-bottom: 1px solid #f1f3f5; }
+
+    td {
+      color: #374151;
+
+      &:first-child {
+        white-space: nowrap;
+        color: #12103c;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Lignes traitement / travail : plus de fond coloré, la distinction se fait par le badge de type
+.table-row-traitement,
+.table-row-travail {
+  background-color: #ffffff;
+}
+
+// Badge "Type" (traitement / travail au champ)
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  i { font-size: 0.8rem; }
+
+  &.bg-primary { background: #ece7fb !important; color: #4c3d99 !important; }
+  &.bg-success { background: #e3f6f3 !important; color: #03918a !important; }
+}
+
+// Détails tronqués (infobulle au survol, inchangé)
+.details-text {
+  cursor: help;
+
+  &:hover { text-decoration: underline; }
+}
+
+.text-muted {
+  color: #9ca3af !important;
+}
+
+// Bouton "modifier" (crayon discret)
+.action-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  i { font-size: 0.95rem; }
+
+  &:hover {
+    background: #e3f6f3;
+    border-color: #b9e6e1;
+    color: #03918a;
+  }
+}
+
+// ─── Totaux + Actualiser ─────────────────────────────────────────────────────
+.stats-info {
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+
+    i { font-size: 0.8rem; }
+  }
+
+  .badge-traitement { background: #ece7fb !important; color: #4c3d99 !important; }
+  .badge-travail { background: #e3f6f3 !important; color: #03918a !important; }
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #ffffff;
+  color: #12103c;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) { border-color: #05b1af; color: #03918a; }
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// Chargement
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+
+  &.text-primary { color: #05b1af !important; }
+}
+
+// Téléphone : tableau plus compact (palier existant conservé)
+@media (max-width: 576px) {
+  .data-table {
+    font-size: 0.8rem;
+
+    th, td { padding: 0.45rem; }
+  }
+}
+
+// Tablette : tableau et badges agrandis (palier existant conservé)
+@media (min-width: 576px) and (max-width: 992px) {
+  .data-table {
+    font-size: 1.05rem;
+
+    th, td { padding: 0.8rem; }
+  }
+
+  .stats-info .badge,
+  .type-tag {
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,97 @@
+@use '../../../../styles/dashboard-cards' as *;
+
+// 🔐 Alerte de session expirée
+.session-expired-alert {
+    position: fixed;
+    top: 70px; // En dessous du header
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    animation: slideDown 0.3s ease-out;
+
+    .alert {
+        margin-bottom: 0;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        i {
+            font-size: 1.2em;
+        }
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+main {
+    a {
+        color: #05b1af;
+
+        &:hover {
+            color: #2d9089;
+        }
+    }
+}
+
+// Grille 2 colonnes pour les 6 blocs de présentation ("À propos de l'outil") — .quick-access-card
+// (dashboard-cards.scss) est pensé en liste verticale (back-office) ; ici on veut une grille.
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+
+    @media (max-width: 767.98px) {
+        grid-template-columns: 1fr;
+    }
+
+    // Cartes purement informatives (pas de navigation) : pas de curseur pointeur ni de survol
+    // "cliquable" hérité de .quick-access-card.
+    .quick-access-card {
+        margin-bottom: 0;
+        cursor: default;
+
+        &:hover {
+            box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+            transform: none;
+        }
+    }
+}
+
+.mobile-only-btns {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.ndc{
+    background-color: rgb(255, 255, 255);
+    border: 2px solid #22bf76;
+    color: #22bf76;
+    box-shadow: none !important;
+}
+.ndc:hover{
+    background-color: #22bf76;
+    color: #ffffff;
+}
+.dc{
+    background-color: #22bf76;
+    border: 1px solid #22bf76;
+    box-shadow: none !important;
+}
+.dc:hover{
+    background-color: #1e9e68;
+    border: 1px solid #1e9e68;
+    color: #ffffff;
+}

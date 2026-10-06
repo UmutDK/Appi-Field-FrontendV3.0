@@ -1,0 +1,220 @@
+@use '../../../styles/dashboard-cards' as *;
+
+.dashboard-header h1 i {
+  color: #03918a;
+  margin-right: 0.4rem;
+}
+
+// ─── Message de feedback ─────────────────────────────────────────────────────
+.formation-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 0.92rem;
+
+  &.formation-alert-success {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.formation-alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+// ─── Formulaire ──────────────────────────────────────────────────────────────
+.formation-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.formation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 140px;
+
+  &.formation-field-wide { flex: 2; min-width: 220px; }
+  &.formation-field-full { flex: 1 0 100%; }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #495057;
+  }
+}
+
+.formation-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: #111827;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder { color: #9ca3af; }
+
+  &:focus {
+    outline: none;
+    border-color: #03918a;
+    box-shadow: 0 0 0 3px rgba(3, 145, 138, 0.12);
+  }
+}
+
+.formation-help {
+  color: #6b7280;
+  font-size: 0.78rem;
+}
+
+.formation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f3;
+
+  .spinner-border {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-width: 0.15em;
+    margin-right: 6px;
+  }
+}
+
+// ─── Liste ───────────────────────────────────────────────────────────────────
+.formation-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 0;
+  color: #6b7280;
+}
+
+.formation-table-wrapper {
+  overflow-x: auto;
+}
+
+.formation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7280;
+    border-bottom: 1.5px solid #edf0f3;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.12s ease;
+
+    &:hover { background: #f9fafb; }
+    &:last-child { border-bottom: none; }
+  }
+
+  td {
+    padding: 10px 12px;
+    vertical-align: middle;
+    color: #111827;
+  }
+
+  .col-order { width: 56px; }
+  .col-date { width: 90px; }
+  .col-actions { width: 110px; }
+}
+
+.formation-date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #05b1af 0%, #03918a 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 6px 4px;
+  min-width: 56px;
+  text-align: center;
+
+  .day {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .month {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.9;
+  }
+}
+
+.formation-order-btns,
+.formation-row-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.formation-order-btns { flex-direction: column; }
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) { background: #e5e7eb; border-color: #9ca3af; }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.btn-edit:hover:not(:disabled) {
+    background: rgba(5, 177, 175, 0.12);
+    border-color: #05b1af;
+    color: #03918a;
+  }
+
+  &.btn-delete:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: #f87171;
+    color: #dc2626;
+  }
+}
+
+// Responsive
+@media (max-width: 575.98px) {
+  .formation-field-row { flex-direction: column; }
+  .formation-field { min-width: 0; }
+  .formation-actions { flex-direction: column-reverse; }
+  .formation-actions .btn-primary,
+  .formation-actions .btn-secondary { width: 100%; }
+}

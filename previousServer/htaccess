@@ -1,0 +1,4 @@
+# Bloque tout accès HTTP direct aux fichiers .json, dans tous les sous-dossiers
+<FilesMatch "\.json$">
+    Require all denied
+</FilesMatch>

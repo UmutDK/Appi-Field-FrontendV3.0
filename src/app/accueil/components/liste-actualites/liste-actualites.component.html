@@ -1,0 +1,61 @@
+<div class="section2">
+    <div class="container">
+        <div class="cadre">
+            <section class="row">
+                <article class="col-lg-12">
+                    <h2 style="margin-bottom: 0%;">Actualités</h2>
+                    <p style="color: rgb(128, 128, 128);"><i>(source : Walakis)</i></p>
+                    <section class="row">
+                        @if (isLoading) {
+                          <div class="text-center py-4">
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            Chargement des actualités...
+                          </div>
+                        } @else if (error) {
+                          <div class="alert alert-danger text-center">{{ error }}</div>
+                        } @else if (actualites.length === 0) {
+                          <div class="text-center py-4 text-muted">
+                            Aucune actualité disponible pour le moment.
+                          </div>
+                        } @else {
+                          @for (actu of actualites; track actu.link) {
+                            <article class="col-lg-3 col-md-6 col-12 mb-4 mb-md-3 actu-item">
+                              <a [href]="actu.link" target="_blank" rel="noopener">
+                                <div class="cadre-actualite">
+                                  <div class="card h-100">
+                                    @if (actu.image) {
+                                      <img [src]="actu.image" 
+                                           class="card-img-top" 
+                                           alt="{{ actu.title }}"
+                                           loading="lazy"
+                                           onerror="this.style.display='none'">
+                                    } @else {
+                                      <div class="card-img-placeholder">
+                                        <i class="fas fa-newspaper"></i>
+                                      </div>
+                                    }
+                                    <div class="card-body d-flex flex-column">
+                                      <h3 class="card-title">{{ actu.title }}</h3>
+                                      <p class="card-text-date">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        {{ actu.pubDate | date:'dd/MM/yyyy' }}
+                                      </p>
+                                      @if (actu.description && actu.description.trim()) {
+                                        <p class="card-text flex-grow-1">{{ actu.description }}</p>
+                                      }
+                                      <div class="mt-auto">
+                                        <span class="btn-link-custom">Lire la suite →</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </a>
+                            </article>
+                          }
+                        }
+                    </section>
+                </article>
+            </section>
+        </div>
+    </div>
+</div>

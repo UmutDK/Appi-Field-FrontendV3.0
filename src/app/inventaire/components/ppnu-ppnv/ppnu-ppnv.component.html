@@ -1,0 +1,161 @@
+<div class="ajouterUneCulture ppnu-form-container scrollable-content" #popupContent>
+  <div class="popup-content-scrollable scrollable-content">
+  <form id="ppnuForm" (ngSubmit)="onSubmit()" #ppnuForm="ngForm">
+
+    <div class="row g-3">
+      <!-- Sélection du produit -->
+      <div class="col-lg-6">
+        <label class="simple-label">Produit<sup>*</sup></label>
+        <div class="dropdown-container" [class.open]="isProductDropdownOpen">
+          <button type="button" class="dropdown-btn" aria-label="Produit" (click)="toggleProductDropdown(); $event.stopPropagation()">
+            <span class="dropdown-value">{{ selectedProductLabel }}</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+          @if (isProductDropdownOpen) {
+            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                @for (product of inventoryProducts; track product.product_id) {
+                  <div class="dropdown-list-item" (click)="selectProductOption(product.product_id)">
+                    {{ product.product_name }} - {{ product.product_numaut }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Type d'entrée PPNU/PPNV -->
+      <div class="col-lg-6">
+        <label class="simple-label">Type d'entrée<sup>*</sup></label>
+        <div class="dropdown-container" [class.open]="isTypeDropdownOpen">
+          <button type="button" class="dropdown-btn" aria-label="Type d'entrée" (click)="toggleTypeDropdown(); $event.stopPropagation()">
+            <span class="dropdown-value">{{ selectedTypeLabel }}</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+          @if (isTypeDropdownOpen) {
+            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                @for (option of typeOptions; track option.value) {
+                  <div class="dropdown-list-item" (click)="selectTypeOption(option.value === 'PPNU' ? 'PPNU' : 'PPNV')">
+                    {{ option.label }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div class="col-lg-6">
+        <label class="simple-label" for="ppnuDate">Date de la sortie<sup>*</sup></label>
+        <input
+          type="date"
+          class="form-control popup-text-input"
+          id="ppnuDate"
+          [(ngModel)]="selectedDate"
+          name="date"
+          required
+          #dateCtrl="ngModel"
+          [class.input-error]="dateCtrl.touched && !selectedDate"
+          [max]="maxDate">
+        @if (dateCtrl.touched && !selectedDate) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+        }
+      </div>
+
+      <!-- Quantité -->
+      <div class="col-lg-3">
+        <label class="simple-label" for="ppnuQuantity">Quantité<sup>*</sup></label>
+        <input
+          type="number"
+          class="form-control popup-text-input"
+          id="ppnuQuantity"
+          [(ngModel)]="quantity"
+          name="quantity"
+          placeholder="Ex : 2.5"
+          min="0.01"
+          step="0.01"
+          required
+          #qtyCtrl="ngModel"
+          [class.input-error]="qtyCtrl.touched && !(quantity > 0)">
+        @if (qtyCtrl.touched && !(quantity > 0)) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>La quantité doit être supérieure à 0.</p>
+        }
+      </div>
+
+      <!-- Unité -->
+      <div class="col-lg-3">
+        <label class="simple-label">Unité<sup>*</sup></label>
+        <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+          <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+            <span class="dropdown-value">{{ selectedUnit }}</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+          @if (isUnitDropdownOpen) {
+            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                @for (unit of unitOptions; track unit.value) {
+                  <div class="dropdown-list-item" (click)="selectUnitOption(unit.value)">
+                    {{ unit.label }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (selectedProduct && selectedUnit !== selectedProduct.quantity_unit) {
+        <div class="col-lg-12">
+          <div class="form-text text-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            Attention : L'unité sélectionnée ({{ selectedUnit }}) diffère de l'unité du produit ({{ selectedProduct.quantity_unit }})
+          </div>
+        </div>
+      }
+    </div>
+
+  </form>
+  </div>
+
+  <!-- Boutons d'action — hors de .popup-content-scrollable pour rester plein largeur/collé en
+       bas comme dans parcelles (où .popup-footer est un simple frère de .popup-body). Le bouton
+       de validation reste associé au formulaire via l'attribut form= malgré d'être hors du
+       <form> lui-même. -->
+  <div class="action-buttons popup-footer">
+    @if (!isFormValid) {
+      <p class="popup-required-hint">
+        <i class="bi bi-info-circle"></i>
+        <span>À compléter :
+          @if (!selectedProductId) { <b>produit</b> }
+          @if (!selectedDate) { <b>date</b> }
+          @if (!(quantity > 0)) { <b>quantité (supérieure à 0)</b> }
+          @if (!selectedUnit) { <b>unité</b> }
+        </span>
+      </p>
+    }
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="onCancel()">
+      Annuler
+    </button>
+    <button
+      type="submit"
+      form="ppnuForm"
+      class="btn-primary"
+      [disabled]="!isFormValid || isSubmitting">
+      @if (isSubmitting) {
+        <div class="spinner-border spinner-border-sm me-2" role="status">
+          <span class="visually-hidden">{{ isEditMode ? 'Mise à jour' : 'Ajout' }} en cours...</span>
+        </div>
+        {{ isEditMode ? 'Mise à jour' : 'Ajout' }} en cours...
+      } @else {
+        <i class="bi bi-{{ isEditMode ? 'pencil-square' : 'plus-circle' }}"></i>
+        {{ isEditMode ? 'Modifier' : 'Ajouter' }} l'entrée {{ selectedType }}
+      }
+    </button>
+  </div>
+</div>

@@ -1,0 +1,191 @@
+@if ( usersEnfant ) {
+    <form #profil="ngForm"  (ngSubmit)="updateMonProfil(profil)">
+    <div class="container py-5">
+        <div class="row">
+             <div class="col-lg-12">
+                <h2>Mon profil</h2>
+             </div>
+
+            <!-- Colonne avec informations -->
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header" style="background-color: #0e103c; color: white;">
+                        <h5 class="card-title mb-0">Informations personnelles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-envelope" style="color: #03918a;"></i> Email
+                            </div>
+                            <div class="col-sm-9">
+                                {{usersEnfant.Mail }}
+                                <input type="hidden" name="userMail" [(ngModel)]="usersEnfant.Mail" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-person" style="color: #03918a;"></i> Nom
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="userNom" [(ngModel)]="usersEnfant.Nom" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-person-badge" style="color: #03918a;"></i> Prénom
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="userPrenom" [(ngModel)]="usersEnfant.Prenom" required>
+                            </div>
+                        </div>
+                        <!-- Ajout des champs infos utilisateur -->
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-card-list" style="color: #03918a;"></i> Numéro de phytolicence
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="validate form-control" name="phytolicence" [(ngModel)]="userInfos.phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-card-list" style="color: #03918a;"></i> Numéro d'exploitant
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="exploitingNumber" [(ngModel)]="userInfos.exploitingNumber" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-calendar-date" style="color: #03918a;"></i> Date d'enregistrement
+                            </div>
+                            <div class="col-sm-9">
+                                {{usersEnfant.Date_De_Creation | date :'fullDate'}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations de mon exploitation -->
+                <div class="card shadow mt-4">
+                    <div class="card-header" style="background-color: #0e103c; color: white;">
+                        <h5 class="card-title mb-0">Informations de mon exploitation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-house" style="color: #03918a;"></i> Adresse
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="exploitationAddress" [(ngModel)]="exploitationInfos.exploitationAddress" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-geo-alt" style="color: #03918a;"></i> Code postal
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" name="exploitationPostalCode" [(ngModel)]="exploitationInfos.exploitationPostalCode" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-receipt" style="color: #03918a;"></i> Numéro TVA
+                            </div>
+                            <div class="col-sm-9">
+                                <input placeholder="Numéro TVA" type="text" class="validate form-control" name="vatNumber" [(ngModel)]="exploitationInfos.vatNumber" maxlength="15" (input)="onNumeroTVAInput($event)" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <i class="bi bi-building" style="color: #03918a;"></i> Nom de mon exploitation
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="exploitationName" [(ngModel)]="exploitationInfos.exploitationName" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section actions -->
+                <div class="card shadow mt-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="form-control btn-success" style="background-color: #03918a; color: white;">
+                                    <i class="bi bi-save"></i> Enregistrer les modifications
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="form-control btn-danger" style="background-color: #dc3545; color: white;" (click)="openDeleteModal()">
+                                    <i class="bi bi-trash"></i> Supprimer mon compte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+    </form>
+
+    <!-- Popup de confirmation de suppression -->
+    @if (showDeleteModal) {
+        <div class="delete-modal-overlay" (click)="closeDeleteModal()">
+            <div class="delete-modal-content" (click)="$event.stopPropagation()">
+                <div class="delete-modal-header">
+                    <h5>
+                        <i class="bi bi-exclamation-triangle"></i> Confirmation de suppression
+                    </h5>
+                    <button type="button" class="btn-close-custom" (click)="closeDeleteModal()">×</button>
+                </div>
+                <div class="delete-modal-body">
+                    <div class="alert-danger-custom">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>Attention :</strong> Cette action est irréversible !
+                    </div>
+                    <p>La suppression de votre compte entraînera la perte définitive de :</p>
+                    <ul>
+                        <li>Toutes vos données personnelles</li>
+                        <li>Vos parcelles et cultures</li>
+                        <li>Votre historique de traitements</li>
+                        <li>Votre inventaire de produits</li>
+                    </ul>
+                    <hr>
+                    <p><strong>Pour confirmer, veuillez taper exactement :</strong></p>
+                    <p class="text-center"><code>supprimer mon compte</code></p>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        [(ngModel)]="deleteConfirmText" 
+                        placeholder="Tapez 'supprimer mon compte'"
+                        [ngModelOptions]="{standalone: true}"
+                    >
+                    @if (deleteError) {
+                        <div class="alert-warning-custom">
+                            <i class="bi bi-exclamation-triangle"></i> {{ deleteError }}
+                        </div>
+                    }
+                </div>
+                <div class="delete-modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">
+                        <i class="bi bi-x-circle"></i> Annuler
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-danger" 
+                        (click)="deleteAccount()" 
+                        [disabled]="isDeleting"
+                    >
+                        @if (isDeleting) {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Suppression en cours...
+                        } @else {
+                            <i class="bi bi-trash"></i> Supprimer définitivement
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+}

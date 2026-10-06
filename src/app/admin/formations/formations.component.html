@@ -1,0 +1,156 @@
+<main class="dashboard">
+  <div class="dashboard-container">
+
+    <header class="dashboard-header">
+      <h1><i class="bi bi-calendar-event"></i> Gestion des formations</h1>
+      <p class="dashboard-subtitle">Gérez les formations affichées sur la page d'accueil</p>
+    </header>
+
+    <!-- Message de feedback -->
+    @if (message()) {
+      <div class="formation-alert" [class.formation-alert-success]="message()!.type === 'success'" [class.formation-alert-error]="message()!.type === 'error'" role="alert">
+        <i class="bi" [class.bi-check-circle-fill]="message()!.type === 'success'" [class.bi-exclamation-triangle-fill]="message()!.type === 'error'"></i>
+        {{ message()!.text }}
+      </div>
+    }
+
+    <!-- Formulaire -->
+    <section class="dashboard-card" id="formationForm">
+      <h2>
+        @if (isEditing()) {
+          <i class="bi bi-pencil-square"></i> Modifier une formation
+        } @else {
+          <i class="bi bi-plus-circle"></i> Nouvelle formation
+        }
+      </h2>
+      <form [formGroup]="formationForm" (ngSubmit)="onSubmit()">
+        <div class="formation-field-row">
+          <div class="formation-field">
+            <label for="day">Jour*</label>
+            <input type="text" id="day" class="formation-input" formControlName="day" placeholder="Ex: 25">
+          </div>
+          <div class="formation-field">
+            <label for="month">Mois*</label>
+            <input type="text" id="month" class="formation-input" formControlName="month" placeholder="Ex: Février">
+          </div>
+          <div class="formation-field formation-field-wide">
+            <label for="title">Titre*</label>
+            <input type="text" id="title" class="formation-input" formControlName="title" placeholder="Titre de la formation">
+          </div>
+        </div>
+
+        <div class="formation-field-row">
+          <div class="formation-field formation-field-wide">
+            <label for="location">Lieu*</label>
+            <input type="text" id="location" class="formation-input" formControlName="location" placeholder="Ex: 7904 Tourpes">
+          </div>
+          <div class="formation-field formation-field-wide">
+            <label for="time">Horaire*</label>
+            <input type="text" id="time" class="formation-input" formControlName="time" placeholder="Ex: 19h30 - 20h15">
+          </div>
+        </div>
+
+        <div class="formation-field-row">
+          <div class="formation-field formation-field-full">
+            <label for="link">Lien*</label>
+            <input type="text" id="link" class="formation-input" formControlName="link" placeholder="Ex: mailto:contact@example.com ou https://example.com">
+            <small class="formation-help">Le lien doit commencer par "https://" ou "mailto:"</small>
+          </div>
+        </div>
+
+        <div class="formation-actions">
+          @if (isEditing()) {
+            <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isLoading()">
+              <i class="bi bi-x-circle"></i> Annuler
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="formationForm.invalid || isLoading()">
+              @if (isLoading()) {
+                <span class="spinner-border spinner-border-sm"></span>
+              }
+              <i class="bi bi-check-circle"></i> Modifier
+            </button>
+          } @else {
+            <button type="submit" class="btn-primary" [disabled]="formationForm.invalid || isLoading()">
+              @if (isLoading()) {
+                <span class="spinner-border spinner-border-sm"></span>
+              }
+              <i class="bi bi-plus-circle"></i> Ajouter
+            </button>
+          }
+        </div>
+      </form>
+    </section>
+
+    <!-- Liste des formations -->
+    <section class="dashboard-card">
+      <h2><i class="bi bi-list-ul"></i> Formations existantes ({{ formations().length }})</h2>
+
+      @if (isLoading() && formations().length === 0) {
+        <div class="formation-loading">
+          <span class="spinner-border"></span>
+          <p>Chargement des formations...</p>
+        </div>
+      }
+
+      @if (!isLoading() && formations().length === 0) {
+        <div class="empty-state">
+          <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+          <p class="empty-state-description">Aucune formation pour le moment</p>
+        </div>
+      }
+
+      @if (formations().length > 0) {
+        <div class="formation-table-wrapper">
+          <table class="formation-table">
+            <thead>
+              <tr>
+                <th class="col-order">Ordre</th>
+                <th class="col-date">Date</th>
+                <th>Titre</th>
+                <th>Lieu</th>
+                <th>Horaire</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (formation of formations(); track $index) {
+                <tr>
+                  <td>
+                    <div class="formation-order-btns">
+                      <button type="button" class="btn-icon" (click)="onMoveUp($index)" [disabled]="isLoading() || $index === 0" title="Monter">
+                        <i class="bi bi-arrow-up"></i>
+                      </button>
+                      <button type="button" class="btn-icon" (click)="onMoveDown($index)" [disabled]="isLoading() || $index === formations().length - 1" title="Descendre">
+                        <i class="bi bi-arrow-down"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="formation-date-badge">
+                      <span class="day">{{ formation.day }}</span>
+                      <span class="month">{{ formation.month }}</span>
+                    </div>
+                  </td>
+                  <td><strong>{{ formation.title }}</strong></td>
+                  <td>{{ formation.location }}</td>
+                  <td>{{ formation.time }}</td>
+                  <td>
+                    <div class="formation-row-actions">
+                      <button type="button" class="btn-icon btn-edit" (click)="onEdit(formation, $index)" [disabled]="isLoading()" title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button type="button" class="btn-icon btn-delete" (click)="onDelete($index)" [disabled]="isLoading()" title="Supprimer">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+  </div>
+</main>

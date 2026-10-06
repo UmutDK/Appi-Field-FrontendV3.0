@@ -1,0 +1,179 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card" [class.shake]="shakeError()">
+            <h1>Création de compte</h1>
+            <p>Créez gratuitement votre compte pour bénéficier de toutes les fonctionnalités d'Appi'Field.</p>
+
+            @if (errorMessage()) {
+                <p class="error-message">{{ errorMessage() }}</p>
+            }
+
+            <form [formGroup]="form">
+                <div class="auth-grid">
+                    <div class="auth-field">
+                        <label for="prenom">Prénom<sup>*</sup></label>
+                        <input id="prenom" placeholder="Votre prénom" type="text" class="form-control" formControlName="Prenom" required
+                            [ngClass]="{'input-error': form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')}">
+                        @if (form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="nom">Nom de famille<sup>*</sup></label>
+                        <input id="nom" placeholder="Votre nom de famille" type="text" class="form-control" formControlName="Nom" required
+                            [ngClass]="{'input-error': form.get('Nom')?.touched && form.get('Nom')?.hasError('required')}">
+                        @if (form.get('Nom')?.touched && form.get('Nom')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        }
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="mail">Adresse mail<sup>*</sup></label>
+                        <input id="mail" placeholder="Votre adresse mail" type="email" class="form-control" formControlName="Mail" required
+                            [ngClass]="{'input-error': form.get('Mail')?.touched && (form.get('Mail')?.hasError('pattern') || form.get('Mail')?.hasError('required'))}">
+                        @if (form.get('Mail')?.touched && form.get('Mail')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        } @else if (form.get('Mail')?.touched && form.get('Mail')?.hasError('pattern')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Adresse mail invalide (ex. : nom&#64;exemple.be).</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="confirmationMail">Confirmez votre adresse mail<sup>*</sup></label>
+                        <input id="confirmationMail" placeholder="Confirmez votre adresse mail" type="email" class="form-control" formControlName="Confirmation_Mail" required
+                            [ngClass]="{'input-error': form.get('Confirmation_Mail')?.touched && (!emailMatch || form.get('Confirmation_Mail')?.hasError('required'))}">
+                        @if (form.get('Confirmation_Mail')?.touched && form.get('Confirmation_Mail')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        } @else if (!emailMatch && form.get('Confirmation_Mail')?.touched) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Les deux adresses mail ne correspondent pas.</p>
+                        }
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="motDePasse">Mot de passe<sup>*</sup></label>
+                        <div class="password-container">
+                            <!-- Bulle d'info conditions mot de passe -->
+                            <div *ngIf="passwordTouched" class="password-hints">
+                                <div class="password-hint">
+                                    <i class="material-icons" [style.color]="passwordHasLength ? '#28a745' : '#dc3545'">{{passwordHasLength ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 8 caractères</span>
+                                </div>
+                                <div class="password-hint">
+                                    <i class="material-icons" [style.color]="passwordHasDigit ? '#28a745' : '#dc3545'">{{passwordHasDigit ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 1 chiffre</span>
+                                </div>
+                                <div class="password-hint">
+                                    <i class="material-icons" [style.color]="passwordHasSpecial ? '#28a745' : '#dc3545'">{{passwordHasSpecial ? 'check_circle' : 'close'}}</i>
+                                    <span>Au moins 2 caractères spéciaux</span>
+                                </div>
+                            </div>
+                            <input
+                                id="motDePasse"
+                                [type]="showPassword ? 'text' : 'password'"
+                                placeholder="Votre mot de passe"
+                                class="form-control"
+                                formControlName="Mot_De_Passe"
+                                required
+                                [ngClass]="{'input-error': form.get('Mot_De_Passe')?.touched && form.get('Mot_De_Passe')?.hasError('required')}"
+                                (focus)="passwordTouched = true"
+                                (blur)="passwordTouched = false"
+                            >
+                            <i class="material-icons password-toggle" (click)="showPassword = !showPassword">
+                                {{showPassword ? 'visibility_off' : 'visibility'}}
+                            </i>
+                        </div>
+                        @if (form.get('Mot_De_Passe')?.touched && form.get('Mot_De_Passe')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="confirmationMotDePasse">Confirmez votre mot de passe<sup>*</sup></label>
+                        <div class="password-container">
+                            <input
+                                id="confirmationMotDePasse"
+                                [type]="showConfirmPassword ? 'text' : 'password'"
+                                placeholder="Confirmer votre mot de passe"
+                                class="form-control"
+                                formControlName="Confirmation_Mot_De_Passe"
+                                required
+                                [ngClass]="{'input-error': form.get('Confirmation_Mot_De_Passe')?.touched && (!passwordMatch || form.get('Confirmation_Mot_De_Passe')?.hasError('required'))}"
+                            >
+                            <i class="material-icons password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+                                {{showConfirmPassword ? 'visibility_off' : 'visibility'}}
+                            </i>
+                        </div>
+                        @if (form.get('Confirmation_Mot_De_Passe')?.touched && form.get('Confirmation_Mot_De_Passe')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        } @else if (!passwordMatch && form.get('Confirmation_Mot_De_Passe')?.touched) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Les deux mots de passe ne correspondent pas.</p>
+                        }
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="dateNaissance">Date de naissance<sup>*</sup></label>
+                        <input id="dateNaissance" type="date" class="form-control" formControlName="Date_De_Naissance" name="date" required
+                            [max]="maxBirthDate"
+                            [ngClass]="{'input-error': form.get('Date_De_Naissance')?.hasError('futureDate') || (form.get('Date_De_Naissance')?.touched && form.get('Date_De_Naissance')?.hasError('required'))}">
+                        @if (form.get('Date_De_Naissance')?.touched && form.get('Date_De_Naissance')?.hasError('required')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        } @else if (form.get('Date_De_Naissance')?.hasError('futureDate')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>La date de naissance ne peut pas être dans le futur.</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="sexe">Sexe<sup>*</sup></label>
+                        <div class="select-container">
+                            <select id="sexe" class="form-control" formControlName="Sex" required>
+                                <option value="Non spécifié">Non spécifié</option>
+                                <option value="Homme">Homme</option>
+                                <option value="Femme">Femme</option>
+                            </select>
+                            <i class="material-icons select-arrow">arrow_drop_down</i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="acceptCGU">
+                    <div class="acceptCGU-row" (click)="toggleCheckbox()">
+                        <div class="acceptCGU-box">
+                            <input
+                                type="checkbox"
+                                formControlName="AcceptCGU"
+                                id="acceptCGU"
+                                [checked]="form.get('AcceptCGU')?.value"
+                                (click)="$event.stopPropagation(); onDirectCheckboxClick()"
+                            >
+                        </div>
+                        <span class="acceptCGU-text">
+                            En me créant un compte, je consens aux
+                            <a routerLink="/cgu" target="_blank" (click)="$event.stopPropagation()">conditions générales d'utilisation d'AppiField</a><sup>*</sup>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="auth-btn auth-btn-primary" (click)="onSinscrire()" [disabled]="form.invalid || isSubmitting()">
+                        @if (isSubmitting()) {
+                            <span>Inscription en cours...</span>
+                        } @else {
+                            <span>S'inscrire</span>
+                        }
+                    </button>
+                </div>
+                @if (form.invalid && !isSubmitting()) {
+                    <p class="auth-hint">
+                        @if (!form.get('AcceptCGU')?.value) {
+                            Complétez les champs obligatoires (*) et acceptez les conditions générales pour vous inscrire.
+                        } @else {
+                            Complétez correctement les champs obligatoires (*) pour vous inscrire.
+                        }
+                    </p>
+                }
+            </form>
+
+            <p class="auth-switch">
+                Déjà un compte ?
+                <button type="button" class="auth-link" (click)="onAnnuler()">Se connecter</button>
+            </p>
+        </section>
+    </div>
+</main>

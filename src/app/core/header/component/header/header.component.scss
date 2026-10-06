@@ -1,0 +1,829 @@
+// =============================================
+// SIDEBAR (DESKTOP ≥993px)
+// =============================================
+$sidebar-width: 232px;
+$sidebar-width-collapsed: 76px;
+$sidebar-bg: linear-gradient(165deg, #14174f 0%, #0e103c 55%, #0a0b2e 100%);
+$sidebar-accent: #05b1af;
+
+.sidebar {
+    display: none;
+
+    @media (min-width: 993px) {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: $sidebar-width;
+        background: $sidebar-bg;
+        flex-direction: column;
+        padding: 20px 14px;
+        transition: width 0.25s ease;
+        z-index: 500;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-shadow: 1px 0 0 rgba(5, 177, 175, 0.15);
+
+        &.collapsed {
+            width: $sidebar-width-collapsed;
+
+            .sidebar-logo,
+            .sidebar-link-label,
+            .sidebar-admin-chevron,
+            .sidebar-user-info,
+            .workspace-btn-label,
+            .workspace-chevron,
+            .sidebar-workspace {
+                display: none;
+            }
+
+            .sidebar-top {
+                justify-content: center;
+            }
+
+            .sidebar-link,
+            .sidebar-user {
+                justify-content: center;
+                padding: 11px 0;
+            }
+
+            .sidebar-link.active::after {
+                right: 8px;
+            }
+
+            // Sidebar repliée : trop étroite pour deux boutons côte à côte — la déconnexion
+            // passe sous l'avatar (empilés verticalement, centrés).
+            .sidebar-user-row {
+                flex-direction: column;
+                gap: 8px;
+
+                .sidebar-user {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.sidebar-logo-img {
+    height: 70px;
+    width: auto;
+}
+
+.sidebar-collapse-btn {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.85rem;
+
+    &:hover {
+        background: rgba(5, 177, 175, 0.25);
+    }
+}
+
+// ─── Sélecteur de workspace (mandats) ────────────────────────────────────────
+// Réutilise les classes .workspace-* (logique déjà gérée dans le composant), stylées ici
+// pour s'intégrer en pleine largeur dans la colonne étroite de la sidebar plutôt qu'en
+// pilule flottante dans une barre horizontale.
+.sidebar-workspace {
+    padding: 0 2px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.workspace-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.workspace-btn {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+
+    .workspace-btn-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.12);
+    }
+}
+
+.workspace-dropdown.open .workspace-chevron {
+    transform: rotate(180deg);
+}
+
+.workspace-chevron {
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+// Panneau statique sous le bouton (pas d'overlay flottant) : plus sûr dans une colonne étroite.
+.workspace-dropdown-menu {
+    margin-top: 6px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 0.3rem;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.workspace-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &.active {
+        color: $sidebar-accent;
+        font-weight: 600;
+        background-color: rgba(5, 177, 175, 0.12);
+    }
+}
+
+.workspace-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+}
+
+.spinner-workspace {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin-workspace 0.7s linear infinite;
+}
+
+@keyframes spin-workspace {
+    to { transform: rotate(360deg); }
+}
+
+// ─── Navigation principale ────────────────────────────────────────────────────
+// Materialize (chargé globalement dans l'app) impose background/height/line-height à tout
+// élément <nav> nu (voir plus bas, même correctif déjà appliqué à .mobile-nav-links) — sans ça,
+// <nav class="sidebar-nav"> hérite du corail #ee6e73 par défaut de Materialize.
+nav.sidebar-nav {
+    background-color: transparent !important;
+    height: auto !important;
+    line-height: normal !important;
+    width: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+    position: relative;
+
+    .sidebar-link-icon {
+        font-size: 1.1rem;
+        width: 20px;
+        flex-shrink: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+        transition: color 0.15s ease;
+    }
+
+    .sidebar-link-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+
+        .sidebar-link-icon { color: rgba(255, 255, 255, 0.85); }
+    }
+
+    &.active {
+        background: rgba(5, 177, 175, 0.16);
+        color: #ffffff;
+        font-weight: 600;
+
+        .sidebar-link-icon { color: $sidebar-accent; }
+
+        &::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: $sidebar-accent;
+        }
+    }
+}
+
+// ─── Bas de sidebar : FAQ + profil utilisateur ───────────────────────────────
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+
+    // Libellés longs ("Conditions générales d'utilisation") : retour à la ligne plutôt que "…"
+    .sidebar-link-label {
+        white-space: normal;
+        line-height: 1.25;
+    }
+}
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none; // <a> (lien vers Mon compte) quand connecté, <button> sinon
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+}
+
+// =============================================
+// BOUTON ADMIN + sous-menu à droite (survol / clic)
+// =============================================
+.sidebar-admin {
+    position: relative;
+}
+
+// <button> avec l'apparence d'un .sidebar-link
+.sidebar-admin-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+
+    .sidebar-admin-chevron {
+        margin-left: auto;
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+}
+
+// Position `fixed` (coordonnées calculées en TS) : la sidebar a overflow-x:hidden, un menu en
+// `absolute` serait coupé à son bord droit. Le padding-left sert de "pont" invisible entre le
+// bouton et le menu, pour que le survol ne se perde pas en passant de l'un à l'autre.
+.sidebar-admin-menu {
+    position: fixed;
+    z-index: 1200;
+    padding-left: 10px;
+    animation: adminMenuIn 0.15s ease;
+}
+
+.sidebar-admin-menu-inner {
+    min-width: 280px;
+    padding: 8px;
+    background: $sidebar-bg;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-admin-menu-title {
+    padding: 6px 12px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.sidebar-admin-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    i {
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(255, 255, 255, 0.07);
+        color: #ffffff;
+        outline: none;
+
+        i { color: $sidebar-accent; }
+    }
+
+    &.active {
+        background: rgba(5, 177, 175, 0.16);
+        color: #ffffff;
+
+        i { color: $sidebar-accent; }
+    }
+}
+
+@keyframes adminMenuIn {
+    from { opacity: 0; transform: translateX(-4px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+// Ligne utilisateur connecté : bouton compte (ouvre le menu) + bouton déconnexion à droite
+.sidebar-user-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+
+    .sidebar-user {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-top: 0;
+    }
+}
+
+.sidebar-logout-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: rgba(232, 56, 79, 0.12);
+    border: none;
+    border-radius: 10px;
+    color: #f0556a;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    i { font-size: 1.1rem; }
+
+    &:hover {
+        background: #e8384f;
+        color: #ffffff;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba(232, 56, 79, 0.5);
+        outline-offset: 2px;
+    }
+}
+
+.sidebar-user-avatar {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(5, 177, 175, 0.2);
+    color: $sidebar-accent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    align-items: flex-start;
+}
+
+.sidebar-user-name {
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.sidebar-user-role {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.72rem;
+}
+
+// =============================================
+// BARRE MOBILE/TABLETTE (<993px) — remplace la sidebar
+// =============================================
+.mobile-topbar {
+    display: none;
+
+    @media (max-width: 992px) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 500;
+        padding: 0.6rem 1rem;
+        background: linear-gradient(180deg, rgba(20, 23, 82, 0.92), rgba(14, 16, 60, 0.88));
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        box-shadow:
+            0 1px 0 rgba(5, 177, 175, 0.35),
+            0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+}
+
+.mobile-topbar-logo-img {
+    height: 44px;
+    width: auto;
+}
+
+.mobile-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-mobile-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none; // l'icône "Mon compte" est un <a>
+    transition: background-color 0.2s ease, transform 0.15s ease;
+
+    i { font-size: 1.5rem; }
+
+    &:hover {
+        background-color: rgba(5, 177, 175, 0.25);
+    }
+
+    &:active {
+        transform: scale(0.92);
+    }
+}
+
+// Sélecteur d'exploitation (mandats) affiché dans l'offcanvas de navigation mobile.
+.mobile-workspace-select {
+    margin-bottom: 1.2rem;
+
+    .usermenu-section-label {
+        margin-bottom: 8px;
+    }
+
+    .workspace-loading {
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+}
+
+// =============================================
+// OFFCANVAS STYLES
+// =============================================
+.dropdown-item {
+    margin-bottom: 5px;
+}
+
+.text-bg-dark {
+    background-color: #0e103c94 !important;
+}
+
+
+// Menu mobile navigation — même langage visuel que le header flat mobile/tablette (dégradé
+// navy, liseré teal) plutôt qu'un aplat uni et une simple liste de liens soulignés.
+.mobile-nav-offcanvas {
+    background: linear-gradient(165deg, #14174f 0%, #0e103c 55%, #0a0b2e 100%);
+
+    .offcanvas-header {
+        padding: 1.4rem 1.5rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 1px 0 rgba(5, 177, 175, 0.3);
+
+        .offcanvas-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .offcanvas-logo {
+            height: 32px;
+            width: auto;
+        }
+
+        .offcanvas-title {
+            color: #ffffff;
+            font-weight: 700;
+            font-family: "Panton", sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .offcanvas-body {
+        background-color: transparent;
+        padding: 1.2rem 1rem;
+    }
+}
+
+// Liste sobre à séparateurs (pas de cartes/pastilles individuelles par ligne) : icône alignée
+// en colonne fixe, libellé, liseré teal à gauche au survol/actif plutôt qu'un fond plein.
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+
+    .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        flex-shrink: 0;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 0.9rem 0.3rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-left: 2px solid transparent;
+        transition: color 0.15s ease, border-left-color 0.15s ease, padding-left 0.15s ease;
+        font-size: 1rem;
+        font-weight: 400;
+
+        .mobile-nav-icon {
+            flex-shrink: 0;
+            width: 1.3rem;
+            text-align: center;
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.15s ease;
+        }
+
+        .mobile-nav-label {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &:hover {
+            color: #ffffff;
+            padding-left: 0.6rem;
+
+            .mobile-nav-icon {
+                color: rgba(255, 255, 255, 0.85);
+            }
+        }
+
+        &.active {
+            color: #ffffff;
+            font-weight: 600;
+            border-left-color: #05b1af;
+            padding-left: 0.9rem;
+
+            .mobile-nav-icon {
+                color: #05b1af;
+            }
+        }
+    }
+}
+// Materialize (chargé globalement dans l'app) impose height:56px/line-height:56px à tout
+// élément <nav> nu (pensé pour sa propre navbar) — sans ce correctif, un <nav> avec plusieurs
+// lignes de contenu ne réserve que 56px dans le flux du parent alors que son contenu déborde
+// visuellement en dessous (overflow visible par défaut), chevauchant le bloc suivant.
+nav.mobile-nav-links{
+    background-color: transparent !important;
+    height: auto !important;
+    line-height: normal !important;
+    overflow: visible !important;
+}
+
+// Tablette : menu de navigation mobile encore plus généreux (icônes/texte/touch targets).
+@media (min-width: 576px) and (max-width: 992px) {
+    .mobile-nav-offcanvas {
+        .offcanvas-header {
+            padding: 1.8rem 2rem 1.5rem;
+        }
+
+        .offcanvas-logo {
+            height: 42px;
+        }
+
+        .offcanvas-title {
+            font-size: 1.5rem;
+        }
+
+        .offcanvas-body {
+            padding: 1.6rem 1.5rem;
+        }
+    }
+
+    .mobile-nav-links .mobile-nav-link {
+        padding: 1.3rem 0.5rem;
+        font-size: 1.3rem;
+        gap: 1.1rem;
+
+        .mobile-nav-icon {
+            width: 1.7rem;
+            font-size: 1.35rem;
+        }
+
+        &:hover, &.active {
+            padding-left: 1rem;
+        }
+    }
+}
+
+// Libellé de section (utilisé par le sélecteur d'exploitation du menu mobile)
+.usermenu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.usermenu-section-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.45);
+    padding: 0 0.2rem;
+}
+
+// "Déconnexion" dans le menu mobile : <button> avec l'apparence d'un .mobile-nav-link, en rouge
+.usermenu-link-danger {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    color: rgba(255, 138, 147, 0.85);
+
+    .mobile-nav-icon {
+        color: rgba(255, 138, 147, 0.6);
+    }
+
+    &:hover {
+        color: #ff8a93;
+
+        .mobile-nav-icon {
+            color: #ff8a93;
+        }
+    }
+
+    &.active, &:active {
+        border-left-color: #dc3545;
+
+        .mobile-nav-icon {
+            color: #dc3545;
+        }
+    }
+}
+
+// Tablette : libellé de section agrandi, même échelle que .mobile-nav-links ci-dessus.
+@media (min-width: 576px) and (max-width: 992px) {
+    .usermenu-section-label {
+        font-size: 0.95rem;
+    }
+}
+
+// Backdrop avec effet de flou pour le menu offcanvas
+.offcanvas-backdrop {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.offcanvas.show ~ .offcanvas-backdrop {
+    opacity: 1;
+}
+
+// Effet de flou sur le contenu principal quand le menu est ouvert
+body.menu-opened {
+    .sidebar,
+    .mobile-topbar,
+    router-outlet,
+    main,
+    .container:not(.offcanvas .container) {
+        filter: blur(3px);
+        transition: filter 0.3s ease;
+    }
+}
+
+body:not(.menu-opened) {
+    .sidebar,
+    .mobile-topbar,
+    router-outlet,
+    main,
+    .container:not(.offcanvas .container) {
+        filter: none;
+        transition: filter 0.3s ease;
+    }
+}

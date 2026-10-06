@@ -1,0 +1,264 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+
+        <header class="dashboard-header">
+            <h1>Bienvenue, {{nom}} !</h1>
+            <p class="dashboard-subtitle">Votre tableau de bord exploitation — {{ today | date:'d MMMM y' }}</p>
+        </header>
+
+        <!-- Tuiles stats -->
+        <section class="stats-row">
+            <div class="stat-tile stat-tile-teal">
+                <span class="stat-label">Parcelles actives</span>
+                @if (stats.parcellesActives === null) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ stats.parcellesActives }}</span>
+                    <span class="stat-sub">{{ stats.parcellesHaTotal | number:'1.0-1' }} ha total</span>
+                }
+            </div>
+            <div class="stat-tile stat-tile-purple">
+                <span class="stat-label">Cultures en cours</span>
+                @if (stats.culturesEnCours === null) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ stats.culturesEnCours }}</span>
+                    <span class="stat-sub">{{ stats.cultureUniqueName || (stats.culturesEnCours + ' culture' + (stats.culturesEnCours > 1 ? 's' : '')) }}</span>
+                }
+            </div>
+            <div class="stat-tile stat-tile-lime">
+                <span class="stat-label">Interventions ce mois</span>
+                @if (stats.interventionsCeMois === null) {
+                    <span class="stat-value stat-loading">—</span>
+                } @else {
+                    <span class="stat-value">{{ stats.interventionsCeMois }}</span>
+                    @if (stats.derniereInterventionDate) {
+                        <span class="stat-sub">Dernière : {{ stats.derniereInterventionDate | date:'dd/MM/yyyy' }}</span>
+                    } @else {
+                        <span class="stat-sub">Aucune ce mois-ci</span>
+                    }
+                }
+            </div>
+        </section>
+
+        <!-- Accès rapide + carte -->
+        <section class="dashboard-main-grid">
+            <div class="dashboard-col-left">
+                <h2 class="dashboard-section-label">Accès rapide</h2>
+
+                <a routerLink="/registre" class="quick-access-card">
+                    <span class="quick-access-icon"><i class="bi bi-journal-text"></i></span>
+                    <span class="quick-access-body">
+                        <span class="quick-access-title">Gérer mon carnet de champ</span>
+                        <span class="quick-access-desc">Encodage de vos traitements phytos, sauvegarde de vos observations, export de documents conformes légalement.</span>
+                    </span>
+                    <i class="bi bi-chevron-right quick-access-chevron"></i>
+                </a>
+
+                <a routerLink="/inventaire" class="quick-access-card">
+                    <span class="quick-access-icon"><i class="bi bi-box-seam"></i></span>
+                    <span class="quick-access-body">
+                        <span class="quick-access-title">Mon local phyto numérique</span>
+                        <span class="quick-access-desc">Suivez votre stock de produits phytos, encodez vos PPNU et vos PPNV.</span>
+                    </span>
+                    <i class="bi bi-chevron-right quick-access-chevron"></i>
+                </a>
+
+                <a routerLink="/parcelles" class="quick-access-card">
+                    <span class="quick-access-icon"><i class="bi bi-geo-alt"></i></span>
+                    <span class="quick-access-body">
+                        <span class="quick-access-title">Organiser mes parcelles</span>
+                        <span class="quick-access-desc">Visualisez, gérez et importez vos parcelles agricoles avec localisation GPS.</span>
+                    </span>
+                    <i class="bi bi-chevron-right quick-access-chevron"></i>
+                </a>
+
+                <!-- <div> et non <nav> : Materialize stylise globalement tout <nav> (fond rouge, hauteur 64px) -->
+                <div class="quick-links" role="navigation" aria-label="Raccourcis de la page">
+                    <a routerLink="/faq" class="quick-link">
+                        <i class="bi bi-question-circle"></i> Besoin d'aide
+                    </a>
+                    <a [routerLink]="[]" fragment="equipe-section" (click)="scrollToSection('equipe-section')" class="quick-link">
+                        <i class="bi bi-people"></i> Mon équipe
+                    </a>
+                    <a [routerLink]="[]" fragment="formations-section" (click)="scrollToSection('formations-section')" class="quick-link">
+                        <i class="bi bi-mortarboard"></i> Espace formation
+                    </a>
+                    <a [routerLink]="[]" fragment="actualites-section" (click)="scrollToSection('actualites-section')" class="quick-link">
+                        <i class="bi bi-newspaper"></i> Actualités
+                    </a>
+                </div>
+            </div>
+
+            <div class="dashboard-col-right">
+                <h2 class="dashboard-section-label">Ma carte parcellaire</h2>
+                <div class="map-card">
+                    <div id="map" #mapContainer></div>
+                </div>
+                <a routerLink="/parcelles" class="btn-view-all-parcels">
+                    Voir toutes mes parcelles <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Mon équipe -->
+        <section id="equipe-section" class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div class="dashboard-card-header-text">
+                    <h2>Mon équipe</h2>
+                    <p>Gérez les opérateurs-ices travaillant sur votre exploitation :</p>
+                </div>
+                <button class="btn-add-operateur" (click)="openOperateurForm()">
+                    <i class="bi bi-plus-lg"></i> Nouvel opérateur
+                </button>
+            </div>
+
+            <div class="equipe-section">
+                <div class="operateurs-grid">
+                    @for (op of operateurs; track op.operatorId) {
+                        <div class="operateur-card">
+                            <div class="operateur-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="operateur-info">
+                                <span class="operateur-nom" [title]="op.operatorName">{{ op.operatorName }}</span>
+                                <span class="operateur-phyto">
+                                    <i class="bi bi-hash"></i>{{ op.operatorPhytolicence || '—' }}
+                                </span>
+                            </div>
+                            <div class="operateur-actions">
+                                <button class="btn-icon btn-edit" (click)="editOperateur(op)" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-icon btn-delete" (click)="deleteOperateur(op)" title="Supprimer">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    @empty {
+                        <p class="equipe-empty">Aucun opérateur enregistré.</p>
+                    }
+                </div>
+            </div>
+
+            @if (showOperateurForm) {
+                <div class="popup-overlay" (click)="closeOperateurForm()">
+                    <div class="modal-operateur popup-container" (click)="$event.stopPropagation()">
+                        <div class="popup-header">
+                            <div class="header-title">
+                                <i class="bi bi-person-badge"></i>
+                                <h4>{{ editingOperateur ? 'Modifier l\'opérateur' : 'Nouvel opérateur' }}</h4>
+                            </div>
+                            <button class="btn-close-popup" (click)="closeOperateurForm()">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="popup-body">
+                            <div class="form-group">
+                                <label for="backofficeOperateurName">Nom et prénom*</label>
+                                <input
+                                    id="backofficeOperateurName"
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    [(ngModel)]="operateurForm.name"
+                                    placeholder="Ex : Dupont Marie"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="backofficeOperateurPhytolicence">Numéro de phytolicence</label>
+                                <input
+                                    id="backofficeOperateurPhytolicence"
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    [(ngModel)]="operateurForm.phytolicence"
+                                    placeholder="Ex : 23.2.00445"
+                                    (input)="onPhytolicenceInput($event)"
+                                />
+                            </div>
+                            @if (operateurError) {
+                                <p class="form-error">{{ operateurError }}</p>
+                            }
+                        </div>
+                        <div class="popup-footer">
+                            <button class="btn-secondary" (click)="closeOperateurForm()">Annuler</button>
+                            <button
+                                class="btn-primary"
+                                (click)="saveOperateur()"
+                                [disabled]="operateurSaving"
+                            >
+                                @if (operateurSaving) {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                {{ editingOperateur ? 'Mettre à jour' : 'Enregistrer' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </section>
+
+        <!-- Espace formation (slider complet) -->
+        <section id="formations-section" class="dashboard-card">
+            <h2>Espace formation</h2>
+            <p>Retrouvez ici la liste de toutes les prochaines formations Appi'Field :</p>
+
+            <div class="formations-slider">
+                <div class="slider-nav" [style.display]="needsSlider ? 'flex' : 'none'">
+                    <button class="nav-btn prev-btn" (click)="prevSlide()" [disabled]="currentSlideIndex <= 0">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn next-btn" (click)="nextSlide()" [disabled]="currentSlideIndex >= maxSlideIndex">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="formations-viewport">
+                    <div class="formations-container" [style.transform]="sliderTransform">
+                        @for (formation of formations; track $index) {
+                            <div class="formation-card">
+                                <!-- Formation sans date (rediffusion, à la demande) : jour "📅" — enregistré "????" quand la
+                                     base ne gère pas les émojis — ou vide → libellé explicite au lieu du texte brut. -->
+                                @let sansDate = formation.day === '📅' || formation.day === '????' || !(formation.day || '').trim();
+                                <div class="formation-date" [class.formation-date--sans-date]="sansDate" [style.background-color]="sansDate ? 'rgb(88, 88, 88)' : ''">
+                                    @if (sansDate) {
+                                        <div class="date-info">
+                                            <i class="bi bi-calendar2-x day"></i>
+                                            <span class="month">Sans date fixe</span>
+                                        </div>
+                                    } @else {
+                                        <div class="date-info">
+                                            <span class="day">{{ formation.day }}</span>
+                                            @if (formation.month) {
+                                                <span class="month">{{ formation.month }}</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="formation-content">
+                                    <h3>{{ formation.title }}</h3>
+                                    @if (formation.location) {
+                                        <p class="location"><i class="bi bi-geo-alt"></i>{{ formation.location }}</p>
+                                    }
+                                    @if (formation.time) {
+                                        <p class="time"><i class="bi bi-clock"></i>{{ formation.time }}</p>
+                                    }
+                                    @if (formation.link) {
+                                        <a [href]="formation.link" target="_blank" rel="noopener noreferrer">
+                                            <button class="btn-inscrire">Informations</button>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Actualités -->
+        <section id="actualites-section" class="dashboard-card dashboard-card-flush">
+            <app-liste-actualites></app-liste-actualites>
+        </section>
+
+    </div>
+</main>

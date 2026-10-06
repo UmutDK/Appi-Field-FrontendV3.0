@@ -1,0 +1,303 @@
+// Le chrome partagé (overlay, header, close, dropdowns, footer, format-choice...) vit
+// désormais dans src/styles/_popup-system.scss (classes globales) — ce fichier ne garde
+// que ce qui est spécifique à cette popup : grille de filtres, états vides/chargement,
+// puces de filtres actifs.
+
+// Loading
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  gap: 12px;
+  color: #6c757d;
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e9ecef;
+    border-top-color: #05b1af;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+// No Data State
+.no-data-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #6c757d;
+
+  i {
+    font-size: 3.5rem;
+    color: #ced4da;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0 0 8px 0;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 4px 0;
+    line-height: 1.5;
+  }
+
+  .help-text {
+    font-size: 0.875rem;
+    color: #adb5bd;
+    margin-top: 8px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Filters Grid
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  overflow: visible;
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.filter-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+}
+
+.filter-block {
+  margin-bottom: 8px;
+}
+
+// Format Section
+.format-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+// Active Filters
+.active-filters {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 10px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #495057;
+
+  &.status {
+    background: rgba(#05b1af, 0.1);
+    color: #05b1af;
+  }
+
+  button {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: #adb5bd;
+    display: flex;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #dee2e6;
+      color: #343a40;
+    }
+
+    i {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  color: #05b1af;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: auto;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+// =============================================================================
+// REFONTE V2 — POPUP "EXPORTER" (sous-étape 6 du Carnet de champ)
+// Même rendu que les autres popups du carnet : titre bleu nuit, libellés normaux, champs 44px,
+// choix actif en sarcelle. Bouton "Exporter" sarcelle aussi en PDF (le rouge est réservé aux
+// suppressions). Surcharges limitées à cette popup (:host), le système global n'est pas modifié.
+// =============================================================================
+:host {
+  .popup-header .header-title {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    color: #12103c;
+  }
+
+  .filter-title {
+    font-family: "Panton", sans-serif;
+    font-weight: 600;
+    color: #12103c;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .dropdown-btn {
+    border-color: #dee2e6;
+    color: #12103c;
+
+    &:hover { border-color: #adb5bd; }
+  }
+
+  .dropdown-container.open .dropdown-btn {
+    border-color: #05b1af;
+    box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+  }
+
+  .dropdown-panel {
+    border: 1px solid #edf0f3;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(18, 16, 60, 0.14);
+  }
+
+  .dropdown-header .link-btn { color: #03918a; font-weight: 600; }
+
+  // Une seule case par ligne : la case native (sarcelle) ; la fausse case que Materialize dessine
+  // sur le <span> suivant (::before / ::after) est retirée — sinon deux cases s'affichaient.
+  .checkbox-item {
+    input[type="checkbox"] {
+      position: static;
+      opacity: 1;
+      pointer-events: auto;
+      accent-color: #05b1af;
+    }
+
+    input[type="checkbox"] + span {
+      padding-left: 0;
+      height: auto;
+      line-height: normal;
+
+      &::before,
+      &::after { display: none !important; }
+    }
+
+    .label-text { color: #12103c; }
+
+    &:hover { background: #f8fbfb; }
+  }
+
+  .segmented-control {
+    background: #f1f3f5;
+    border-radius: 10px;
+
+    .segment {
+      font-family: "Panton", sans-serif;
+      color: #6b7280;
+      border-radius: 8px;
+
+      &.active {
+        background: #ffffff;
+        color: #03918a;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .format-choice .format-btn {
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    background: #ffffff;
+
+    i { color: #6b7280; }
+    .format-label { color: #12103c; font-family: "Panton", sans-serif; }
+    .format-desc { color: #6b7280; }
+
+    &:hover { border-color: #05b1af; background: #ffffff; }
+
+    &.active {
+      border-color: #05b1af;
+      background: #f0faf9;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+
+      i, .format-label { color: #03918a; }
+    }
+  }
+
+  .format-section,
+  .active-filters { border-top-color: #edf0f3; }
+
+  .filter-chip {
+    background: #e3f6f3;
+    color: #03918a;
+    font-weight: 600;
+
+    &.status { background: #e3f6f3; color: #03918a; }
+
+    button {
+      color: #03918a;
+
+      &:hover { background: #c9ece7; color: #12103c; }
+    }
+  }
+
+  .clear-all { color: #03918a; font-weight: 600; }
+
+  .no-data-state h3 { font-family: "Panton", sans-serif; color: #12103c; }
+
+  // "Exporter" : sarcelle en Excel comme en PDF
+  .popup-footer .btn-primary.danger {
+    background: #05b1af;
+
+    &:hover:not(:disabled) { background: #03918a; }
+  }
+}
+
+@media (min-width: 993px) {
+  :host {
+    .popup-header .header-title { font-size: 1.5rem; }
+    .filter-title { font-size: 0.9rem; margin-bottom: 6px; }
+    .dropdown-btn { min-height: 44px; height: 44px; padding: 0 12px; }
+    .segmented-control .segment { min-height: 38px; font-size: 0.85rem; }
+    .format-choice .format-btn { min-height: 52px; height: auto; }
+  }
+}

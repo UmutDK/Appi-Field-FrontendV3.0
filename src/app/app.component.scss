@@ -1,0 +1,36 @@
+// app-root est la colonne flex principale (100% wide)
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Wrapper du contenu (limité en largeur sur laptop via styles.scss) — décalé à droite de la
+// sidebar fixe sur desktop (largeur pilotée par --sidebar-width, mise à jour par HeaderComponent
+// au repli/dépli), et sous la barre mobile fixe en dessous de 993px.
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  @media (min-width: 993px) {
+    margin-left: var(--sidebar-width, 232px);
+    transition: margin-left 0.25s ease;
+  }
+
+  @media (max-width: 992px) {
+    padding-top: 64px; // espace pour .mobile-topbar fixed
+  }
+}
+
+// Le contenu principal prend tout l'espace disponible
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-container {
+  flex: 1;
+}

@@ -1,0 +1,81 @@
+// Tokens de grille — 5 paliers (voir normesResponsive.md à la racine du projet).
+// Même pattern que _typography-tokens.scss/_button-tokens.scss : variables Sass + custom
+// properties CSS (--grid-columns/--grid-margin/--grid-gutter), qui changent de valeur à chaque
+// palier via des @media sur :root.
+//
+// RÉFÉRENCE UNIQUEMENT — voir le plan "Application des normes responsive" : ces tokens ne sont
+// PAS appliqués aux 300+ usages existants de la grille Bootstrap (.col-*/.row, chargée en CSS
+// déjà compilé, pas en source Sass) et ne migrent pas la méthode d'import Bootstrap. Ils servent
+// de référence documentée pour les futurs écrans, pas d'une nouvelle grille active.
+//
+// Contrairement à la typographie (3 paliers réels) et aux boutons (4), les 5 lignes du tableau
+// normesResponsive.md sont ici toutes distinctes (colonnes 4/8/12/12/12, mais marge/gouttière
+// différentes à chaque palier) — 5 paliers réels.
+
+$bp-grid-sm: 576px;  // début tablette (sm/md)
+$bp-grid-lg: 992px;  // début PC (lg)
+$bp-grid-xl: 1200px; // début PC large (xl)
+$bp-grid-xxl: 1400px; // début grand écran (xxl)
+
+// xs : 0–575,99 (smartphone)
+$grid-columns-xs: 4;
+$grid-margin-xs: 16px;
+$grid-gutter-xs: 16px;
+
+// sm/md : 576–991,99 (tablette)
+$grid-columns-sm: 8;
+$grid-margin-sm: 24px;
+$grid-gutter-sm: 24px;
+
+// lg : 992–1199,99 (PC)
+$grid-columns-lg: 12;
+$grid-margin-lg: 32px;
+$grid-gutter-lg: 24px;
+
+// xl : 1200–1399,99 (PC large)
+$grid-columns-xl: 12;
+$grid-margin-xl: 32px;
+$grid-gutter-xl: 32px;
+
+// xxl : >=1400 (grand écran) — marge extérieure 40px ou container max-width, voir normesResponsive.md
+$grid-columns-xxl: 12;
+$grid-margin-xxl: 40px;
+$grid-gutter-xxl: 32px;
+
+:root {
+  --grid-columns: #{$grid-columns-xs};
+  --grid-margin: #{$grid-margin-xs};
+  --grid-gutter: #{$grid-gutter-xs};
+}
+
+@media (min-width: #{$bp-grid-sm}) {
+  :root {
+    --grid-columns: #{$grid-columns-sm};
+    --grid-margin: #{$grid-margin-sm};
+    --grid-gutter: #{$grid-gutter-sm};
+  }
+}
+
+@media (min-width: #{$bp-grid-lg}) {
+  :root {
+    --grid-columns: #{$grid-columns-lg};
+    --grid-margin: #{$grid-margin-lg};
+    --grid-gutter: #{$grid-gutter-lg};
+  }
+}
+
+@media (min-width: #{$bp-grid-xl}) {
+  :root {
+    --grid-columns: #{$grid-columns-xl};
+    --grid-margin: #{$grid-margin-xl};
+    --grid-gutter: #{$grid-gutter-xl};
+  }
+}
+
+@media (min-width: #{$bp-grid-xxl}) {
+  :root {
+    --grid-columns: #{$grid-columns-xxl};
+    --grid-margin: #{$grid-margin-xxl};
+    --grid-gutter: #{$grid-gutter-xxl};
+  }
+}

@@ -1,0 +1,39 @@
+﻿@use 'popup-tokens' as *;
+
+// Scrollbar verticale teal unifiée (reprend le style de traitement-phyto).
+@mixin popup-scrollbar(
+  $thumb: $popup-scrollbar-thumb,
+  $thumb-hover: $popup-scrollbar-thumb-hover,
+  $track: transparent,
+  $width: 6px
+) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 3px;
+
+    &:hover {
+      background: $thumb-hover;
+    }
+  }
+}
+
+// Popup plein écran sur mobile, avec footer toujours accessible (voir .popup-footer
+// dans _popup-system.scss pour le position:sticky correspondant).
+@mixin popup-mobile-fullscreen($breakpoint: 992px) {
+  @media (max-width: $breakpoint) {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+}

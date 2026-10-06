@@ -1,0 +1,2011 @@
+﻿@use '../../../../styles/popup-mixins' as *;
+@use '../../../../styles/add-menu' as *;
+
+// =============================================
+// EN-TÊTE DU PANNEAU : titre "Ma carte" + bouton "Ajouter une parcelle ▾" en haut à droite
+// =============================================
+.panel-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+// Desktop uniquement : sur tablette/mobile, le footer d'actions (.fab-mobile) prend le relais.
+@media (max-width: 992px) {
+    .add-menu-desktop {
+        display: none !important;
+    }
+}
+
+// Le panneau est collé au bord gauche de l'écran et le bouton passe souvent sous le titre :
+// la liste s'ouvre donc vers la droite (alignée sur le bord gauche du bouton) au lieu de
+// s'aligner à droite et de déborder hors de l'écran.
+.add-menu-desktop .add-menu-list {
+    left: 0;
+    right: auto;
+}
+
+// La règle `.parcelles i { color:#03918a; font-size:small }` (plus bas, héritée) colore toutes
+// les icônes du panneau en teal : sur le bouton teal, "+" et la flèche devenaient invisibles.
+.parcelles .add-menu-desktop {
+    .add-menu-btn i {
+        color: #ffffff;
+        font-size: 1rem;
+    }
+
+    .add-menu-btn .add-menu-chevron {
+        font-size: 0.8rem;
+    }
+
+    .add-menu-icon i {
+        color: #03918a;
+        font-size: 1.05rem;
+    }
+
+    .add-menu-item--danger .add-menu-icon i {
+        color: #dc3545;
+    }
+}
+
+// Retour à la liste : action neutre (le rouge est réservé aux actions destructives)
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: #ffffff;
+    color: #12103c;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    font-family: "Panton", sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    i { font-size: 1rem; }
+
+    &:hover {
+        border-color: #05b1af;
+        color: #03918a;
+    }
+}
+
+// Overlay de dessin polygone sur la carte
+.polygon-drawing-overlay {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 90%;
+    flex-wrap: wrap;
+
+    .drawing-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        color: #333;
+
+        i { color: #03918a; font-size: 1.1rem; }
+
+        .point-count {
+            font-weight: 700;
+            color: #03918a;
+        }
+
+        .drawing-hint {
+            color: #666;
+            font-size: 0.82rem;
+        }
+    }
+
+    .drawing-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+}
+
+    // Uniformiser la taille de police sur tous les input, select, textarea et leur placeholder dans le composant
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input:not([type]),
+    select,
+    textarea {
+        font-size: 16px !important;
+        font-family: "Panton", sans-serif;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder,
+    input[type="date"]::placeholder,
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder,
+    input[type="search"]::placeholder,
+    input:not([type])::placeholder,
+    textarea::placeholder {
+        font-size: 16px !important;
+        font-family: "Panton", sans-serif;
+    }
+
+    // Tablette/smartphone : le bloc ci-dessus fixe 16px !important à TOUTE taille d'écran (champ
+    // ET placeholder), ce qui empêchait silencieusement tout agrandissement tablette/smartphone.
+    // Mêmes paliers que travail-au-champ.component.scss (même base 16px) pour une taille
+    // cohérente sur toute l'application.
+    @media (min-width: 576px) and (max-width: 992px) {
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        input[type="password"],
+        input[type="search"],
+        input:not([type]),
+        select,
+        textarea {
+            font-size: 26px !important;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        input[type="date"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="search"]::placeholder,
+        input:not([type])::placeholder,
+        textarea::placeholder {
+            font-size: 26px !important;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        input[type="password"],
+        input[type="search"],
+        input:not([type]),
+        select,
+        textarea {
+            font-size: 19px !important;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        input[type="date"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="search"]::placeholder,
+        input:not([type])::placeholder,
+        textarea::placeholder {
+            font-size: 19px !important;
+        }
+    }
+// Afficher le bouton Ajouter uniquement sur desktop
+@media (max-width: 992px) {
+    .d-desktop {
+        display: none !important;
+    }
+}
+@media (min-width: 993px) {
+    .d-desktop {
+        display: inline-flex !important;
+    }
+}
+// Footer flottant pour mobile/tablette (max-width: 992px)
+@media (max-width: 992px) {
+    // Masquer les contrôles de zoom Leaflet UNIQUEMENT sur mobile/tablette
+    .leaflet-control-container,
+    .leaflet-control-zoom,
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out,
+    .leaflet-bar a.leaflet-control-zoom,
+    .leaflet-bar .leaflet-control-zoom-in,
+    .leaflet-bar .leaflet-control-zoom-out {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .leaflet-top.leaflet-left .leaflet-control-zoom {
+        display: none !important;
+    }
+    
+    // Masquer la version desktop des contrôles
+    .desktop-search,
+    .desktop-controls {
+        display: none !important;
+    }
+    
+    // Afficher la version mobile
+    .mobile-search {
+        display: block !important;
+        width: 100%;
+        // .search-location (même élément, classe partagée avec la version desktop) impose
+        // max-width:400px sans media query (.map-controls .search-location, plus bas dans ce
+        // fichier) — bat sinon silencieusement ce width:100% et empêchait la barre de recherche
+        // mobile/tablette d'occuper toute la largeur de l'écran.
+        max-width: none !important;
+        position: relative;
+
+        .location-search-container-mobile {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.45);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            border-radius: 32px;
+            padding: 1px 12px;
+            margin: 0 15px;
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            gap: 12px;
+            
+            i.bi-geo-alt {
+                color: #0e103b;
+                font-size: 1.2em;
+                margin-right: 8px;
+            }
+            
+            .location-input-mobile {
+                flex: 1;
+                border: none;
+                background: transparent;
+                outline: none;
+                font-size: 1em;
+                color: #0e103b;
+                font-weight: 500;
+                &::placeholder {
+                    color: rgba(14, 16, 59, 0.6);
+                    font-weight: 400;
+                }
+            }
+            
+            .layer-btn-mobile {
+                background: #0e103c;
+                color: #fff;
+                border: none;
+                border-radius: 24px;
+                padding: 8px 16px;
+                font-size: 0.9em;
+                font-weight: 400;
+                text-transform: none; // Materialize force uppercase sur .btn
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: background 0.2s;
+                cursor: pointer;
+                white-space: nowrap;
+                
+                &:hover {
+                    background: #05b1af;
+                }
+                
+                &.active {
+                    background: #03918a;
+                }
+                
+                i {
+                    font-size: 1em;
+                }
+                
+                span {
+                    font-size: 0.9em;
+                }
+            }
+        }
+        
+        .mobile-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 15px;
+            right: 15px;
+            z-index: 1050;
+            background: white;
+            border: 2px solid #03918a;
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: -10px;
+            
+            .suggestion-item {
+                padding: 12px 16px;
+                border-bottom: 1px solid #e9ecef;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                
+                &:last-child {
+                    border-bottom: none;
+                    border-radius: 0 0 14px 14px;
+                }
+                
+                &:hover {
+                    background: #f8f9fa;
+                    color: #03918a;
+                }
+            }
+        }
+    }
+    
+    .fab-mobile.footer-fab {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+        z-index: 9999;
+        background: rgba(255,255,255,0.45);
+        border: 2px solid #e9ecef;
+        border-radius: 32px;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 12px 12px 12px;
+        margin: 0 0 19px 0;
+        min-width: 320px;
+        max-width: 95vw;
+        width: max-content;
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border: 1.5px solid rgba(255,255,255,0.18);
+    }
+    .row-footer {
+        display: flex;
+        flex-direction: row;
+        gap: 18px;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    .footer-btn {
+        background: #0e103c;
+        color: #fff;
+        border: none;
+        padding: 8px 18px;
+        font-size: 1.1em;
+        font-weight: 300;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(44, 154, 148, 0.08);
+        transition: background 0.2s;
+        cursor: pointer;
+        min-width: 0;
+        width: auto;
+        justify-content: center;
+        border-radius: 50px;
+    }
+    .footer-btn:hover {
+        background: #05b1af;
+        color: #fff;
+    }
+    .footer-icon {
+        font-size: 1.2em;
+        margin-left: 6px;
+        display: flex;
+        align-items: center;
+    }
+    // Style spécial pour le bouton "Quitter le mode carte" (rouge)
+    .footer-btn.quitter {
+        background: #d0021b;
+        color: #fff;
+        border: none;
+        font-weight: 300;
+        justify-content: flex-start;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .footer-btn.quitter .footer-icon {
+        margin-left: 0;
+        margin-right: 10px;
+        font-size: 1.3em;
+    }
+}
+
+// Sur tablette, ce footer garde des tailles pensées pour un écran de téléphone — proportion-
+// nellement à un écran bien plus large, il paraît minuscule. Agrandi ici (même échelle que
+// registre.component.scss, qui a le même pattern .fab-mobile.footer-fab/.footer-btn).
+@media (min-width: 576px) and (max-width: 992px) {
+    .fab-mobile.footer-fab {
+        gap: 16px;
+        padding: 24px 20px 20px 20px;
+        min-width: 560px;
+    }
+    .row-footer {
+        gap: 28px;
+    }
+    .footer-btn {
+        padding: 18px 34px;
+        font-size: 1.7em;
+        gap: 14px;
+    }
+    // .footer-icon (base 1.2em/1.3em) volontairement PAS agrandi ici : contrairement à
+    // registre/inventaire (icônes SVG en width/height fixes, insensibles au font-size), ici
+    // l'icône est une vraie glyphe de police (<i class="bi ...">) qui grossit réellement avec
+    // le font-size — 1.9em/2em relatifs à un bouton déjà à 1.7em donnaient une icône démesurée
+    // (~50-55px) qui cassait la mise en page tablette (même bug que parcelles.component.scss).
+    .footer-btn.quitter {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    // Bouton "Satellite" (bascule de calque) : comme .footer-btn ci-dessus, n'avait qu'une
+    // seule taille sur toute la plage ≤992px, pensée pour smartphone — minuscule sur tablette.
+    // Sélecteur imbriqué à l'identique de la règle de base (.mobile-search .location-search-
+    // container-mobile .layer-btn-mobile) pour égaler sa spécificité — un .layer-btn-mobile seul
+    // ici serait moins spécifique que la règle de base et resterait sans effet.
+    .mobile-search .location-search-container-mobile .layer-btn-mobile {
+        padding: 14px 24px;
+        font-size: 1.3em;
+        gap: 10px;
+        border-radius: 28px;
+
+        i {
+            font-size: 1.2em;
+        }
+
+        span {
+            font-size: 1.2em;
+        }
+    }
+}
+
+@media (min-width: 993px) {
+    .fab-mobile.footer-fab {
+        display: none !important;
+    }
+
+    // Masquer la version mobile sur desktop
+    .mobile-search {
+        display: none !important;
+    }
+    
+    // Afficher la version desktop
+    .desktop-search,
+    .desktop-controls {
+        display: block !important;
+    }
+}
+// Masquer la colonne de gauche (.parcelles) sur tablette et smartphone
+@media (max-width: 992px) {
+    .parcelles {
+        display: none !important;
+    }
+    .col-lg-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .col-lg-3{
+        display: none !important;
+    }
+}
+main{
+    height: 100vh; // Hauteur fixe pour toute la page
+    overflow: hidden; // Empêcher le scroll global
+    
+    .container-fluid{
+        padding: 0px;
+        margin-top: -35px;
+        margin-bottom: -35px;
+        height: 100vh; // Hauteur fixe pour le conteneur
+        
+        .parcelles{
+            // L'ancien bloc "styles de base" (h2{}/.principal{}, remplacé par .parcelles-header
+            // h1.principal plus bas) a été retiré : un h2{} générique ici serait redevenu actif
+            // par erreur sur .parcel-name (elle-même passée de h6 à h2 lors du retaggage
+            // sémantique) à cause d'une spécificité plus élevée que le simple sélecteur de classe.
+            .listeParcelle{
+                font-size: small;
+            }
+            i{
+                font-size: small;
+                color: #03918a;
+            }
+        }
+        #map{
+            width: 100%;
+            height: 100vh;
+        }
+    }
+    
+    // Style pour les contrôles de zoom Leaflet - sélecteurs très spécifiques
+    :host ::ng-deep #map .leaflet-control-container .leaflet-top.leaflet-left {
+        top: 25px !important;
+        margin-top: 0 !important;
+    }
+    
+    :host ::ng-deep #map .leaflet-control-zoom.leaflet-bar.leaflet-control {
+        top: 25px !important;
+        margin-top: 0 !important;
+    }
+    
+    :host ::ng-deep .leaflet-control-container .leaflet-control-zoom {
+        top: 25px !important;
+        margin-top: 0 !important;
+    }
+    
+    .modal{
+        width: 50% !important;
+        border-radius: 16px !important;
+        .modal-content , .modal-footer{
+            background-color: #ffffff !important;
+        }
+    }
+    #modal1{
+        background-color: #ffffff !important;
+    }
+
+    // ============================================
+    // POPUPS "Ajouter une parcelle" — système partagé (.popup-container/.popup-header/
+    // .popup-body/.popup-footer, voir src/styles/_popup-system.scss), même pattern que
+    // traitement-phyto/culture/travail au champ. L'ancien .popup-modal (largeur/rayon/ombre
+    // concurrents à .popup-container sur le même élément) a été retiré.
+    // ============================================
+
+    // Titre du header : traitement-phyto/travail au champ n'utilisent PAS le simple style global
+    // .header-title (_popup-system.scss) — registre.component.scss leur applique une surcouche
+    // locale plus spécifique (font-size:1.2rem, color:#16213e, et le h2 imbriqué monte à
+    // 1.5em/#0e103c). Reproduite ici à l'identique, plus le contournement Materialize (impose sa
+    // propre police aux titres nus, spécificité qui bat l'héritage de "Panton").
+    .popup-header .header-title h3 {
+        font-family: "Panton", sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 1.8rem !important;
+        color: #0e103c !important;
+    }
+
+    .popup-body {
+        // .popup-body (global) a overflow-y:auto ET overflow-x:visible — mais la spec CSS dit que
+        // si l'un des deux axes n'est pas "visible", l'autre est recalculé en "auto"
+        // automatiquement. overflow-x:visible devient donc réellement overflow-x:auto, et le
+        // moindre débordement horizontal (même 1px) fait apparaître une vraie scrollbar (stylée
+        // en teal par le même mixin que la scrollbar verticale). En forçant hidden ici, plus aucun
+        // débordement horizontal n'est possible, quelle qu'en soit la source.
+        overflow-x: hidden !important;
+
+        // Ce build Bootstrap ne fournit pas non plus la règle de gouttière horizontale standard
+        // (padding-right/left: calc(var(--bs-gutter-x) * .5) sur .col-*) — confirmé par recherche
+        // dans le CSS compilé : seuls .container/.container-fluid ont cette déclaration, aucun
+        // sélecteur .col-* n'en a. Sans ce padding, les colonnes adjacentes se collent/chevauchent
+        // (la marge négative de .row sur left/right n'est compensée par aucun padding positif).
+        // --bs-gutter-x est bien défini par .row (1.5rem), donc on le réutilise ici.
+        .row > [class*="col-"] {
+            padding-right: calc(var(--bs-gutter-x, 1.5rem) * .5);
+            padding-left: calc(var(--bs-gutter-x, 1.5rem) * .5);
+        }
+
+        // S'assurer que les colonnes Bootstrap permettent l'overflow des suggestions
+        .col-lg-12, .col-12 {
+            overflow: visible !important;
+            position: relative;
+        }
+
+        // Libellé fixe au-dessus du champ (remplace l'ancien pattern .form-floating à libellé
+        // flottant) : même classe que traitement-phyto/culture/travail au champ, pour cohérence.
+        .simple-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 1em;
+        }
+
+        // Materialize (chargé globalement dans l'app) impose un style "underline" sans cadre à
+        // tout input[type=text] non marqué .browser-default, avec une spécificité qui bat
+        // .popup-text-input seul — même contournement que culture.component.scss.
+        input[type="text"].form-control {
+            box-sizing: border-box !important;
+            width: 100% !important;
+            border: 1.5px solid #dee2e6 !important;
+            border-radius: 8px !important;
+            background: #fff !important;
+            padding: 0 12px !important;
+            height: 40px !important;
+            line-height: 1.2 !important; // valeur explicite (pas "normal", dont le calcul diffère entre <button> et <input> selon le navigateur) — identique sur .dropdown-btn ci-dessous
+            box-shadow: none !important;
+
+            &:hover {
+                border-color: #adb5bd !important;
+            }
+
+            &:focus {
+                outline: none !important;
+                border-color: #05b1af !important;
+                box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+            }
+        }
+
+        // Pas de height fixe ici : .dropdown-btn (global) a le même padding/border/font-size que
+        // input[type="text"].form-control ci-dessus (10px 12px, 1.5px, 0.9rem) — leur hauteur
+        // naturelle calculée est donc déjà identique sans avoir besoin de forcer un nombre.
+        .unit-dropdown .dropdown-btn {
+            padding: 0 12px; // identique à input[type="text"].form-control ci-dessus
+            height: 40px;
+            line-height: 1.2;
+        }
+
+        // Wrapper du champ adresse : remplace .form-floating.has-suggestions comme ancre de
+        // positionnement pour .address-suggestions (position:absolute, stylée plus bas).
+        .address-field-wrapper {
+            position: relative;
+
+            &.has-suggestions .form-control {
+                border-radius: 8px 8px 0 0; // Arrondi seulement en haut quand les suggestions sont visibles
+            }
+        }
+
+        .category-section {
+            .form-label {
+                color: #495057;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                margin-bottom: 0.3rem;
+                font-size: 14px;
+
+                i {
+                    color: #03918a;
+                    font-size: 16px;
+                }
+            }
+
+            .category-options {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.6rem;
+
+                // min-width:0 : les items de grille CSS ont min-width:auto par défaut, ce qui les
+                // empêche de rétrécir sous la largeur de leur contenu — pousse alors toute la
+                // grille plus large que la popup (barre de scroll horizontale). Même bug déjà
+                // rencontré et corrigé plusieurs fois cette session.
+                .form-check {
+                    min-width: 0;
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    padding: 0.6rem 0.8rem;
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #e9ecef;
+                        border-color: #03918a;
+                    }
+
+                    .form-check-input {
+                        &:checked {
+                            background-color: #03918a;
+                            border-color: #03918a;
+
+                            & ~ .form-check-label {
+                                color: #03918a;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+
+                    // Style pour la catégorie sélectionnée
+                    &:has(.form-check-input:checked) {
+                        border: 2px solid #03918a !important;
+                        background: rgba(3, 145, 138, 0.1);
+                    }
+
+                    .form-check-label {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.4rem;
+                        font-weight: 400;
+                        cursor: pointer;
+                        width: 100%;
+                        font-size: 13px;
+
+                        i {
+                            font-size: 14px;
+                            color: #6c757d;
+                        }
+                    }
+                }
+
+            }
+
+            .category-options-compact {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+
+                .form-check {
+                    background: #f8f9fa;
+                    border: 2px solid #e9ecef;
+                    border-radius: 12px;
+                    padding: 0.75rem 1rem;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    flex: 1;
+                    min-width: 120px;
+
+                    &:hover {
+                        background: #e9ecef;
+                    }
+
+                    .form-check-input:checked ~ .form-check-label {
+                        color: #03918a;
+                        font-weight: 600;
+                        border: 1px solid #03918a
+                    }
+
+                    .form-check-label {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        font-weight: 500;
+                        cursor: pointer;
+                        margin: 0;
+
+                        i {
+                            font-size: 1rem;
+                            color: #6c757d;
+                        }
+                    }
+                }
+            }
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+
+            .info-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+                color: #495057;
+                font-weight: 600;
+                font-size: 0.9rem;
+
+                i {
+                    font-size: 1.1rem;
+                }
+            }
+
+            .info-content {
+                color: #6c757d;
+                font-size: 0.9rem;
+                line-height: 1.4;
+
+                strong {
+                    color: #495057;
+                }
+            }
+
+            &.pac-info {
+                background: linear-gradient(135deg, #cfe2ff 0%, #b6d7ff 100%);
+                border-color: #b3d4fc;
+
+                .info-header {
+                    color: #0c63e4;
+                }
+
+                .info-content {
+                    color: #0a58ca;
+                }
+            }
+        }
+
+        .address-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 99999999 !important; // Z-index très élevé pour être au-dessus de tout, même des modales
+            background: white;
+            border: 1px solid #03918a;
+            border-top: none;
+            border-radius: 0 0 9px 9px;
+            max-height: 200px;
+            overflow-y: auto;
+
+            .list-group {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+
+                .list-group-item {
+                    border: none;
+                    border-bottom: 1px solid #e9ecef;
+                    padding: 0.75rem 1rem;
+                    transition: background-color 0.2s ease;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    background: white;
+
+                    &:last-child {
+                        border-bottom: none;
+                        border-radius: 0 0 10px 10px;
+                    }
+
+                    &:hover, &:focus {
+                        background-color: #f8f9fa;
+                        color: #03918a;
+
+                        i {
+                            color: #03918a !important;
+                        }
+                    }
+
+                    &.active {
+                        background-color: #03918a;
+                        color: white;
+
+                        i {
+                            color: white !important;
+                        }
+                    }
+
+                    i {
+                        color: #6c757d;
+                        margin-right: 0.5rem;
+                        font-size: 0.9rem;
+                    }
+
+                    .suggestion-text {
+                        font-size: 0.9rem;
+                        color: inherit;
+                        line-height: 1.3;
+                    }
+                }
+            }
+
+            // Animation d'apparition
+            animation: dropdownSlide 0.2s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    ///---
+    /// ANCIENS STYLES (À CONSERVER POUR COMPATIBILITÉ)
+    ///
+    .ajouter{
+        #overlay{
+            .addHome{
+                position: fixed;
+                width: 850px;
+                left: 50%;
+                //top: 50%;
+                bottom: -170px;
+                transform: translate(-50%, -50%);
+                border: #0e103b 1px solid;
+                background-color: #ffffff;
+                padding: 20px 10px 20px 20px;
+                z-index: 9999999; /* au-dessus de l'overlay */
+                border-radius: 8px;
+                .header{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    .parcelle{
+                        h2{
+                            font-family: Roboto, "Helvetica Neue", sans-serif;
+                            font-weight: 500;
+                            font-size: 1.5em;
+                            text-transform: capitalize;
+                            color: #fff;
+                        }
+                    }
+                    .icon{
+                        i{
+                            cursor: pointer;
+                            font-size: 1.8em;
+                            color: #fff;
+                        }
+                    }
+                }
+                .nomDeLaParcelle, .Superficie, .ha, .adresseDeLaParcelle, .categoriesDeLaParcelle, .point {
+                    display: flex;
+                    align-items: center;
+                    background-color: #fff;
+                    border: #0e103b 1px solid;
+                    border-radius: 8px;
+                    padding: 4px 4px 4px 8px;
+                    margin-bottom: 24px;
+                    .icon{
+                        width: 32px;
+                        i{
+                            padding-top: 4px;
+                            color: #0e103b;
+                        }
+                    }
+                    .text{
+                    input::placeholder{
+                        color: #03918a92;
+                        font-family: "Panton", sans-serif;
+                        font-weight: 500;
+                        font-size: 16px;
+                        font-weight: 400;
+                    }
+                    }
+                }
+                .nomDeLaParcelle{
+                    .text{
+                        width: 90%;
+                        input{
+                            all: unset;
+                            color: #03918a92;
+                            //width: 21.625em;
+                            width: 100%;
+                        }
+                    }
+                }
+                .Superficie{
+                    .text{
+                        width: 80%;
+                        input{
+                            all: unset;
+                            color: #03918a92;
+                            //width: 8.125em;
+                            width: 100%;
+                        }
+                    }
+                }
+                .ha{
+                    .text{
+                        width: 80%;
+                        height: 35px;
+                        vertical-align: middle;
+                        select {
+                            position: relative;
+                            cursor: pointer;
+                            background-color: transparent;
+                            border: none;
+                            vertical-align: middle;
+                            border-bottom: 0px solid #40ded2 !important;
+                            outline: none;
+                            border-radius: 9px;
+                            height: 3rem;
+                            line-height: 3rem;
+                            width: 100%;
+                            font-size: 16px;
+                            margin: 0 0 0 0;
+                            display: flex;
+                            z-index: 1;
+                            color: #03918a92;
+                        }
+                    }
+                }
+                .adresseDeLaParcelle{
+                    .text{
+                        width: 100%;
+                        position: relative;
+                        input{
+                            all: unset;
+                            color: #03918a92;
+                            width: 100%;
+                        }
+                        
+                        // Styles pour les suggestions d'adresses
+                        .address-suggestions {
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            right: 0;
+                            z-index: 99999999 !important; // Z-index très élevé pour être au-dessus de tout, même des modales
+                            background: white;
+                            border: 2px solid #03918a;
+                            border-top: none;
+                            border-radius: 0 0 9px 9px;
+                            max-height: 200px;
+                            overflow-y: auto;
+                            
+                            .list-group {
+                                margin-bottom: 0;
+                                border-radius: 0;
+                                
+                                .address-suggestion-item {
+                                    border: none;
+                                    border-bottom: 1px solid #f0f0f0;
+                                    cursor: pointer;
+                                    padding: 10px 15px;
+                                    
+                                    &:hover {
+                                        background-color: #f8f9fa;
+                                        color: #03918a;
+                                    }
+                                    
+                                    &:last-child {
+                                        border-bottom: none;
+                                    }
+                                    
+                                    .suggestion-text {
+                                        font-size: 0.9em;
+                                        color: #333;
+                                    }
+                                    
+                                    .bi-geo-alt {
+                                        font-size: 0.8em;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .categoriesDeLaParcelle{
+                    .headerCategorie{
+                        .entete{
+                            display: flex;
+                            align-items: center;
+                            .titre{
+                                color: #0e103b;
+                            }
+                        }
+                        .corps{
+                            margin-bottom: 24px;
+                            padding-top: 16px;
+                            color: #0e103b;
+                            border-top: #0e103b 1px solid;
+                            width: 139%;
+                        }
+                    }
+                }
+                .point{
+                    .text{
+                        width: 100%;
+                        color: #03918a92;
+                        input{
+                            all: unset;
+                            color: #03918a92;
+                            width: 100%;
+                            height: 35px;
+                        }
+                    }
+                }
+                .bouton{
+                    display: flex;
+                    justify-content: end;
+                    .annuler{
+                        margin-right: 16px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Styles pour les cartes de parcelles
+.parcel-card {
+    font-family: "Panton", sans-serif;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    background: white;
+    cursor: pointer;
+    
+    &:hover {
+        background: #f8f9fa;
+        border-color: #03918a;
+    }
+    
+    .card-content {
+        width: 100%;
+    }
+    
+    .parcel-header {
+        margin-bottom: 8px;
+    }
+    
+    .parcel-name {
+        // Anciennement h6 : Angular Material imposait .mat-typography h6 { font: 400 1.5rem/2rem
+        // Roboto } (une règle qui cible h6 directement, imbattable par spécificité) — d'où le
+        // besoin d'un font-size explicite ici, plutôt que de compter sur l'héritage. Passée à h2
+        // (titre de carte, aucun h2 de section n'existe entre elle et le h1 de page), ce qui
+        // évite désormais la surcouche Material — mais la taille reste explicite pour ne pas
+        // dépendre du socle h2 générique (1,9-2,2rem, trop grand pour une carte compacte).
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: #0e103b;
+        margin: 0;
+        text-align: left;
+    }
+    
+    // Badges : mêmes styles que le tableau de la page Parcelles (parcelles.component.scss)
+    .parcel-badges {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .category-badge,
+    .area-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .category-badge {
+        background: #e3f6f3;
+        color: #03918a;
+
+        &--none {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+    }
+
+    .area-badge {
+        background: #f3f4f6;
+        color: #12103c;
+    }
+
+    // Bouton icône discret (modifier) — même style que sur la page Parcelles
+    .icon-btn {
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        i { font-size: 1rem; }
+
+        &:hover {
+            background: #e3f6f3;
+            border-color: #b9e6e1;
+            color: #03918a;
+        }
+    }
+}
+
+// Styles pour la barre de recherche et filtre — alignés sur le style des champs de popup
+// (.popup-text-input/.dropdown-btn dans _popup-system.scss) : bordure #dee2e6, radius 8px,
+// police Panton, focus teal #05b1af.
+.search-container {
+    .search-input-wrapper {
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: #fff;
+        border-radius: 8px;
+        border: 1.5px solid #dee2e6 !important;
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-color: #adb5bd;
+        }
+
+        &:focus-within {
+            border-color: #05b1af;
+            box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+        }
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1em;
+        color: #adb5bd;
+        pointer-events: none;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+    }
+
+    .form-control {
+        border: none !important;
+        border-radius: 8px;
+        width: 100% !important;
+        padding: 10px 12px 10px 2.8em !important;
+        background: transparent !important;
+        font-size: 0.9rem;
+        font-family: "Panton", sans-serif;
+        font-weight: 400;
+        color: #343a40;
+        outline: none !important;
+        box-shadow: none !important;
+        height: 40px;
+
+        &::placeholder {
+            color: #adb5bd;
+            font-style: normal;
+            font-weight: 400;
+        }
+
+        &:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+// .filter-container n'a plus besoin de styles locaux : le menu déroulant utilise maintenant
+// .dropdown-container/.dropdown-btn/.dropdown-panel/.dropdown-list (classes globales,
+// _popup-system.scss), déjà stylées et identiques à celles des popups.
+.filter-container {
+    position: relative;
+}
+
+// Tablette/smartphone : les 4 popups d'ajout/edition de parcelle (adresse/point GPS/PAC/
+// polygone, toutes .popup-body) restaient figees a la taille desktop (40px) sur tablette et
+// smartphone — contrairement au popup equivalent de parcelles.component.scss (page liste), qui
+// a deja ces paliers. Memes valeurs reprises ici pour coherence. !important necessaire pour
+// battre les regles !important deja en place sur input[type="text"].form-control/
+// .unit-dropdown .dropdown-btn (contournement Materialize, voir plus haut dans ce fichier).
+// Sans le font-size explicite ici, le bloc generique en tete de fichier (26px tablette/19px
+// smartphone, sur TOUS les inputs sans distinction) resterait applique malgre sa specificite
+// plus faible que la sienne — texte a 26px dans une boite figee a 40px, trop serre.
+@media (min-width: 576px) and (max-width: 991.98px) {
+    main .popup-body {
+        .simple-label {
+            font-size: 1.3rem !important;
+        }
+
+        input[type="text"].form-control {
+            height: 62px !important;
+            padding: 0 18px !important;
+            font-size: 26px !important;
+        }
+
+        .unit-dropdown .dropdown-btn {
+            height: 62px !important;
+            padding: 0 18px !important;
+            font-size: 26px !important;
+        }
+
+        // .category-section (boutons "Catégorie de parcelle") n'avait aucun palier tablette,
+        // restait à la taille desktop compacte (14px/13px) — même remarque que ci-dessus.
+        .category-section {
+            .form-label {
+                font-size: 1.35rem !important;
+
+                i { font-size: 1.45rem !important; }
+            }
+
+            .category-options {
+                gap: 1rem !important;
+
+                .form-check {
+                    padding: 1.4rem 1.6rem !important;
+
+                    .form-check-input {
+                        width: 22px !important;
+                        height: 22px !important;
+                    }
+
+                    .form-check-label {
+                        font-size: 1.4rem !important;
+                        gap: 0.7rem !important;
+
+                        i { font-size: 1.5rem !important; }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    main .popup-body {
+        .simple-label {
+            font-size: 1.1rem !important;
+        }
+
+        input[type="text"].form-control {
+            height: 50px !important;
+            padding: 0 14px !important;
+            font-size: 19px !important;
+        }
+
+        .unit-dropdown .dropdown-btn {
+            height: 50px !important;
+            padding: 0 14px !important;
+            font-size: 19px !important;
+        }
+
+        // .category-section (boutons "Catégorie de parcelle") n'avait aucun palier smartphone —
+        // c'est ce qui rendait les boutons "Plein air"/"Sous-protection"/"Traitement de
+        // semences" nettement plus petits que le reste du formulaire déjà agrandi.
+        .category-section {
+            .form-label {
+                font-size: 1.1rem !important;
+
+                i { font-size: 1.15rem !important; }
+            }
+
+            .category-options {
+                gap: 0.8rem !important;
+
+                .form-check {
+                    padding: 1rem 1.2rem !important;
+
+                    .form-check-input {
+                        width: 18px !important;
+                        height: 18px !important;
+                    }
+
+                    .form-check-label {
+                        font-size: 1.1rem !important;
+                        gap: 0.55rem !important;
+
+                        i { font-size: 1.2rem !important; }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Styles pour layout à hauteur fixe avec scroll
+main {
+    height: 100vh;
+    overflow: hidden;
+    
+    .container-fluid {
+        height: 100vh;
+        
+        .row {
+            height: 100vh;
+        }
+        
+        // Colonne des parcelles avec scroll
+        .col-lg-3 {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            
+            .parcelles {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                padding: 5%;
+                overflow: hidden;
+                
+                // Header fixe (titre + recherche + filtre)
+                .parcelles-header {
+                    flex-shrink: 0;
+                    padding-bottom: 1rem;
+                    border-bottom: 1px solid #eee;
+                    margin-bottom: 1rem;
+                    
+                    // H1 de la page (route /parcelles/voir-parcelles, independante de
+                    // parcelles.component) — anciennement h2, corrige un titre de page tague trop
+                    // bas dans la hierarchie.
+                    h1.principal {
+                        margin: 0;
+                        font-family: 'Panton', sans-serif;
+                        font-weight: 700;
+                        // Plus petit que le h1 de page standard : le panneau latéral est étroit et
+                        // partage sa ligne avec le bouton "Ajouter une parcelle".
+                        font-size: 1.9rem;
+                        line-height: 1.2;
+                        color: #0e103b;
+                    }
+
+                    p {
+                        font-family: 'Panton', sans-serif;
+                    }
+
+                    .map-mode-controls {
+                        display: flex;
+                        justify-content: left;
+                        
+                        .btn {
+                            font-size: 0.95rem;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 25px;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            text-transform: none;
+                            letter-spacing: 0.5px;
+                            width: auto;
+                            white-space: nowrap;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: none !important;
+                            vertical-align: middle;
+                            gap: 0.75rem;
+                            
+                            i {
+                                margin-right: 0;
+                                font-size: 1.2rem;
+                                color: inherit;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                            
+                            &.btn-outline-primary {
+                                border-color: #03918a;
+                                color: #03918a;
+                                background: white;
+                                
+                                &:hover {
+                                    background-color: #03918a;
+                                    border-color: #03918a;
+                                    color: white;
+                                    transform: translateY(-1px);
+                                }
+                            }
+                            
+                            &.btn-outline-secondary {
+                                border: 2px solid #dc3545;
+                                background: #dc3545;
+                                color: white;
+                                font-weight: 400;
+                                
+                                &:hover {
+                                    background: white;
+                                    color: #dc3545;
+                                    border-color: #bd2130;
+                                }
+                            }
+                        }
+                    }
+                    
+                    .search-container {
+                        margin-bottom: 0.75rem;
+                        
+                        .search-input-wrapper {
+                            background: #fff;
+                            border-radius: 8px;
+                            border: 1.5px solid #dee2e6;
+                            transition: all 0.2s ease;
+
+                            &:hover {
+                                border-color: #adb5bd;
+                            }
+
+                            &:focus-within {
+                                border-color: #05b1af;
+                                box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+                            }
+                        }
+
+                        .form-control {
+                            border: none !important;
+                            margin: 0 !important;
+                            font-size: 0.9rem;
+                            font-family: "Panton", sans-serif;
+                            padding: 0 12px 0 2.8em !important;
+                            background: transparent !important;
+                            font-weight: 400;
+                            color: #343a40;
+                            outline: none !important;
+                            box-shadow: none !important;
+                            height: 40px;
+
+                            &::placeholder {
+                                color: #adb5bd;
+                                font-style: normal;
+                                font-weight: 400;
+                            }
+                        }
+                    }
+
+                    .filter-container {
+                        margin-bottom: 0.75rem;
+                    }
+                }
+                
+                // Zone scrollable pour les parcelles
+                .parcelles-list {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding-right: 6px; // Marge visuelle avant la scrollbar
+                    @include popup-scrollbar($thumb: #8b8b8b, $thumb-hover: #737373);
+                }
+            }
+        }
+        
+        // Colonne de la carte
+        .col-lg-9 {
+            height: 75vh;
+            padding: 0;
+            position: relative;
+            
+            // Contrôles de la carte - style identique au mobile
+            .map-controls {
+                position: absolute;
+                top: 25px !important;
+                left: 25px;
+                right: 15px;
+                z-index: 1000;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                align-items: flex-start;
+                
+                .search-location {
+                    flex: 1;
+                    min-width: 280px;
+                    max-width: 400px;
+                    position: relative;
+                    
+                    .location-search-container {
+                        display: flex;
+                        align-items: center;
+                        background: rgba(255,255,255,0.45);
+                        border: 1.5px solid rgba(255,255,255,0.18);
+                        border-radius: 32px;
+                        padding: 1px 12px;
+                        backdrop-filter: blur(18px) saturate(180%);
+                        -webkit-backdrop-filter: blur(18px) saturate(180%);
+                        gap: 12px;
+                        
+                        // Style when suggestions are shown
+                        &.suggestions-active {
+                            border-color: rgba(3, 145, 138, 0.3);
+                        }
+                        
+                        i.bi-geo-alt {
+                            color: #0e103b;
+                            font-size: 1.2em;
+                            margin-right: 8px;
+                        }
+                        
+                        .location-input {
+                            flex: 1;
+                            border: none;
+                            background: transparent;
+                            outline: none;
+                            font-size: 1em;
+                            color: #0e103b;
+                            font-weight: 500;
+                            margin: 0 !important;
+                            &::placeholder {
+                                color: rgba(14, 16, 59, 0.6);
+                                font-weight: 400;
+                            }
+                        }
+                        
+                        .layer-btn {
+                            background: #0e103c;
+                            color: #fff;
+                            border: none;
+                            border-radius: 24px;
+                            padding: 8px 16px;
+                            font-size: 0.9em;
+                            font-weight: 400;
+                            text-transform: none; // Materialize force uppercase sur .btn
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            transition: background 0.2s;
+                            cursor: pointer;
+                            white-space: nowrap;
+                            
+                            &:hover {
+                                background: #05b1af;
+                            }
+                            
+                            &.active {
+                                background: #03918a;
+                            }
+                            
+                            i {
+                                font-size: 1em;
+                            }
+                            
+                            span {
+                                font-size: 0.9em;
+                            }
+                        }
+                    }
+                    
+                    // Suggestions dropdown - maintenant au niveau de .search-location
+                    .location-suggestions {
+                        position: absolute;
+                        top: calc(100% + 5px); // Espacement de 5px sous la barre de recherche
+                        left: 0;
+                        right: 0;
+                        z-index: 1000;
+                        background: white;
+                        border: 1px solid #ddd;
+                        border-radius: 8px; // Coins arrondis pour un menu indépendant
+                        max-height: 250px; // Hauteur plus généreuse
+                        overflow-y: auto;
+                        
+                        // Animation d'apparition
+                        animation: fadeInDown 0.2s ease-out;
+                        
+                        .suggestion-item {
+                            padding: 15px 18px; // Plus d'espacement
+                            cursor: pointer;
+                            font-size: 14px;
+                            color: #333;
+                            border-bottom: 1px solid #f0f0f0;
+                            transition: all 0.2s ease;
+                            
+                            &:hover {
+                                background-color: #f8f9fa;
+                                color: #03918a;
+                                padding-left: 22px; // Léger décalage au survol
+                            }
+                            
+                            &:first-child {
+                                border-radius: 8px 8px 0 0;
+                            }
+                            
+                            &:last-child {
+                                border-bottom: none;
+                                border-radius: 0 0 8px 8px;
+                            }
+                            
+                            // Truncate long addresses mais avec plus d'espace
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            
+                            // Icône pour chaque suggestion
+                            &::before {
+                                content: "📍";
+                                margin-right: 8px;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+                
+                // Responsive pour petits écrans
+                @media (max-width: 768px) {
+                    flex-direction: column;
+                    align-items: stretch;
+                    
+                    .search-location {
+                        max-width: none;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .map-layer-controls {
+                        .layer-btn {
+                            justify-content: center;
+                        }
+                    }
+                }
+            }
+            
+            .map-image {
+                height: 100%;
+                
+                #map {
+                    width: 100%;
+                    height: 100vh;
+                }
+            }
+
+        }
+    }
+}
+
+// ============================================
+// ÉTATS DE CHARGEMENT ET VIDE
+// ============================================
+
+.loading-state {
+    padding: 2rem 1rem;
+    
+    .spinner-border {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+}
+
+.empty-state {
+    padding: 2rem 1rem;
+    
+    .empty-icon {
+        opacity: 0.6;
+    }
+    
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.75rem;
+    }
+    
+    .empty-description {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn {
+        font-weight: 500;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        
+        i {
+            color: inherit;
+        }
+    }
+}
+
+// ============================================
+// MODE CARTE PLEIN ÉCRAN
+// ============================================
+
+// Styles globaux appliqués au body quand le mode plein écran est actif
+:host-context(body.full-screen-map-mode) {
+    main {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: white;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        
+        .container-fluid {
+            height: 100vh !important;
+            width: 100vw !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+            
+            .row {
+                height: 100vh !important;
+                margin: 0 !important;
+                
+                .col-lg-3 {
+                    height: 100vh !important;
+                    padding: 0 !important;
+                    
+                    .parcelles {
+                        height: 100vh !important;
+                        padding: 1rem !important;
+
+                        .parcelles-list {
+                            max-height: calc(100vh - 280px) !important;
+                            overflow-y: auto !important;
+                        }
+                    }
+                }
+                
+                .col-lg-9 {
+                    height: 100vh !important;
+                    padding: 0 !important;
+                    
+                    #map {
+                        height: 100vh !important;
+                        width: 100% !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Masquer les éléments de l'interface principale en mode plein écran
+body.full-screen-map-mode {
+    overflow: hidden !important;
+    
+    // Masquer tous les éléments sauf le composant get-parcelles
+    > *:not(app-root) {
+        display: none !important;
+    }
+    
+    app-root {
+        > *:not(router-outlet):not(app-get-parcelles) {
+            display: none !important;
+        }
+        
+        // Si l'app a une structure différente, cibler les éléments courants
+        .banniere,
+        .menu,
+        .footer,
+        nav,
+        header,
+        .main-header,
+        .main-footer,
+        .sidebar {
+            display: none !important;
+        }
+        
+        // S'assurer que le main-content ou équivalent occupe tout l'espace
+        .main-content,
+        main,
+        .content {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+    }
+}
+
+// ============================================
+// TOAST DE SUCCÈS
+// ============================================
+.success-toast {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    animation: slideDown 0.4s ease-out, fadeOut 0.4s ease-in 2.6s;
+    
+    .success-toast-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #28a745;
+        color: white;
+        padding: 16px 28px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(40, 167, 69, 0.35);
+        font-size: 1rem;
+        font-weight: 500;
+        
+        i {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+// =============================================
+// REFONTE V2 — corrections du test global (onglet 4)
+// =============================================
+// Astérisque des champs obligatoires
+.popup-overlay .simple-label sup { color: #dc3545; }
+
+// Popup « Modifier la parcelle » : « Supprimer » à gauche, action principale à droite
+.popup-overlay .popup-footer .btn-primary.danger {
+    order: -1;
+    margin-right: auto;
+}
+
+// Liste latérale : recherche sans résultat (même rendu que « Mes parcelles »)
+.parcels-empty-search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 12px;
+    text-align: center;
+    color: #6b7280;
+
+    i { font-size: 1.4rem; color: #9ca3af; }
+    p { margin: 0; font-size: 0.9rem; }
+}
+
+// Messages de validation (même rendu que la création de compte) + aide dans le pied
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 0;
+    color: #dc3545;
+    font-size: 0.82rem;
+
+    i { font-size: 0.85rem; }
+}
+
+input.input-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 1px #dc3545 !important;
+}
+
+.popup-required-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 auto;
+    margin: 0 auto 0 0;
+    color: #6b7280;
+    font-size: 0.82rem;
+    line-height: 1.4;
+
+    i { color: #9ca3af; margin-top: 2px; }
+    b { color: #12103c; font-weight: 600; }
+    b + b::before { content: '· '; color: #9ca3af; font-weight: 400; }
+}
+
+// Les boutons du pied ne se coupent pas sur 2 lignes quand l'aide « À compléter » est affichée
+.popup-footer .btn-primary,
+.popup-footer .btn-secondary {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+// Téléphone (pied en colonne inversée) : l'aide passe au-dessus des boutons
+@media (max-width: 480px) {
+    .popup-footer .popup-required-hint { order: 10; margin: 0 0 4px; }
+}

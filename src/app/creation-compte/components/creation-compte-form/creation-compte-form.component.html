@@ -1,0 +1,83 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card">
+            <span class="auth-icon"><i class="bi bi-building"></i></span>
+            <h1>Finaliser mon inscription</h1>
+            <p>Complétez les informations de votre exploitation pour commencer à utiliser Appi'Field.</p>
+
+            <!-- Message de chargement -->
+            <div *ngIf="isLoading" class="loading-note">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                Chargement de vos informations...
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSuivant()" [ngClass]="{'opacity-50': isLoading}">
+                <h2 class="form-section-title">Informations personnelles</h2>
+                <div class="auth-grid">
+                    <div class="auth-field">
+                        <label for="phytolicence" class="label-with-help">
+                            Numéro de phytolicence
+                            <i class="bi bi-info-circle-fill help-icon"
+                               matTooltip="Si vous êtes professionnel et utilisez exclusivement des produits phytos ne nécessitant pas de phytolicence, vous pouvez laisser ce champ vide. Dans le cas contraire, le numéro de phytolicence est une information à mentionner dans le cadre du registre électronique."
+                               matTooltipPosition="above">
+                            </i>
+                        </label>
+                        <input id="phytolicence" placeholder="Ex : 23.2.00445" type="text" class="form-control" formControlName="phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)" [disabled]="isLoading">
+                    </div>
+                    <div class="auth-field">
+                        <label for="exploitingNumber" class="label-with-help">
+                            Numéro d'exploitant
+                            <i class="bi bi-info-circle-fill help-icon"
+                               matTooltip="Dans le cas où vous en avez un."
+                               matTooltipPosition="above">
+                            </i>
+                        </label>
+                        <input id="exploitingNumber" placeholder="Numéro d'exploitant" type="number" class="form-control" formControlName="exploiting_number" [disabled]="isLoading">
+                    </div>
+                </div>
+
+                <h2 class="form-section-title">Informations de l'entreprise</h2>
+                <div class="auth-grid">
+                    <div class="auth-field">
+                        <label for="adress">Adresse (rue et localité)<sup>*</sup></label>
+                        <input id="adress" placeholder="Rue et localité" type="text" class="form-control" formControlName="adress" [disabled]="isLoading" required
+                            [class.input-error]="showError('adress')">
+                        @if (showError('adress')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="postal">Code postal<sup>*</sup></label>
+                        <input id="postal" placeholder="Ex : 7000" type="text" inputmode="numeric" maxlength="4" class="form-control" formControlName="postal" [disabled]="isLoading" required
+                            (input)="onPostalCodeInput($event)" [class.input-error]="showError('postal')">
+                        @if (showError('postal')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.get('postal')?.hasError('required') ? 'Champ obligatoire.' : 'Code postal belge : 4 chiffres.' }}</p>
+                        }
+                    </div>
+                    <div class="auth-field">
+                        <label for="tva">Numéro de TVA</label>
+                        <input id="tva" placeholder="BE 0000.000.000" type="text" class="form-control" formControlName="tva" maxlength="15" (input)="onNumeroTVAInput($event)" [disabled]="isLoading">
+                    </div>
+                    <div class="auth-field">
+                        <label for="name">Nom de mon exploitation<sup>*</sup></label>
+                        <input id="name" placeholder="Nom de mon exploitation" type="text" class="form-control" formControlName="name" [disabled]="isLoading" required
+                            [class.input-error]="showError('name')">
+                        @if (showError('name')) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                        }
+                    </div>
+                </div>
+
+                @if (submitError) {
+                    <p class="submit-error" role="alert"><i class="bi bi-exclamation-triangle-fill"></i>{{ submitError }}</p>
+                }
+
+                <div class="auth-actions">
+                    <button type="submit" class="auth-btn auth-btn-primary" [disabled]="form.invalid || isLoading || isSubmitting">
+                        {{ isLoading ? 'Chargement...' : (isSubmitting ? 'Enregistrement...' : 'Suivant') }}
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>

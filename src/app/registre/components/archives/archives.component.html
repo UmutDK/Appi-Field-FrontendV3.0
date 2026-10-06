@@ -1,0 +1,180 @@
+<main class="archives-page">
+    <div class="dashboard-container">
+
+        <!-- En-tête : titre + intro à gauche, retour au carnet en haut à droite -->
+        <header class="archives-header">
+            <div class="dashboard-header">
+                <h1>Mes archives</h1>
+                <p class="dashboard-subtitle">Retrouvez vos cultures archivées, consultez leur historique ou restaurez-les dans votre carnet de champ.</p>
+            </div>
+            <div class="archives-header-actions">
+                <button type="button" class="btn-outline-neutral btn-retour" (click)="goBack()">
+                    <i class="bi bi-arrow-left"></i>
+                    <span class="text">Retour au carnet de champ</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Recherche + filtre par collection -->
+        <div class="recherche-etendue">
+            <!-- Barre de recherche principale -->
+            <div class="barre-recherche-principale">
+                <div class="icon">
+                    <button type="button" class="bouton-icon"><i class="bi bi-search"></i></button>
+                </div>
+                <div class="input-etendu">
+                    <input
+                        type="text"
+                        class="form-control ligne-etendue"
+                        placeholder="Rechercher une culture archivée..."
+                        [value]="searchTerm()"
+                        (input)="onSearchChange($event)"
+                    >
+                </div>
+            </div>
+
+            <!-- Contrôles de filtres -->
+            <div class="controles-filtres">
+                <!-- Bouton filtre par collection -->
+                <div class="bouton-controle">
+                    <button type="button" class="btn-filtre" [class.btn-filtre--active]="selectedCollection()" (click)="toggleCollectionFilter()" title="Filtrer par collection">
+                        <i class="bi bi-folder"></i>
+                    </button>
+                    @if (isCollectionFilterOpen) {
+                        <div class="dropdown-menu dropdown-moderne">
+                            <div class="dropdown-header">Filtrer par collection</div>
+                            <div class="dropdown-item" (click)="selectCollection(''); closeCollectionFilter()">
+                                <i class="bi bi-collection"></i>
+                                Toutes les collections
+                            </div>
+                            @for (collection of availableCollections(); track collection) {
+                                <div class="dropdown-item"
+                                     [class.selected]="selectedCollection() === collection"
+                                     (click)="selectCollection(collection); closeCollectionFilter()">
+                                    <i class="bi bi-folder2-open"></i>
+                                    {{ collection }}
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- État de chargement -->
+        @if (isLoading()) {
+            <div class="dashboard-card state-card">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p>Chargement des archives...</p>
+            </div>
+        } @else {
+            <!-- Tableau des archives -->
+            @if (filteredCrops().length > 0) {
+                <div class="table-container">
+                    <table class="table table-archives">
+                        <thead>
+                            <tr>
+                                <th class="sortable col-collection" (click)="onSort('collection')">
+                                    <div class="th-content">
+                                        <span>Collection</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('collection') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-crop-name" (click)="onSort('crop_name')">
+                                    <div class="th-content">
+                                        <span>Culture</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('crop_name') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-species hide-tablet" (click)="onSort('phytoweb_name')">
+                                    <div class="th-content">
+                                        <span>Espèce</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('phytoweb_name') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-date hide-mobile" (click)="onSort('sowing_date')">
+                                    <div class="th-content">
+                                        <span>Date de semis</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('sowing_date') }}</i>
+                                    </div>
+                                </th>
+                                <th class="actions-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (crop of filteredCrops(); track crop.crop_id) {
+                                <tr class="clickable-row" (click)="openCultureDetail(crop)">
+                                    <td class="col-collection">
+                                        <span class="badge badge-collection">
+                                            <i class="bi bi-folder badge-icon"></i>
+                                            {{ crop.collection }}
+                                        </span>
+                                    </td>
+                                    <td class="col-crop-name">
+                                        <div class="crop-info">
+                                            <span class="crop-name">{{ crop.crop_name }}</span>
+                                            <span class="crop-details mobile-only">
+                                                @if (crop.phytoweb_name) {
+                                                    <span class="detail-item"><i class="bi bi-tag"></i> {{ crop.phytoweb_name }}</span>
+                                                }
+                                                @if (crop.sowing_date) {
+                                                    <span class="detail-item"><i class="bi bi-calendar-event"></i> {{ formatDate(crop.sowing_date) }}</span>
+                                                }
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="col-species hide-tablet">
+                                        <span class="species-tag">{{ crop.phytoweb_name || '-' }}</span>
+                                    </td>
+                                    <td class="col-date hide-mobile">
+                                        <span class="date-tag">{{ formatDate(crop.sowing_date) }}</span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button
+                                            type="button"
+                                            class="btn-restore"
+                                            (click)="restoreCrop(crop); $event.stopPropagation()"
+                                            title="Restaurer cette culture"
+                                        >
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                            <span class="btn-text">Restaurer</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            } @else {
+                <!-- Message vide -->
+                <div class="dashboard-card empty-state">
+                    <div class="empty-icon"><i class="bi bi-archive"></i></div>
+                    @if (searchTerm() || selectedCollection()) {
+                        <h2>Aucune culture archivée correspondante</h2>
+                        <p>Modifiez vos critères de recherche pour trouver des cultures archivées.</p>
+                    } @else {
+                        <h2>Aucune culture archivée</h2>
+                        <p>Vous n'avez pas encore archivé de cultures. Archivez une culture depuis le carnet de champ pour la retrouver ici.</p>
+                    }
+                    <button type="button" class="btn-solid btn-retour-vide" (click)="goBack()">
+                        <i class="bi bi-arrow-left"></i>
+                        Retour au carnet de champ
+                    </button>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Popup de détail de culture -->
+    @if (showDetailPopup() && selectedCultureForDetail()) {
+        <app-culture-detail-popup
+            [culture]="selectedCultureForDetail()"
+            [isArchived]="true"
+            (close)="closeCultureDetail()"
+            (restoreCulture)="onRestoreCultureFromPopup($event)"
+            (deleteCulture)="onDeleteCultureFromPopup($event)">
+        </app-culture-detail-popup>
+    }
+</main>

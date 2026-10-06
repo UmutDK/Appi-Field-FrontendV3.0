@@ -1,0 +1,562 @@
+// Primitives visuelles partagées par les pages "tableau de bord" (back-office, accueil...) :
+// conteneur de page, en-têtes de section, cartes blanches, cartes "Accès rapide" et slider de
+// formations. Extrait de back-office.component.scss lors de l'ajout de la page d'accueil
+// redesignée, pour que les deux pages restent visuellement synchronisées sans dupliquer le CSS.
+//
+// Usage : @use '../../../styles/dashboard-cards' as *; (adapter le chemin relatif) dans le
+// fichier .scss du composant — les classes ne sont pas préfixées, à utiliser telles quelles dans
+// le template.
+
+.dashboard {
+    padding: 32px 40px 56px;
+
+    @media (max-width: 992px) {
+        padding: 20px 20px 40px;
+    }
+
+    @media (max-width: 575.98px) {
+        padding: 16px 16px 32px;
+    }
+}
+
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+// =============================================
+// EN-TÊTE
+// =============================================
+.dashboard-header {
+    margin-bottom: 24px;
+
+    h1 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: var(--font-size-h1);
+        color: #12103c;
+        margin: 0 0 6px 0;
+    }
+}
+
+.dashboard-subtitle {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.dashboard-section-label {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin: 0 0 14px 0;
+}
+
+// =============================================
+// TUILES STATS (chiffres clés)
+// =============================================
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+
+    @media (max-width: 767.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stat-tile {
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .stat-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(18, 16, 60, 0.55);
+    }
+
+    .stat-value {
+        font-family: "Panton", sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #12103c;
+        line-height: 1.15;
+
+        &.stat-loading {
+            color: rgba(18, 16, 60, 0.25);
+        }
+    }
+
+    .stat-sub {
+        font-size: 0.82rem;
+        color: rgba(18, 16, 60, 0.6);
+    }
+}
+
+.stat-tile-teal { background: #e3f6f3; }
+.stat-tile-purple { background: #ece7fb; }
+.stat-tile-lime { background: #edf5da; }
+
+// =============================================
+// CARTES "ACCÈS RAPIDE"
+// =============================================
+.quick-access-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(18, 16, 60, 0.1);
+        transform: translateY(-1px);
+    }
+}
+
+.quick-access-icon {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #e3f6f3;
+    color: #03918a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.quick-access-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.quick-access-title {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #12103c;
+}
+
+.quick-access-desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.quick-access-chevron {
+    // Teal en permanence (pas seulement au survol) : sur une capture statique ou une démo à
+    // l'écran, un survol de souris ne se voit pas — la couleur doit à elle seule signaler que
+    // la ligne est cliquable.
+    flex-shrink: 0;
+    color: #05b1af;
+    font-size: 1.1rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.quick-access-card:hover .quick-access-chevron {
+    transform: translateX(2px);
+}
+
+// =============================================
+// CARTES DE SECTION BLANCHES
+// =============================================
+.dashboard-card {
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    padding: 20px 24px 22px;
+    margin-bottom: 16px;
+
+    @media (max-width: 575.98px) {
+        padding: 16px 16px 18px;
+    }
+
+    h2 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #12103c;
+        margin-bottom: 6px;
+    }
+
+    // Le paragraphe d'intro juste sous le h2 n'a plus besoin de la marge par défaut du
+    // navigateur : le h2 ci-dessus gère déjà l'espacement.
+    > p {
+        margin-top: 0;
+        margin-bottom: 14px;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+}
+
+// En-tête de carte avec action : titre + intro à gauche, bouton d'ajout toujours en haut à
+// droite de l'encadré (convention commune à toutes les cartes qui listent des éléments ajoutables).
+.dashboard-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    margin-bottom: 14px;
+
+    .dashboard-card-header-text {
+        flex: 1 1 240px;
+        min-width: 0;
+    }
+
+    p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    // Bouton d'ajout : ne rétrécit pas, reste aligné en haut à droite.
+    > button {
+        flex-shrink: 0;
+    }
+}
+
+// Contenu qui a déjà son propre padding interne (ex. app-liste-actualites) — évite le double padding.
+.dashboard-card-flush {
+    padding: 4px 4px 8px;
+}
+
+// =============================================
+// SLIDER DE FORMATIONS
+// =============================================
+.formations-slider {
+    position: relative;
+    margin: 8px 0 0;
+    .formations-viewport {
+        overflow: hidden; // Masquer les cards qui débordent
+        width: 100%;
+    }
+
+    .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+
+        .nav-btn {
+            background: #05b1af;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            pointer-events: all;
+            font-size: 18px;
+
+            &:hover {
+                background: rgba(44, 154, 148, 1);
+                transform: scale(1.1);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+
+                &:hover {
+                    transform: none;
+                }
+            }
+
+            &.prev-btn {
+                margin-left: -20px;
+            }
+
+            &.next-btn {
+                margin-right: -20px;
+            }
+        }
+    }
+
+    .formations-container {
+        display: flex;
+        gap: 20px;
+        transition: transform 0.3s ease;
+        padding: 0px 0px 20px 0px;
+        // Le conteneur doit avoir une largeur calculée selon le nombre total de cards
+        width: calc(100% * 4 / 4); // 4 cards total / 4 cards visibles
+    }
+
+    .formation-card {
+        flex: 0 0 calc((100% - 60px) / 4); // Largeur = (100% - gaps) / nombre total de cards
+        background: white;
+        border-radius: 9px !important;
+        border: 2px solid #e9ecef;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+             transform: scale(1.01);
+        }
+
+        .formation-date {
+            background: #05b1af;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .date-info {
+                text-align: center;
+
+                .day {
+                    display: block;
+                    font-size: 28px;
+                    font-weight: bold;
+                    line-height: 1;
+                }
+
+                .month {
+                    display: block;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    margin-top: 2px;
+                    letter-spacing: 1px;
+                }
+            }
+
+            // Formation sans date : icône + "Sans date fixe" sur deux lignes si besoin
+            &.formation-date--sans-date .date-info .month {
+                margin-top: 8px;
+                font-size: 11px;
+                line-height: 1.25;
+                letter-spacing: 0.5px;
+                white-space: normal;
+            }
+
+            .formation-type {
+                font-size: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                padding: 4px 8px;
+                border-radius: 12px;
+                margin: 0;
+                max-width: 600px;
+                text-align: center;
+                line-height: 1.2;
+
+                &.gratuit {
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                &.premium {
+                    background:#fafd2e6a;
+                color: #110f3b;
+                border: 1px #fbfd2e solid;
+                }
+            }
+        }
+
+        .formation-content {
+            padding: 20px;
+
+            h3 {
+                color: #1a1a3c;
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0 0 12px 0;
+                line-height: 1.3;
+            }
+
+            .location {
+                color: #666;
+                font-size: 14px;
+                margin: 0 0 10px 0;
+
+                i {
+                    margin-right: 5px;
+                    color: #05b1af;
+                }
+            }
+
+            .time {
+                color: #666;
+                font-size: 14px;
+                margin: 0 0 10px 0;
+
+                i {
+                    margin-right: 5px;
+                    color: #2C9A94;
+                }
+            }
+
+            .description {
+                color: #333;
+                font-size: 13px;
+                line-height: 1.4;
+                margin: 0 0 15px 0;
+            }
+
+
+
+            .btn-inscrire {
+                width: auto;
+                padding: 5px 10px 5px 10px;
+                background: #ffffff;
+                border: 2px solid #1a1a3c;
+                color: #1a1a3c;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+
+                &:hover {
+                    background: #1a1a3c;
+                    color: #ffffff;
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+            }
+        }
+    }
+}
+
+// Responsive Design unique par breakpoint
+@media (max-width: 1200px) {
+    .formations-slider .formations-container {
+        width: calc(100% * 4 / 3);
+    }
+    .formations-slider .formation-card {
+        flex: 0 0 calc((100% - 40px) / 3);
+    }
+}
+
+@media (max-width: 950px) {
+    // Passer en mode liste : désactiver le slider
+    .slider-nav {
+        display: none;
+    }
+
+    .formations-viewport {
+        overflow: visible;
+    }
+
+    .formations-container {
+        flex-direction: column;
+        width: 100% !important;
+        transform: none !important;
+        transition: none !important;
+        gap: 10px;
+        padding: 0;
+    }
+
+    .formation-card {
+        flex: none;
+        width: 100%;
+        border-radius: 10px !important;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+
+        &:hover {
+            transform: none;
+            background-color: #f8f9fa;
+        }
+
+        .formation-date {
+            min-width: 120px;
+            width: 120px;
+            flex-shrink: 0;
+            padding: 22px 14px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-radius: 10px 0 0 10px;
+
+            .date-info {
+                .day { font-size: 42px; }
+                .month { font-size: 16px; }
+            }
+        }
+
+        .formation-content {
+            padding: 26px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+
+            h3 { font-size: 21px; margin: 0 0 10px 0; line-height: 1.3; }
+            .location, .time { font-size: 16px; margin: 0 0 6px 0; }
+
+            .btn-inscrire {
+                width: fit-content;
+                font-size: 16px;
+                padding: 9px 20px;
+                margin-top: 10px;
+            }
+        }
+    }
+}
+
+// Téléphone uniquement : la carte liste redevient compacte (largeur d'écran réellement
+// restreinte), le palier ci-dessus reste généreux pour toute la plage tablette.
+@media (max-width: 576px) {
+    .formation-card {
+        .formation-date {
+            min-width: 80px;
+            width: 80px;
+            padding: 16px 10px;
+
+            .date-info {
+                .day { font-size: 26px; }
+                .month { font-size: 12px; }
+            }
+        }
+
+        .formation-content {
+            padding: 16px 16px;
+
+            h3 { font-size: 15px; }
+            .location, .time { font-size: 13px; }
+
+            .btn-inscrire {
+                font-size: 13px;
+                padding: 5px 12px;
+            }
+        }
+    }
+}

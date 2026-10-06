@@ -1,0 +1,51 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card">
+            <span class="auth-icon"><i class="bi bi-people"></i></span>
+            <h1>Gestion des opérateurs</h1>
+            <p>Ajoutez les personnes qui réalisent les traitements sur votre exploitation. Vous pourrez compléter votre équipe plus tard dans « Mon compte ».</p>
+
+            <form [formGroup]="form">
+                <!-- Ajout d'un opérateur -->
+                <h2 class="form-section-title">Ajouter un opérateur</h2>
+                <div class="add-operator-row">
+                    <div class="auth-field">
+                        <label for="operatorName">Nom et prénom<sup>*</sup></label>
+                        <input id="operatorName" type="text" class="form-control" placeholder="Ex : Dupont Marie" formControlName="name" required>
+                    </div>
+                    <div class="auth-field">
+                        <label for="operatorPhytolicence">Numéro de phytolicence<sup>*</sup></label>
+                        <input id="operatorPhytolicence" type="text" class="form-control" placeholder="Ex : 23.2.00445" formControlName="phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)" required>
+                    </div>
+                    <button class="auth-btn auth-btn-secondary add-operator-btn" (click)="onInviter()" type="submit">
+                        <i class="bi bi-plus-lg"></i> Ajouter
+                    </button>
+                </div>
+
+                <!-- Équipe actuelle -->
+                <h2 class="form-section-title team-title">Mon équipe actuelle</h2>
+                <div class="operateurs-grid">
+                    @for (item of signalGet(); track item.operatorId) {
+                        <div class="operateur-card">
+                            <span class="operateur-avatar"><i class="bi bi-person-fill"></i></span>
+                            <div class="operateur-info">
+                                <span class="operateur-nom">{{ item.operatorName }}</span>
+                                <span class="operateur-phyto"><i class="bi bi-hash"></i>{{ item.operatorPhytolicence }}</span>
+                            </div>
+                            <button type="button" class="icon-btn icon-btn--danger" (click)="onDEl(item.operatorId)"
+                                    title="Supprimer cet opérateur" aria-label="Supprimer cet opérateur">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    } @empty {
+                        <p class="team-empty">Aucun opérateur ajouté pour le moment.</p>
+                    }
+                </div>
+
+                <div class="auth-actions">
+                    <button type="button" class="auth-btn auth-btn-primary" (click)="onTerminer()">Terminer</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>

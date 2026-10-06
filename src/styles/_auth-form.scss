@@ -1,0 +1,298 @@
+// Formulaires d'authentification (connexion, création de compte) : encadré pleine largeur
+// .dashboard-card (voir _dashboard-cards.scss), champs en grille, boutons en casse normale.
+//
+// Usage : @use '../../../../../styles/auth-form' as *; (adapter le chemin relatif).
+
+@use 'dashboard-cards' as *;
+
+.auth-card {
+    padding: 28px 32px 30px;
+
+    @media (max-width: 575.98px) {
+        padding: 18px 16px 20px;
+    }
+
+    h1 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: var(--font-size-h1);
+        line-height: 1.2;
+        color: #12103c;
+        margin: 0 0 6px 0;
+    }
+
+    > p {
+        margin: 0 0 20px 0;
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+}
+
+// Pages à un ou deux champs (mot de passe oublié, code, validation) : encadré pleine largeur
+// comme la connexion, mais champs limités en largeur pour rester lisibles.
+.auth-card--narrow {
+    .auth-field,
+    .auth-stack {
+        max-width: 520px;
+    }
+
+    > p:not(.auth-switch):not(.auth-note):not(.error-message) {
+        max-width: 640px;
+    }
+}
+
+// Champs empilés (un par ligne)
+.auth-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+// Icône d'en-tête (carré teal clair, comme les accès rapides)
+.auth-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #e3f6f3;
+    color: #03918a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    margin-bottom: 14px;
+}
+
+// Petite note d'information (ex. vérifier les spams)
+.auth-card > p.auth-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: -8px 0 20px;
+    font-size: 0.85rem;
+    color: #6b7280;
+
+    i { color: #03918a; }
+}
+
+// Bulle des règles du mot de passe (au-dessus du champ)
+.password-hints {
+    position: absolute;
+    bottom: 110%;
+    left: 0;
+    z-index: 10;
+    min-width: 220px;
+    background: #fff;
+    border: 1.5px solid #03918a;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(3, 145, 138, 0.13);
+    padding: 7px 12px;
+    font-size: 0.85em;
+}
+
+.password-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i { font-size: 1em; }
+}
+
+.auth-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+
+    @media (max-width: 767.98px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.auth-field {
+    min-width: 0;
+
+    label {
+        display: block;
+        font-family: "Panton", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #12103c;
+        margin-bottom: 6px;
+
+        sup { color: #dc3545; }
+    }
+
+    // Champ sans libellé visible (ex. confirmation) : garde l'alignement avec la colonne voisine.
+    label.label-placeholder { visibility: hidden; }
+
+    input.form-control,
+    select.form-control {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+.password-container {
+    position: relative;
+
+    input.form-control { padding-right: 44px !important; }
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6b7280;
+        transition: color 0.2s ease;
+
+        &:hover { color: #03918a; }
+    }
+}
+
+.select-container {
+    position: relative;
+
+    select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        display: block;
+        padding-right: 2.4em !important;
+    }
+
+    .select-arrow {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6b7280;
+    }
+}
+
+// Boutons en bas à droite de l'encadré
+.auth-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+
+    @media (max-width: 575.98px) {
+        flex-direction: column-reverse;
+
+        .auth-btn { width: 100%; }
+    }
+}
+
+.auth-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-family: "Panton", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.auth-btn-primary {
+    background: #05b1af;
+    color: #ffffff;
+    border: 1.5px solid #05b1af;
+
+    &:hover:not(:disabled) {
+        background: #049694;
+        border-color: #049694;
+    }
+}
+
+.auth-btn-secondary {
+    background: #ffffff;
+    color: #12103c;
+    border: 1.5px solid #d1d5db;
+
+    &:hover:not(:disabled) {
+        border-color: #05b1af;
+        color: #03918a;
+    }
+}
+
+// Lien vers l'autre formulaire (connexion ↔ création de compte)
+// `.auth-card > .auth-switch` (et non `.auth-switch` seul) : sinon la règle `.auth-card > p`
+// ci-dessus, plus spécifique, remettait la marge haute à 0 (lien collé aux boutons).
+.auth-card > .auth-switch,
+.auth-switch {
+    margin: 32px 0 0;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.92rem;
+
+    a,
+    .auth-link {
+        margin-left: 4px;
+        padding: 0;
+        background: none;
+        border: none;
+        color: #03918a;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover { text-decoration: underline; }
+    }
+}
+
+// Message d'aide/erreur sous un champ
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 0;
+    color: #dc3545;
+    font-size: 0.82rem;
+
+    i { font-size: 0.85rem; }
+}
+
+// Explication sous le bouton désactivé
+.auth-hint {
+    margin: 10px 0 0;
+    text-align: right;
+    color: #6b7280;
+    font-size: 0.82rem;
+
+    @media (max-width: 575.98px) { text-align: center; }
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin: 0 0 16px 0;
+}
+
+.input-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 1px #dc3545 !important;
+}
+
+// Animation shake pour erreur
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}

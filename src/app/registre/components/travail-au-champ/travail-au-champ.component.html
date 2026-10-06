@@ -1,0 +1,719 @@
+﻿@if (travailAuChamp === "Fertilisation") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="scrollable-content" #scrollableContent>
+      <div class="section-title">
+        <h3>Sélectionnez les parcelles et cultures concernées</h3>
+      </div>
+        <form [formGroup]="form">
+        <div class="group-by-tags">
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+        </div>
+        <div class="culture-selection-grid">
+        @if (isLoadingParcelCultures) {
+          <div class="loading-state">
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <div>
+                <h5>Chargement des cultures...</h5>
+                <p class="text-muted">Récupération des associations parcelles/cultures</p>
+              </div>
+            </div>
+          </div>
+        } @else {
+          @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+            <div class="culture-selection-grid">
+              @for (group of parcelCultureGroupsData; track group.groupKey) {
+              <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                  <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                  <h4>{{ group.groupTitle }}</h4>
+                  <label class="group-select-all" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                           [checked]="isGroupFullySelected(group)"
+                           (change)="toggleGroupSelection(group, $event)">
+                    <span class="select-all-label">Tout sélectionner</span>
+                  </label>
+                </div>
+                <div class="parcel-cards-grid">
+                  @for (association of group.associations; track association.uniqueId) {
+                    <label class="parcel-card" 
+                           [class.selected]="isParcelCultureSelected(association)">
+                      <input type="checkbox" 
+                             [value]="association.uniqueId" 
+                             [checked]="isParcelCultureSelected(association)"
+                             (change)="onCheckedParcelCulture($event, association)"
+                             name="parcels_culture_id">
+                      <div class="card-icon"><i class="bi bi-bucket-fill"></i></div>
+                      <div class="card-content">
+                        @if (groupByMode === 'parcelle') {
+                          <div class="parcel-name">{{ association.crop_name }}</div>
+                          <div class="crop-name">{{ association.parcel_name }}</div>
+                        } @else {
+                          <div class="parcel-name">{{ association.parcel_name }}</div>
+                          <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                      </div>
+                      <i class="bi bi-check-circle-fill card-check"></i>
+                    </label>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          } @else if (shouldShowEmptyState) {
+            <div class="empty-state">
+              <i class="bi bi-exclamation-circle"></i>
+              <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+            </div>
+          }
+        }
+        </div>
+      </form>
+    </div>
+
+    <!-- Bouton sticky maintenant géré par le composant parent pour être fixe à la popup -->
+
+    <!-- Footer supprimé - bouton Annuler retiré -->
+  </div>
+
+
+} @else if (travailAuChamp === "FertilisationAdd") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Détails de la fertilisation</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <form [formGroup]="formFertilisation">
+        <div class="form-section">
+          <div class="form-group">
+            <label class="simple-label" for="fertilisationDate">Date de fertilisation<sup>*</sup></label>
+            <input type="date"
+                   id="fertilisationDate"
+                   name="date"
+                   formControlName="date"
+                   class="form-control popup-text-input"
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="fertilisationInformations">Informations sur les produits apportés<sup>*</sup></label>
+            <input type="text"
+                   id="fertilisationInformations"
+                   name="informations"
+                   formControlName="informations"
+                   class="form-control popup-text-input"
+                   placeholder="Nature, quantité, etc...">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="fertilisationTool">Outil de pilotage<sup>*</sup></label>
+            <input type="text"
+                   id="fertilisationTool"
+                   name="tool"
+                   formControlName="tool"
+                   class="form-control popup-text-input"
+                   placeholder="Outil utilisé">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="fertilisationRemark">Remarques</label>
+            <textarea id="fertilisationRemark"
+                      name="remark"
+                      formControlName="remark"
+                      class="form-control popup-text-input"
+                      placeholder="Remarques additionnelles..."
+                      rows="4"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+} @else if (travailAuChamp === "Irrigation") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="scrollable-content" #scrollableContent>
+      <div class="section-title">
+        <h3>Sélectionnez les parcelles et cultures concernées</h3>
+      </div>
+      <form [formGroup]="form">
+        <div class="group-by-tags">
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+        </div>
+        <div class="culture-selection-grid">
+        @if (isLoadingParcelCultures) {
+          <div class="loading-state">
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <div>
+                <h5>Chargement des cultures...</h5>
+                <p class="text-muted">Récupération des associations parcelles/cultures</p>
+              </div>
+            </div>
+          </div>
+        } @else {
+          @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+            <div class="culture-selection-grid">
+              @for (group of parcelCultureGroupsData; track group.groupKey) {
+              <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                  <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                  <h4>{{ group.groupTitle }}</h4>
+                  <label class="group-select-all" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                           [checked]="isGroupFullySelected(group)"
+                           (change)="toggleGroupSelection(group, $event)">
+                    <span class="select-all-label">Tout sélectionner</span>
+                  </label>
+                </div>
+                <div class="parcel-cards-grid">
+                  @for (association of group.associations; track association.uniqueId) {
+                    <label class="parcel-card" 
+                           [class.selected]="isParcelCultureSelected(association)">
+                      <input type="checkbox" 
+                             [value]="association.uniqueId" 
+                             [checked]="isParcelCultureSelected(association)"
+                             (change)="onCheckedParcelCulture($event, association)"
+                             name="parcels_culture_id">
+                      <div class="card-icon"><i class="bi bi-droplet"></i></div>
+                      <div class="card-content">
+                        @if (groupByMode === 'parcelle') {
+                          <div class="parcel-name">{{ association.crop_name }}</div>
+                          <div class="crop-name">{{ association.parcel_name }}</div>
+                        } @else {
+                          <div class="parcel-name">{{ association.parcel_name }}</div>
+                          <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                      </div>
+                      <i class="bi bi-check-circle-fill card-check"></i>
+                    </label>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          } @else if (shouldShowEmptyState) {
+            <div class="empty-state">
+              <i class="bi bi-exclamation-circle"></i>
+              <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+            </div>
+          }
+        }
+        </div>
+      </form>
+    </div>
+
+    <!-- Bouton sticky maintenant géré par le composant parent -->
+
+    <!-- Footer supprimé - bouton Annuler retiré -->
+  </div>
+
+} @else if (travailAuChamp === "IrrigationAdd") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Détails de l'irrigation</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <form [formGroup]="irrigation">
+        <div class="form-section">
+          <div class="encoding-row">
+            <div class="field-col">
+              <label class="field-label" for="irrigationDate">Date d'irrigation<sup>*</sup></label>
+              <input type="date"
+                     id="irrigationDate"
+                     name="date"
+                     formControlName="date"
+                     class="field-input">
+            </div>
+
+            <div class="field-col">
+              <label class="field-label" for="irrigationDose">Quantité<sup>*</sup></label>
+              <input type="number"
+                     id="irrigationDose"
+                     name="dose"
+                     formControlName="dose"
+                     class="field-input"
+                     placeholder="0.00"
+                     min="0"
+                     step="0.01"
+                     [class.input-error]="irrigation.get('dose')?.touched && !(irrigation.value.dose > 0)">
+              @if (irrigation.get('dose')?.touched && !(irrigation.value.dose > 0)) {
+                <p class="field-error"><i class="bi bi-exclamation-circle"></i>La quantité doit être supérieure à 0.</p>
+              }
+            </div>
+            <div class="field-col field-col-unit">
+              <label class="field-label">Unité<sup>*</sup></label>
+              <div class="dropdown-container dose-unit-dropdown" [class.open]="isDoseUnitDropdownOpen">
+                <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleDoseUnitDropdown(); $event.stopPropagation()">
+                  <span class="dropdown-value">{{ irrigation.value.dose_unit }}</span>
+                  <i class="bi bi-chevron-down dropdown-icon"></i>
+                </button>
+                @if (isDoseUnitDropdownOpen) {
+                  <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                    <div class="dropdown-list">
+                      <div class="dropdown-list-item" (click)="selectDoseUnit('L')">L</div>
+                      <div class="dropdown-list-item" (click)="selectDoseUnit('L/ha')">L/ha</div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="irrigationRemark">Remarques</label>
+            <textarea id="irrigationRemark"
+                      name="remark"
+                      formControlName="remark"
+                      class="form-control popup-text-input"
+                      placeholder="Remarques additionnelles..."
+                      rows="4"></textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else if (travailAuChamp === "Récolte") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="scrollable-content" #scrollableContent>
+      <div class="section-title">
+        <h3>Sélectionnez les parcelles et cultures concernées</h3>
+      </div>
+      <form [formGroup]="form">
+        <div class="group-by-tags">
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+        </div>
+        <div class="culture-selection-grid">
+        @if (isLoadingParcelCultures) {
+          <div class="loading-state">
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <div>
+                <h5>Chargement des cultures...</h5>
+                <p class="text-muted">Récupération des associations parcelles/cultures</p>
+              </div>
+            </div>
+          </div>
+        } @else {
+          @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+            <div class="culture-selection-grid">
+              @for (group of parcelCultureGroupsData; track group.groupKey) {
+              <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                  <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                  <h4>{{ group.groupTitle }}</h4>
+                  <label class="group-select-all" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                           [checked]="isGroupFullySelected(group)"
+                           (change)="toggleGroupSelection(group, $event)">
+                    <span class="select-all-label">Tout sélectionner</span>
+                  </label>
+                </div>
+                <div class="parcel-cards-grid">
+                  @for (association of group.associations; track association.uniqueId) {
+                    <label class="parcel-card" 
+                           [class.selected]="isParcelCultureSelected(association)">
+                      <input type="checkbox" 
+                             [value]="association.uniqueId" 
+                             [checked]="isParcelCultureSelected(association)"
+                             (change)="onCheckedParcelCulture($event, association)"
+                             name="parcels_culture_id">
+                      <div class="card-icon"><i class="bi bi-truck"></i></div>
+                      <div class="card-content">
+                        @if (groupByMode === 'parcelle') {
+                          <div class="parcel-name">{{ association.crop_name }}</div>
+                          <div class="crop-name">{{ association.parcel_name }}</div>
+                        } @else {
+                          <div class="parcel-name">{{ association.parcel_name }}</div>
+                          <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                      </div>
+                      <i class="bi bi-check-circle-fill card-check"></i>
+                    </label>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          } @else if (shouldShowEmptyState) {
+            <div class="empty-state">
+              <i class="bi bi-exclamation-circle"></i>
+              <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+            </div>
+          }
+        }
+        </div>
+      </form>
+    </div>
+
+    <!-- Bouton sticky maintenant géré par le composant parent -->
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else if (travailAuChamp === "RécolteAdd") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Détails de la récolte</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <form [formGroup]="recolte">
+        <div class="form-section">
+          <div class="form-group">
+            <label class="simple-label" for="recolteHarvestDate">Date de récolte<sup>*</sup></label>
+            <input type="date"
+                   id="recolteHarvestDate"
+                   name="harvest_date"
+                   formControlName="harvest_date"
+                   class="form-control popup-text-input">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="recolteRendement">Rendement<sup>*</sup></label>
+            <textarea id="recolteRendement"
+                      name="Rendement"
+                      formControlName="Rendement"
+                      class="form-control popup-text-input"
+                      placeholder="Rendement obtenu, quantité, qualité..."
+                      rows="4"></textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else if (travailAuChamp === "Observation") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="scrollable-content" #scrollableContent>
+      <div class="section-title">
+        <h3>Sélectionnez les parcelles et cultures concernées</h3>
+      </div>
+      <form [formGroup]="form">
+        <div class="group-by-tags">
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+        </div>
+        <div class="culture-selection-grid">
+        @if (isLoadingParcelCultures) {
+          <div class="loading-state">
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <div>
+                <h5>Chargement des cultures...</h5>
+                <p class="text-muted">Récupération des associations parcelles/cultures</p>
+              </div>
+            </div>
+          </div>
+        } @else {
+          @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+            <div class="culture-selection-grid">
+              @for (group of parcelCultureGroupsData; track group.groupKey) {
+              <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                  <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                  <h4>{{ group.groupTitle }}</h4>
+                  <label class="group-select-all" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                           [checked]="isGroupFullySelected(group)"
+                           (change)="toggleGroupSelection(group, $event)">
+                    <span class="select-all-label">Tout sélectionner</span>
+                  </label>
+                </div>
+                <div class="parcel-cards-grid">
+                  @for (association of group.associations; track association.uniqueId) {
+                    <label class="parcel-card" 
+                           [class.selected]="isParcelCultureSelected(association)">
+                      <input type="checkbox" 
+                             [value]="association.uniqueId" 
+                             [checked]="isParcelCultureSelected(association)"
+                             (change)="onCheckedParcelCulture($event, association)"
+                             name="parcels_culture_id">
+                      <div class="card-icon"><i class="bi bi-eye"></i></div>
+                      <div class="card-content">
+                        @if (groupByMode === 'parcelle') {
+                          <div class="parcel-name">{{ association.crop_name }}</div>
+                          <div class="crop-name">{{ association.parcel_name }}</div>
+                        } @else {
+                          <div class="parcel-name">{{ association.parcel_name }}</div>
+                          <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                      </div>
+                      <i class="bi bi-check-circle-fill card-check"></i>
+                    </label>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          } @else if (shouldShowEmptyState) {
+            <div class="empty-state">
+              <i class="bi bi-exclamation-circle"></i>
+              <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+            </div>
+          }
+        }
+        </div>
+      </form>
+    </div>
+
+    <!-- Bouton sticky maintenant géré par le composant parent -->
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else if (travailAuChamp === "ObservationAdd") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Détails de l'observation</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <form [formGroup]="observation">
+        <div class="form-section">
+          <div class="form-group">
+            <label class="simple-label" for="observationDate">Date de l'observation<sup>*</sup></label>
+            <input type="date"
+                   id="observationDate"
+                   name="dateDeLobservation"
+                   formControlName="dateDeLobservation"
+                   class="form-control popup-text-input">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="observationText">Observation<sup>*</sup></label>
+            <textarea id="observationText"
+                      name="Observation"
+                      formControlName="Observation"
+                      class="form-control popup-text-input"
+                      placeholder="Détails de l'observation..."
+                      rows="4"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else if (travailAuChamp === "Travail du sol") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="scrollable-content" #scrollableContent>
+      <div class="section-title">
+        <h3>Sélectionnez les parcelles et cultures concernées</h3>
+      </div>
+      <form [formGroup]="form">
+        <div class="group-by-tags">
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'phytoweb'" (click)="setGroupByMode('phytoweb')">Catégorie Phytoweb</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'culture'" (click)="setGroupByMode('culture')">Culture</button>
+          <button type="button" class="group-by-tag" [class.active]="groupByMode === 'parcelle'" (click)="setGroupByMode('parcelle')">Parcelles</button>
+        </div>
+        <div class="culture-selection-grid">
+        @if (isLoadingParcelCultures) {
+          <div class="loading-state">
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <div>
+                <h5>Chargement des cultures...</h5>
+                <p class="text-muted">Récupération des associations parcelles/cultures</p>
+              </div>
+            </div>
+          </div>
+        } @else {
+          @if (parcelCultureGroupsData && parcelCultureGroupsData.length > 0) {
+            <div class="culture-selection-grid">
+              @for (group of parcelCultureGroupsData; track group.groupKey) {
+              <div class="culture-group" [class.expanded]="isGroupExpandedOnMobile(group.groupKey)">
+                <div class="group-header" (click)="toggleGroupOnMobile(group.groupKey)">
+                  <i class="bi bi-chevron-right mobile-toggle-arrow"></i>
+                  <h4>{{ group.groupTitle }}</h4>
+                  <label class="group-select-all" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                           [checked]="isGroupFullySelected(group)"
+                           (change)="toggleGroupSelection(group, $event)">
+                    <span class="select-all-label">Tout sélectionner</span>
+                  </label>
+                </div>
+                <div class="parcel-cards-grid">
+                  @for (association of group.associations; track association.uniqueId) {
+                    <label class="parcel-card" 
+                           [class.selected]="isParcelCultureSelected(association)">
+                      <input type="checkbox" 
+                             [value]="association.uniqueId" 
+                             [checked]="isParcelCultureSelected(association)"
+                             (change)="onCheckedParcelCulture($event, association)"
+                             name="parcels_culture_id">
+                      <div class="card-icon"><i class="bi bi-gear"></i></div>
+                      <div class="card-content">
+                        @if (groupByMode === 'parcelle') {
+                          <div class="parcel-name">{{ association.crop_name }}</div>
+                          <div class="crop-name">{{ association.parcel_name }}</div>
+                        } @else {
+                          <div class="parcel-name">{{ association.parcel_name }}</div>
+                          <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                      </div>
+                      <i class="bi bi-check-circle-fill card-check"></i>
+                    </label>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          } @else if (shouldShowEmptyState) {
+            <div class="empty-state">
+              <i class="bi bi-exclamation-circle"></i>
+              <p>Aucune association parcelle+culture trouvée. Vérifiez que vous avez bien des cultures assignées à des parcelles.</p>
+            </div>
+          }
+        }
+        </div>
+      </form>
+    </div>
+  </div>
+
+} @else if (travailAuChamp === "Travail du solAdd") {
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Détails du travail du sol</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <form [formGroup]="travailDuSol">
+        <div class="form-section">
+          <div class="form-group">
+            <label class="simple-label" for="travailDuSolDate">Date du travail<sup>*</sup></label>
+            <input type="date"
+                   id="travailDuSolDate"
+                   name="date"
+                   formControlName="date"
+                   class="form-control popup-text-input"
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="travailDuSolType">Type de travail<sup>*</sup></label>
+            <input type="text"
+                   id="travailDuSolType"
+                   name="field_work_type"
+                   formControlName="field_work_type"
+                   class="form-control popup-text-input"
+                   placeholder="Type de travail effectué (labour, semis, etc.)">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="travailDuSolDescription">Description</label>
+            <input type="text"
+                   id="travailDuSolDescription"
+                   name="description"
+                   formControlName="description"
+                   class="form-control popup-text-input"
+                   placeholder="Description détaillée du travail">
+          </div>
+
+          <div class="form-group">
+            <label class="simple-label" for="travailDuSolRemark">Remarques</label>
+            <textarea id="travailDuSolRemark"
+                      name="remark"
+                      formControlName="remark"
+                      class="form-control popup-text-input"
+                      placeholder="Observations et remarques..."
+                      rows="4"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer avec boutons -->
+  </div>
+
+} @else {
+  <!-- Écran de sélection du type de travail -->
+  <div class="work-content" [attr.data-slide-direction]="slideDirection" (@slideStep.done)="onSlideAnimationDone()">
+    <div class="section-title">
+      <h3>Sélectionner le type de travail au champ</h3>
+    </div>
+    
+    <div class="scrollable-content" #scrollableContent>
+      <div class="work-type-selection">
+        <div class="work-type-column">
+        <div class="work-type-card" (click)="onFertilisation()">
+          <div class="card-icon">
+            <i class="bi bi-bucket-fill"></i>
+          </div>
+          <div class="card-content">
+            <h4>Fertilisation</h4>
+            <p>Apport d'éléments nutritifs aux cultures</p>
+          </div>
+        </div>
+
+        <div class="work-type-card" (click)="onIrrigation()">
+          <div class="card-icon">
+            <i class="bi bi-droplet"></i>
+          </div>
+          <div class="card-content">
+            <h4>Irrigation</h4>
+            <p>Apport d'eau aux cultures</p>
+          </div>
+        </div>
+
+        <div class="work-type-card" (click)="onRecolte()">
+          <div class="card-icon">
+            <i class="bi bi-truck"></i>
+          </div>
+          <div class="card-content">
+            <h4>Récolte</h4>
+            <p>Collecte des produits de la culture</p>
+          </div>
+        </div>
+
+        <div class="work-type-card" (click)="onObservation()">
+          <div class="card-icon">
+            <i class="bi bi-eye"></i>
+          </div>
+          <div class="card-content">
+            <h4>Observation</h4>
+            <p>Suivi et notes sur l'état des cultures</p>
+          </div>
+        </div>
+
+        <div class="work-type-card" (click)="onTravailDuSol()">
+          <div class="card-icon">
+            <i class="bi bi-gear"></i>
+          </div>
+          <div class="card-content">
+            <h4>Travail du sol</h4>
+            <p>Préparation et entretien des sols</p>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

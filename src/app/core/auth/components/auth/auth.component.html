@@ -1,0 +1,51 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+
+        <!-- 🔐 Message de session expirée -->
+        @if (sessionExpiredMessage()) {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{ sessionExpiredMessage() }}</strong>
+            </div>
+        }
+
+        <section class="dashboard-card auth-card" [class.shake]="shakeError()">
+            <h1>Connexion</h1>
+            <p>Connectez-vous pour accéder à votre carnet de champ.</p>
+
+            @if (errorMessage()) {
+                <p class="error-message">{{ errorMessage() }}</p>
+            }
+
+            <form [formGroup]="form" class="auth-form">
+                <div class="auth-grid">
+                    <div class="auth-field">
+                        <label for="login">Adresse mail</label>
+                        <input id="login" placeholder="E-mail" type="email" class="form-control" formControlName="login" required>
+                    </div>
+                    <div class="auth-field">
+                        <label for="mdp">Mot de passe</label>
+                        <div class="password-container">
+                            <input id="mdp" placeholder="Mot de passe"
+                                   [type]="showPassword ? 'text' : 'password'"
+                                   class="form-control"
+                                   formControlName="mdp" required>
+                            <i class="material-icons password-toggle" (click)="showPassword = !showPassword">
+                                {{showPassword ? 'visibility_off' : 'visibility'}}
+                            </i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="button" class="auth-btn auth-btn-secondary" (click)="onUdpate()">Mot de passe oublié</button>
+                    <button type="submit" class="auth-btn auth-btn-primary" (click)="onConnexion()" [disabled]="form.invalid">Connexion</button>
+                </div>
+            </form>
+
+            <p class="auth-switch">
+                Pas encore de compte ?
+                <a routerLink="/creation-compte">Créer un compte gratuitement</a>
+            </p>
+        </section>
+    </div>
+</main>

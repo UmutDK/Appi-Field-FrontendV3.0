@@ -1,0 +1,135 @@
+:host { display: block; }
+
+// Encadré d'accueil : même style que .dashboard-card (src/styles/_dashboard-cards.scss) —
+// texte à gauche, boutons à droite ; empilés sous 992px.
+.hero-card {
+    display: flex;
+    // Boutons alignés en bas, au niveau des paragraphes d'intro (et non centrés sur le bloc).
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    padding: 28px 32px;
+    margin-bottom: 16px;
+
+    @media (max-width: 991.98px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    @media (max-width: 575.98px) {
+        padding: 18px 16px;
+    }
+}
+
+.hero-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #12103c;
+
+    h1 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: var(--font-size-h1);
+        line-height: 1.2;
+        color: #12103c;
+        margin: 0 0 14px 0;
+    }
+
+    .hero-accent { color: #05b1af; }
+
+    p {
+        color: #6b7280;
+        font-size: 0.95rem;
+        margin: 0 0 6px 0;
+
+        b { color: #12103c; }
+    }
+}
+
+// Boutons dans l'encadré
+.banniere-btns {
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (max-width: 991.98px) {
+        flex-basis: auto;
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border: none;
+        border-radius: 8px;
+        // Materialize force text-transform:uppercase sur .btn — le reste de l'app est en casse normale.
+        text-transform: none !important;
+        font-family: "Panton", sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: normal;
+        line-height: 1.2;
+        white-space: nowrap;
+        height: auto;
+        padding: 14px 18px;
+        transition: background-color 0.2s ease, transform 0.15s ease;
+        box-shadow: none !important;
+
+        &:hover { transform: translateY(-1px); }
+        &:active { transform: translateY(0); }
+        &:focus-visible {
+            outline: 2px solid rgba(17, 15, 59, 0.35);
+            outline-offset: 2px;
+        }
+    }
+
+    .btns-row {
+        display: flex;
+        gap: 12px;
+        align-items: stretch;
+
+        .btn { width: 100%; }
+
+        @media screen and (max-width: 420px) {
+            flex-direction: column;
+        }
+    }
+
+    .btn-teal {
+        flex: 1;
+        background-color: #05b1af;
+        color: #ffffff;
+
+        &:hover { background-color: #049694; }
+    }
+
+    .btn-wallesmart {
+        gap: 10px;
+        background-color: #e8384f;
+        color: #ffffff;
+        text-decoration: none;
+        cursor: pointer;
+
+        span { font-size: 0.92rem; }
+
+        .wallesmart-logo {
+            height: 35px;
+            width: auto;
+            display: block;
+        }
+
+        &:hover { background-color: #d92e45; }
+
+        &:focus-visible {
+            outline: 2px solid rgba(232, 56, 79, 0.4);
+            outline-offset: 2px;
+        }
+    }
+}

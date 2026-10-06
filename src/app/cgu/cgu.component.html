@@ -1,0 +1,259 @@
+<!-- même conteneur et même en-tête que l'accueil / Parcelles / Mon compte -->
+<main class="dashboard">
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Conditions générales d'utilisation (CGU)</h1>
+            <p class="dashboard-subtitle">Les règles d'utilisation de la plateforme Appi'Field.</p>
+        </header>
+
+        <div class="cgu-layout">
+            <!-- Sommaire (masqué sous 992px, voir cgu.component.scss) -->
+            <div class="cgu-toc-col">
+                <nav class="cgu-toc" aria-label="Sommaire">
+                    <span class="cgu-toc-title">Sommaire</span>
+                    <!-- [routerLink]="[]" + fragment (au lieu de href="#...") : avec <base href="/">
+                         (index.html), un simple href="#cgu-section-N" se résout en "/#cgu-section-N"
+                         au lieu de "/cgu#cgu-section-N" — ça quittait la page (et redirigeait les
+                         utilisateurs connectés vers /back-office via RedirectIfAuthenticatedGuard sur
+                         "/") au lieu de faire défiler la page courante. routerLink reste sur la route
+                         active et ne change que le fragment. -->
+                    <a [routerLink]="[]" fragment="cgu-section-1" (click)="scrollToSection('cgu-section-1')">1. Objet</a>
+                    <a [routerLink]="[]" fragment="cgu-section-2" (click)="scrollToSection('cgu-section-2')">2. Définitions</a>
+                    <a [routerLink]="[]" fragment="cgu-section-3" (click)="scrollToSection('cgu-section-3')">3. Principales fonctionnalités de la Plateforme</a>
+                    <a [routerLink]="[]" fragment="cgu-section-4" (click)="scrollToSection('cgu-section-4')">4. Acceptation et modification des présentes Conditions</a>
+                    <a [routerLink]="[]" fragment="cgu-section-5" (click)="scrollToSection('cgu-section-5')">5. Prix</a>
+                    <a [routerLink]="[]" fragment="cgu-section-6" (click)="scrollToSection('cgu-section-6')">6. Création du Compte</a>
+                    <a [routerLink]="[]" fragment="cgu-section-7" (click)="scrollToSection('cgu-section-7')">7. Sites tiers</a>
+                    <a [routerLink]="[]" fragment="cgu-section-8" (click)="scrollToSection('cgu-section-8')">8. Obligations de l'Utilisateur</a>
+                    <a [routerLink]="[]" fragment="cgu-section-9" (click)="scrollToSection('cgu-section-9')">9. Obligations de Corder</a>
+                    <a [routerLink]="[]" fragment="cgu-section-10" (click)="scrollToSection('cgu-section-10')">10. Responsabilité</a>
+                    <a [routerLink]="[]" fragment="cgu-section-11" (click)="scrollToSection('cgu-section-11')">11. Propriété intellectuelle</a>
+                    <a [routerLink]="[]" fragment="cgu-section-12" (click)="scrollToSection('cgu-section-12')">12. Données à caractère personnel</a>
+                    <a [routerLink]="[]" fragment="cgu-section-13" (click)="scrollToSection('cgu-section-13')">13. Durée et résiliation</a>
+                    <a [routerLink]="[]" fragment="cgu-section-14" (click)="scrollToSection('cgu-section-14')">14. Dispositions diverses</a>
+                    <a [routerLink]="[]" fragment="cgu-section-15" (click)="scrollToSection('cgu-section-15')">15. Droit applicable et juridiction compétente</a>
+                </nav>
+            </div>
+
+            <div class="cgu-main-col">
+                <div class="dashboard-card cgu-content">
+                    <div class="cgu-text">
+                        <div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-1" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Objet</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les pr&eacute;sentes conditions g&eacute;n&eacute;rales d&rsquo;utilisation ont pour objet de r&eacute;gir l&rsquo;utilisation de la plateforme &laquo; Registre &eacute;lectronique d&rsquo;utilisation des PPP &raquo; (ci-apr&egrave;s la &laquo; <strong>Plateforme</strong> &raquo;) fournie par l&rsquo;ASBL Corder, ayant son si&egrave;ge social &agrave; 1348 Louvain-la-Neuve, Croix du Sud, 2, bte L7.05.03, et &eacute;tant enregistr&eacute;e &agrave; la Banque-Carrefour des Entreprises sous le num&eacute;ro&nbsp;BE 0453.764.119 (ci-apr&egrave;s &laquo; <strong>Corder</strong> &raquo;).</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme est mise &agrave; disposition sous la forme d&rsquo;une application web et d&rsquo;une application mobile.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-2" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">D&eacute;finitions</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Au sens des pr&eacute;sentes Conditions, les termes repris ci-apr&egrave;s et commen&ccedil;ant par une majuscule ont la signification suivante, qu&rsquo;ils soient employ&eacute;s au singulier ou au pluriel&nbsp;:</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Compte</strong> &raquo; : interface personnelle dont l&rsquo;Utilisateur dispose sur la Plateforme et qui lui permet de b&eacute;n&eacute;ficier des fonctionnalit&eacute;s offertes par la Plateforme.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Conditions</strong> &raquo; : les pr&eacute;sentes Conditions g&eacute;n&eacute;rales d&rsquo;utilisation.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Dommages indirects</strong> &raquo; :&nbsp;les cons&eacute;quences directes des dommages directs. Sans que cette liste soit limitative, ces dommages incluent&nbsp;: tout pr&eacute;judice financier ou commercial&nbsp;; la perte de Client&egrave;le ou d&rsquo;&eacute;pargne&nbsp;; toute augmentation des co&ucirc;ts et autres frais g&eacute;n&eacute;raux&nbsp;; la perte de b&eacute;n&eacute;fices&nbsp;; la perte ou la d&eacute;gradation d&rsquo;image de marque&nbsp;; tout report ou perturbation dans le planning de projets ou de l&rsquo;activit&eacute;&nbsp;; la perte de donn&eacute;es et ses cons&eacute;quences.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo;<span style="font-family: 'Arial',sans-serif;">&thinsp;</span><strong>Droits de propri&eacute;t&eacute; intellectuelle</strong><span style="font-family: 'Arial',sans-serif;">&thinsp;</span>&raquo; : tous les brevets, droits d&rsquo;auteur, droits sur les dessins, sch&eacute;mas ou mod&egrave;les, droits sur les plans et &oelig;uvres d&rsquo;architecture, droits de marque, logo, nom commercial, secrets d&rsquo;affaires, savoir-faire, droits <em>sui generis</em> sur les bases de donn&eacute;es, et tout autre droit de propri&eacute;t&eacute; intellectuelle (enregistr&eacute; ou non), ainsi que toutes les applications de ceux-ci, partout dans le monde.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Force majeure</strong> &raquo; : tout &eacute;v&eacute;nement habituellement retenu par la doctrine et/ou par la jurisprudence comme constituant un cas de force majeure,&nbsp;ainsi que les circonstances suivantes&nbsp;: les modifications l&eacute;gislatives et r&eacute;glementaires, les incendies, les temp&ecirc;tes, les inondations, les gr&egrave;ves totales ou partielles notamment des services postaux et moyens de transport et/ou communication, les lockdowns, les confinements, les &eacute;pid&eacute;mies et pand&eacute;mies, les catastrophes naturelles, les actes terroristes, les guerres, les surtensions et chocs &eacute;lectriques, les chocs &eacute;lectromagn&eacute;tiques, les orages, les pannes des syst&egrave;mes de refroidissement et des mat&eacute;riels informatiques, les blocages et ralentissements des r&eacute;seaux de communication &eacute;lectroniques, les virus et piratages informatiques, en ce compris les attaques par d&eacute;ni de service, et plus g&eacute;n&eacute;ralement tout fait impr&eacute;visible pour les Parties.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Partie</strong> &raquo; : d&eacute;signe indiff&eacute;remment une des Parties aux pr&eacute;sentes Conditions.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Plateforme</strong> &raquo; : la plateforme &laquo; Registre &eacute;lectronique d&rsquo;utilisation des PPP &raquo; fournie par Corder, ainsi que l&rsquo;ensemble des bases de donn&eacute;es et l&rsquo;ensemble des modules qui y sont associ&eacute;s.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>RGPD</strong> &raquo; :&nbsp;r&egrave;glement (UE) g&eacute;n&eacute;ral sur la protection des donn&eacute;es n&deg; 2016/679.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&laquo; <strong>Utilisateur</strong> &raquo; : la personne physique ou morale qui dispose d&rsquo;un Compte. Il existe deux types d&rsquo;Utilisateurs :</p>
+<ul style="list-style-type: disc;">
+    <li style="text-align: left;">l&rsquo;&laquo; <strong>Utilisateur Gestionnaire</strong> &raquo; : l&rsquo;Utilisateur qui est gestionnaire d&rsquo;exploitations sur lesquelles des produits phytopharmaceutiques sont utilis&eacute;s par lui-m&ecirc;me et/ou par un ou plusieurs Utilisateur(s) Op&eacute;rateur(s) ;</li>
+    <li style="text-align: left;">l&rsquo;&laquo; <strong>Utilisateur Op&eacute;rateur</strong> &raquo; : l&rsquo;Utilisateur qui utilise des produits phytopharmaceutiques sur des exploitations dont il n&rsquo;est pas gestionnaire pour le compte d&rsquo;un Utilisateur Gestionaire.</li>
+</ul>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-3" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Principales fonctionnalit&eacute;s de la Plateforme</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme offre &agrave; l&rsquo;Utilisateur &eacute;tabli sur le territoire de la R&eacute;gion wallonne (Belgique) la possibilit&eacute; d&rsquo;enregistrer de mani&egrave;re &eacute;lectronique certaines informations relatives &agrave; l&rsquo;utilisation de produits phytopharmaceutiques (PPP) et de les exporter ult&eacute;rieurement. Les informations en question concernent tant des informations facilitant l&rsquo;utilisation de la plateforme, que &nbsp;les informations l&eacute;galement obligatoire d&rsquo;enregistrer &eacute;lectroniquement pour tout &laquo; utilisateur professionnel &raquo;, &agrave; savoir &laquo;&nbsp;toute personne qui utilise des pesticides au cours de son activit&eacute; professionnelle, et notamment les op&eacute;rateurs, les techniciens, les employeurs et les ind&eacute;pendants, tant dans le secteur agricole que dans d&rsquo;autres secteurs&nbsp;&raquo;.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme permet en outre &agrave; l&rsquo;Utilisateur Gestionnaire, le cas &eacute;ch&eacute;ant, d&rsquo;inviter des Utilisateurs Op&eacute;rateurs &agrave; enregistrer les informations relatives &agrave; l&rsquo;utilisation de produits phytopharmaceutiques sur les exploitations sur lesquelles ils op&egrave;rent pour le compte de l&rsquo;Utilisateur Gestionnaire. Pour ce faire, l&rsquo;Utilisateur Gestionnaire doit renseigner le num&eacute;ro de phytolicence ainsi que les nom et pr&eacute;nom des Utilisateurs Op&eacute;rateurs concern&eacute;s.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme offre par ailleurs une fonctionnalit&eacute; de gestion du stock virtuel en ce qui concerne certains produits phytopharmaceutiques qui arrivent &agrave; &eacute;ch&eacute;ance et ne sont pas renouvel&eacute;s ou qui font l&rsquo;objet d&rsquo;une interdiction d&rsquo;utilisation par les autorit&eacute;s (PPNU). Des e-mails sont envoy&eacute;s par Corder &agrave; l&rsquo;Utilisateur pour le pr&eacute;venir de la survenance de ces circonstances. L&rsquo;Utilisateur peut demander d'annuler l'envoi de ces e-mails &agrave; tout moment en envoyant un mail à registre[a]corder.be</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">A toutes fins utiles, Corder pr&eacute;cise que la mise &agrave; disposition de la Plateforme ne poursuit ni un objectif commercial, ni un objectif de contr&ocirc;le proactif des activit&eacute;s des Utilisateurs, par Corder ou qui que ce soit d&rsquo;autres, bien que les informations reprises sur la Plateforme aient pour objectif d&rsquo;&ecirc;tre facilement exportables en cas de contr&ocirc;le par les autorit&eacute;s comp&eacute;tentes pour ce faire.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-4" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Acceptation et modification des pr&eacute;sentes Conditions</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">En utilisant la Plateforme, l&rsquo;Utilisateur marque formellement, sans condition et sans aucune r&eacute;serve, son accord sur l&rsquo;application des pr&eacute;sentes Conditions et s&rsquo;engage &agrave; les respecter.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder se r&eacute;serve le droit de modifier les pr&eacute;sentes Conditions &agrave; tout moment et en informe pr&eacute;alablement l&rsquo;Utilisateur. Si l&rsquo;Utilisateur n&rsquo;accepte pas les modifications des Conditions, il doit cesser imm&eacute;diatement toute utilisation de la Plateforme.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-5" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Prix</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;acc&egrave;s &agrave; la Plateforme est gratuit.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Cet acc&egrave;s n&eacute;cessite cependant, sans que cette liste soit limitative, une connexion internet et du mat&eacute;riel informatique adapt&eacute;, lesquels repr&eacute;sentent des frais qui ne sont pas &agrave; la charge de Corder. Ces frais sont support&eacute;s par l&rsquo;Utilisateur.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-6" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Cr&eacute;ation du Compte&nbsp;</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur d&eacute;clare avoir re&ccedil;u toutes les informations n&eacute;cessaires de la part de Corder concernant les caract&eacute;ristiques et les fonctionnalit&eacute;s offertes par la Plateforme.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La cr&eacute;ation d&rsquo;un Compte est n&eacute;cessaire pour utiliser la Plateforme. Elle requiert la fourniture par l&rsquo;Utilisateur de certaines donn&eacute;es, telles que pr&eacute;cis&eacute;es lors de la cr&eacute;ation du Compte.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Chaque Compte ne peut &ecirc;tre utilis&eacute; que par un seul Utilisateur. Chaque Utilisateur ne peut disposer que d&rsquo;un seul compte sur la Plateforme. &nbsp;&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur s&rsquo;engage &agrave; fournir des donn&eacute;es exactes, &agrave; jour, et compl&egrave;tes&nbsp;au moment de la cr&eacute;ation du Compte ainsi qu&rsquo;&agrave; tout moment ult&eacute;rieur et &agrave; en assurer la mise &agrave; jour r&eacute;guli&egrave;re. L&rsquo;Utilisateur s&rsquo;engage &agrave; employer un mot de passe suffisamment &eacute;labor&eacute; et &agrave; le garder strictement confidentiel. Il ne le divulgue &agrave; personne. L&rsquo;Utilisateur est seul responsable de la confidentialit&eacute; de son mot de passe et de toute utilisation qui pourrait survenir &agrave; son insu.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur signale &agrave; Corder, dans les plus brefs d&eacute;lais, toute utilisation frauduleuse de son Compte.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur est seul responsable de la s&eacute;curisation et de la confidentialit&eacute; de son Compte, de ses terminaux, de ses mots de passe et de sa connexion.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-7" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Sites tiers</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme peut contenir des liens hypertextes renvoyant vers des sites internet &eacute;dit&eacute;s par des tiers sur lesquels Corder n&apos;exerce aucun contr&ocirc;le. Par cons&eacute;quent, Corder ne peut &ecirc;tre tenue responsable du contenu de ces sites tiers.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur est seul responsable s&rsquo;il se rend sur ces sites tiers.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-8" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Obligations de l&rsquo;Utilisateur</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Dans le cadre de l&rsquo;acc&egrave;s &agrave; et de l&rsquo;utilisation de la Plateforme, l&rsquo;Utilisateur s&rsquo;interdit express&eacute;ment, de quelque mani&egrave;re que ce soit et quels que soient les moyens techniques utilis&eacute;s, sous peine de voir sa responsabilit&eacute; engag&eacute;e, de&nbsp;:</p>
+<ul style="list-style-type: disc;">
+    <li style="text-align: left;">acc&eacute;der de mani&egrave;re non autoris&eacute;e &agrave; la Plateforme&nbsp;;</li>
+    <li style="text-align: left;">poser un quelconque acte qui, &agrave; un quelconque moment, pourrait compromettre le bon fonctionnement de la Plateforme, de quelque mani&egrave;re que ce soit, pour lui-m&ecirc;me et/ou pour tout ou partie des autres Utilisateurs&nbsp;;</li>
+    <li style="text-align: left;">t&eacute;l&eacute;verser sur la Plateforme tout contenu ill&eacute;gal, nuisible, mena&ccedil;ant, violent, constitutif de harc&egrave;lement, abusif, diffamatoire, vulgaire, obsc&egrave;ne, mena&ccedil;ant pour la vie priv&eacute;e d&rsquo;autrui, haineux, raciste ou autrement r&eacute;pr&eacute;hensible ou encore tout contenu prot&eacute;g&eacute; par des Droits de propri&eacute;t&eacute; intellectuelle dont un tiers est titulaire sans disposer des autorisations &agrave; cette fin&nbsp;;</li>
+    <li style="text-align: left;">consulter, afficher, t&eacute;l&eacute;charger, t&eacute;l&eacute;verser, envoyer, transmettre ou divulguer tout contenu qui serait contraire aux lois en vigueur&nbsp;;</li>
+    <li style="text-align: left;">t&eacute;l&eacute;charger, t&eacute;l&eacute;verser, afficher ou utiliser de toute autre mani&egrave;re tout contenu comprenant des virus informatiques ou tout autre code, dossier ou programme con&ccedil;us pour interrompre, d&eacute;truire, entraver, perturber, ou limiter la fonctionnalit&eacute; de, sans que cette &eacute;num&eacute;ration soit limitative, tout logiciel, ordinateur, service, serveur, r&eacute;seau ou outil de t&eacute;l&eacute;communication&nbsp;;</li>
+    <li style="text-align: left;">de mani&egrave;re g&eacute;n&eacute;rale, commettre tout acte ou omission constitutif d&rsquo;une violation des pr&eacute;sentes Conditions ou de la loi applicable.&nbsp;</li>
+</ul>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur s&rsquo;engage &agrave; prendre toutes les pr&eacute;cautions raisonnables et n&eacute;cessaires afin d&rsquo;&eacute;viter que son &eacute;quipement ou ses donn&eacute;es soient atteints par des virus, des bugs, des chevaux de Troie ou tout autre programme informatique malveillant, de quelque nature que ce soit.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur garantit que les donn&eacute;es qu&rsquo;il renseigne sur la Plateforme sont exactes et tenues &agrave; jour.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur assume l&rsquo;enti&egrave;re responsabilit&eacute; de l&rsquo;utilisation qu&rsquo;il fait des informations et contenus pr&eacute;sents sur la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder se r&eacute;serve le droit de refuser l&apos;acc&egrave;s &agrave; la Plateforme, de fermer un Compte, de retirer ou d&apos;&eacute;diter du contenu si l&rsquo;Utilisateur viole une quelconque loi applicable ou une quelconque disposition des pr&eacute;sentes Conditions, en ce compris s&rsquo;il adopte un comportement anormal que n&rsquo;adopterait pas un Utilisateur normalement prudent et diligent dans le cadre d&rsquo;une utilisation normale de la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur accepte que les fonctionnalit&eacute;s propos&eacute;es au travers de la Plateforme soient susceptibles d&rsquo;&eacute;voluer. Ainsi, certaines d&rsquo;entre elles peuvent &ecirc;tre supprim&eacute;es et d&rsquo;autres ajout&eacute;es, sans que l&rsquo;Utilisateur puisse consid&eacute;rer que l&rsquo;acc&egrave;s &agrave; une fonctionnalit&eacute; particuli&egrave;re ne constitue un droit acquis. De m&ecirc;me, Corder d&eacute;cidera seul de l&rsquo;opportunit&eacute; d&rsquo;inclure ou de supprimer tout contenu pr&eacute;sent&eacute; dans la Plateforme.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-9" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Obligations de Corder</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder d&eacute;ploie ses meilleurs efforts afin d&rsquo;assurer le bon fonctionnement et l&rsquo;acc&egrave;s &agrave; la Plateforme.&nbsp;Les obligations de Corder sont en tout &eacute;tat de cause des obligations de moyen.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les informations fournies par Corder sur la Plateforme (en ce compris sur les produits phytopharmaceutiques et leurs doses recommand&eacute;es) le&nbsp;sont &agrave; titre informatif. Corder ne peut donner aucune garantie de fiabilit&eacute; quant &agrave; l&apos;ensemble des informations fournies et autres donn&eacute;es pr&eacute;sentes sur la Plateforme, qu&apos;elles soient fournies par elle, ses &eacute;ventuels partenaires et/ou tout tiers. L&rsquo;Utilisateur reconna&icirc;t en cons&eacute;quence utiliser ces informations et les autres donn&eacute;es de la Plateforme &agrave; ses risques et p&eacute;rils. En particulier, si l&rsquo;Utilisateur souhaite obtenir des informations &agrave; jour relatives aux produits phytopharmaceutiques et leurs doses recommand&eacute;es, il consultera la Plateforme Phytoweb.be, qui est la source officielle en ce qui concerne les autorisations de produits phytopharmaceutiques.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder fournit la Plateforme en l&rsquo;&eacute;tat, avec toutes ses imperfections et selon ses disponibilit&eacute;s. L&rsquo;Utilisateur reconna&icirc;t et accepte que les syst&egrave;mes informatiques et de communication &eacute;lectronique ne sont pas exempts de d&eacute;fauts et qu&rsquo;il est possible de subir des interruptions de services. <span style="font-family: Calibri;">L&rsquo;Utilisateur est conscient du fait qu&rsquo;un probl&egrave;me technique, tel un virus, un bug informatique ou une intrusion malveillante lors de l&rsquo;utilisation de la Plateforme ne peuvent &ecirc;tre totalement exclus.&nbsp;</span></p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Aucune garantie n&apos;est offerte par Corder en cas de perte, d&apos;indisponibilit&eacute; temporaire ou de d&eacute;faut de conservation de tout contenu sur la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-10" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Responsabilit&eacute;</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder se r&eacute;serve la possibilit&eacute; d&apos;interrompre, de suspendre momentan&eacute;ment ou de modifier sans pr&eacute;avis l&apos;acc&egrave;s &agrave; tout ou partie de la Plateforme afin d&apos;en assurer la maintenance ou pour toute autre raison. Il ne saurait donc &ecirc;tre tenu pour responsable de tout dommage, quelle qu&apos;en soit la nature, cons&eacute;cutif &agrave; une indisponibilit&eacute; de la Plateforme. Une telle interruption n&rsquo;ouvre aucun droit &agrave; r&eacute;paration dans le chef de l&rsquo;Utilisateur, quelles qu&rsquo;en soient les cons&eacute;quences.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La responsabilit&eacute; de Corder ne saurait &ecirc;tre engag&eacute;e pour tous les inconv&eacute;nients ou dommages inh&eacute;rents &agrave; l&rsquo;utilisation du r&eacute;seau Internet&nbsp;: notamment, mais sans s&rsquo;y limiter, une rupture du service, une intrusion ext&eacute;rieure ou la pr&eacute;sence de virus informatiques, une tentative d&rsquo;escroquerie par phishing (ou autre technique), le d&eacute;tournement ou vol d&rsquo;information. Il est d&egrave;s lors impos&eacute; aux Utilisateurs d&rsquo;installer les firewall, anti-virus et autres mesures de protection n&eacute;cessaires afin d&rsquo;emp&ecirc;cher les &eacute;ventuels endommagements de leurs ordinateurs et de r&eacute;duire au maximum le risque de violation de donn&eacute;es. Corder ne peut &ecirc;tre tenue responsable du vol de ces donn&eacute;es.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder ne peut en outre &ecirc;tre tenue responsable de tout dysfonctionnement du r&eacute;seau ou des serveurs ou de tout autre &eacute;v&eacute;nement qui emp&ecirc;cherait ou d&eacute;graderait l&apos;acc&egrave;s &agrave; la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Sauf faute lourde ou intentionnelle, Corder n&rsquo;est responsable d&rsquo;aucune perte et d&apos;aucun dommage que l&rsquo;Utilisateur ou que tout tiers aurait subi &agrave; la suite de l&rsquo;utilisation de la Plateforme, en ce compris en cas d&rsquo;utilisation de son Compte par autrui et ce, m&ecirc;me si l&rsquo;Utilisateur en ignorait l&rsquo;utilisation. En particulier, en cas de communication par l&rsquo;Utilisateur aux autorit&eacute;s comp&eacute;tentes des informations relatives &agrave; son utilisation de produits phytopharmaceutiques (en ce compris apr&egrave;s export de ces informations depuis la Plateforme), l&rsquo;Utilisateur est seul responsable des informations communiqu&eacute;es. Corder ne peut, par exemple, &ecirc;tre tenue responsable des r&eacute;sultats dudit contr&ocirc;le et des &eacute;ventuels dommages en d&eacute;coulant.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">En tout &eacute;tat de cause, Corder d&eacute;cline toute responsabilit&eacute; :</p>
+<ul style="list-style-type: disc;">
+    <li style="text-align: left;">en cas de Dommages indirects ;</li>
+    <li style="text-align: left;">en cas de collaboration insuffisante de l&rsquo;Utilisateur dans l&rsquo;ex&eacute;cution des pr&eacute;sentes Conditions&nbsp;;</li>
+    <li style="text-align: left;">en cas de&nbsp;faute d&rsquo;un tiers ou d&rsquo;un Utilisateur&nbsp;;</li>
+    <li style="text-align: left;">en cas de Force majeure.</li>
+</ul>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; line-height: normal; margin: 0cm 0cm 0cm 36pt;">&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Sauf disposition l&eacute;gale imp&eacute;rative contraire, le montant total de la responsabilit&eacute; de Corder, si elle devait &ecirc;tre engag&eacute;e, est limit&eacute;e au plafond de son assurance responsabilit&eacute; civile, dont le montant peut &ecirc;tre communiqu&eacute; &agrave; l&rsquo;Utilisateur &agrave; premi&egrave;re demande., dont le montant peut &ecirc;tre communiqu&eacute; &agrave; l&rsquo;Utilisateur &agrave; premi&egrave;re demande.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-11" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Propri&eacute;t&eacute; intellectuelle</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;ensemble des &eacute;l&eacute;ments accessibles sur la Plateforme, leur compilation et leur agencement (textes, photographies, images, ic&ocirc;nes, vid&eacute;os, logiciels, base de donn&eacute;es, en ce compris leurs structures et leurs contenus&hellip;) sont prot&eacute;g&eacute;s par des Droits de propri&eacute;t&eacute; intellectuelle dont Corder ou des tiers sont titulaires.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur s&rsquo;engage &agrave; ne pas porter atteinte &agrave; ces Droits de propri&eacute;t&eacute; intellectuelle et &agrave; prendre les mesures n&eacute;cessaires pour assurer le respect de ceux-ci.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder conc&egrave;de toutefois &agrave; l&rsquo;Utilisateur une licence d&rsquo;utilisation sur la Plateforme permettant &agrave; celui-ci d&rsquo;utiliser la Plateforme conform&eacute;ment &agrave; sa destination, &agrave; l&rsquo;exclusion de toute autre utilisation. Cette licence est :&nbsp;</p>
+<ul style="list-style-type: disc;">
+    <li style="text-align: left;">gratuite&nbsp;;</li>
+    <li style="text-align: left;">personnelle&nbsp;;</li>
+    <li style="text-align: left;">non cessible et non transf&eacute;rable&nbsp;;</li>
+    <li style="text-align: left;">non exclusive&nbsp;;</li>
+    <li style="text-align: left;">conc&eacute;d&eacute;e pour la dur&eacute;e de validit&eacute; du Compte&nbsp;;</li>
+    <li style="text-align: left;">valable pour le monde entier&nbsp;;</li>
+    <li style="text-align: left;">conditionn&eacute;e au respect des pr&eacute;sentes Conditions.</li>
+</ul>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">En dehors des autorisations vis&eacute;es ci-dessus, il est interdit &agrave; l&rsquo;Utilisateur de copier, reproduire, repr&eacute;senter, modifier, transmettre, publier, adapter, distribuer, diffuser, conc&eacute;der sous licence, transf&eacute;rer, vendre, sur quelque support que ce soit, par quelque moyen que ce soit, ou exploiter de quelque mani&egrave;re que ce soit, tout ou partie des &eacute;l&eacute;ments prot&eacute;g&eacute;s par des Droits de propri&eacute;t&eacute; intellectuelle sans l&rsquo;autorisation &eacute;crite pr&eacute;alable de Corder.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-12" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Donn&eacute;es &agrave; caract&egrave;re personnel</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Dans le cadre de la mise &agrave; disposition de la Plateforme, les donn&eacute;es &agrave; caract&egrave;re personnel de l&rsquo;Utilisateur ou, si l&rsquo;Utilisateur est une personne morale et qu&rsquo;une personne physique d&ucirc;ment autoris&eacute;e utilise le Compte au nom de l&rsquo;Utilisateur, les donn&eacute;es &agrave; caract&egrave;re personnel de cette personne physique (ci-apr&egrave;s d&eacute;nomm&eacute;e &laquo; repr&eacute;sentant &raquo;) sont trait&eacute;es par Corder en qualit&eacute; de responsable du traitement conform&eacute;ment &agrave; la l&eacute;gislation applicable, en particulier le RGPD et la&nbsp;loi du 30 juillet 2018 relative &agrave; la protection des personnes physiques &agrave; l&apos;&eacute;gard des traitements de donn&eacute;es &agrave; caract&egrave;re personnel (LPPPD)<strong>.</strong></p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Note d&rsquo;information relative au traitement des donn&eacute;es &agrave; caract&egrave;re personnel, sera bient&ocirc;t disponible sur corder.be, est destin&eacute;e &agrave; fournir aux Utilisateurs et, le cas &eacute;ch&eacute;ant, leur repr&eacute;sentant, des informations sur les raisons pour lesquelles Corder traite leurs donn&eacute;es &agrave; caract&egrave;re personnel et sur la mani&egrave;re dont celles-ci sont trait&eacute;es. La Note d&rsquo;information peut &ecirc;tre mise &agrave; jour. L&rsquo;Utilisateur ou, le cas &eacute;ch&eacute;ant, son repr&eacute;sentant, est donc invit&eacute; &agrave; la consulter r&eacute;guli&egrave;rement.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;utilisation de la Plateforme par l&rsquo;Utilisateur ne n&eacute;cessite en principe pas le traitement de donn&eacute;es &agrave; caract&egrave;re personnel relatives &agrave; des tiers &agrave; l&rsquo;Utilisateur ou, le cas &eacute;ch&eacute;ant, &agrave; son repr&eacute;sentant. L&rsquo;Utilisateur s&rsquo;interdit donc de t&eacute;l&eacute;verser des donn&eacute;es &agrave; caract&egrave;re personnel relatives &agrave; des tiers sur la Plateforme, &agrave; l&rsquo;exception des donn&eacute;es relatives aux Utilisateurs Op&eacute;rateurs qu&rsquo;il souhaite inviter aux fins d&eacute;crites &agrave; l&rsquo;￼ REF _Ref191842190 \r \h <span style="font-family: Aptos;">&nbsp;REF _Ref191842190 \r \h&nbsp;</span>Article 3￼ des pr&eacute;sentes Conditions. <span style="font-family: Aptos;">.&nbsp;</span></p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Si, pour des raisons exceptionnelles d&ucirc;ment justifi&eacute;es, il est n&eacute;cessaire pour l&rsquo;Utilisateur de t&eacute;l&eacute;verser des donn&eacute;es relatives &agrave; des tiers sur la Plateforme, l&rsquo;Utilisateur doit pr&eacute;alablement en informer Corder par &eacute;crit et entreprendre, de concert avec Corder, toutes les d&eacute;marches n&eacute;cessaires pour se conformer &agrave; la loi applicable (en ce compris la conclusion des dispositions contractuelles impos&eacute;es par le RGPD). Si l&rsquo;Utilisateur ne respecte pas ces obligations, Corder ne peut en aucun cas &ecirc;tre tenue responsable d&rsquo;un &eacute;ventuel traitement illicite des donn&eacute;es &agrave; caract&egrave;re personnel de tiers.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">En tout &eacute;tat de cause, si l&rsquo;Utilisateur communique &agrave; Corder des donn&eacute;es &agrave; caract&egrave;re personnel relatives &agrave; des tiers, il veille &agrave; en informer ceux-ci de mani&egrave;re appropri&eacute;e et garantit disposer des autorisations n&eacute;cessaires pour communiquer ces donn&eacute;es, conform&eacute;ment &agrave; la l&eacute;gislation applicable.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-13" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Dur&eacute;e et r&eacute;siliation</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les pr&eacute;sentes Conditions valent pour toute la dur&eacute;e d&rsquo;activit&eacute; du Compte, c&rsquo;est-&agrave;-dire de sa cr&eacute;ation &agrave; sa cl&ocirc;ture, &agrave; l&rsquo;exception de certaines de leurs dispositions qui, de par leur nature, sont cens&eacute;es continuer &agrave; sortir leurs effets apr&egrave;s la cl&ocirc;ture du Compte. Il en va ainsi notamment des dispositions relatives &agrave; la responsabilit&eacute; et au respect des Droits de propri&eacute;t&eacute; intellectuelle.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">L&rsquo;Utilisateur peut proc&eacute;der &agrave; la cl&ocirc;ture de son Compte &agrave; tout moment en suivant les instructions renseign&eacute;es sur la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder peut unilat&eacute;ralement d&eacute;cider de cl&ocirc;turer le Compte de l&rsquo;Utilisateur avec effet imm&eacute;diat et sans intervention judiciaire par notification &eacute;crite envoy&eacute;e &agrave; l&rsquo;Utilisateur en cas de manquement de l&rsquo;Utilisateur aux pr&eacute;sentes Conditions, si ce manquement n&rsquo;est susceptible d&rsquo;aucun rem&egrave;de ou si l&rsquo;Utilisateur en d&eacute;faut a &eacute;chou&eacute; &agrave; rem&eacute;dier &agrave; ce manquement dans un d&eacute;lai de trente (30) jours apr&egrave;s r&eacute;ception de la notification du manquement et de la requ&ecirc;te d&rsquo;y rem&eacute;dier.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Corder peut &eacute;galement d&eacute;cider de ne plus mettre &agrave; disposition la Plateforme, auquel cas il en informera l&rsquo;Utilisateur dans un d&eacute;lai raisonnable avant la fin effective de la mise &agrave; disposition de la Plateforme.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">La Plateforme dispose d&rsquo;une fonctionnalit&eacute; d&rsquo;export des informations relatives aux produits phytopharmaceutiques enregistr&eacute;es par l&rsquo;Utilisateur. L&rsquo;Utilisateur est conscient qu&rsquo;apr&egrave;s la cl&ocirc;ture de son Compte, il n&rsquo;aura plus la possibilit&eacute; d&rsquo;exporter ces informations. Il veillera donc, le cas &eacute;ch&eacute;ant, &agrave; exporter ces informations en temps utile avant la cl&ocirc;ture de son Compte. En cas de cl&ocirc;ture de son Compte avec effet imm&eacute;diat, l&rsquo;Utilisateur disposera toutefois d&rsquo;un acc&egrave;s limit&eacute; &agrave; la Plateforme lui permettant uniquement d&rsquo;exporter ces informations pendant un d&eacute;lai de 7jours apr&egrave;s la cl&ocirc;ture du Compte. &nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-14" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Dispositions diverses</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Aucun acte, comportement, tol&eacute;rance ou omission de la part de Corder ne pourra &ecirc;tre interpr&eacute;t&eacute; comme une renonciation, m&ecirc;me partielle, de sa part &agrave; l&rsquo;ex&eacute;cution stricte et int&eacute;grale des dispositions des pr&eacute;sentes Conditions.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Si une disposition des pr&eacute;sentes Conditions est jug&eacute;e ill&eacute;gale, invalide ou inapplicable, en totalit&eacute; ou en partie, cette disposition sera r&eacute;put&eacute;e ne pas faire partie des Conditions, sans que la l&eacute;galit&eacute;, la validit&eacute; ou l&rsquo;applicabilit&eacute; du reste de celles-ci ne soit affect&eacute;e. Les Parties d&eacute;ploieront en outre leurs meilleurs efforts pour n&eacute;gocier imm&eacute;diatement de bonne foi une disposition de remplacement valide qui conservera, dans la mesure du possible, la balance &eacute;conomique et l&rsquo;intention des Parties telle qu&rsquo;elle transparaissait de la disposition d&eacute;clar&eacute;e ill&eacute;gale, invalide ou inapplicable.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les pr&eacute;sentes Conditions sont r&eacute;dig&eacute;es en fran&ccedil;ais. Toute traduction qui serait fournie dans une autre langue est fournie &agrave; titre informatif. Le cas &eacute;ch&eacute;ant, en cas de diff&eacute;rence ou contradiction entre les diff&eacute;rentes versions, la version en fran&ccedil;ais primera.&nbsp;</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">&nbsp;</p>
+<div style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+    <ol style="margin-bottom: 0cm;">
+        <li style="text-align: justify; font-size: 11.0pt; font-family: 'Aptos',sans-serif; margin: 0cm 0cm 8.0pt 0cm;">
+            <h1 id="cgu-section-15" style="text-align: left; text-indent: 0cm; font-size: 15px; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt 36pt;">Droit applicable et juridiction comp&eacute;tente</h1>
+        </li>
+    </ol>
+</div>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les pr&eacute;sentes Conditions sont exclusivement r&eacute;gies par et interpr&eacute;t&eacute;es conform&eacute;ment au droit belge.</p>
+<p style="text-align: left; font-size: 11pt; font-family: Aptos, sans-serif; margin: 0cm 0cm 8pt;">Les Parties tenteront toujours de r&eacute;soudre &agrave; l&rsquo;amiable tout diff&eacute;rend r&eacute;sultant de ou en rapport avec&nbsp;l&rsquo;utilisation de la Plateforme ou la validit&eacute;, l&apos;interpr&eacute;tation ou l&apos;ex&eacute;cution des pr&eacute;sentes Conditions. Si cela est impossible, le diff&eacute;rend sera exclusivement tranch&eacute; par les juridictions comp&eacute;tentes de l&apos;arrondissement judiciaire de Nivelles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-back-to-top></app-back-to-top>
+</main>
+

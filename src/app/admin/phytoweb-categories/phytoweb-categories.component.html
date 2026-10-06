@@ -1,0 +1,274 @@
+<div class="phyto-container">
+  <div class="container mt-4">
+
+    <!-- En-tête -->
+    <div class="header-section">
+      <h1>
+        <i class="bi bi-tags"></i>
+        Gestion des catégories Phytoweb
+      </h1>
+      <p class="subtitle">Créez et gérez les catégories Phytoweb disponibles dans l'application</p>
+    </div>
+
+    <!-- Message feedback -->
+    @if (message()) {
+      <div class="alert"
+           [class.alert-success]="message()!.type === 'success'"
+           [class.alert-danger]="message()!.type === 'error'"
+           role="alert">
+        {{ message()!.text }}
+      </div>
+    }
+
+    <!-- ════ SECTION CRÉATION ════ -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="bi bi-plus-circle"></i> Ajouter une catégorie personnalisée
+        </h5>
+        <button class="btn btn-sm btn-outline-primary" (click)="showCreateForm.set(!showCreateForm())">
+          @if (showCreateForm()) {
+            <i class="bi bi-chevron-up"></i> Réduire
+          } @else {
+            <i class="bi bi-chevron-down"></i> Développer
+          }
+        </button>
+      </div>
+
+      @if (showCreateForm()) {
+        <div class="card-body">
+
+          <!-- Étape 1 : Rechercher une catégorie de base -->
+          @if (!selectedBase()) {
+            <div class="step-block">
+              <div class="step-label">
+                <span class="step-badge">1</span>
+                Rechercher une catégorie initiale (base)
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Tapez au moins 3 caractères..."
+                [ngModel]="createSearch()"
+                (ngModelChange)="createSearch.set($event)"
+              />
+              <small class="text-muted">Seules les catégories Phytoweb initiales peuvent servir de base.</small>
+
+              <!-- Résultats -->
+              @if (createSearch().trim().length >= 3) {
+                <div class="search-results mt-2">
+                  @if (baseSearchResults().length === 0) {
+                    <div class="no-results">Aucune catégorie initiale trouvée</div>
+                  }
+                  @for (cat of baseSearchResults(); track cat.cropId) {
+                    <div class="result-item" (click)="selectBase(cat)">
+                      <div class="result-name">{{ cat.nameFr }}</div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Étape 2 : Définir le nouveau nom -->
+          @if (selectedBase()) {
+            <div class="step-block">
+              <div class="step-label">
+                <span class="step-badge">1</span>
+                Catégorie de base sélectionnée
+              </div>
+              <div class="selected-base">
+                <div class="selected-base-info">
+                  <strong>{{ selectedBase()!.nameFr }}</strong>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary" (click)="clearBase()">
+                  <i class="bi bi-x"></i> Changer
+                </button>
+              </div>
+            </div>
+
+            <div class="step-block mt-3">
+              <div class="step-label">
+                <span class="step-badge">2</span>
+                Nom de la nouvelle catégorie
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Nouveau nom fr..."
+                [(ngModel)]="newNameFr"
+              />
+            </div>
+
+            <div class="form-actions mt-3">
+              <button
+                class="btn btn-success"
+                (click)="onCreateSubmit()"
+                [disabled]="!newNameFr.trim() || isCreating()">
+                @if (isCreating()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+                <i class="bi bi-check-circle"></i> Créer la catégorie
+              </button>
+              <button class="btn btn-secondary" (click)="showCreateForm.set(false); clearBase()">
+                Annuler
+              </button>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+
+    <!-- ════ TABLEAU ════ -->
+    <div class="card">
+      <div class="card-header">
+        <div class="table-header-row">
+          <h5 class="mb-0">
+            <i class="bi bi-list-ul"></i>
+            Catégories
+            <span class="count-badge">{{ filteredTable().length }}</span>
+            <small class="text-muted ms-2">({{ customCount() }} personnalisée{{ customCount() > 1 ? 's' : '' }})</small>
+          </h5>
+          <div class="table-controls">
+            <input
+              type="text"
+              class="form-control form-control-sm search-input"
+              placeholder="Rechercher..."
+              [ngModel]="tableSearch()"
+              (ngModelChange)="tableSearch.set($event)"
+            />
+            <div class="form-check form-switch ms-3 mb-0">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="showInit"
+                [checked]="showInitiales()"
+                (change)="showInitiales.set(!showInitiales())"
+              />
+              <label class="form-check-label" for="showInit">Afficher les initiales</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        @if (isLoading()) {
+          <div class="text-center p-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Chargement...</p>
+          </div>
+        }
+
+        @if (!isLoading() && filteredTable().length === 0) {
+          <div class="empty-state p-4 text-center">
+            <i class="bi bi-inbox display-4 text-muted"></i>
+            <p class="mt-3">
+              @if (!showInitiales() && tableSearch().trim() === '') {
+                Aucune catégorie personnalisée. Créez-en une ci-dessus.
+              } @else {
+                Aucun résultat pour cette recherche.
+              }
+            </p>
+          </div>
+        }
+
+        @if (!isLoading() && filteredTable().length > 0) {
+          <div class="table-responsive">
+            <table class="table table-sm table-hover compact-table mb-0">
+              <thead>
+                <tr>
+                  <th style="width:100px">Type</th>
+                  <th>Nom</th>
+                  <th style="width:140px">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (cat of filteredTable(); track cat.cropId) {
+                  <tr [class.row-custom]="!isInitiale(cat)" [class.row-initiale]="isInitiale(cat)">
+
+                    <!-- Badge type -->
+                    <td>
+                      @if (isInitiale(cat)) {
+                        <span class="type-badge initiale">initiale</span>
+                      } @else {
+                        <span class="type-badge personnalisee">personnalisée</span>
+                      }
+                    </td>
+
+                    <!-- nameFr (éditable si personnalisée) -->
+                    <td>
+                      @if (editingCropId() === cat.cropId) {
+                        <input
+                          type="text"
+                          class="form-control form-control-sm edit-input"
+                          [(ngModel)]="editNameFr"
+                          (keyup.enter)="saveEdit(cat)"
+                          (keyup.escape)="cancelEdit()"
+                          autofocus
+                        />
+                      } @else {
+                        <span class="name-fr">{{ cat.nameFr }}</span>
+                      }
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                      @if (isInitiale(cat)) {
+                        <button
+                          class="btn btn-sm visibility-toggle"
+                          [class.btn-visible]="cat.visibleStatut !== false"
+                          [class.btn-hidden]="cat.visibleStatut === false"
+                          (click)="toggleVisibility(cat)"
+                          [title]="cat.visibleStatut !== false ? 'Visible — cliquer pour masquer' : 'Masqué — cliquer pour afficher'">
+                          @if (cat.visibleStatut !== false) {
+                            <i class="bi bi-eye-fill"></i> Visible
+                          } @else {
+                            <i class="bi bi-eye-slash-fill"></i> Masqué
+                          }
+                        </button>
+                      }
+                      @if (!isInitiale(cat)) {
+                        @if (editingCropId() === cat.cropId) {
+                          <div class="btn-group btn-group-sm">
+                            <button
+                              class="btn btn-success"
+                              (click)="saveEdit(cat)"
+                              [disabled]="!editNameFr.trim()"
+                              title="Enregistrer">
+                              <i class="bi bi-check"></i>
+                            </button>
+                            <button class="btn btn-secondary" (click)="cancelEdit()" title="Annuler">
+                              <i class="bi bi-x"></i>
+                            </button>
+                          </div>
+                        } @else {
+                          <div class="btn-group btn-group-sm">
+                            <button
+                              class="btn btn-outline-primary"
+                              (click)="startEdit(cat)"
+                              title="Modifier le nom">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                            <button
+                              class="btn btn-outline-danger"
+                              (click)="onDelete(cat)"
+                              title="Supprimer">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        }
+                      }
+                    </td>
+
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

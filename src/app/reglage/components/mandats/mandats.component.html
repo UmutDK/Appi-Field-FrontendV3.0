@@ -1,0 +1,143 @@
+<div class="mandats-section">
+
+  <!-- Envoyer une demande -->
+  <div class="mandats-card mb-4">
+    <h2 class="mandats-card__title">
+      <i class="bi bi-send-fill me-2"></i>Accorder l'accès à mon carnet de champ à un autre utilisateur
+    </h2>
+    <p class="text-muted small mb-3">
+      Invitez un autre utilisateur à accéder à votre carnet de champ. Il devra accepter la demande.
+    </p>
+    <p class="text-muted small mb-3">
+      Dès que votre mandaté aura accepté votre demande, il pourra consulter et gérer votre carnet de champ, votre parcellaire et votre inventaire numérique depuis son propre compte. Vous pourrez révoquer cet accès à tout moment.
+    </p>
+    <form (ngSubmit)="onSendMandat()" class="d-flex gap-2 flex-wrap">
+      <input
+        type="email"
+        class="form-control"
+        style="max-width: 320px;"
+        placeholder="Adresse email du mandaté"
+        [(ngModel)]="newMandatMail"
+        name="mandatMail"
+        required
+      />
+      <button type="submit" class="btn btn-primary" [disabled]="isSending || !newMandatMail.trim()">
+        @if (isSending) {
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Envoyer
+      </button>
+    </form>
+    @if (sendSuccess) {
+      <div class="alert alert-success mt-2 py-2">{{ sendSuccess }}</div>
+    }
+    @if (sendError) {
+      <div class="alert alert-danger mt-2 py-2">{{ sendError }}</div>
+    }
+  </div>
+
+  <!-- Messages d'action globaux -->
+  @if (actionSuccess()) {
+    <div class="alert alert-success alert-dismissible py-2">
+      {{ actionSuccess() }}
+      <button type="button" class="btn-close" (click)="actionSuccess.set('')"></button>
+    </div>
+  }
+  @if (actionError()) {
+    <div class="alert alert-danger alert-dismissible py-2">
+      {{ actionError() }}
+      <button type="button" class="btn-close" (click)="actionError.set('')"></button>
+    </div>
+  }
+
+  <!-- Demandes reçues en attente -->
+  @if (pendingReceivedMandats.length > 0) {
+    <div class="mandats-card mb-4">
+      <h2 class="mandats-card__title">
+        <i class="bi bi-inbox-fill me-2"></i>Demandes reçues en attente
+      </h2>
+      <div class="mandats-list">
+        @for (m of pendingReceivedMandats; track m.mandateId) {
+          <div class="mandat-item">
+            <div class="mandat-item__info">
+              <span class="mandat-item__name">{{ m.mandateName || m.ownerUserMail }}</span>
+              <span class="mandat-item__mail text-muted small">{{ m.ownerUserMail }}</span>
+            </div>
+            <div class="mandat-item__actions">
+              <button class="btn btn-sm btn-success me-1" (click)="onAccept(m)">
+                <i class="bi bi-check-lg"></i> Accepter
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="onRefuse(m)">
+                <i class="bi bi-x-lg"></i> Refuser
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Accès accordés (mandats acceptés où je suis le mandaté) -->
+  @if (acceptedReceivedMandats.length > 0) {
+    <div class="mandats-card mb-4">
+      <h2 class="mandats-card__title">
+        <i class="bi bi-check2-circle me-2 text-success"></i>Accès reçus
+      </h2>
+      <p class="text-muted small mb-3">Liste des mandats que vous avez reçus.</p>
+      <p class="text-muted small mb-3">Exploitations auxquelles vous avez accès.</p>
+      <div class="mandats-list">
+        @for (m of acceptedReceivedMandats; track m.mandateId) {
+          <div class="mandat-item">
+            <div class="mandat-item__info">
+              <span class="mandat-item__name">{{ m.mandateName || m.ownerUserMail }}</span>
+              <span class="mandat-item__mail text-muted small">{{ m.ownerUserMail }}</span>
+            </div>
+            <div class="mandat-item__actions">
+              <span class="badge bg-success me-2">Actif</span>
+              <button class="btn btn-sm btn-outline-danger" (click)="onDelete(m)" title="Révoquer l'accès">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Mes demandes envoyées -->
+  <div class="mandats-card">
+    <h2 class="mandats-card__title">
+      <i class="bi bi-people-fill me-2"></i>Accès accordés
+    </h2>
+    <p class="text-muted small mb-3">Liste des mandats que vous avez accordés à d'autres utilisateurs.</p>
+    @if (mandatService.isLoading()) {
+      <div class="text-center py-3">
+        <span class="spinner-border spinner-border-sm text-primary"></span>
+      </div>
+    } @else if (sentMandats.length === 0) {
+      <p class="text-muted small mb-0">Aucune demande de mandat envoyée.</p>
+    } @else {
+      <div class="mandats-list">
+        @for (m of sentMandats; track m.mandateId) {
+          <div class="mandat-item">
+            <div class="mandat-item__info">
+              <span class="mandat-item__name">{{ m.mandateUserMail }}</span>
+              <span class="mandat-item__date text-muted small">
+                Envoyée le {{ m.createdAt | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+            <div class="mandat-item__actions">
+              <span class="badge bg-{{ getStatutBadge(m.status) }} me-2">
+                {{ getStatutLabel(m.status) }}
+              </span>
+              <button class="btn btn-sm btn-outline-danger" (click)="onDelete(m)" title="Supprimer">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>

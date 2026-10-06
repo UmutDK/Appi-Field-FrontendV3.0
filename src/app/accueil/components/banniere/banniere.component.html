@@ -1,0 +1,20 @@
+<section class="hero-card">
+    <div class="hero-text">
+        <h1>Votre application de <span class="hero-accent">registre électronique</span> gratuite et connectée !</h1>
+        <p>Bienvenue sur l'application de <b>carnet de champ électronique</b> développée par l'ASBL Corder.</p>
+        <p>Créez-vous gratuitement un compte afin de bénéficier de toutes
+            les fonctionnalités de l’application 🚀
+        </p>
+    </div>
+
+    <div class="banniere-btns">
+        <div class="btns-row">
+            <button class="btn btn-teal" (click)="goToCreationCompte()">Me créer un compte</button>
+            <button class="btn btn-teal" (click)="goToConnexion()">Me connecter</button>
+        </div>
+        <a class="btn btn-wallesmart" [href]="wallesmartUrl" target="_blank" rel="noopener noreferrer">
+            <span>Me connecter avec</span>
+            <img src="image/wallesmart.png" alt="WalleSmart" class="wallesmart-logo">
+        </a>
+    </div>
+</section>

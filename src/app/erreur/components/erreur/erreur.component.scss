@@ -1,0 +1,130 @@
+@use '../../../../styles/dashboard-cards' as *;
+
+:host { display: block; }
+
+a { text-decoration: none; }
+
+// Encadré centré, même style que les autres cartes de l'app (.dashboard-card)
+.error-card {
+    max-width: 620px;
+    margin: 40px auto 0;
+    padding: 48px 40px 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (max-width: 575.98px) {
+        margin-top: 16px;
+        padding: 32px 20px 28px;
+    }
+
+    h1 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #12103c;
+        margin: 0 0 10px;
+    }
+}
+
+.error-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: #e3f6f3;
+    color: #03918a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 18px;
+}
+
+.error-code {
+    font-family: "Panton", sans-serif;
+    font-weight: 800;
+    font-size: 5.5rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #05b1af;
+    margin: 0 0 12px;
+
+    @media (max-width: 575.98px) {
+        font-size: 4rem;
+    }
+}
+
+.error-text {
+    color: #6b7280;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    margin: 0 0 28px;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    @media (max-width: 575.98px) {
+        flex-direction: column-reverse;
+        width: 100%;
+
+        .error-btn { width: 100%; }
+    }
+}
+
+.error-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-family: "Panton", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.error-btn-primary {
+    background: #05b1af;
+    color: #ffffff;
+    border: 1.5px solid #05b1af;
+
+    &:hover {
+        background: #049694;
+        border-color: #049694;
+    }
+}
+
+.error-btn-secondary {
+    background: #ffffff;
+    color: #12103c;
+    border: 1.5px solid #d1d5db;
+
+    &:hover {
+        border-color: #05b1af;
+        color: #03918a;
+    }
+}
+
+.error-help {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+    width: 100%;
+    justify-content: center;
+    color: #03918a;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    &:hover { color: #05b1af; }
+}

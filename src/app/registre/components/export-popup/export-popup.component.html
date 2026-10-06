@@ -1,0 +1,235 @@
+<div class="popup-overlay" (click)="onClose()">
+  <div class="popup-container" (click)="$event.stopPropagation(); closeAllDropdowns()">
+    
+    <!-- Header minimaliste -->
+    <div class="popup-header">
+      <div class="header-title">
+        <i class="bi bi-download"></i>
+        <span>Export du registre</span>
+      </div>
+      <button type="button" class="btn-close-popup" (click)="onClose()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="popup-body">
+      @if (isLoading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Chargement des données...</span>
+        </div>
+      } @else if (hasNoData()) {
+        <div class="no-data-state">
+          <i class="bi bi-inbox"></i>
+          <h3>Aucune donnée à exporter</h3>
+          <p>Il n'y a actuellement aucun traitement enregistré dans votre registre.</p>
+          <p class="help-text">Ajoutez des traitements pour pouvoir les exporter.</p>
+        </div>
+      } @else {
+        <!-- Grille de filtres en 2 colonnes -->
+        <div class="filters-grid">
+          
+          <!-- Colonne gauche -->
+          <div class="filter-column">
+            
+            <!-- Filtre Année -->
+            <div class="filter-block">
+              <label class="filter-title">Année</label>
+              <div class="dropdown-container" [class.open]="isYearDropdownOpen()">
+                <button type="button" class="dropdown-btn" (click)="toggleYearDropdown(); $event.stopPropagation()">
+                  <span class="dropdown-value">{{ getSelectedYearsText() }}</span>
+                  <i class="bi bi-chevron-down dropdown-icon"></i>
+                </button>
+                @if (isYearDropdownOpen()) {
+                  <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                    <div class="dropdown-header">
+                      <button type="button" class="link-btn" (click)="selectAllYears()">Tout</button>
+                      <span class="separator">|</span>
+                      <button type="button" class="link-btn" (click)="clearYears()">Aucun</button>
+                      @if (selectedYears.length > 0) {
+                        <span class="selected-count">{{ selectedYears.length }} sélectionnée{{ selectedYears.length > 1 ? 's' : '' }}</span>
+                      }
+                    </div>
+                    <div class="dropdown-list">
+                      @for (year of availableYears; track year) {
+                        <label class="checkbox-item">
+                          <input type="checkbox" [checked]="isYearSelected(year)" (change)="toggleYear(year)">
+                          <span class="label-text">{{ year }}</span>
+                        </label>
+                      }
+                      @if (availableYears.length === 0) {
+                        <div class="empty-state">Aucune donnée</div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Filtre Parcelle -->
+            <div class="filter-block">
+              <label class="filter-title">Parcelle</label>
+              <div class="dropdown-container" [class.open]="isParcelDropdownOpen()">
+                <button type="button" class="dropdown-btn" (click)="toggleParcelDropdown(); $event.stopPropagation()">
+                  <span class="dropdown-value">{{ getSelectedParcelsText() }}</span>
+                  <i class="bi bi-chevron-down dropdown-icon"></i>
+                </button>
+                @if (isParcelDropdownOpen()) {
+                  <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                    <div class="dropdown-header">
+                      <button type="button" class="link-btn" (click)="selectAllParcels()">Tout</button>
+                      <span class="separator">|</span>
+                      <button type="button" class="link-btn" (click)="clearParcels()">Aucun</button>
+                      @if (selectedParcels.length > 0) {
+                        <span class="selected-count">{{ selectedParcels.length }} sélectionnée{{ selectedParcels.length > 1 ? 's' : '' }}</span>
+                      }
+                    </div>
+                    <div class="dropdown-list">
+                      @for (parcel of availableParcels; track parcel.name) {
+                        <label class="checkbox-item">
+                          <input type="checkbox" [checked]="isParcelSelected(parcel.name)" (change)="toggleParcel(parcel.name)">
+                          <span class="label-text">{{ parcel.name }}</span>
+                          <span class="item-badge">({{ parcel.count }})</span>
+                        </label>
+                      }
+                      @if (availableParcels.length === 0) {
+                        <div class="empty-state">Aucune donnée</div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Colonne droite -->
+          <div class="filter-column">
+            
+            <!-- Filtre Culture -->
+            <div class="filter-block">
+              <label class="filter-title">Culture</label>
+              <div class="dropdown-container" [class.open]="isCropDropdownOpen()">
+                <button type="button" class="dropdown-btn" (click)="toggleCropDropdown(); $event.stopPropagation()">
+                  <span class="dropdown-value">{{ getSelectedCropsText() }}</span>
+                  <i class="bi bi-chevron-down dropdown-icon"></i>
+                </button>
+                @if (isCropDropdownOpen()) {
+                  <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                    <div class="dropdown-header">
+                      <button type="button" class="link-btn" (click)="selectAllCrops()">Tout</button>
+                      <span class="separator">|</span>
+                      <button type="button" class="link-btn" (click)="clearCrops()">Aucun</button>
+                      @if (selectedCropNames.length > 0) {
+                        <span class="selected-count">{{ selectedCropNames.length }} sélectionnée{{ selectedCropNames.length > 1 ? 's' : '' }}</span>
+                      }
+                    </div>
+                    <div class="dropdown-list">
+                      @for (crop of availableCropNames; track crop.name) {
+                        <label class="checkbox-item">
+                          <input type="checkbox" [checked]="isCropSelected(crop.name)" (change)="toggleCrop(crop.name)">
+                          <span class="label-text">{{ crop.name }}</span>
+                          <span class="item-badge">({{ crop.count }})</span>
+                        </label>
+                      }
+                      @if (availableCropNames.length === 0) {
+                        <div class="empty-state">Aucune donnée</div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Filtre Statut d'archivage -->
+            <div class="filter-block">
+              <label class="filter-title">Statut</label>
+              <div class="segmented-control">
+                <button type="button" class="segment" 
+                        [class.active]="archiveStatus === 'all'" 
+                        (click)="archiveStatus = 'all'">
+                  Toutes
+                </button>
+                <button type="button" class="segment" 
+                        [class.active]="archiveStatus === 'not-archived'" 
+                        (click)="archiveStatus = 'not-archived'">
+                  Actives
+                </button>
+                <button type="button" class="segment" 
+                        [class.active]="archiveStatus === 'archived'" 
+                        (click)="archiveStatus = 'archived'">
+                  Archivées
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Choix du format d'export -->
+        <div class="format-section">
+          <label class="filter-title">Format d'export</label>
+          <div class="format-choice">
+            <button type="button" class="format-btn" 
+                    [class.active]="exportFormat === 'excel'"
+                    (click)="exportFormat = 'excel'">
+              <i class="bi bi-file-earmark-excel"></i>
+              <span class="format-label">Excel</span>
+              <span class="format-desc">Tableur complet</span>
+            </button>
+            <button type="button" class="format-btn" 
+                    [class.active]="exportFormat === 'pdf'"
+                    (click)="exportFormat = 'pdf'">
+              <i class="bi bi-file-earmark-pdf"></i>
+              <span class="format-label">PDF</span>
+              <span class="format-desc">Document imprimable</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tags des filtres actifs -->
+        @if (hasActiveFilters()) {
+          <div class="active-filters">
+            <div class="filters-row">
+              @for (year of selectedYears; track year) {
+                <span class="filter-chip">
+                  {{ year }}
+                  <button type="button" (click)="toggleYear(year)"><i class="bi bi-x"></i></button>
+                </span>
+              }
+              @for (crop of selectedCropNames; track crop) {
+                <span class="filter-chip">
+                  {{ crop }}
+                  <button type="button" (click)="toggleCrop(crop)"><i class="bi bi-x"></i></button>
+                </span>
+              }
+              @for (parcel of selectedParcels; track parcel) {
+                <span class="filter-chip">
+                  {{ parcel }}
+                  <button type="button" (click)="toggleParcel(parcel)"><i class="bi bi-x"></i></button>
+                </span>
+              }
+              @if (archiveStatus !== 'all') {
+                <span class="filter-chip status">
+                  {{ archiveStatus === 'archived' ? 'Archivées' : 'Actives' }}
+                  <button type="button" (click)="archiveStatus = 'all'"><i class="bi bi-x"></i></button>
+                </span>
+              }
+              <button type="button" class="clear-all" (click)="resetFilters()">Effacer tout</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <button type="button" class="btn-secondary" (click)="onClose()">Annuler</button>
+      <button type="button" class="btn-primary" [class.danger]="exportFormat === 'pdf'" (click)="onExport()" [disabled]="isLoading()">
+        <i class="bi" [class.bi-file-earmark-excel]="exportFormat === 'excel'" [class.bi-file-earmark-pdf]="exportFormat === 'pdf'"></i>
+        {{ getExportButtonText() }}
+      </button>
+    </div>
+  </div>
+</div>

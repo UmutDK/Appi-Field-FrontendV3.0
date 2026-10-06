@@ -1,0 +1,27 @@
+<main class="dashboard">
+    <div class="dashboard-container">
+        <section class="dashboard-card auth-card auth-card--narrow">
+            <span class="auth-icon"><i class="bi bi-envelope-check"></i></span>
+            <h1>Réinitialisation du mot de passe</h1>
+            <p>Nous vous avons envoyé un code de récupération par mail. Saisissez-le ci-dessous pour continuer.</p>
+            <p class="auth-note"><i class="bi bi-info-circle"></i> Pensez à vérifier vos mails indésirables (spams).</p>
+
+            <div class="auth-field">
+                <label for="codeRecuperation">Code de récupération</label>
+                <input id="codeRecuperation" type="text" class="form-control" placeholder="Code reçu par mail"
+                       [formControl]="formCtrl" name="Code" required autocomplete="one-time-code"
+                       (keydown.enter)="!formCtrl.invalid && onValider()">
+            </div>
+
+            <div class="auth-actions">
+                <button type="button" class="auth-btn auth-btn-secondary" (click)="onAnnuler()">Annuler</button>
+                <button type="button" class="auth-btn auth-btn-primary" (click)="onValider()" [disabled]="formCtrl.invalid">Valider</button>
+            </div>
+
+            <p class="auth-switch">
+                Pas reçu de code ?
+                <a routerLink="/connexion/mis_a_jour">Renvoyer un mail</a>
+            </p>
+        </section>
+    </div>
+</main>

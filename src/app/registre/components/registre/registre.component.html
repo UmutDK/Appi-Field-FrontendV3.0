@@ -1,0 +1,771 @@
+<main class="registre-page">
+    <div class="dashboard-container container-registre">
+
+        <!-- En-tête : titre à gauche, Exporter / Mes archives / "Ajouter ▾" en haut à droite -->
+        <header class="registre-header">
+            <div class="dashboard-header">
+                <h1>Mon carnet de champ</h1>
+                <p class="dashboard-subtitle">Encodez vos cultures, traitements phytos et travaux au champ, et exportez votre registre.</p>
+            </div>
+
+            <div class="registre-header-actions">
+                @if (culturesLoaded && availableCultures.length > 0) {
+                    <button type="button" class="btn-outline-neutral" (click)="exportCarnetChamp()" [disabled]="isExporting">
+                        @if (isExporting) {
+                            <i class="bi bi-hourglass-split"></i> Export en cours...
+                        } @else {
+                            <i class="bi bi-file-earmark-arrow-down"></i> Exporter
+                        }
+                    </button>
+                    <button type="button" class="btn-outline-neutral" (click)="goToArchives()">
+                        <i class="bi bi-archive"></i> Mes archives
+                    </button>
+                }
+
+                <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
+                    <button type="button" class="add-menu-btn" (click)="toggleFab()"
+                            aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Ajouter</span>
+                        <i class="bi bi-chevron-down add-menu-chevron"></i>
+                    </button>
+                    @if (isFabOpen) {
+                        <div class="add-menu-list" role="menu">
+                            <button type="button" class="add-menu-item" role="menuitem" (click)="onCulture(); closeFab()">
+                                <span class="add-menu-icon"><i class="bi bi-flower1"></i></span>
+                                <span class="add-menu-text">
+                                    <span class="add-menu-title">Culture</span>
+                                    <span class="add-menu-desc">Ajoutez une culture sur une ou plusieurs parcelles.</span>
+                                </span>
+                            </button>
+                            <button type="button" class="add-menu-item" role="menuitem" (click)="onTravail(); closeFab()">
+                                <span class="add-menu-icon"><i class="bi bi-tools"></i></span>
+                                <span class="add-menu-text">
+                                    <span class="add-menu-title">Travail au champ</span>
+                                    <span class="add-menu-desc">Fertilisation, irrigation, travail du sol…</span>
+                                </span>
+                            </button>
+                            <button type="button" class="add-menu-item" role="menuitem" (click)="onTraitement(); closeFab()">
+                                <span class="add-menu-icon"><i class="bi bi-droplet-half"></i></span>
+                                <span class="add-menu-text">
+                                    <span class="add-menu-title">Traitement phyto</span>
+                                    <span class="add-menu-desc">Encodez un traitement en surface ou en bouillie.</span>
+                                </span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </header>
+
+        @if (culturesLoaded && availableCultures.length > 0) {
+            <!-- Recherche + filtres (structure et comportement des menus inchangés) -->
+            <form>
+                <div class="recherche-etendue">
+                    <div class="barre-recherche-principale">
+                        <div class="icon">
+                            <button type="button" class="bouton-icon"><i class="bi bi-search"></i></button>
+                        </div>
+                        <div class="input-etendu">
+                            <input type="text" class="form-control ligne-etendue" placeholder="Rechercher une culture ou une parcelle..." [(ngModel)]="searchTerm" name="search">
+                        </div>
+                    </div>
+                    <div class="controles-filtres">
+                        <!-- Bouton de vue -->
+                        <div class="dropdown-container" [class.open]="isViewMenuOpen">
+                            <button type="button" class="btn-filtre" [class.btn-filtre--active]="!vueParCulture" (click)="toggleViewMenu(); $event.stopPropagation()" title="Changer de vue">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            @if (isViewMenuOpen) {
+                                <div class="filter-popup-backdrop" (click)="closeAllMenus()">
+                                <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                    <div class="filter-popup-mobile-header">
+                                        <span class="filter-popup-mobile-title">Changer de vue</span>
+                                        <button type="button" class="filter-popup-mobile-close" (click)="closeAllMenus()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-list">
+                                        <div class="dropdown-list-item" (click)="onVueGlobale(); closeAllMenus()">
+                                            <i class="material-icons">visibility</i>
+                                            @if (vueParCulture) {
+                                                Vue globale
+                                            } @else {
+                                                Vue par cultures
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Filtres par date -->
+                        <div class="dropdown-container" [class.open]="isDateFilterOpen">
+                            <button type="button" class="btn-filtre" [class.btn-filtre--active]="!!dateFilters.startDate || !!dateFilters.endDate" (click)="toggleDateFilter(); $event.stopPropagation()" title="Filtrer par dates">
+                                <i class="material-icons">calendar_month</i>
+                            </button>
+                            @if (isDateFilterOpen) {
+                                <div class="filter-popup-backdrop" (click)="closeAllMenus()">
+                                <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                    <div class="filter-popup-mobile-header">
+                                        <span class="filter-popup-mobile-title">Filtrer par dates</span>
+                                        <button type="button" class="filter-popup-mobile-close" (click)="closeAllMenus()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-header">
+                                        <span>Filtrer par période</span>
+                                    </div>
+                                    <div class="dropdown-list">
+                                        <div class="date-range-container">
+                                            <label>Du :</label>
+                                            <input type="date" [(ngModel)]="dateFilters.startDate" name="startDate" class="popup-text-input">
+                                        </div>
+                                        <div class="date-range-container">
+                                            <label>Au :</label>
+                                            <input type="date" [(ngModel)]="dateFilters.endDate" name="endDate" class="popup-text-input">
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-footer">
+                                        <button type="button" class="btn-secondary" (click)="clearDateFilter()">Effacer</button>
+                                        <button type="button" class="btn-primary" (click)="closeAllMenus()">Appliquer</button>
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Filtres par parcelles -->
+                        <div class="dropdown-container" [class.open]="isParcelFilterOpen">
+                            <button type="button" class="btn-filtre" [class.btn-filtre--active]="parcelFilters.length > 0" (click)="toggleParcelFilter(); $event.stopPropagation()" title="Filtrer par parcelles">
+                                <i class="material-icons">location_on</i>
+                            </button>
+                            @if (isParcelFilterOpen) {
+                                <div class="filter-popup-backdrop" (click)="closeAllMenus()">
+                                <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                    <div class="filter-popup-mobile-header">
+                                        <span class="filter-popup-mobile-title">Filtrer par parcelles</span>
+                                        <button type="button" class="filter-popup-mobile-close" (click)="closeAllMenus()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-header">
+                                        <button type="button" class="link-btn" (click)="selectAllParcels()">Tout</button>
+                                        <span class="separator">|</span>
+                                        <button type="button" class="link-btn" (click)="clearParcelFilter()">Aucun</button>
+                                        @if (parcelFilters.length > 0) {
+                                            <span class="selected-count">{{ parcelFilters.length }} sélectionnée{{ parcelFilters.length > 1 ? 's' : '' }}</span>
+                                        }
+                                    </div>
+                                    <div class="dropdown-list">
+                                        @for (parcelle of availableParcels; track $index) {
+                                            <label class="checkbox-item">
+                                                <input type="checkbox"
+                                                       [checked]="parcelFilters.includes(parcelle.parcel_name)"
+                                                       (change)="onParcelFilterChange(parcelle.parcel_name, $event)"
+                                                       name="parcel-{{parcelle.id_parcel}}">
+                                                <span class="label-text">{{ parcelle.parcel_name }}</span>
+                                            </label>
+                                        }
+                                        @if (availableParcels.length === 0) {
+                                            <div class="empty-state">Aucune parcelle</div>
+                                        }
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Filtres par cultures -->
+                        <div class="dropdown-container" [class.open]="isCultureFilterOpen">
+                            <button type="button" class="btn-filtre" [class.btn-filtre--active]="cultureFilters.length > 0" (click)="toggleCultureFilter(); $event.stopPropagation()" title="Filtrer par cultures">
+                                <i class="material-icons">grass</i>
+                            </button>
+                            @if (isCultureFilterOpen) {
+                                <div class="filter-popup-backdrop" (click)="closeAllMenus()">
+                                <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                    <div class="filter-popup-mobile-header">
+                                        <span class="filter-popup-mobile-title">Filtrer par cultures</span>
+                                        <button type="button" class="filter-popup-mobile-close" (click)="closeAllMenus()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-header">
+                                        <button type="button" class="link-btn" (click)="selectAllCultures()">Tout</button>
+                                        <span class="separator">|</span>
+                                        <button type="button" class="link-btn" (click)="clearCultureFilter()">Aucun</button>
+                                        @if (cultureFilters.length > 0) {
+                                            <span class="selected-count">{{ cultureFilters.length }} sélectionnée{{ cultureFilters.length > 1 ? 's' : '' }}</span>
+                                        }
+                                    </div>
+                                    <div class="dropdown-list">
+                                        @for (culture of uniqueCultureCategories; track culture.phytoweb_name) {
+                                            <label class="checkbox-item">
+                                                <input type="checkbox"
+                                                       [checked]="cultureFilters.includes(culture.phytoweb_name)"
+                                                       (change)="onCultureFilterChange(culture.phytoweb_name, $event)"
+                                                       name="culture-{{culture.phytoweb_name}}">
+                                                <span class="label-text">{{ culture.phytoweb_name }}</span>
+                                            </label>
+                                        }
+                                        @if (uniqueCultureCategories.length === 0) {
+                                            <div class="empty-state">Aucune culture</div>
+                                        }
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+        }
+
+        <h2 class="section-heading">Mes cultures</h2>
+
+        <!-- État de chargement -->
+        @if (!culturesLoaded) {
+            <section class="dashboard-card state-card">
+                <span class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </span>
+                <p>Chargement des cultures...</p>
+            </section>
+        }
+
+        <!-- Message d'état vide : affiché seulement si le chargement est terminé ET qu'il n'y a aucune culture -->
+        @if (culturesLoaded && availableCultures.length === 0) {
+            <section class="dashboard-card no-cultures-card">
+                <span class="empty-icon"><i class="bi bi-journal-text"></i></span>
+                <h2>Aucune culture n'a été détectée</h2>
+                <p>Pour commencer à utiliser votre carnet de champ, vous devez d'abord créer vos parcelles et ensuite ajouter vos premières cultures.</p>
+                <div class="empty-actions">
+                    <button type="button" class="btn-outline-neutral" routerLink="/parcelles">
+                        <i class="bi bi-geo-alt"></i>
+                        Encoder mes parcelles
+                    </button>
+                    <button type="button" class="btn-solid" (click)="onCulture()">
+                        <i class="bi bi-plus-lg"></i>
+                        Créer ma première culture
+                    </button>
+                </div>
+            </section>
+        }
+
+        @if (culturesLoaded && availableCultures.length > 0) {
+            @if (vueParCulture) {
+                <app-registre-get [filterData]="filterData" (modifyCultureRequested)="onModifyCultureRequested($event)"></app-registre-get>
+            } @else {
+                <app-registre-get-vue-globale [filterData]="filterData" (modifyEvent)="onModifyGlobalEvent($event)"></app-registre-get-vue-globale>
+            }
+        }
+
+        <!-- Ancien bouton flottant "Ajouter" (desktop) remplacé par "Ajouter ▾" dans l'en-tête.
+             Bouton "retour en haut" et footer mobile : inchangés. -->
+
+        <!-- Bouton "retour en haut" (desktop) — visible dès qu'on scrolle -->
+        <button
+            type="button"
+            class="scroll-top-btn scroll-top-btn--desktop"
+            [class.show]="showScrollTop"
+            (click)="scrollToTop()"
+            aria-label="Retour en haut de la page"
+        >
+            <i class="bi bi-arrow-up"></i>
+        </button>
+
+                <!-- Version mobile/tablette : footer flottant -->
+                <footer *ngIf="onValeurAjouter() !== 'Culture' && onValeurAjouter() !== 'Travail au champ' && onValeurAjouter() !== 'Traitement Phyto'" class="footer-fab fab-mobile">
+                    <!-- Bouton "retour en haut" (mobile) — enfant du footer pour hériter sa largeur
+                         réelle (centré, max-content) et s'aligner exactement sur son bord droit -->
+                    <button
+                        type="button"
+                        class="scroll-top-btn scroll-top-btn--mobile"
+                        [class.show]="showScrollTop"
+                        (click)="scrollToTop()"
+                        aria-label="Retour en haut de la page"
+                    >
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <div style="display: flex; flex-direction: column; width: 100%; align-items: center; gap: 10px;">
+                        <div style="display: flex; gap: 18px; width: 100%; justify-content: center;">
+                            <button class="footer-btn" (click)="onCulture()">
+                                Culture
+                                <span class="footer-icon">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTI0Ny42MyA0Ny44OWE4IDggMCAwIDAtNy41Mi03LjUyYy01MS43Ni0zLTkzLjMyIDEyLjc0LTExMS4xOCA0Mi4yMmMtMTEuOCAxOS40OS0xMS43OCA0My4xNi0uMTYgNjUuNzRhNzEuMyA3MS4zIDAgMCAwLTE0LjE3IDI3TDk4LjMzIDE1OWM3LjgyLTE2LjMzIDcuNTItMzMuMzUtMS00Ny40OWMtMTMuMi0yMS43OS00My42Ny0zMy40Ny04MS41LTMxLjI1YTggOCAwIDAgMC03LjUyIDcuNTJjLTIuMjMgMzcuODMgOS40NiA2OC4zIDMxLjI1IDgxLjVBNDUuOCA0NS44IDAgMCAwIDYzLjQ0IDE3NkE1NC42IDU0LjYgMCAwIDAgODcgMTcwLjMzbDI1IDI1VjIyNGE4IDggMCAwIDAgMTYgMHYtMjkuNDlhNTUuNiA1NS42IDAgMCAxIDEyLjI3LTM1YTczLjkgNzMuOSAwIDAgMCAzMy4zMSA4LjRhNjAuOSA2MC45IDAgMCAwIDMxLjgzLTguODZjMjkuNDgtMTcuODQgNDUuMjYtNTkuNCA0Mi4yMi0xMTEuMTZNNDcuODEgMTU1LjZDMzIuNDcgMTQ2LjMxIDIzLjc5IDEyNC4zMiAyNCA5NmMyOC4zMi0uMjQgNTAuMzEgOC40NyA1OS42IDIzLjgxYzQuODUgOCA1LjY0IDE3LjMzIDIuNDYgMjYuOTRsLTI0LjQxLTI0LjQxYTggOCAwIDAgMC0xMS4zMSAxMS4zMWwyNC40MSAyNC40MWMtOS42MSAzLjE4LTE4LjkzIDIuMzktMjYuOTQtMi40Nm0xNDkuMzEtMTAuMjJjLTEzLjQgOC4xMS0yOS4xNSA4LjczLTQ1LjE1IDJsNTMuNjktNTMuN2E4IDggMCAwIDAtMTEuMzEtMTEuMzFMMTQwLjY1IDEzNmMtNi43Ni0xNi02LjE1LTMxLjc2IDItNDUuMTVjMTMuOTQtMjMgNDctMzUuODIgODkuMzMtMzQuODNjLjk2IDQyLjMyLTExLjg0IDc1LjQyLTM0Ljg2IDg5LjM2Ii8+PC9zdmc+" viewBox="0 0 256 256" width="22" height="22" alt="">
+                                </span>
+                            </button>
+                            <button class="footer-btn" (click)="onTraitement()">
+                                Traitement phyto
+                                <span class="footer-icon">
+                                    <svg class="icon-presentation" viewBox="0 0 256 256" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+                                        <path xmlns="http://www.w3.org/2000/svg" fill="currentColor" d="M200 24h-76.69A15.86 15.86 0 0 0 112 28.69L101.66 39L91.31 28.69a16 16 0 0 0-22.62 0l-24 24a16 16 0 0 0 0 22.62L55 85.66L44.69 96A15.86 15.86 0 0 0 40 107.31V216a16 16 0 0 0 16 16h144a16 16 0 0 0 16-16V40a16 16 0 0 0-16-16M56 64l24-24l10.34 10.34l-24 24Zm144 152H56V107.31l16-16L123.31 40H200ZM128 64a8 8 0 0 1 8-8h40a8 8 0 0 1 0 16h-40a8 8 0 0 1-8-8m52.8 62.4L141.33 156l39.47 29.6a8 8 0 1 1-9.6 12.8L128 166l-43.2 32.4a8 8 0 0 1-9.6-12.8l39.47-29.6l-39.47-29.6a8 8 0 0 1 9.6-12.8L128 146l43.2-32.4a8 8 0 0 1 9.6 12.8"/>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 18px; width: 100%; justify-content: center;">
+                            <button class="footer-btn" (click)="onTravail()">
+                                Travail au champ
+                                <span class="footer-icon">
+                                    <svg class="icon-presentation" viewBox="0 0 256 256" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+                                        <path xmlns="http://www.w3.org/2000/svg" fill="currentColor" d="M232 158a6 6 0 0 0 0-12a230.1 230.1 0 0 0-66.11 9.65a260 260 0 0 0-23.07-13.28A248.3 248.3 0 0 1 232 126a6 6 0 0 0 0-12c-6 0-12 .22-18 .62V80a6 6 0 0 0-2.4-4.8l-64-48a6 6 0 0 0-7.2 0l-64 48A6 6 0 0 0 74 80v38.77A264.3 264.3 0 0 0 24 114a6 6 0 0 0 0 12a249 249 0 0 1 195.17 93.75a6 6 0 0 0 4.69 2.25a6 6 0 0 0 4.67-9.75a265 265 0 0 0-18.69-20.94A191 191 0 0 1 232 190a6 6 0 0 0 0-12a199 199 0 0 0-33.21 2.79q-9.63-8.65-20-16.25A218.7 218.7 0 0 1 232 158m-106-23.44V102h36v21.46a259 259 0 0 0-33.93 12ZM86 83l58-43.5L202 83v32.71a261 261 0 0 0-28 4.73V96a6 6 0 0 0-6-6h-48a6 6 0 0 0-6 6v33.85a259 259 0 0 0-28-8.46Zm49.17 136.32a6 6 0 0 1-8.32 1.68A185.14 185.14 0 0 0 24 190a6 6 0 0 1 0-12a197.1 197.1 0 0 1 109.49 33a6 6 0 0 1 1.68 8.32m49.8-7.61a6 6 0 1 1-8.4 8.57A216.8 216.8 0 0 0 24 158a6 6 0 0 1 0-12a228.74 228.74 0 0 1 161 65.71Z" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </footer>
+    </div>
+
+    @if (onValeurAjouter() === "Culture") {
+        <div class="ajouter">
+            <div id="overlay">
+                <!-- ✨ Animation de succès -->
+                @if (showCultureSuccessAnimation()) {
+                    <div class="success-animation-overlay success-animation-overlay--card">
+                        <div class="success-content">
+                            <svg class="checkmark" viewBox="0 0 52 52">
+                                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                            <h2 class="success-title">Nouvelle culture créée !</h2>
+                            <button type="button" class="btn-return-registre" (click)="closeSuccessAnimation()">
+                                <i class="bi bi-arrow-left"></i>
+                                Retourner au registre
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <div class="ajouterUneCulture popup-container popup-container--wide" [class.fade-out]="showCultureSuccessAnimation()">
+                    <div class="header popup-header">
+                        <div class="header-top">
+                            <div class="header-title">
+                                <i class="bi bi-flower1"></i>
+                                <h2>{{ cultureToModify ? 'Modifier la culture' : 'Ajouter une culture' }}</h2>
+                            </div>
+                            <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                        <div class="progress-integration">
+                            <!-- Barre de progression intégrée -->
+                            <div class="modern-progress">
+                                <div class="progress-bar" [style.width.%]="getCultureProgress()"></div>
+                                <div class="progress-steps">
+                                    <div class="step" [class.active]="getCultureProgress() >= 33" [class.completed]="getCultureProgress() > 33">
+                                        <span></span>
+                                        <label>Informations</label>
+                                    </div>
+                                    <div class="step" [class.active]="getCultureProgress() >= 66" [class.completed]="getCultureProgress() > 66">
+                                        <span></span>
+                                        <label>Culture</label>
+                                    </div>
+                                    <div class="step" [class.active]="getCultureProgress() >= 100">
+                                        <span></span>
+                                        <label>Parcelles</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <app-culture #cultureComponent
+                                   [cultureToModify]="cultureToModify"
+                                   (progressChange)="onCultureProgressChange($event)"
+                                   (validationChange)="onCultureValidationChange($event)"
+                                   (cultureCreated)="onCultureCreated()"
+                                   (cultureUpdated)="onCultureUpdated()"></app-culture>
+                    </div>
+                    
+                    <!-- Boutons Précédent et Valider fixes dans le modal -->
+                    <div class="fixed-validate-button-modal popup-footer">
+                        @if (cultureComponent.canGoToPreviousStep()) {
+                            <button type="button"
+                                    class="previous-btn btn-secondary"
+                                    (click)="cultureComponent.goToPreviousStep()">
+                                <i class="bi bi-arrow-left"></i>
+                                Précédent
+                            </button>
+                        }
+                        <button type="button" (click)="cultureComponent.triggerValidation()" class="validate-btn btn-primary" [disabled]="!isCultureValidationEnabled()">
+                            <i class="bi bi-check-lg"></i>
+                            Valider
+                        </button>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    }@else if (onValeurAjouter() === "Travail au champ") {
+        <div class="ajouter">
+            <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                <!-- ✨ Animation de succès pour travail au champ -->
+                @if (showFieldWorkSuccessAnimation()) {
+                    <div class="success-animation-overlay success-animation-overlay--card">
+                        <div class="success-content">
+                            <svg class="checkmark" viewBox="0 0 52 52">
+                                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                            <h2 class="success-title">Nouveau travail au champ créé !</h2>
+                            
+                            <!-- Débrief du travail au champ -->
+                            @if (fieldWorkSuccessData) {
+                                <div class="treatment-summary">
+                                    <div class="summary-row">
+                                        <strong>Type :</strong>
+                                        <span>{{ fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs }}</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <strong>Date :</strong>
+                                        <span>{{ (fieldWorkSuccessData.date || fieldWorkSuccessData.datee) | date:'dd/MM/yyyy' }}</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <strong>Parcelles concernées :</strong>
+                                        <span>{{ getFieldWorkParcelCount() }} parcelle(s)</span>
+                                    </div>
+                                    @if ((fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs) === 'Fertilisation') {
+                                        @if (fieldWorkSuccessData.informations) {
+                                            <div class="summary-row">
+                                                <strong>Produits :</strong>
+                                                <span>{{ fieldWorkSuccessData.informations }}</span>
+                                            </div>
+                                        }
+                                        @if (fieldWorkSuccessData.tool || fieldWorkSuccessData.outil) {
+                                            <div class="summary-row">
+                                                <strong>Outil :</strong>
+                                                <span>{{ fieldWorkSuccessData.tool || fieldWorkSuccessData.outil }}</span>
+                                            </div>
+                                        }
+                                    }
+                                    @if ((fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs) === 'Irrigation') {
+                                        @if (fieldWorkSuccessData.dose) {
+                                            <div class="summary-row">
+                                                <strong>Dose :</strong>
+                                                <span>{{ fieldWorkSuccessData.dose }} {{ fieldWorkSuccessData.dose_unit || fieldWorkSuccessData.lha }}</span>
+                                            </div>
+                                        }
+                                    }
+                                    @if ((fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs) === 'Travail du sol') {
+                                        @if (fieldWorkSuccessData.field_work_type || fieldWorkSuccessData.travailtype) {
+                                            <div class="summary-row">
+                                                <strong>Type de travail :</strong>
+                                                <span>{{ fieldWorkSuccessData.field_work_type || fieldWorkSuccessData.travailtype }}</span>
+                                            </div>
+                                        }
+                                    }
+                                    @if ((fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs) === 'Observation' && fieldWorkSuccessData.observation) {
+                                        <div class="summary-row">
+                                            <strong>Observation :</strong>
+                                            <span>{{ fieldWorkSuccessData.observation }}</span>
+                                        </div>
+                                    }
+                                    @if (fieldWorkSuccessData.remark || fieldWorkSuccessData.remaques) {
+                                        <div class="summary-row">
+                                            <strong>{{ (fieldWorkSuccessData.type || fieldWorkSuccessData.type_travaux_aux_champs) === 'Récolte' ? 'Rendement :' : 'Remarques :' }}</strong>
+                                            <span>{{ fieldWorkSuccessData.remark || fieldWorkSuccessData.remaques }}</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            
+                            <button type="button" class="btn-return-registre" (click)="closeFieldWorkSuccessAnimation()">
+                                <i class="bi bi-arrow-left"></i>
+                                Retourner au registre
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <div class="ajouterTravailAuChamp popup-container popup-container--wide" [class.fade-out]="showFieldWorkSuccessAnimation()">
+                    <div class="header popup-header">
+                        <div class="header-top">
+                            <div class="header-title">
+                                <i class="bi bi-tools"></i>
+                                <h2>@if (interventionToModify) {
+                                    Modification d'un travail au champ
+                                } @else {
+                                    Ajouter un travail au champ
+                                }</h2>
+                            </div>
+                            <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                        <div class="progress-integration">
+                            <!-- Barre de progression intégrée -->
+                            <div class="modern-progress">
+                                <div class="progress-bar" [style.width.%]="getTravailProgress()"></div>
+                                <div class="progress-steps">
+                                    <div class="step" [class.active]="getTravailProgress() >= 25" [class.completed]="getTravailProgress() > 25">
+                                        <span></span>
+                                        <label>Type de travail</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTravailProgress() >= 50" [class.completed]="getTravailProgress() > 50">
+                                        <span></span>
+                                        <label>Parcelles</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTravailProgress() >= 75" [class.completed]="getTravailProgress() > 75">
+                                        <span></span>
+                                        <label>Détails</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTravailProgress() >= 100">
+                                        <span></span>
+                                        <label>Validation</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <app-travail-au-champ #travailAuChampComponent
+                            [modificationData]="interventionToModify"
+                            (progressChange)="onTravailProgressChange($event)"
+                            (validationChange)="onTravailValidationChange($event)"
+                            (fieldWorkCreated)="onFieldWorkCreated($event)"
+                            (closePopup)="onClose()"
+                            (closePopupWithRefresh)="onCloseWithRefresh()"></app-travail-au-champ>
+                    </div>
+                    
+                    <!-- Boutons d'action fixes pour travail au champ -->
+                    @if (travailAuChampComponent.shouldShowValidateButton()) {
+                        <div class="fixed-validate-button-modal popup-footer">
+                            <!-- Bouton Supprimer (visible uniquement en mode modification) -->
+                            @if (interventionToModify) {
+                                <button type="button"
+                                        class="delete-btn btn-primary danger"
+                                        (click)="travailAuChampComponent.onDeleteWork()">
+                                    <i class="bi bi-trash"></i>
+                                    Supprimer le travail
+                                </button>
+                            }
+
+                            <!-- Bouton Précédent -->
+                            @if (travailAuChampComponent.canGoToPreviousStep()) {
+                                <button type="button"
+                                        class="previous-btn btn-secondary"
+                                        (click)="travailAuChampComponent.goToPreviousStep()">
+                                    <i class="bi bi-arrow-left"></i>
+                                    Précédent
+                                </button>
+                            }
+
+                            <!-- Bouton Valider -->
+                            <button type="button"
+                                    class="validate-btn btn-primary"
+                                    [disabled]="!travailAuChampComponent.canProceedToNext()"
+                                    (click)="travailAuChampComponent.executeAction()">
+                                <i class="bi bi-check-lg"></i>
+                                Valider
+                            </button>
+                        </div>
+                    } @else {
+                        <!-- Tant que « Valider » n'est pas disponible : on explique quoi faire -->
+                        <div class="fixed-validate-button-modal popup-footer">
+                            <p class="popup-required-hint">
+                                <i class="bi bi-info-circle"></i>
+                                @if (travailAuChampComponent.travailAuChamp) {
+                                    <span>Cochez au moins une <b>parcelle</b> (avec sa culture) pour continuer.</span>
+                                } @else {
+                                    <span>Choisissez le <b>type de travail</b> à encoder.</span>
+                                }
+                            </p>
+                            @if (travailAuChampComponent.canGoToPreviousStep()) {
+                                <button type="button"
+                                        class="previous-btn btn-secondary"
+                                        (click)="travailAuChampComponent.goToPreviousStep()">
+                                    <i class="bi bi-arrow-left"></i>
+                                    Précédent
+                                </button>
+                            }
+                        </div>
+                    }
+                </div> 
+            </div>
+        </div> 
+    }@else if (onValeurAjouter() === "Traitement Phyto") {
+        <div class="ajouter">
+            <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                <!-- ✨ Animation de succès pour traitement -->
+                @if (showTreatmentSuccessAnimation()) {
+                    <div class="success-animation-overlay success-animation-overlay--card">
+                        <div class="success-content">
+                            <svg class="checkmark" viewBox="0 0 52 52">
+                                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                            <h2 class="success-title">Nouveau traitement créé !</h2>
+                            
+                            <!-- Débrief du traitement -->
+                            @if (treatmentSuccessData) {
+                                <div class="treatment-summary">
+                                    <div class="summary-row">
+                                        <strong>Type :</strong>
+                                        <span>{{ treatmentSuccessData.type === 'phyto_porridge_treatment' ? 'Bouillie' : (treatmentSuccessData.type === 'phyto_quantity_treatment' ? 'Quantité' : 'Surface') }}</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <strong>Date :</strong>
+                                        <span>{{ (treatmentSuccessData.date || treatmentSuccessData.event_date) | date:'dd/MM/yyyy' }}</span>
+                                    </div>
+                                    @if (treatmentSuccessData.target || treatmentSuccessData.ciblee) {
+                                        <div class="summary-row">
+                                            <strong>Cible :</strong>
+                                            <span>{{ treatmentSuccessData.target || treatmentSuccessData.ciblee }}</span>
+                                        </div>
+                                    }
+                                    <div class="summary-row summary-products">
+                                        <strong>Produits :</strong>
+                                        <div class="products-list">
+                                            @for (product of getTreatmentProducts(); track $index) {
+                                                <span class="product-name">{{ product }}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="summary-row">
+                                        <strong>Parcelles traitées :</strong>
+                                        <span>{{ getTreatmentParcelCount() }} parcelle(s)</span>
+                                    </div>
+                                    @if (treatmentSuccessData.type === 'phyto_porridge_treatment') {
+                                        <div class="summary-row">
+                                            <strong>Volume total :</strong>
+                                            <span>{{ treatmentSuccessData.treatment_total_quantity_used }} L</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            
+                            <button type="button" class="btn-return-registre" (click)="closeTreatmentSuccessAnimation()">
+                                <i class="bi bi-arrow-left"></i>
+                                Retourner au registre
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <div class="ajouterTraitementPhyto popup-container popup-container--wide" [class.fade-out]="showTreatmentSuccessAnimation()">
+                    <div class="header popup-header">
+                        <div class="header-top">
+                            <div class="header-title">
+                                <i class="bi bi-droplet-half"></i>
+                                <h2>
+                                    @if (traitementPhytoComponent.isEditModeSignal()) {
+                                        Modifier un traitement
+                                    } @else {
+                                        Ajouter un traitement
+                                    }
+                                </h2>
+                            </div>
+                            <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                        <div class="progress-integration">
+                            <!-- Barre de progression intégrée -->
+                            <div class="modern-progress">
+                                <div class="progress-bar" [style.width.%]="getTraitementProgress()"></div>
+                                <div class="progress-steps">
+                                    <!-- Ordre réel de l'assistant : Parcelles (25) → Type (50) → Composition (70, ou
+                                         85 en bouillie : produits + volume sur le même écran) → Répartition (100). -->
+                                    <div class="step" [class.active]="getTraitementProgress() >= 25" [class.completed]="getTraitementProgress() > 25">
+                                        <span></span>
+                                        <label>Parcelles</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTraitementProgress() >= 50" [class.completed]="getTraitementProgress() > 50">
+                                        <span></span>
+                                        <label>Type</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTraitementProgress() >= 70" [class.completed]="getTraitementProgress() >= 100">
+                                        <span></span>
+                                        <label>Composition</label>
+                                    </div>
+                                    <div class="step" [class.active]="getTraitementProgress() >= 100">
+                                        <span></span>
+                                        <label>Répartition</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <app-traitement-phyto #traitementPhytoComponent 
+                                            [interventionToModify]="interventionToModify" 
+                                            (closePopup)="onClose()"
+                                            (closePopupWithRefresh)="onCloseWithRefresh()"
+                                            (treatmentCreated)="onTreatmentCreated($event)"
+                                            (progressChanged)="onTraitementProgressChange($event)"
+                                            (validationChanged)="onTraitementValidationChange($event)"></app-traitement-phyto>
+                    </div>
+                    
+                    <!-- Boutons d'action fixe pour traitement phyto -->
+                    @if (traitementPhytoComponent.shouldShowValidateButton()) {
+                        <div class="fixed-validate-button-modal popup-footer">
+                            <!-- Bouton Supprimer (uniquement en mode modification) -->
+                            @if (traitementPhytoComponent.isEditMode) {
+                                <button type="button"
+                                        class="delete-btn btn-primary danger"
+                                        (click)="traitementPhytoComponent.onDeleteTreatment()">
+                                    <i class="bi bi-trash"></i>
+                                    Supprimer le traitement
+                                </button>
+                            }
+
+                            <!-- Ce qu'il manque pour pouvoir valider l'étape en cours -->
+                            @if (!traitementPhytoComponent.canProceedToNext()) {
+                                <p class="popup-required-hint">
+                                    <i class="bi bi-info-circle"></i>
+                                    @switch (traitementPhytoComponent.traitement) {
+                                        @case ('selection parcelles') { <span>Cochez au moins une <b>parcelle</b> (avec sa culture) pour continuer.</span> }
+                                        @case ('type de traitement') { <span>Indiquez le <b>type d'encodage</b> et la <b>date</b> du traitement.</span> }
+                                        @case ('composition de mon traitement') { <span>Ajoutez au moins un <b>produit</b> avec sa <b>dose</b> et sa <b>cible</b>.</span> }
+                                        @case ('volument de bouillie utilisee') { <span>Ajoutez au moins un <b>produit</b> (dose et cible) et le <b>volume de bouillie</b>.</span> }
+                                        @case ('repartition de mon traitement') { <span>La quantité répartie entre les parcelles doit correspondre à la <b>quantité totale</b>.</span> }
+                                        @case ('repartition de mon traitement littre') { <span>La quantité répartie entre les parcelles doit correspondre à la <b>quantité totale</b>.</span> }
+                                    }
+                                </p>
+                            }
+
+                            <!-- Bouton Précédent (si pas à la première étape) -->
+                            @if (traitementPhytoComponent.canGoToPreviousStep()) {
+                                <button type="button"
+                                        class="previous-btn btn-secondary"
+                                        (click)="traitementPhytoComponent.goToPreviousStep()">
+                                    <i class="bi bi-arrow-left"></i>
+                                    Précédent
+                                </button>
+                            }
+
+                            <!-- Bouton Valider -->
+                            <button type="button"
+                                    class="validate-btn btn-primary"
+                                    [disabled]="!traitementPhytoComponent.canProceedToNext()"
+                                    (click)="traitementPhytoComponent.proceedToNextStep()">
+                                <i class="bi bi-check-lg"></i>
+                                Valider
+                            </button>
+                        </div>
+                    }
+                </div> 
+            </div>
+        </div> 
+    }
+</main>
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span id="closePopup" class="close">&times;</span>
+        <div class="header">
+            <div class="document">
+                <i class="bi bi-file-text-fill"></i>
+            </div>
+        </div>
+        <div class="content">
+            <h2>Téléchargement de Document</h2>
+            <p>Votre document est prêt à être téléchargé. Cliquez sur "Télécharger" pour commencer le téléchargement.</p>
+        </div>
+        <p><a href="doc/Mon carnet de champ.csv"><button class="btn btn-success form-control "> <i class="bi bi-file-earmark-arrow-down"></i> Télécharger</button> </a> </p>
+    </div>
+</div>
+
+<!-- Popup d'export avec filtres -->
+@if (showExportPopup()) {
+    <app-export-popup
+        (close)="closeExportPopup()"
+        (export)="performExportWithFilters($event)">
+    </app-export-popup>
+}

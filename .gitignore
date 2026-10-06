@@ -1,0 +1,17 @@
+/node_modules
+public/image/laptopB.png
+.claude/settings.local.json
+server/.env.local
+
+# Fichiers générés / dépendances
+/.angular
+/dist
+/vendor
+server/venv/
+__pycache__/
+*.pyc
+*.log
+
+# Secrets
+server/.env
+.env

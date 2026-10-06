@@ -1,0 +1,95 @@
+.footer{
+    background-color: #0f103b;
+    flex-shrink: 0; // Empêche le footer de rétrécir
+    padding: 16px 0; // Ajoute un peu de padding pour une meilleure apparence
+    margin: 0; // Supprime toute marge
+    display: flex;
+    justify-content: left;
+    height: auto;
+    .container {
+        margin: 0 auto; // Centre le container
+        padding: 0;
+    }
+    
+    .row {
+        margin: 0;
+        justify-content: left; // Centre la row
+    }
+    
+    .pied{
+        margin: 0;
+        padding: 0;
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-text {
+            flex: 1;
+            text-align: left;
+            
+            p{
+                font-family:Verdana, Geneva, Tahoma, sans-serif;
+                font-size: 12px;
+                padding: 0;
+                color: #ffffff;
+                text-align: left;
+                margin: 0 !important;
+                margin-bottom: 8px !important;
+                line-height: 1.2;
+                
+                a {
+                    color: #ffffff !important;
+                    text-decoration: underline !important;
+                    cursor: pointer !important;
+                    pointer-events: auto !important;
+                    z-index: 10 !important;
+                    position: relative !important;
+                    
+                    &:hover {
+                        color: #ccc !important;
+                        text-decoration: underline !important;
+                    }
+                    
+                    &:focus {
+                        outline: 2px solid #ffffff;
+                        outline-offset: 2px;
+                    }
+                }
+            }
+        }
+        
+        .footer-logo {
+            flex-shrink: 0;
+            
+            .corder-logo {
+                height: 40px;
+                width: auto;
+                max-width: 150px;
+                object-fit: contain;
+            }
+        }
+        
+        // Responsive pour mobile
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .footer-text {
+                text-align: center;
+            }
+            
+            .footer-logo .corder-logo {
+                height: 35px;
+                max-width: 120px;
+            }
+        }
+    }
+}

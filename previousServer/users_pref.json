@@ -1,0 +1,1585 @@
+[
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": [
+            "Pépinières forestières",
+            "Sapins de Noël"
+        ],
+        "idMesPreference": "4d480c46-d62e-4026-bbb9-4ba8a5a543a5",
+        "datee": "2025-08-27T10:02:47.694Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "b65fa912-069e-4f04-a9f6-3b34893e2752",
+        "datee": "2025-08-27T12:52:00.327Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage"
+        ],
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux"
+        ],
+        "plantesOrnementales": [
+            "Plantes fleuries"
+        ],
+        "arboriculture": [
+            "Poirers"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "cef767ae-ca9f-497d-b770-6a0a019a53a9",
+        "datee": "2025-08-29T09:53:24.269Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage"
+        ],
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs"
+        ],
+        "culturesFourrageres": [
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": [
+            "Pommiers",
+            "Poirers"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "5a0431ad-533f-49ae-a933-d1f53f3cd68e",
+        "datee": "2025-09-03T06:20:06.936Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Fraises et petits fruits"
+        ],
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": [
+            "Oléagineux"
+        ],
+        "plantesOrnementales": [
+            "Pépinières",
+            "Plantes fleuries"
+        ],
+        "arboriculture": [
+            "Poirers",
+            "Autres arbres fruitiers",
+            "Raisins de table"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": [
+            "Pépinières forestières",
+            "Sapins de Noël"
+        ],
+        "idMesPreference": "80ba8ba0-478e-43f1-adbe-d654a2bd0109",
+        "datee": "2025-09-10T07:11:24.434Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage"
+        ],
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": [
+            "Oléagineux"
+        ],
+        "plantesOrnementales": [
+            "Espaces vertes"
+        ],
+        "arboriculture": [
+            "Vignes"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": [
+            "Sapins de Noël"
+        ],
+        "idMesPreference": "1effc3c1-946f-4893-a095-3b092d6fc39c",
+        "datee": "2025-09-11T06:29:22.510Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": [
+            "Espaces vertes"
+        ],
+        "arboriculture": [
+            "Pommiers",
+            "Poirers"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "a5a15805-7e0a-4b17-8cfc-bd6f78111fe0",
+        "datee": "2025-09-11T07:16:27.575Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "c38bc2c2-ae39-46db-a1c4-434cd4bc7fda",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage"
+        ],
+        "grandesCultures": null,
+        "culturesFourrageres": [
+            "Protéagineux",
+            "Oléagineux"
+        ],
+        "plantesOrnementales": [
+            "Plantes fleuries"
+        ],
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "758143e6-370b-4f8a-8e4e-95314cfd3ddc",
+        "datee": "2025-09-11T11:44:11.122Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "ce0b9987-cc91-4243-ae1d-c9d0b89708b2",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux",
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": [
+            "Pommiers",
+            "Raisins de table"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": [
+            "Sapins de Noël"
+        ],
+        "idMesPreference": "f925af98-88c6-459f-967b-8433a3553b29",
+        "datee": "2025-09-11T12:37:45.465Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Fraises et petits fruits"
+        ],
+        "grandesCultures": [
+            "Betterave et chicorée"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux"
+        ],
+        "plantesOrnementales": [
+            "Plantes fleuries"
+        ],
+        "arboriculture": [
+            "Poirers"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": [
+            "Sapins de Noël"
+        ],
+        "idMesPreference": "a436483c-3859-481d-8862-3b6b54a91248",
+        "datee": "2025-09-11T12:48:49.903Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "0f3a1611-8fd6-40a6-beab-eaef4c336185",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "c65acf7a-bd48-44e6-b9a1-0d104a2e1ff2",
+        "datee": "2025-09-12T08:10:41.399Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "97ea72df-30bb-47c1-81ad-3122583c7648",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "33b61b6c-557f-4843-bf04-7f1662db248b",
+        "datee": "2025-09-18T09:30:36.460Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "c11b9e63-863a-4d59-be35-a8369326111d",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage",
+            "Fraises et petits fruits"
+        ],
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "9ca9d1a3-4030-4af7-9ce4-1b9fb9f03d7d",
+        "datee": "2025-09-28T07:30:20.531Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "9aa77206-57bf-4b8b-8c11-b77bfb9813cd",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": [
+            "Pommiers",
+            "Poirers",
+            "Vignes"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "64380c9a-1330-48db-a039-e4aa2c44a9b3",
+        "datee": "2025-09-29T11:32:45.143Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "424bb7d0-bf34-474c-8bb4-42c5029bee64",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": [
+            "Pommiers"
+        ],
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "30a840a9-4639-4730-8dcf-c803703b2df6",
+        "datee": "2025-10-01T10:40:14.216Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "53cdf69b-9762-46eb-8a63-ddac046fabf7",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [
+            "Maraichage"
+        ],
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux"
+        ],
+        "plantesOrnementales": [],
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "e12adc0e-8dc8-48a5-9f81-6926db2cb2f7",
+        "datee": "2025-10-03T06:38:49.235Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "071c0e15-3751-4fd7-ab93-f33d983348a8",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "0c629009-25d0-4bd0-90ab-36fa92793b9d",
+        "datee": "2025-10-08T08:13:39.448Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "9dd020e7-e2eb-4aaa-b246-76737b732aae",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "580f28fb-e229-48d8-9aba-315e4d93dab2",
+        "datee": "2025-10-08T09:08:02.736Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "f703c3ff-137e-4268-b684-bc856839c958",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "d29c3b64-c2f0-41d3-b8c7-1af603a6eb5b",
+        "datee": "2025-10-08T16:03:35.279Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "909a3f8a-627b-4bc4-b356-f0d3b460725d",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "20b6d01d-bc47-4fcf-824b-a3bfa6e729cc",
+        "datee": "2025-10-09T15:16:03.933Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "7344f77b-8ab4-4074-95c0-ae5e987aa4bd",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": [],
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "02a7eddb-c478-4a9e-8515-70f539010709",
+        "datee": "2025-10-09T19:37:02.400Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "5697dbc9-9fb4-43ce-86d8-0121b4fd6fc9",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "3b111b27-8822-4011-bfb7-31ae80aa000a",
+        "datee": "2025-10-10T04:54:41.241Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "657-001a7285-e1bd-4593-9e19-183a149fab7a-7579",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "2be507cd-243a-4f82-96be-429d23bb0fe9",
+        "datee": "2025-10-11T16:36:44.996Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "fd7ea78d-41f5-41ee-a380-326b3fecbc38",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "91b32cc9-36a3-42b0-898e-1015ce736cc1",
+        "datee": "2025-10-13T09:18:12.203Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "22119123-a5eb-4637-802b-322caa1b7450",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "1eb692fa-8882-4b02-9ab6-ff9310129570",
+        "datee": "2025-10-14T12:53:07.207Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "62048719-470c-43d9-9630-122205de8c90",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "5b98f7aa-9239-40b3-af33-e432a4e20bbd",
+        "datee": "2025-10-17T07:41:59.588Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "1912-3917e558-8a05-41a5-90c5-fea39c21f123-274",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "53cefef0-28dc-4c24-8ab4-55e3f9c7dd18",
+        "datee": "2025-10-20T09:45:15.455Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "874-620da9ba-591f-447f-a7af-8a2fe730c4d4-1219",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "77426566-a58f-45d8-9aed-a76511f4e301",
+        "datee": "2025-10-20T10:38:04.142Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "6919-c7ac295c-2b9a-45b0-b954-54630d11555a-8026",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "714570ec-53d7-4637-8721-d0bf998027e6",
+        "datee": "2025-10-20T11:15:21.959Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "874-620da9ba-591f-447f-a7af-8a2fe730c4d4-1219",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "cf90f04f-9536-488e-b5f2-7fc570e5cc4d",
+        "datee": "2025-10-21T06:34:20.921Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "0b10096b-2a6d-4c64-bdb0-cd60dd3cc29b",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "79371133-8f6b-4d4f-b889-9e5a723a0580",
+        "datee": "2025-10-21T11:22:53.654Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "c05a53c4-7846-4ef3-b936-e46fbf109b16",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "4754ec3f-d170-43d4-8917-02db1b64da62",
+        "datee": "2025-10-21T11:43:31.415Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "5005-653b90ca-0eec-4c28-ac91-13093b27e22c-3657",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "8b3813a5-719a-45c0-b985-9c55d8679549",
+        "datee": "2025-10-21T11:44:43.814Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "6e32736f-62d9-4e85-b589-4e32def8598f",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "b56b49a5-ab25-4172-901f-1205840f0b0c",
+        "datee": "2025-10-21T12:31:41.777Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "7196-b0814685-7e02-4136-ab10-47bc54c3c80f-654",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "08ec81be-f2ff-4a73-ae02-3df14704f3f4",
+        "datee": "2025-10-22T06:51:30.974Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "a145630e-d8c2-4a26-9c58-b9661efdd460",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux",
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "63c325fb-2406-4f39-a165-45ca89b5b68f",
+        "datee": "2025-10-22T14:23:35.663Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "54afba9a-10e1-423c-b8f7-172431cff122",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux",
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "4955cedd-caec-4d96-987e-4f16225b6966",
+        "datee": "2025-10-22T18:42:06.353Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "52f77b9d-25d5-4190-bd2a-46733a2a5929",
+        "datee": "2025-10-23T07:12:10.691Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "7147-dcd1e9b2-ee62-4e70-b6cc-d8f14c947e44-7406",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "4a2b15cd-87ec-4296-a49f-bb95acc270cd",
+        "datee": "2025-10-24T06:25:48.407Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "9d0e56c2-7a8f-4ee4-a427-5e30ecbde3a2",
+        "datee": "2025-10-24T07:17:01.424Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "9417-fff672f0-d811-4bdb-88cb-8e4d2be32312-9106",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "f08db6d6-9d31-4be4-a86a-d70c52c85625",
+        "datee": "2025-10-24T09:43:31.733Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4674-010d2840-2053-4f6d-b016-139b505d4ff9-3257",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "a981cad7-f907-4db3-8c73-d1c5ed3ddd49",
+        "datee": "2025-10-25T06:32:10.419Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "9da4ed6a-42d6-4e41-ac9d-b8102c9c68b7",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": [],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "c6d3747e-93c7-4fa1-86ad-ac56a00fed6d",
+        "datee": "2025-10-25T07:09:02.305Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "2296-da895c7b-acc1-4b96-bb8c-1ad42537d89f-5944",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "04530b1d-d865-48f0-95dc-a848b9c89072",
+        "datee": "2025-10-25T15:14:25.344Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "5873-bba0950e-c678-4729-8fc8-fda6bbb0dae2-9382",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "9d076e8b-f435-41f1-b67b-47a5c739ad5f",
+        "datee": "2025-10-27T10:00:20.620Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "0b10096b-2a6d-4c64-bdb0-cd60dd3cc29b",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "253ce6b0-e59d-4f08-848d-39da9562f75b",
+        "datee": "2025-10-28T09:10:46.884Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "b77b59cf-75fa-4756-a991-00a2bc19b0d8",
+        "datee": "2025-10-28T10:47:24.332Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "1470-704a5e02-60ae-46bf-943a-0c4e6642b611-9588",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": [
+            "Espaces vertes"
+        ],
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "6a3a10d6-03f4-41a7-b3bb-243f632a6072",
+        "datee": "2025-10-29T01:11:55.333Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "14abacf3-d26c-4789-8890-929e28021bdf",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "24a4e68f-f154-4220-a6d4-e3b320557604",
+        "datee": "2025-10-29T10:22:26.146Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "5873-bba0950e-c678-4729-8fc8-fda6bbb0dae2-9382",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "fe303261-2c2e-46ae-8c01-3a92a380a8ce",
+        "datee": "2025-10-30T09:30:19.599Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "5884-a6940c52-57d4-46ee-993e-2fd7efd1449e-6357",
+        "encodageDuTraitement": "Bouillie",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "d0fe6e29-10dd-4c4f-b552-480c3990a7b9",
+        "datee": "2025-10-31T10:35:40.639Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "15136fef-5e81-476e-aca7-47db3929f911",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales d'hiver",
+            "Légumes de plein champ",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": [
+            "Pépinières"
+        ],
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "cec35032-5270-47ae-934c-37231c05785f",
+        "datee": "2025-11-03T10:22:34.440Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "2834-5b34ed73-4679-4bb2-954e-2b37b5dd8ef8-2283",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs",
+            "Pommes de terre"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "c8246874-62a0-4775-937b-f42cb994d442",
+        "datee": "2025-11-04T19:20:15.228Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "14c38f01-3b87-477c-87ec-d7a9e7ea57ca",
+        "datee": "2025-11-05T08:09:19.571Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4247-b0586351-0022-4ed2-af6c-536f242d4f14-1711",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "820cdc55-9c28-436b-be13-b6aee7866227",
+        "datee": "2025-11-05T19:27:46.901Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "c5c31fc5-9550-44b6-8492-b1dbd9a28e94",
+        "datee": "2025-11-06T08:12:21.279Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "289d9b18-89f0-4d38-8d7f-37983f8fdb6c",
+        "datee": "2025-11-06T09:10:13.694Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "7196-b0814685-7e02-4136-ab10-47bc54c3c80f-654",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Betterave et chicorée",
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "2e35d1ed-892a-412e-bb36-99f3adb2e08f",
+        "datee": "2025-11-07T06:43:08.058Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": null,
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "4cc391df-c119-4f01-9778-c2a7d0d42896",
+        "datee": "2025-11-07T08:24:01.432Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "a1b3fe1d-8d04-49d0-9142-bf49969672bf",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": false,
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver",
+            "Maïs"
+        ],
+        "culturesFourrageres": [
+            "Protéagineux",
+            "Oléagineux"
+        ],
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "99f528c8-7e61-4caa-a2c7-72f931f2d28e",
+        "datee": "2025-11-20T15:16:21.472Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    },
+    {
+        "id_user": "97ea72df-30bb-47c1-81ad-3122583c7648",
+        "encodageDuTraitement": "Surface",
+        "typeDePulverisateur": "J’utilise un pulvérisateur de plus de 20 L.",
+        "maraichage": null,
+        "grandesCultures": [
+            "Céréales de printemps",
+            "Céréales d'hiver"
+        ],
+        "culturesFourrageres": null,
+        "plantesOrnementales": null,
+        "arboriculture": null,
+        "pepinieresForestieresEtViticultureSapinsDeNoel": null,
+        "idMesPreference": "655fa6a3-bb87-4713-9ae5-ad67a9ec2d5c",
+        "datee": "2025-12-05T07:34:32.394Z",
+        "parcel_category": [
+            "plein air",
+            "serre",
+            "verger",
+            "jardin",
+            "sous-protection"
+        ],
+        "succes": true
+    }
+]

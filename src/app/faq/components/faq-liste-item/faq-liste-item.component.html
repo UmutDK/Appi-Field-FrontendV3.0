@@ -1,0 +1,101 @@
+<!-- Contacts -->
+<section class="dashboard-card contact-card">
+    <h2>Nous contacter</h2>
+    <div class="contact-grid">
+        <div class="contact-item">
+            <span class="contact-icon"><i class="bi bi-camera-video"></i></span>
+            <div class="contact-body">
+                <h3>Tutoriel vidéo</h3>
+                <div class="video-links">
+                    <a href="https://www.youtube.com/watch?v=R8ktEhoiOKQ" target="_blank" rel="noopener noreferrer" class="video-btn">
+                        Accéder au webinaire (partie législative) <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                    <a href="https://www.youtube.com/watch?v=liLtL7Buyks" target="_blank" rel="noopener noreferrer" class="video-btn">
+                        Accéder au webinaire (partie pratique) <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="contact-item">
+            <span class="contact-icon"><i class="bi bi-envelope"></i></span>
+            <div class="contact-body">
+                <h3>Email</h3>
+                <p>Contactez-nous par mail à l'adresse</p>
+                <a href="mailto:registre@corder.be" class="contact-link">registre&#64;corder.be</a>
+            </div>
+        </div>
+        <div class="contact-item">
+            <span class="contact-icon"><i class="bi bi-telephone"></i></span>
+            <div class="contact-body">
+                <h3>Téléphone</h3>
+                <p>Du lundi au vendredi, de 9h à 12h et de 14h à 16h</p>
+                <a href="tel:+3210473754" class="contact-link">010/47.37.54</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Questions fréquentes -->
+<section class="dashboard-card faq-card">
+    <h2>Questions fréquemment posées</h2>
+
+    <!-- Barre de recherche + filtres par catégorie -->
+    <div class="faq-toolbar">
+        <div class="search-field">
+            <i class="bi bi-search search-field-icon"></i>
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Rechercher une question..."
+                [(ngModel)]="searchText"
+                aria-label="Rechercher une question">
+            @if (searchText) {
+                <button type="button" class="search-clear" (click)="searchText = ''" title="Effacer la recherche">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            }
+        </div>
+
+        <div class="filters-container">
+            <button
+                type="button"
+                class="filter-tag"
+                [class.active]="selectedCategory === 'all'"
+                (click)="selectCategory('all')">
+                Toutes les questions
+            </button>
+            @for (category of categories; track category) {
+                <button
+                    type="button"
+                    class="filter-tag"
+                    [class.active]="selectedCategory === category"
+                    (click)="selectCategory(category)">
+                    {{category}}
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Accordion des questions -->
+    <div class="accordion" id="faqAccordion">
+        @for (item of filteredItems; track $index) {
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + item.id">
+                        <span class="category-badge">{{item.category}}</span>
+                        <span class="question-text">{{item.question}}</span>
+                    </button>
+                </h3>
+                <div [id]="item.id" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body preserve-whitespace" [innerHTML]="item.answer"></div>
+                </div>
+            </div>
+        }
+        @if (filteredItems.length === 0) {
+            <div class="faq-empty">
+                <i class="bi bi-search"></i>
+                <p>Aucune question ne correspond à votre recherche.</p>
+            </div>
+        }
+    </div>
+</section>

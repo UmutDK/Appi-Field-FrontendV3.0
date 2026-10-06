@@ -1,0 +1,650 @@
+<main class="dashboard inventaire-page">
+<div class="dashboard-container">
+
+    <!-- En-tête : titre à gauche, Exporter + "Ajouter ▾" en haut à droite -->
+    <header class="inventaire-header">
+        <div class="dashboard-header">
+            <h1>Mon inventaire numérique</h1>
+            <p class="dashboard-subtitle">Suivez le stock de vos produits phytos, vos achats, vos PPNU et vos PPNV.</p>
+        </div>
+
+        <div class="inventaire-header-actions">
+            <button type="button" class="btn-export" [disabled]="isExporting" (click)="exportInventaireExcel()">
+                @if (isExporting) {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    Export en cours...
+                } @else {
+                    <i class="bi bi-file-earmark-arrow-down"></i> Exporter
+                }
+            </button>
+
+            <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
+                <button type="button" class="add-menu-btn" (click)="toggleFab()"
+                        aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Ajouter</span>
+                    <i class="bi bi-chevron-down add-menu-chevron"></i>
+                </button>
+                @if (isFabOpen) {
+                    <div class="add-menu-list" role="menu">
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="onAddPpnu(); closeFab()">
+                            <span class="add-menu-icon"><i class="bi bi-recycle"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">PPNU / PPNV</span>
+                                <span class="add-menu-desc">Produit non utilisable ou non valorisable sorti du stock.</span>
+                            </span>
+                        </button>
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="onAddAchatPpp(); closeFab()">
+                            <span class="add-menu-icon"><i class="bi bi-cart-plus"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Achat de PPP</span>
+                                <span class="add-menu-desc">Enregistrez l'achat d'un produit phytopharmaceutique.</span>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </header>
+
+    <section class="inventaire-grid">
+
+        <!-- ===== Colonne gauche : liste des produits ===== -->
+        <aside class="dashboard-card products-card">
+            <h2>Mes produits</h2>
+
+            <!-- Filtres (pastilles) -->
+            <div class="filter-chips">
+                <button type="button" class="filter-chip" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+                    Tous
+                </button>
+                @if (countPositive > 0) {
+                    <button type="button" class="filter-chip" [class.active]="activeFilter === 'positive'" (click)="setFilter('positive')">
+                        Stock positif <span class="chip-count">{{ countPositive }}</span>
+                    </button>
+                }
+                @if (countNegative > 0) {
+                    <button type="button" class="filter-chip filter-chip--warning" [class.active]="activeFilter === 'negative'" (click)="setFilter('negative')">
+                        Entrées non à jour <span class="chip-count">{{ countNegative }}</span>
+                    </button>
+                }
+                @if (countEmpty > 0) {
+                    <button type="button" class="filter-chip" [class.active]="activeFilter === 'empty'" (click)="setFilter('empty')">
+                        Stock vide <span class="chip-count">{{ countEmpty }}</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Version desktop : liste -->
+            <div class="product-list d-none d-lg-block">
+                @for (product of paginatedProducts; track product.product_id; let i = $index) {
+                    <button
+                        type="button"
+                        class="product-item"
+                        [class.active]="selectedProduct?.product_id === product.product_id"
+                        (click)="selectProduct(product)">
+                        <span class="status-indicator-list"
+                              [style.background-color]="getProductPhytowebData(product) ? getStatusColor(getProductPhytowebData(product)!.authorization_status) : '#6c757d'">
+                        </span>
+                        <span class="product-item-body">
+                            <span class="product-item-title">{{ product.product_name }}</span>
+                            <span class="product-item-sub">{{ product.product_numaut }}</span>
+                        </span>
+                        <i class="bi bi-chevron-right product-item-chevron"></i>
+                    </button>
+                }
+
+                @if (isLoading) {
+                    <div class="list-state">
+                        <span class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </span>
+                        Chargement des produits...
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination pour desktop -->
+            @if (!isLoading && filteredProducts.length > itemsPerPage) {
+                <div class="pagination-controls d-none d-lg-flex">
+                    <button type="button" class="page-btn" [disabled]="!canGoPrevious" (click)="goToPreviousPage()" aria-label="Page précédente">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <span class="pagination-text">{{ paginationText }}</span>
+                    <button type="button" class="page-btn" [disabled]="!canGoNext" (click)="goToNextPage()" aria-label="Page suivante">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            }
+
+            <!-- Version mobile/tablette : dropdown -->
+            <div class="dropdown d-lg-none">
+                <label class="form-label mobile-label">Sélectionnez un produit</label>
+                <button class="btn dropdown-toggle w-100 custom-dropdown-btn" type="button" id="productDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="dropdown-content-wrapper">
+                        @if (selectedProduct) {
+                            <div class="selected-product d-flex align-items-center">
+                                <span class="status-indicator-list me-2"
+                                      [style.background-color]="selectedProductPhytoweb ? getStatusColor(selectedProductPhytoweb.authorization_status) : '#6c757d'">
+                                </span>
+                                <span class="product-name">{{ selectedProduct.product_name }}</span>
+                                <small class="product-numaut ms-2">{{ selectedProduct.product_numaut }}</small>
+                            </div>
+                        } @else {
+                            <div class="placeholder-text">
+                                <i class="bi bi-search me-2"></i>
+                                Choisir un produit...
+                            </div>
+                        }
+                    </div>
+                </button>
+                <ul class="dropdown-menu w-100 custom-dropdown-menu" aria-labelledby="productDropdown">
+                    @for (product of sortedProducts; track product.product_id; let i = $index) {
+                        <li>
+                            <button
+                                class="dropdown-item custom-dropdown-item d-flex align-items-center"
+                                type="button"
+                                [class.active]="selectedProduct?.product_id === product.product_id"
+                                (click)="selectProduct(product)">
+                                <span class="status-indicator-list me-2"
+                                      [style.background-color]="getProductPhytowebData(product) ? getStatusColor(getProductPhytowebData(product)!.authorization_status) : '#6c757d'">
+                                </span>
+                                <div class="product-item-content">
+                                    <span class="product-item-name">{{ product.product_name }}</span>
+                                    <small class="product-item-numaut ms-2">{{ product.product_numaut }}</small>
+                                </div>
+                                @if (selectedProduct?.product_id === product.product_id) {
+                                    <i class="bi bi-check-circle-fill"></i>
+                                }
+                            </button>
+                        </li>
+                    }
+
+                    @if (isLoading) {
+                        <li>
+                            <div class="dropdown-item-text">
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                Chargement des produits...
+                            </div>
+                        </li>
+                    }
+
+                    @if (!isLoading && sortedProducts.length === 0) {
+                        <li>
+                            <div class="dropdown-item-text">
+                                Aucun produit disponible
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </aside>
+
+        <!-- ===== Colonne droite : fiche produit, PPNU/PPNV, historique ===== -->
+        <div class="inventaire-main">
+            @if (selectedProduct) {
+                <div class="product-cards">
+                    <!-- Fiche produit : graphique + quantités -->
+                    <section class="dashboard-card inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <h2>{{ selectedProduct.product_name }}</h2>
+                                <span class="inventory-numaut">{{ selectedProduct.product_numaut }}</span>
+                            </div>
+                            <div *ngIf="selectedProduct.quantity_unit === 'L' || selectedProduct.quantity_unit === 'Kg'">
+                                <button type="button" class="unit-switcher" (click)="switchUnit()" title="Changer l'unité d'affichage">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    Afficher en {{ displayUnitLabel === 'L' ? 'mL' : displayUnitLabel === 'ml' ? 'L' : displayUnitLabel === 'Kg' ? 'g' : 'Kg' }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="inventory-body">
+                            <div class="chart-container">
+                                <canvas #chartCanvas id="myChart" width="180" height="180"></canvas>
+                            </div>
+                            <div class="stats-container">
+                                <div class="stat-item stat-item--main" [class.negative-quantity]="convertedQuantityRemaining < 0">
+                                    <span class="stat-label"><span class="stat-dot" [style.background]="convertedQuantityRemaining < 0 ? '#cf3514' : '#0f113b'"></span>Quantité restante</span>
+                                    <span class="stat-value" [style.color]="convertedQuantityRemaining < 0 ? '#cf3514' : '#0f113b'">
+                                        {{ convertedQuantityRemaining | number:'1.2-2' }} {{ displayUnitLabel }}
+                                    </span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label"><span class="stat-dot" style="background: #03918a;"></span>Quantité achetée</span>
+                                    <span class="stat-value" style="color: #03918a;">
+                                        {{ convertedQuantityBuyed | number:'1.2-2' }} {{ displayUnitLabel }}
+                                    </span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label"><span class="stat-dot" style="background: #05b1af;"></span>Utilisation</span>
+                                    <span class="stat-value" style="color: #43928a;">
+                                        {{ convertedQuantityUsed | number:'1.2-2' }} {{ displayUnitLabel }}
+                                    </span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label"><span class="stat-dot" style="background: #b2b221;"></span>PPNU + PPNV</span>
+                                    <span class="stat-value" style="color: #8f8f1a;">
+                                        {{ convertedQuantityPpnuPpnv | number:'1.2-2' }} {{ displayUnitLabel }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Données Phytoweb -->
+                    <section class="dashboard-card phytoweb-card">
+                        <div class="phytoweb-header">
+                            <span class="status-indicator"
+                                  [style.background-color]="selectedProductPhytoweb ? getStatusColor(selectedProductPhytoweb.authorization_status) : '#6c757d'">
+                            </span>
+                            <h2>Données Phytoweb</h2>
+                        </div>
+                        @if (selectedProductPhytoweb) {
+                            <div class="phytoweb-content">
+                                <div class="phytoweb-item">
+                                    <span class="phytoweb-label">Statut</span>
+                                    <span class="phytoweb-value">{{ getStatusLabel(selectedProductPhytoweb.authorization_status) }}</span>
+                                </div>
+                                <div class="phytoweb-item">
+                                    <span class="phytoweb-label">Type</span>
+                                    <span class="phytoweb-value">{{ selectedProductPhytoweb.product_type }}</span>
+                                </div>
+                                <div class="phytoweb-item">
+                                    <span class="phytoweb-label">Utilisateurs</span>
+                                    <span class="phytoweb-value">{{ selectedProductPhytoweb.user_group }}</span>
+                                </div>
+                                @if (selectedProductPhytoweb.date_act) {
+                                    <div class="phytoweb-item">
+                                        <span class="phytoweb-label">Date du dernier acte</span>
+                                        <span class="phytoweb-value">{{ selectedProductPhytoweb.date_act }}</span>
+                                    </div>
+                                }
+                                @if (selectedProductPhytoweb.authorization_status === 'withdrawing' && selectedProductPhytoweb.use_tolerance_date) {
+                                    <div class="phytoweb-item phytoweb-item-warning">
+                                        <span class="phytoweb-label">Autorisation en cours de retrait — usage toléré jusqu'au</span>
+                                        <span class="phytoweb-value">{{ selectedProductPhytoweb.use_tolerance_date }}</span>
+                                    </div>
+                                }
+                                @if (selectedProductPhytoweb.authorization_status === 'forbidden') {
+                                    <div class="phytoweb-item phytoweb-item-forbidden">
+                                        <span class="phytoweb-value"><i class="bi bi-slash-circle"></i> Ce produit n'est plus autorisé (statut : Retrait)</span>
+                                    </div>
+                                }
+                            </div>
+                        } @else if (isLoadingPhytoweb) {
+                            <div class="card-state">
+                                <span class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </span>
+                                <p>Chargement des données Phytoweb...</p>
+                            </div>
+                        } @else {
+                            <div class="card-state">
+                                <i class="bi bi-info-circle"></i>
+                                <p>Aucune donnée Phytoweb disponible pour ce produit</p>
+                            </div>
+                        }
+                    </section>
+                </div>
+            } @else if (isLoading) {
+                <!-- État de chargement -->
+                <section class="dashboard-card card-state card-state--large">
+                    <span class="spinner-border" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </span>
+                    <p>Chargement des données de l'inventaire...</p>
+                </section>
+            } @else if (isEmpty) {
+                <!-- État vide - aucun produit -->
+                <section class="dashboard-card empty-state">
+                    <span class="empty-icon"><i class="bi bi-archive"></i></span>
+                    <h2>Aucun produit détecté</h2>
+                    <p>Commencez à encoder vos traitements et mentionnez vos entrées de PPP.</p>
+                    <div class="empty-actions">
+                        <button type="button" class="btn-outline-neutral" (click)="onAddAchatPpp()">
+                            <i class="bi bi-cart-plus"></i>
+                            Ajouter un achat PPP
+                        </button>
+                        <a routerLink="/registre" class="btn-solid">
+                            <i class="bi bi-plus-lg"></i>
+                            Encoder un traitement
+                        </a>
+                    </div>
+                </section>
+            } @else {
+                <!-- Aucun produit sélectionné -->
+                <section class="dashboard-card card-state card-state--large">
+                    <i class="bi bi-arrow-left-circle"></i>
+                    <p>Sélectionnez un produit pour voir ses détails</p>
+                </section>
+            }
+
+            @if (!isEmpty) {
+                <!-- PPNU & PPNV -->
+                <section class="dashboard-card table-card">
+                    <div class="dashboard-card-header">
+                        <div class="dashboard-card-header-text">
+                            <h2>PPNU &amp; PPNV</h2>
+                        </div>
+                        @if (selectedProduct) {
+                            <button type="button" class="btn-card-action" (click)="onAddPpnuForSelectedProduct()">
+                                <i class="bi bi-plus-lg"></i> Ajouter un PPNU/PPNV
+                            </button>
+                        }
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Quantité</th>
+                                    <th class="col-actions"><span class="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (productPpnuPpnvEvents && productPpnuPpnvEvents.length > 0) {
+                                    @for (event of productPpnuPpnvEvents; track event.event_id) {
+                                    <tr>
+                                        <td>{{ event.event_date | date }}</td>
+                                        <td>
+                                            <span class="tag" [class]="event.event_type === 'ppnu_entry' ? 'tag tag--ppnu' : 'tag tag--ppnv'">
+                                                {{ event.event_type === 'ppnu_entry' ? 'PPNU' : 'PPNV' }}
+                                            </span>
+                                        </td>
+                                        <td>{{ event.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit || 'L' }}</td>
+                                        <td class="col-actions">
+                                            <button type="button" class="icon-btn" (click)="onEditPpnuPpnvEvent(event)"
+                                                    title="Modifier cet événement" aria-label="Modifier cet événement">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="icon-btn icon-btn--danger" (click)="onDeletePpnuPpnvEvent(event)"
+                                                    title="Supprimer cet événement" aria-label="Supprimer cet événement">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    }
+                                } @else {
+                                    <tr>
+                                        <td colspan="4" class="table-state">
+                                            <i class="bi bi-info-circle"></i>
+                                            @if (selectedProduct) {
+                                                Aucun événement PPNU/PPNV pour ce produit
+                                            } @else {
+                                                Sélectionnez un produit pour voir les événements PPNU/PPNV
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Historique -->
+                <section class="dashboard-card table-card">
+                    <div class="dashboard-card-header">
+                        <div class="dashboard-card-header-text">
+                            <h2>Historique @if (selectedProduct) { <span class="title-muted">— {{ selectedProduct.product_name }}</span> }</h2>
+                        </div>
+                        @if (selectedProduct) {
+                            <button type="button" class="btn-card-action" (click)="onAddAchatForSelectedProduct()">
+                                <i class="bi bi-cart-plus"></i> Nouvel achat
+                            </button>
+                        }
+                    </div>
+
+                    <!-- Navigation par onglets -->
+                    <ul class="nav nav-tabs history-tabs" id="historyTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-events" type="button">
+                                Tout <span class="tab-count">{{ productUsages.length }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="purchases-tab" data-bs-toggle="tab" data-bs-target="#purchases" type="button">
+                                Achats <span class="tab-count">{{ productPurchases.length }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="treatments-tab" data-bs-toggle="tab" data-bs-target="#treatments" type="button">
+                                Traitements <span class="tab-count">{{ productTreatments.length }}</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Contenu des onglets -->
+                    <div class="tab-content" id="historyTabsContent">
+                        <!-- Onglet Tout l'historique -->
+                        <div class="tab-pane fade show active" id="all-events">
+                            <div class="table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>Cible</th>
+                                            <th>Quantité</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (productUsages.length === 0) {
+                                            <tr>
+                                                <td colspan="4" class="table-state">
+                                                    @if (selectedProduct) {
+                                                        Aucun événement enregistré pour ce produit
+                                                    } @else {
+                                                        Sélectionnez un produit pour voir son historique
+                                                    }
+                                                </td>
+                                            </tr>
+                                        } @else {
+                                            @for (usage of productUsages; track usage.event_id + '_' + $index) {
+                                                <tr>
+                                                    <td>
+                                                        <span [class]="usage.event_type === 'purchase' ? 'tag tag--purchase' : 'tag tag--treatment'">
+                                                            {{ usage.event_type === 'purchase' ? 'Achat' : 'Traitement' }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ usage.event_date | date:'dd/MM/yyyy' }}</td>
+                                                    <td>{{ usage.event_crop || 'Non spécifié' }}</td>
+                                                    <td>
+                                                        <span [class]="usage.event_type === 'purchase' ? 'qty qty--in' : 'qty qty--out'">
+                                                            {{ usage.event_type === 'purchase' ? '+' : '' }}{{ usage.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Onglet Achats -->
+                        <div class="tab-pane fade" id="purchases">
+                            <div class="table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Quantité achetée</th>
+                                            <th class="col-actions"><span class="visually-hidden">Actions</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (productPurchases.length === 0) {
+                                            <tr>
+                                                <td colspan="3" class="table-state">
+                                                    Aucun achat enregistré pour ce produit
+                                                </td>
+                                            </tr>
+                                        } @else {
+                                            @for (purchase of productPurchases; track purchase.event_id + '_purchase') {
+                                                <tr>
+                                                    <td>{{ purchase.event_date | date:'dd/MM/yyyy' }}</td>
+                                                    <td><span class="qty qty--in">+{{ purchase.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}</span></td>
+                                                    <td class="col-actions">
+                                                        <button type="button" class="icon-btn" (click)="onEditPurchaseEvent(purchase)"
+                                                                title="Modifier cet achat" aria-label="Modifier cet achat">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" class="icon-btn icon-btn--danger" (click)="onDeletePurchaseEvent(purchase)"
+                                                                title="Supprimer cet achat" aria-label="Supprimer cet achat">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Onglet Traitements -->
+                        <div class="tab-pane fade" id="treatments">
+                            <div class="table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Cible</th>
+                                            <th>Quantité utilisée</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (productTreatments.length === 0) {
+                                            <tr>
+                                                <td colspan="3" class="table-state">
+                                                    Aucun traitement enregistré pour ce produit
+                                                </td>
+                                            </tr>
+                                        } @else {
+                                            @for (treatment of productTreatments; track treatment.event_id + '_treatment') {
+                                                <tr>
+                                                    <td>{{ treatment.event_date | date:'dd/MM/yyyy' }}</td>
+                                                    <td>{{ treatment.event_crop || 'Culture non spécifiée' }}</td>
+                                                    <td><span class="qty qty--out">{{ treatment.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}</span></td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Produit dont toutes les quantités sont à zéro -->
+                @if (isSelectedProductEmpty && selectedProduct) {
+                    <section class="dashboard-card empty-product-card">
+                        <div class="empty-product-text">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span><strong>{{ selectedProduct.product_name }}</strong> a toutes ses quantités à zéro.</span>
+                        </div>
+                        <button
+                            type="button"
+                            class="btn-outline-danger-soft"
+                            (click)="onDeleteEmptyProduct()"
+                            title="Supprimer ce produit vide de votre inventaire">
+                            <i class="bi bi-trash3"></i>
+                            Supprimer ce produit vide
+                        </button>
+                    </section>
+                }
+            }
+        </div>
+    </section>
+</div>
+
+<!-- Message de confirmation (remplace l'alerte du navigateur « Achat modifié avec succès ! ») -->
+@if (toastMessage) {
+    <div class="inventaire-toast" role="status">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ toastMessage }}</span>
+        <button type="button" class="inventaire-toast-close" (click)="toastMessage = ''" aria-label="Fermer"><i class="bi bi-x-lg"></i></button>
+    </div>
+}
+
+<!-- Popups PPNU/PPNV et Achat (structure inchangée) -->
+<div class="inventaire-popups">
+            @if (popInventaire === "PPNU - PPNV") {
+                <div class="ajouter">
+                    <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                        <div class="ajouterUneCulture popup-container">
+                            <div class="popup-header">
+                                <div class="header-title">
+                                    <i class="bi bi-recycle"></i>
+                                    <h3>PPNU &amp; PPNV</h3>
+                                </div>
+                                <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                            <div class="body">
+                                <app-ppnu-ppnv [preselectedProductId]="popupPreselectedProductId" (closeForm)="onClosePpnuForm()"></app-ppnu-ppnv>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }@else if (popInventaire === "Achat de PPP") {
+                <div class="ajouter">
+                    <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                        <div class="ajouterUneCulture popup-container">
+                            <div class="popup-header">
+                                <div class="header-title">
+                                    <i class="bi bi-cart-plus"></i>
+                                    <h3>Achat de produit</h3>
+                                </div>
+                                <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                            <div class="body">
+                                <app-achat-de-ppp [preselectedProductId]="popupPreselectedProductId" (closeForm)="onCloseAchatForm()" (saved)="showToast($event)"></app-achat-de-ppp>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+</div>
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span id="closePopup" class="close">&times;</span>
+        <div class="construction">
+            <p>Onglet en construction</p>
+        </div>
+        <div class="header">
+            <div class="document">
+                <i class="bi bi-file-text-fill"></i>
+            </div>
+        </div>
+        <div class="content">
+            <h2>Téléchargement de Document</h2>
+            <p>Votre document est prêt à être téléchargé. Cliquez sur "Télécharger" pour commencer le téléchargement.</p>
+        </div>
+        <p> <button class="btn btn-success form-control" disabled> <i class="bi bi-file-earmark-arrow-down"></i> Télécharger</button> </p>
+    </div>
+</div>
+
+<!-- Ancien bouton flottant "Ajouter" (desktop) remplacé par "Ajouter ▾" dans l'en-tête. Mobile : footer inchangé. -->
+<!-- Version mobile/tablette : footer flottant -->
+<footer *ngIf="popInventaire !== 'PPNU - PPNV' && popInventaire !== 'Achat de PPP'" class="footer-fab fab-mobile">
+    <div style="display: flex; gap: 18px; width: 100%; justify-content: center;">
+        <button class="footer-btn" (click)="onAddPpnu()">
+            <svg class="footer-icon" viewBox="0 0 256 256" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                <path xmlns="http://www.w3.org/2000/svg" fill="currentColor" d="M232 158a6 6 0 0 0 0-12a230.1 230.1 0 0 0-66.11 9.65a260 260 0 0 0-23.07-13.28A248.3 248.3 0 0 1 232 126a6 6 0 0 0 0-12c-6 0-12 .22-18 .62V80a6 6 0 0 0-2.4-4.8l-64-48a6 6 0 0 0-7.2 0l-64 48A6 6 0 0 0 74 80v38.77A264.3 264.3 0 0 0 24 114a6 6 0 0 0 0 12a249 249 0 0 1 195.17 93.75a6 6 0 0 0 4.69 2.25a6 6 0 0 0 4.67-9.75a265 265 0 0 0-18.69-20.94A191 191 0 0 1 232 190a6 6 0 0 0 0-12a199 199 0 0 0-33.21 2.79q-9.63-8.65-20-16.25A218.7 218.7 0 0 1 232 158m-106-23.44V102h36v21.46a259 259 0 0 0-33.93 12ZM86 83l58-43.5L202 83v32.71a261 261 0 0 0-28 4.73V96a6 6 0 0 0-6-6h-48a6 6 0 0 0-6 6v33.85a259 259 0 0 0-28-8.46Zm49.17 136.32a6 6 0 0 1-8.32 1.68A185.14 185.14 0 0 0 24 190a6 6 0 0 1 0-12a197.1 197.1 0 0 1 109.49 33a6 6 0 0 1 1.68 8.32m49.8-7.61a6 6 0 1 1-8.4 8.57A216.8 216.8 0 0 0 24 158a6 6 0 0 1 0-12a228.74 228.74 0 0 1 161 65.71Z" />
+            </svg>
+            PPNU & PPNV
+        </button>
+        <button class="footer-btn" (click)="onAddAchatPpp()">
+            <svg class="footer-icon" viewBox="0 0 256 256" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                <path xmlns="http://www.w3.org/2000/svg" fill="currentColor" d="M200 24h-76.69A15.86 15.86 0 0 0 112 28.69L101.66 39L91.31 28.69a16 16 0 0 0-22.62 0l-24 24a16 16 0 0 0 0 22.62L55 85.66L44.69 96A15.86 15.86 0 0 0 40 107.31V216a16 16 0 0 0 16 16h144a16 16 0 0 0 16-16V40a16 16 0 0 0-16-16M56 64l24-24l10.34 10.34l-24 24Zm144 152H56V107.31l16-16L123.31 40H200ZM128 64a8 8 0 0 1 8-8h40a8 8 0 0 1 0 16h-40a8 8 0 0 1-8-8m52.8 62.4L141.33 156l39.47 29.6a8 8 0 1 1-9.6 12.8L128 166l-43.2 32.4a8 8 0 0 1-9.6-12.8l39.47-29.6l-39.47-29.6a8 8 0 0 1 9.6-12.8L128 146l43.2-32.4a8 8 0 0 1 9.6 12.8"/>
+            </svg>
+            Achat PPP
+        </button>
+    </div>
+</footer>
+</main>

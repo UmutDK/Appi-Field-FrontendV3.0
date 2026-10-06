@@ -1,0 +1,158 @@
+<!-- Même conteneur que l'accueil / Parcelles (.dashboard + .dashboard-container) : titre et
+     encadrés alignés au même endroit sur toutes les pages. -->
+<main class="dashboard reglage-page">
+    <div class="dashboard-container">
+        <h1 class="reglage-title">Mon compte</h1>
+
+        <!-- Navigation mobile : boutons horizontaux (visible < 992px) -->
+        <div class="reglage-mobile-nav">
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'infos-perso'"
+                (click)="activeSection.set('infos-perso')">
+                <i class="bi bi-person-fill"></i>
+                <span>Infos personnelles</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'infos-exploitation'"
+                (click)="activeSection.set('infos-exploitation')">
+                <i class="bi bi-building"></i>
+                <span>Mon exploitation</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'wallesmart'"
+                (click)="activeSection.set('wallesmart')">
+                <i class="bi bi-link-45deg"></i>
+                <span>WalleSmart</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'equipe'"
+                (click)="activeSection.set('equipe')">
+                <i class="bi bi-people-fill"></i>
+                <span>Mon équipe</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'fertilisants'"
+                (click)="activeSection.set('fertilisants')">
+                <i class="bi bi-droplet-fill"></i>
+                <span>Fertilisants</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'password'"
+                (click)="activeSection.set('password')">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Mot de passe</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'mandats'"
+                (click)="activeSection.set('mandats')">
+                <i class="bi bi-file-earmark-person-fill"></i>
+                <span>Mandats</span>
+            </button>
+        </div>
+
+        <div class="row reglage-layout">
+
+            <!-- Navigation (gauche, visible ≥ 992px) -->
+            <div class="col-12 col-lg-3 order-1 order-lg-1">
+                <div class="reglage-nav">
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'infos-perso'"
+                        (click)="activeSection.set('infos-perso')"
+                    >
+                        <i class="bi bi-person-fill"></i>
+                        <span>Informations personnelles</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'infos-exploitation'"
+                        (click)="activeSection.set('infos-exploitation')"
+                    >
+                        <i class="bi bi-building"></i>
+                        <span>Informations de mon exploitation</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'wallesmart'"
+                        (click)="activeSection.set('wallesmart')"
+                    >
+                        <i class="bi bi-link-45deg"></i>
+                        <span>WalleSmart</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'equipe'"
+                        (click)="activeSection.set('equipe')"
+                    >
+                        <i class="bi bi-people-fill"></i>
+                        <span>Mon équipe</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'fertilisants'"
+                        (click)="activeSection.set('fertilisants')"
+                    >
+                        <i class="bi bi-droplet-fill"></i>
+                        <span>Fertilisants personnels</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'password'"
+                        (click)="activeSection.set('password')"
+                    >
+                        <i class="bi bi-shield-lock-fill"></i>
+                        <span>Modifier mon mot de passe</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
+                        [class.active]="activeSection() === 'mandats'"
+                        (click)="activeSection.set('mandats')"
+                    >
+                        <i class="bi bi-file-earmark-person-fill"></i>
+                        <span>Gestion des mandats</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenu (droite) -->
+            <div class="col-12 col-lg-9 order-2 order-lg-2 reglage-content">
+                @if (activeSection() === 'infos-perso') {
+                    <app-infos-perso></app-infos-perso>
+                }
+                @if (activeSection() === 'infos-exploitation') {
+                    <app-infos-exploitation></app-infos-exploitation>
+                }
+                @if (activeSection() === 'wallesmart') {
+                    <app-wallesmart></app-wallesmart>
+                }
+                @if (activeSection() === 'equipe') {
+                    <app-create-user></app-create-user>
+                }
+                @if (activeSection() === 'fertilisants') {
+                    <app-personal-products></app-personal-products>
+                }
+                @if (activeSection() === 'password') {
+                    <app-password></app-password>
+                }
+                @if (activeSection() === 'mandats') {
+                    <app-mandats></app-mandats>
+                }
+            </div>
+
+        </div>
+    </div>
+</main>

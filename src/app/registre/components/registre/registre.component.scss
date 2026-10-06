@@ -1,0 +1,2390 @@
+﻿@use '../../../../styles/popup-mixins' as *;
+@use '../../../../styles/dashboard-cards' as *;
+@use '../../../../styles/add-menu' as *;
+
+// Uniformiser la taille de police sur tous les input, select, textarea et leur placeholder dans le composant
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input:not([type]),
+    select,
+    textarea {
+        font-size: 16px !important;
+        font-family: "Panton", sans-serif;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder,
+    input[type="date"]::placeholder,
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder,
+    input[type="search"]::placeholder,
+    input:not([type])::placeholder,
+    textarea::placeholder {
+        font-size: 16px !important;
+        font-family: "Panton", sans-serif;
+    }
+
+    // Tablette/smartphone : le bloc ci-dessus fixe 16px !important à TOUTE taille d'écran (champ
+    // ET placeholder), ce qui bat silencieusement les tentatives d'agrandissement locales (ex.
+    // .input-etendu .ligne-etendue, qui tentait 22px sans !important plus bas dans ce fichier).
+    // Mêmes paliers que get-parcelles.component.scss/travail-au-champ.component.scss (même base
+    // 16px) pour une taille cohérente sur toute l'application.
+    @media (min-width: 576px) and (max-width: 992px) {
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        input[type="password"],
+        input[type="search"],
+        input:not([type]),
+        select,
+        textarea {
+            font-size: 26px !important;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        input[type="date"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="search"]::placeholder,
+        input:not([type])::placeholder,
+        textarea::placeholder {
+            font-size: 26px !important;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        input[type="password"],
+        input[type="search"],
+        input:not([type]),
+        select,
+        textarea {
+            font-size: 19px !important;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        input[type="date"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="search"]::placeholder,
+        input:not([type])::placeholder,
+        textarea::placeholder {
+            font-size: 19px !important;
+        }
+    }
+
+// Règle globale pour empêcher le scroll du body quand une popup est affichée
+:global(body.no-scroll) {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+// Alternative avec une spécificité plus élevée
+:global(html body.no-scroll) {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+// Pour être sûr que les conteneurs parents n'interfèrent pas
+:global(body.no-scroll *) {
+    &:not(.standard-popup):not(.popup-overlay):not(.popup-container) {
+        pointer-events: none;
+    }
+}
+
+:global(body.no-scroll .standard-popup) {
+    pointer-events: auto;
+}
+
+main{
+    padding-top: 56px;
+    padding-bottom: 45px;
+    // H1 de la page (seul titre de page ici — "Mes cultures" et le message d'etat vide sont
+    // des h2, voir plus bas) — meme style que parcelles.component.scss/
+    // accueil-inventaire.component.scss (poids 750, 2em, palier tablette 2.6em) pour une
+    // apparence coherente entre les 3 pages.
+    h1{
+        font-weight: 750;
+        font-size: 2em;
+        margin-bottom: 24px;
+        line-height: 1.2;
+        color: #0e103c;
+        font-family: 'Panton', sans-serif;
+    }
+
+    @media (min-width: 576px) and (max-width: 992px) {
+        h1{
+            font-size: 2.6em !important;
+        }
+    }
+
+    // "Mes cultures" : h2 semantiquement (section directement sous le h1 de page), mais
+    // visuellement plus discret qu'un h2 pleine taille — taille du token h3, plus petite.
+    h2{
+        font-weight: 750;
+        font-size: var(--font-size-h3);
+        margin-bottom: 24px;
+        line-height: 1.2;
+        color: #0e103c;
+        margin-bottom: 2px;
+        font-family: 'Panton', sans-serif;
+    }
+
+    .archives{
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: 150px;
+        border-radius: 16px;
+        float: right;
+        padding-top: 4px;
+        background-color: #6c757d;
+        color: #fff;
+        border: 1px #6c757d solid;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+        
+        .icone {
+            display: flex;
+            align-items: center;
+            
+            i {
+                font-size: 1.2rem;
+            }
+        }
+        
+        .text{
+            margin-left: 8px;
+            margin-bottom: 4px;
+        }
+        
+        // Style désactivé
+        &.disabled {
+            background-color: #ebebeb !important; 
+            color: #b4b4b4 !important;
+            border: 1px #b4b4b4 solid !important;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        // Masquer sur mobile/tablette
+        @media (max-width: 992px) {
+            display: none !important;
+        }
+    }
+    .export{
+        border: 1px solid #05b1af;
+        border-radius: 16px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 150px;
+        padding-top: 2px;
+        cursor: pointer;
+        .icon{
+            color: #05b1af;
+            margin-left: 0px;
+        }
+        .text{
+            color: #05b1af;
+            font-weight: 700;
+        }
+    }
+    .boutons-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    // Sur mobile/tablette, les deux boutons empilent déjà (flex-wrap) mais avec une largeur
+    // propre à leur contenu (l'un plus large que l'autre) — width:100% + justify-content:center
+    // les aligne sur la même largeur, celle du conteneur.
+    @media (max-width: 992px) {
+        .boutons-actions {
+            .BoutonTelecharger,
+            .BoutonArchives {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+
+    // Tablette : boutons d'action agrandis (padding/police/icônes).
+    @media (min-width: 576px) and (max-width: 992px) {
+        .BoutonTelecharger,
+        .BoutonArchives {
+            padding: 20px 30px;
+            font-size: 1.35rem;
+
+            i {
+                font-size: 1.7rem;
+            }
+        }
+    }
+
+    // Smartphone : ces boutons n'avaient qu'un palier tablette (576-992px) — en dessous, ils
+    // retombaient à la taille desktop compacte (8px 16px, ~37px de haut), sous le minimum
+    // tactile de 44px (normesResponsive.md §46-56).
+    @media (max-width: 575.98px) {
+        .BoutonTelecharger,
+        .BoutonArchives {
+            padding: 16px 24px;
+            font-size: 1.15rem;
+
+            i {
+                font-size: 1.4rem;
+            }
+        }
+    }
+
+    .BoutonTelecharger{
+        padding: 8px 16px;
+        border-radius:8px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        
+        i {
+            font-size: 1.1rem;
+        }
+    }
+    
+    .BoutonArchives {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #5562b51f;
+        border-color: #0f113b;
+        box-shadow: none;
+        color: #0f113b;
+        
+        &:hover {
+            background-color: #0f113b;
+            border-color: #0f113b;
+            color: white;
+            i.material-icons {
+                color: white;
+            }
+        }
+        
+        i.material-icons {
+            font-size: 1.2rem;
+            color: #0f113b;
+        }
+    }
+
+    // ============================================
+    // FOOTER FLOTTANT RESPONSIVE (comme parcelles)
+    // ============================================
+    
+    // Footer flottant pour mobile/tablette (max-width: 992px)
+    @media (max-width: 992px) {
+        .fab-desktop {
+            display: none !important;
+        }
+        // Le footer flottant est position:fixed;bottom:0 (voir .fab-mobile.footer-fab ci-dessous) :
+        // sans cette marge, il recouvre le bas du contenu de la page (dernière carte "Mes cultures"
+        // notamment) au lieu de flotter au-dessus d'un espace réservé.
+        .container-registre {
+            padding-bottom: 100px;
+        }
+        .fab-mobile.footer-fab {
+            display: flex;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.45);
+            border: 2px solid #e9ecef;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+            border-radius: 32px;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            padding: 12px;
+            margin: 0 0 19px 0;
+            min-width: 320px;
+            max-width: 95vw;
+            width: max-content;
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            transition: opacity 0.2s;
+        }
+        .footer-btn {
+            background: #0e103c;
+            color: #fff;
+            border: none;
+            border-radius: 32px;
+            padding: 8px 18px;
+            font-size: 1.1em;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(44, 154, 148, 0.08);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .footer-btn:hover {
+            background: #2c9a94;
+            color: #fff;
+        }
+        .footer-icon {
+            font-size: 1.2em;
+            margin-left: 6px;
+            display: flex;
+            align-items: center;
+        }
+        .footer-fab--hidden {
+            display: none !important;
+        }
+    }
+
+    // Sur tablette, le footer garde les tailles pensées pour un écran de téléphone (min-width:
+    // 320px, padding 12px, boutons 8px/1.1em) — proportionnellement à un écran bien plus large,
+    // il paraît minuscule, perdu au milieu de l'écran. Agrandi ici spécifiquement.
+    @media (min-width: 576px) and (max-width: 992px) {
+        .fab-mobile.footer-fab {
+            gap: 32px;
+            padding: 24px;
+            min-width: 560px;
+        }
+        .footer-btn {
+            padding: 18px 34px;
+            font-size: 1.7em;
+            gap: 14px;
+        }
+        .footer-icon {
+            font-size: 1.9em;
+        }
+
+        // Le footer étant beaucoup plus haut sur tablette (padding 24px + boutons agrandis), le
+        // bouton retour-en-haut doit grandir et remonter en proportion pour rester cohérent.
+        .scroll-top-btn {
+            width: 56px;
+            height: 56px;
+            font-size: 1.6rem;
+        }
+    }
+
+    @media (min-width: 993px) {
+        .fab-mobile.footer-fab {
+            display: none !important;
+        }
+        .fab-desktop {
+            display: block !important;
+        }
+    }
+
+    // Bouton "retour en haut", au-dessus du fab-main (position:fixed;bottom:20px;right:20px,
+    // voir .fab-container dans styles.scss). fab-main fait environ 48px de haut, d'où le
+    // bottom:88px ci-dessous (20 + 48 + 20 de marge) pour flotter juste au-dessus, aligné
+    // sur le même bord droit. .fab-desktop (classe déjà posée sur ce bouton) réutilise le
+    // display:none/block responsive ci-dessus, pas besoin de le redéfinir.
+    .scroll-top-btn {
+        z-index: 999;
+        width: 44px;
+        height: 44px;
+        padding: 0; // un <button> a un padding UA par défaut qui décale le contenu ; à 0, le flex centering ci-dessous s'applique proprement
+        border-radius: 50%;
+        border: none;
+        background-color: #0e103b;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1; // évite qu'un line-height hérité décale l'icône verticalement dans le flex
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+
+        i {
+            display: block;
+        }
+
+        &.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        &:hover {
+            background-color: #05b1af;
+        }
+    }
+
+    // Desktop : au-dessus de .fab-main (position:fixed;bottom:20px;right:20px, voir .fab-container
+    // dans styles.scss). fab-main fait environ 48px de haut, d'où bottom:88px (20 + 48 + 20 de
+    // marge) pour flotter juste au-dessus, aligné sur le même bord droit.
+    .scroll-top-btn--desktop {
+        position: fixed;
+        bottom: 88px;
+        right: 20px;
+        transform: translateY(8px);
+
+        &.show {
+            transform: translateY(0);
+        }
+    }
+
+    // Mobile/tablette : enfant de .fab-mobile.footer-fab (voir plus haut) plutôt qu'un élément
+    // séparé positionné à l'aveugle — le footer est centré avec une largeur variable
+    // (max-content, jusqu'à 95vw selon son contenu), donc son bord droit n'est pas à une distance
+    // fixe de l'écran. En absolute par rapport au footer (déjà position:fixed, donc un containing
+    // block valide) avec top:0;right:0, ce bouton s'aligne exactement sur son bord droit réel,
+    // quelle que soit sa largeur, et translateY(-100% - marge) le fait flotter juste au-dessus.
+    .scroll-top-btn--mobile {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateY(calc(-100% - 4px));
+
+        &.show {
+            transform: translateY(calc(-100% - 12px));
+        }
+    }
+
+    @media (min-width: 993px) {
+        .scroll-top-btn--mobile {
+            display: none !important;
+        }
+    }
+    @media (max-width: 992px) {
+        .scroll-top-btn--desktop {
+            display: none !important;
+        }
+    }
+    
+    // Style moderne pour la barre de recherche étendue
+    .recherche-etendue {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 2px solid #e9ecef;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        padding: 12px 20px;
+        background-color: #fff;
+        margin-bottom: 20px;
+
+        // Responsive : passer en mode colonne sur petits écrans
+        @media (max-width: 992px) {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+            padding: 16px;
+        }
+
+        .barre-recherche-principale {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            position: relative;
+
+            // Responsive : supprimer la marge sur petits écrans
+            @media (max-width: 992px) {
+                margin-right: 0;
+                width: 100%;
+            }
+
+            .icon {
+                position: absolute;
+                left: 16px;
+                z-index: 2;
+                pointer-events: none;
+
+                .bouton-icon {
+                    border: none;
+                    background: none;
+                    padding: 0;
+                    pointer-events: none;
+
+                    .bi {
+                        font-size: 20px;
+                        color: #05b1af;
+                    }
+                }
+            }
+
+            .input-etendu {
+                flex: 1;
+
+                .ligne-etendue {
+                    border: none;
+                    font-size: 16px;
+                    margin: 0;
+                    padding: 12px 16px 12px 48px;
+                    border-radius: 12px;
+                    background-color: #f8f9fa;
+                    transition: all 0.2s ease;
+                    width: 100%;
+                    height: 48px;
+                    border: 2px solid #e9ecef;
+                    box-sizing: border-box;
+
+                    &:focus {
+                        outline: none;
+                        background-color: #e9ecef;
+                        box-shadow: 0 0 0 3px rgba(3, 145, 138, 0.1);
+                    }
+                    
+                    &::placeholder {
+                        color: #6c757d;
+                        font-style: italic;
+                    }
+                }
+            }
+        }
+        
+        .controles-filtres {
+            display: flex;
+            gap: 8px;
+
+            // Responsive : aligner les boutons à gauche sur petits écrans
+            @media (max-width: 992px) {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            
+            .dropdown-container {
+                // .dropdown-panel (global) se cale par défaut sur la largeur du bouton
+                // déclencheur (left:0;right:0) — adapté à un .dropdown-btn pleine largeur
+                // (ex. export-popup), mais ici le déclencheur est un bouton icône étroit
+                // (48px) : sans ça, le panneau seraient aussi étroit que le bouton.
+                .dropdown-panel {
+                    left: auto;
+                    min-width: 280px;
+                }
+
+                .btn-filtre {
+                    border: 2px solid #e9ecef;
+                    background-color: #f8f9fa;
+                    border-radius: 12px;
+                    padding: 12px;
+                    width: 48px;
+                    height: 48px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                    
+                    &:hover {
+                        background-color: #05b1af;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(3, 145, 138, 0.3);
+                        
+                        .bi, .material-icons {
+                            color: #fff !important;
+                        }
+                    }
+                    
+                    .bi, .material-icons {
+                        font-size: 20px;
+                        color: #05b1af;
+                        transition: color 0.2s ease;
+                    }
+                }
+            }
+        }
+    }
+
+    // Tablette : barre de recherche et boutons de filtre agrandis, à l'échelle du reste de
+    // l'app en mode tablette (ils gardaient leur taille desktop compacte jusqu'ici).
+    // Seuil 991.98px (comme le reste de l'app) : demande explicite — la popup de filtres (voir
+    // plus bas) doit couvrir toute la plage tablette, seul le PC (>=992px) garde le dropdown.
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .recherche-etendue .barre-recherche-principale {
+            .icon .bouton-icon .bi {
+                font-size: 30px;
+            }
+            .icon {
+                left: 20px;
+            }
+            .input-etendu .ligne-etendue {
+                height: 72px;
+                font-size: 22px;
+                padding: 16px 20px 16px 64px;
+                border-radius: 16px;
+            }
+        }
+        .recherche-etendue .controles-filtres .dropdown-container .btn-filtre {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+
+            .bi, .material-icons {
+                font-size: 30px;
+            }
+        }
+    }
+
+    // Filtres (Vue/Date/Parcelles/Cultures) : deux présentations totalement différentes selon
+    // la taille d'écran plutôt qu'un repositionnement CSS du même panneau ancré (ancienne
+    // approche, fragile — cf. historique ci-dessous).
+    //   - PC uniquement (>=992px) : dropdown ancré au bouton, INCHANGÉ (.filter-popup-backdrop
+    //     devient display:contents — un wrapper transparent qui ne génère aucune boîte — donc
+    //     .dropdown-panel garde exactement son comportement/CSS existant, comme si le wrapper
+    //     n'existait pas). Seuil 992px (comme le reste de l'app, après une demande explicite de
+    //     couvrir toute la plage tablette avec la popup, pas seulement jusqu'à 768px).
+    //   - Tablette/smartphone (<992px) : vraie popup, backdrop plein écran centré en flexbox.
+    //     Le centrage flexbox (justify-content/align-items sur le backdrop) ne dépend d'aucun
+    //     calcul left/top/transform sur le panneau lui-même — .dropdown-panel redevient un bloc
+    //     ordinaire (position:static) qui flotte simplement au centre de son parent flex. Robuste
+    //     par construction : rien à faire gagner en spécificité CSS, contrairement à l'ancienne
+    //     tentative (position:fixed;top:50%;left:50%;transform), qui perdait silencieusement sa
+    //     propriété "left" face à .dropdown-container .dropdown-panel{left:auto} plus haut dans
+    //     ce fichier (spécificité plus grande côté Angular à cause d'un niveau d'imbrication
+    //     .recherche-etendue en plus) — bug confirmé en reproduisant le CSS compilé réel dans
+    //     Chromium headless (Playwright) et en inspectant les valeurs calculées.
+    //   Fermeture : clic sur le backdrop (nouveau, (click)="closeAllMenus()" en template) ou sur
+    //   le bouton croix .filter-popup-mobile-close (nouveau, visible uniquement en popup) ou,
+    //   comme avant, clic extérieur (onDocumentClick, registre.component.ts, inchangé).
+    .filter-popup-backdrop {
+        display: contents;
+    }
+
+    .filter-popup-mobile-header {
+        display: none;
+    }
+
+    @media (max-width: 991.98px) {
+        .controles-filtres .dropdown-container .filter-popup-backdrop {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            background: rgba(14, 16, 60, 0.55);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000000;
+        }
+
+        // Le titre + croix de .filter-popup-mobile-header remplace .dropdown-header en mode
+        // popup (doublon sinon avec "Filtrer par période", et Tout/Aucun n'apporte rien de plus
+        // qu'un vrai titre pour Parcelles/Cultures).
+        .controles-filtres .dropdown-container .filter-popup-backdrop .dropdown-header {
+            display: none !important;
+        }
+
+        .controles-filtres .dropdown-container .filter-popup-backdrop .dropdown-panel {
+            position: static;
+            width: 100%;
+            max-width: 400px;
+            min-width: 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin-top: 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-popup-mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--popup-gray-200);
+            background: var(--popup-gray-100);
+        }
+
+        .filter-popup-mobile-title {
+            font-family: "Panton", sans-serif;
+            font-weight: 700;
+            color: #0e103c;
+        }
+
+        .filter-popup-mobile-close {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--popup-gray-600);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+
+            &:hover {
+                background: var(--popup-gray-200);
+                color: #0e103c;
+            }
+        }
+    }
+
+    // Tailles de police/espacements du contenu des popups filtres — cohérentes sur les 4 menus
+    // (Vue/Date/Parcelles/Cultures), à l'échelle du reste de l'app en mode tablette/smartphone.
+    // Scopé à .filter-popup-backdrop uniquement : le dropdown PC (>=992px) garde ses
+    // tailles compactes actuelles, inchangées.
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .filter-popup-mobile-header {
+            padding: 20px 22px;
+        }
+
+        .filter-popup-mobile-title {
+            font-size: 1.4rem;
+        }
+
+        .filter-popup-mobile-close {
+            width: 40px;
+            height: 40px;
+
+            i {
+                font-size: 1.3rem;
+            }
+        }
+
+        .filter-popup-backdrop {
+            .date-range-container {
+                gap: 10px;
+                padding: 14px 16px;
+
+                label {
+                    font-size: 1rem;
+                }
+            }
+
+            .dropdown-footer {
+                padding: 18px 20px;
+                gap: 14px;
+
+                .btn-secondary, .btn-primary {
+                    padding: 16px 30px !important;
+                    font-size: 1.15rem !important;
+                }
+            }
+
+            // Valeurs alignées sur le palier tablette déjà existant globalement pour ces
+            // classes (src/styles/_popup-system.scss, 1.35rem/28px) — pas en dessous, sans quoi
+            // le popup afficherait un texte PLUS PETIT que l'ancien dropdown tablette ancré.
+            .dropdown-list-item {
+                padding: 20px 22px !important;
+                font-size: 1.3rem !important;
+            }
+
+            .checkbox-item {
+                padding: 20px 22px !important;
+
+                input[type="checkbox"] {
+                    width: 28px !important;
+                    height: 28px !important;
+                }
+
+                .label-text {
+                    font-size: 1.3rem !important;
+                }
+            }
+
+            .empty-state {
+                padding: 32px !important;
+                font-size: 1.3rem !important;
+            }
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .filter-popup-mobile-header {
+            padding: 14px 16px;
+        }
+
+        .filter-popup-mobile-title {
+            font-size: 1.15rem;
+        }
+
+        .filter-popup-mobile-close {
+            width: 34px;
+            height: 34px;
+
+            i {
+                font-size: 1.05rem;
+            }
+        }
+
+        .filter-popup-backdrop {
+            .date-range-container {
+                gap: 8px;
+                padding: 10px 12px;
+
+                label {
+                    font-size: 0.85rem;
+                }
+            }
+
+            .dropdown-footer {
+                padding: 14px 16px;
+                gap: 10px;
+
+                .btn-secondary, .btn-primary {
+                    padding: 12px 22px !important;
+                    font-size: 0.95rem !important;
+                }
+            }
+
+            .dropdown-list-item {
+                padding: 15px 16px !important;
+                font-size: 1.1rem !important;
+            }
+
+            .checkbox-item {
+                padding: 15px 16px !important;
+
+                input[type="checkbox"] {
+                    width: 24px !important;
+                    height: 24px !important;
+                }
+
+                .label-text {
+                    font-size: 1.1rem !important;
+                }
+            }
+
+            .empty-state {
+                padding: 22px !important;
+                font-size: 1.1rem !important;
+            }
+        }
+    }
+
+    // Filtres de la barre de recherche : le cadre du menu (.dropdown-panel), l'en-tête
+    // Tout/Aucun (.dropdown-header/.link-btn/.separator/.selected-count) et la liste à cocher
+    // (.dropdown-list/.checkbox-item) viennent tous du système de dropdown global (voir
+    // src/styles/_popup-system.scss) — même pattern que export-popup. Ne reste ici que ce qui
+    // est spécifique à ces filtres : le champ de dates et le pied de page Effacer/Appliquer
+    // du filtre par date (les autres filtres appliquent leur sélection en direct, sans pied de page).
+    .date-range-container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px 12px;
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--popup-gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+
+    // Scrollbar grise (comme le dropdown "Cible" de traitement-phyto), pas le teal par défaut
+    // de .dropdown-list (adapté aux grandes zones de contenu, pas à un petit panneau de filtre).
+    .controles-filtres .dropdown-list {
+        &::-webkit-scrollbar-thumb {
+            background: var(--popup-gray-500);
+
+            &:hover {
+                background: var(--popup-gray-600);
+            }
+        }
+    }
+
+    .dropdown-footer {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        padding: 10px 12px;
+        border-top: 1px solid var(--popup-gray-200);
+        background: var(--popup-gray-100);
+        border-radius: 0 0 var(--popup-radius-md) var(--popup-radius-md);
+
+        .btn-secondary, .btn-primary {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+        }
+    }
+    .recherche{
+        display: flex;
+        justify-content:space-evenly;
+        align-items: center;
+        box-shadow: #0000005e 1px 1px 8px;
+        border-radius: 16px;
+        width: 350px;
+        padding-top: 8px;
+        .icon{
+            .bouton-icon{
+                border: none;
+                background-color: #fff;
+                .bi{
+                    font-size: 24px;
+                    color: #0000003c;
+
+                }
+            }
+        }
+        .ligne{
+            border: none;
+        }
+        .bouton{
+            .bouton-icon{
+                border: none;
+                background-color: #fff;
+                .bi{
+                    font-size: 24px;
+                    color: #000000;
+
+                }
+            }
+        }
+        .reglage{
+            .bouton-icon{
+                border: none;
+                background-color: #fff;
+                .bi{
+                    font-size: 24px;
+                    color: #000000;
+                }
+            }
+        }
+    }
+    .vueRecherche{
+        background-color: #ebebeb !important; 
+        border: 1px #b4b4b4 solid !important; 
+        a{
+            color: #b4b4b4 !important;
+            text-decoration: none;
+        }
+    }
+    .filtre{
+        display: flex;
+        justify-content: space-around;
+        padding: 2px;
+        padding-top: 8px;
+        border: #000000 1px solid;
+        border-radius: 16px;
+    }
+    .fixed{
+        height: 40px;
+        color: #fff;
+        position: fixed;
+        bottom: 9%;
+        right: 4.375em; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 16px;
+        .btn-primary {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #0e103c;
+            --bs-btn-border-color: #0e103c;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #0e103cd5;
+            --bs-btn-hover-border-color: #0e103cd5;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #0e103cd5;
+            --bs-btn-active-border-color: #0e103cd5;
+            --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #0e103c;
+            --bs-btn-disabled-border-color: #0e103c;
+        }
+        .footerBouton{
+            background-color: #05b1afd3 !important;
+            .footerBoutonA{
+                color: #fff !important;
+                &:hover{
+                    background-color: #05b1af !important;
+                }
+            }
+        }
+    }
+    
+    .ajouter{
+        #overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5); /* Noir à 50% de transparence */
+            backdrop-filter: blur(5px); /* Effet de flou d'arrière-plan */
+            -webkit-backdrop-filter: blur(5px); /* Support Safari */
+            // Doit dépasser .fab-container (z-index:1000, global styles.scss) pour que le bouton
+            // "Ajouter" passe derrière l'overlay et soit flouté avec le reste de l'arrière-plan,
+            // au lieu de flotter au-dessus du popup.
+            z-index: 1001;
+            padding: 20px;
+
+            // Le conteneur passe en plein écran (100vw/100vh) sous ce seuil (popup-mobile-fullscreen,
+            // voir _popup-mixins.scss) — plein écran sur tablette ET smartphone : un padding ici le
+            // ferait rétrécir (flex-shrink) en laissant deux bandes de fond visibles de part et
+            // d'autre — même correctif que .popup-overlay.
+            @media (max-width: 992px) {
+                padding: 0;
+            }
+
+            // Layout/couleurs/ombre/radius/centrage/police fournis par .popup-container
+            // (classe ajoutée dans le template, voir src/styles/_popup-system.scss) — ne
+            // reste ici que ce qui est spécifique à ces 3 popups assistant multi-étapes
+            // (header à barre de progression, footer fixe, scrollbar du contenu).
+            .ajouterUneCulture, .ajouterTraitementPhyto, .ajouterTravailAuChamp{
+                // Contexte de positionnement pour le footer/les enfants en absolute
+                position: relative;
+
+                * {
+                    box-sizing: border-box;
+                }
+
+                .header{
+                    flex-shrink: 0;
+                    display: flex;
+                    flex-direction: column; // Empile titre + barre de progression
+                    // .popup-header (global) met align-items:center pour son propre layout en ligne ;
+                    // ici la direction est en colonne, donc ça centrerait .header-top et .progress-integration
+                    // au lieu de les étirer sur toute la largeur — d'où ce override explicite.
+                    align-items: stretch;
+                    background-color: white;
+                    padding: 20px 20px 0 20px;
+                    border-bottom: 1px solid #e9ecef;
+
+                    .header-top {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 16px;
+                    }
+
+                    // Intégration de la barre de progression dans le header
+                    .progress-integration {
+                        padding-bottom: 16px;
+                        
+                        // Barre de progression moderne et fine
+                        .modern-progress {
+                            position: relative;
+                            background-color: #e9ecef;
+                            height: 6px;
+                            border-radius: 3px;
+                            margin: 10px 0 20px 0;
+                            overflow: hidden;
+                            
+                            .progress-bar {
+                                height: 100%;
+                                background: linear-gradient(90deg, #05b1af, #36918a);
+                                border: #05b1af solid 1px;
+                                border-radius: 3px;
+                                transition: width 0.8s ease-in-out;
+                                position: relative;
+                            }
+                            
+                            .progress-steps {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                position: absolute;
+                                top: -8px;
+                                left: 0;
+                                right: 0;
+                                
+                                .step {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    transition: all 0.4s ease;
+                                    
+                                    span {
+                                        width: 20px;
+                                        height: 20px;
+                                        border-radius: 50%;
+                                        background-color: #e9ecef;
+                                        transition: all 0.4s ease;
+                                        position: relative;
+                                        z-index: 2;
+                                        opacity: 0;
+                                    }
+                                    
+                                    label {
+                                        font-size: 0.8em;
+                                        color: #6c757d;
+                                        margin-top: 8px;
+                                        font-weight: 500;
+                                        transition: all 0.4s ease;
+                                        text-align: center;
+                                    }
+                                    
+                                    // Étape active
+                                    &.active {
+                                        span {
+                                            background-color: #05b1af;
+                                            border-color: #05b1af;
+                                        }
+                                        
+                                        label {
+                                            color: #05b1af;
+                                            font-weight: 600;
+                                        }
+                                    }
+                                    
+                                    // Étape complétée
+                                    &.completed {
+                                        span {
+                                            background-color: #05b1af;
+                                        }
+                                        
+                                        label {
+                                            color: #05b1af;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                .body {
+                    flex: 1;
+                    display: flex; // Nécessaire pour que app-traitement-phyto (ci-dessous) puisse
+                    flex-direction: column; // s'étirer en flex:1 plutôt qu'en height:100% (voir plus bas).
+                    overflow-y: auto; // Scroll vertical activé automatiquement si nécessaire
+                    overflow-x: hidden; // Supprime le scroll horizontal
+                    padding: 0; // Pas de padding ici pour éviter les conflits
+                    min-height: 0; // CRUCIAL : permet au flex de contraindre la hauteur
+                    position: relative; // IMPORTANT : Crée un contexte de positionnement
+                    z-index: 1; // Assure que le contenu reste dans le bon ordre
+
+                    // CRUCIAL : Empêche tout contenu de déborder
+                    contain: layout style paint;
+
+                    @include popup-scrollbar($track: #f1f1f1);
+
+                    // app-traitement-phyto n'a aucune règle de display et reste donc "inline" par
+                    // défaut (élément custom non stylé). Son enfant <main> utilisait height:100%
+                    // pour se caler sur ce .body — or .popup-container n'a qu'un max-height (pas de
+                    // height explicite), donc sa propre hauteur n'est jamais "définie" au sens CSS,
+                    // et une résolution en % ne remonte pas correctement toute la chaîne (main se
+                    // retrouvait sized-to-content, d'où les doubles scrollbars et les soucis de
+                    // dropdown). En rendant cet élément flex:1 (au lieu de height:100%), sa taille
+                    // est calculée par l'algorithme flex lui-même, qui n'a pas besoin d'une hauteur
+                    // "définie" en amont — voir aussi main{} dans traitement-phyto.component.scss.
+                    app-traitement-phyto, app-travail-au-champ {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1;
+                        min-height: 0;
+                    }
+                }
+
+                // Layout/couleurs/position sticky désormais fournis par .popup-footer et
+                // .btn-secondary/.btn-primary(.danger) (classes ajoutées dans le template) —
+                // les classes previous-btn/validate-btn/delete-btn n'ont plus de style local,
+                // conservées uniquement comme sélecteurs (click bindings du template).
+
+                // Styles pour les flèches personnalisées des champs d'unité
+                .form-floating.unit-field {
+                    position: relative;
+                    
+                    // Wrapper pour masquer complètement les flèches natives
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        right: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 16px;
+                        height: 16px;
+                        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e103b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        pointer-events: none;
+                        z-index: 2;
+                    }
+                    
+                    &:focus-within::after {
+                        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2336918a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+                    }
+                    
+                    .form-select {
+                        appearance: none !important;
+                        -webkit-appearance: none !important;
+                        -moz-appearance: none !important;
+                        background: transparent !important;
+                        background-image: none !important;
+                        padding-right: 40px;
+                        position: relative;
+                        z-index: 1;
+                        
+                        // Suppression de toutes les flèches natives possibles
+                        &::-ms-expand {
+                            display: none !important;
+                        }
+                        
+                        // Suppression des styles de focus par défaut
+                        &:focus, &:active {
+                            appearance: none !important;
+                            -webkit-appearance: none !important;
+                            -moz-appearance: none !important;
+                            background: transparent !important;
+                            background-image: none !important;
+                            outline: none;
+                        }
+                    }
+                }
+
+                // Réinitialiser les styles pour les autres form-floating qui ne sont pas des champs d'unité
+                .form-floating:not(.unit-field) {
+                    .form-select {
+                        // Laisser l'apparence par défaut
+                        appearance: auto;
+                        -webkit-appearance: auto;
+                        -moz-appearance: auto;
+                    }
+                }
+            }
+
+            // ✨ Animation de succès pour la création de culture
+            .success-animation-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1001;
+                animation: fadeIn 400ms ease-out;
+                
+                .success-content {
+                    text-align: center;
+                    animation: slideUp 500ms ease-out;
+                    
+                    .checkmark {
+                        width: 100px;
+                        height: 100px;
+                        margin: 0 auto 30px;
+                        
+                        .checkmark-circle {
+                            stroke: #4DFF84;
+                            stroke-width: 2;
+                            stroke-dasharray: 166;
+                            stroke-dashoffset: 166;
+                            animation: strokeCircle 600ms cubic-bezier(0.65, 0, 0.45, 1) forwards;
+                        }
+                        
+                        .checkmark-check {
+                            stroke: #4DFF84;
+                            stroke-width: 3;
+                            stroke-linecap: round;
+                            stroke-dasharray: 48;
+                            stroke-dashoffset: 48;
+                            animation: strokeCheck 300ms cubic-bezier(0.65, 0, 0.45, 1) 600ms forwards;
+                        }
+                    }
+                    
+                    .success-title {
+                        font-size: 1.8em;
+                        color: #4DFF84;
+                        font-weight: 600;
+                        margin-bottom: 30px;
+                        animation: fadeIn 400ms ease-out 900ms both;
+                    }
+                    
+                    .btn-return-registre {
+                        background: #05b1af;
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        font-size: 1.1em;
+                        font-weight: 500;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+                        animation: fadeIn 400ms ease-out 1200ms both;
+                        
+                        i {
+                            font-size: 1em;
+                        }
+                        
+                        &:hover {
+                            background-color: #42a5a0;
+                            
+                        }
+                        
+                        &:active {
+                            transform: translateY(0);
+                        }
+                    }
+                }
+            }
+
+            // Animation fade-out pour la popup
+            .ajouterUneCulture.fade-out {
+                animation: fadeOut 300ms ease-out forwards;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(20px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes strokeCircle {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+
+            @keyframes strokeCheck {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+            
+            // ✨ Styles pour le débrief du traitement
+            .treatment-summary {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 12px;
+                padding: 20px;
+                margin: 20px 0 30px 0;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                text-align: left;
+                max-width: 450px;
+                animation: fadeIn 400ms ease-out 1400ms both;
+                
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 0;
+                    border-bottom: 1px solid #e9ecef;
+                    
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                    
+                    strong {
+                        color: #495057;
+                        font-weight: 600;
+                        font-size: 0.95em;
+                        min-width: 140px;
+                    }
+                    
+                    span {
+                        color: #05b1af;
+                        font-weight: 500;
+                        font-size: 0.95em;
+                    }
+                    
+                    // Style spécial pour la liste de produits
+                    &.summary-products {
+                        flex-direction: column;
+                        gap: 8px;
+                        
+                        .products-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 6px;
+                            
+                            .product-name {
+                                background: #f0f9f8;
+                                border-left: 3px solid #05b1af;
+                                padding: 6px 12px;
+                                border-radius: 4px;
+                                color: #024d4a;
+                                font-weight: 500;
+                                font-size: 0.9em;
+                                transition: all 0.2s ease;
+                                
+                                &:hover {
+                                    background: #e3f5f3;
+                                    border-left-color: #024d4a;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Animation fade-out pour la popup de traitement
+            .ajouterTraitementPhyto.fade-out {
+                animation: fadeOut 300ms ease-out forwards;
+            }
+            
+            // Animation fade-out pour la popup de travail au champ
+            .ajouterTravailAuChamp.fade-out {
+                animation: fadeOut 300ms ease-out forwards;
+            }
+        }
+    }
+
+    // ===== CLASSE DE BASE POUR TOUTES LES POPUPS =====
+    .standard-popup {
+        // Style d'overlay identique
+        &.popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px); // Cohérent avec .ajouter #overlay
+            -webkit-backdrop-filter: blur(5px);
+            // Doit dépasser .fab-container (z-index:1000, global styles.scss) — voir .ajouter #overlay.
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        // Container principal de la popup
+        .popup-container {
+            position: relative;
+            width: 60%;
+            height: auto;
+            max-height: 85vh;
+            max-width: 900px;
+            min-width: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            
+            // Scrollbar stylisée
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            
+            &::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 3px;
+                
+                &:hover {
+                    background: #a8a8a8;
+                }
+            }
+            
+            // Pour Firefox
+            scrollbar-width: thin;
+            scrollbar-color: #c1c1c1 transparent;
+
+            // Styles responsives
+            @media (max-width: 768px) {
+                width: 90%;
+                max-height: 90vh;
+                min-width: 300px;
+            }
+        }
+
+        // Header de la popup
+        .popup-header {
+            flex-shrink: 0;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background-color: white;
+            border-radius: 8px 8px 0 0;
+
+        }
+
+        // Corps de la popup avec scroll intelligent
+        .popup-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+            min-height: 0;
+            position: relative;
+
+            // Scrollbar stylisée
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #05b1af;
+                border-radius: 3px;
+
+                &:hover {
+                    background: #027a74;
+                }
+            }
+
+            // Pour Firefox
+            scrollbar-width: thin;
+            scrollbar-color: #05b1af #f1f1f1;
+        }
+
+        // Footer de la popup
+        .popup-footer {
+            flex-shrink: 0;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+
+            .btn {
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+
+                &.btn-secondary {
+                    background-color: #6c757d;
+                    color: white;
+
+                    &:hover {
+                        background-color: #5a6268;
+                    }
+                }
+
+                &.btn-primary {
+                    background-color: #0e103c;
+                    color: white;
+
+                    &:hover {
+                        background-color: #1a1f4f;
+                    }
+                }
+
+                &.btn-success {
+                    background-color: #05b1af;
+                    color: white;
+
+                    &:hover {
+                        background-color: #027a74;
+                    }
+                }
+
+                &.btn-danger {
+                    background-color: #dc3545;
+                    color: white;
+
+                    &:hover {
+                        background-color: #c82333;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.popup{
+    .popup-content{
+        .header{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .document{
+                background-color: #05b1af;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .bi{
+                    color: #fff;
+                }
+            }
+        }
+        .content{
+            text-align: center;
+            margin-bottom: 24px;
+            h2{
+                font-family: Roboto, "Helvetica Neue", sans-serif;
+                font-weight: 500;
+                font-size: 2em;
+                color: #05b1af;
+                margin-top: 16px;
+            }
+        }
+    }
+}
+
+// Styles pour le message "Aucune culture détectée"
+.no-cultures-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+    min-height: 300px;
+
+    .info-card {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border: 2px solid #e9ecef;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        max-width: 600px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-icon {
+            margin-bottom: 20px;
+
+            .material-icons {
+                font-size: 4rem;
+                color: #05b1af;
+                background: rgba(3, 145, 138, 0.1);
+                padding: 20px;
+                border-radius: 50%;
+            }
+        }
+
+        .info-content {
+            h2 {
+                font-family: Roboto, "Helvetica Neue", sans-serif;
+                font-size: var(--font-size-h2);
+                font-weight: 600;
+                color: #0e103c;
+                margin-bottom: 15px;
+            }
+
+            p {
+                font-size: 1.1rem;
+                color: #6c757d;
+                line-height: 1.6;
+                margin-bottom: 30px;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .info-actions {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+
+                .action-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 24px;
+                    font-size: 1rem;
+                    font-weight: 400;
+                    border-radius: 12px;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                    min-width: 200px;
+                    justify-content: center;
+                    box-shadow: none;
+                    &.btn-primary {
+                        background: #0e103c;
+                        border: none;
+                        color: white;
+
+                        &:hover {
+                            background: #36b2ae;
+                        }
+
+                        i, .bi {
+                            font-size: 1.1rem;
+                        }
+                    }
+
+                    &.btn-success {
+                        background: #36b2ae;
+                        border: none;
+                        color: white;
+                        box-shadow: none;
+                        &:hover {
+                            background: #0e103c;
+                        }
+
+                        .material-icons {
+                            font-size: 1.2rem;
+                        }
+                    }
+                }
+
+                // Responsive pour les petits écrans
+                @media (max-width: 768px) {
+                    flex-direction: column;
+                    align-items: center;
+
+                    .action-btn {
+                        width: 100%;
+                        max-width: 280px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Responsive pour les petits écrans
+    @media (max-width: 768px) {
+        margin: 20px 0;
+        min-height: 200px;
+
+        .info-card {
+            padding: 30px 20px;
+            margin: 0 15px;
+        }
+    }
+}
+.BoutonTelecharger{
+        padding-bottom: 34px;
+        background-color: #f0f3ff;
+        box-shadow: none;
+        color: #05b1af;
+        font-style: normal;
+    }
+.BoutonTelecharger:hover{
+        background-color: #05b1af;
+        box-shadow: none;
+        color: white;
+        font-style: normal;
+    }
+// Titre des popups (culture/travail au champ/traitement phyto) — même style que
+// parcelles.component.scss (.popup-header .header-title h3) : le neutraliseur générique
+// h1-h4 de _popup-system.scss hérite juste de .header-title (1.1rem/gray-900), il faut donc
+// republier Panton/gras/navy ici pour le <h2> utilisé par ces 3 popups.
+.popup-header .header-title h2 {
+    font-family: "Panton", sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.8rem !important;
+    color: #0e103c !important;
+}
+
+@media (min-width: 576px) and (max-width: 992px) {
+    .popup-header .header-title h2 {
+        font-size: 2.2rem !important;
+    }
+}
+
+
+// ====== MEDIA QUERY POUR SMARTPHONE ======
+// Seuil abaissé de 768px à 576px (vrai smartphone, comme le dit le commentaire ci-dessus) — le
+// texte/checkmark de l'écran de succès n'a pas besoin de rétrécir sur une tablette bien plus large.
+@media (max-width: 576px) {
+  .success-animation-overlay .success-content {
+    padding: 15px !important;
+    max-width: 90vw !important;
+    
+    .checkmark {
+      width: 60px !important;
+      height: 60px !important;
+      margin: 0 auto 15px !important;
+    }
+    
+    .success-title {
+      font-size: 1.3em !important;
+      margin-bottom: 20px !important;
+    }
+    
+    .treatment-summary {
+      padding: 12px !important;
+      margin: 15px 0 20px 0 !important;
+      max-width: 100% !important;
+      
+      .summary-row {
+        padding: 6px 0 !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        
+        strong {
+          font-size: 0.85em !important;
+          min-width: auto !important;
+        }
+        
+        span {
+          font-size: 0.85em !important;
+        }
+        
+        &.summary-products {
+          .products-list {
+            .product-name {
+              padding: 4px 8px !important;
+              font-size: 0.8em !important;
+            }
+          }
+        }
+      }
+    }
+    
+    .btn-return-registre {
+      padding: 10px 20px !important;
+      font-size: 0.95em !important;
+      gap: 6px !important;
+      
+      i {
+        font-size: 0.9em !important;
+      }
+    }
+  }
+}
+
+// ====== MEDIA QUERY COMBINÉE SMARTPHONE + PETITE HAUTEUR ======
+@media (max-width: 576px) and (max-height: 700px) {
+  .success-animation-overlay .success-content {
+    padding: 10px !important;
+    
+    .checkmark {
+      width: 50px !important;
+      height: 50px !important;
+      margin: 0 auto 10px !important;
+    }
+    
+    .success-title {
+      font-size: 1.1em !important;
+      margin-bottom: 15px !important;
+    }
+    
+    .treatment-summary {
+      padding: 8px !important;
+      margin: 10px 0 15px 0 !important;
+      
+      .summary-row {
+        padding: 4px 0 !important;
+        
+        strong, span {
+          font-size: 0.75em !important;
+        }
+      }
+    }
+    
+    .btn-return-registre {
+      padding: 8px 16px !important;
+      font-size: 0.85em !important;
+    }
+  }
+}
+
+
+// =============================================================================
+// REFONTE V2 — PAGE PRINCIPALE DU CARNET DE CHAMP
+// Même conteneur, en-tête, encadrés, boutons et tableaux que l'accueil, Parcelles et
+// l'Inventaire. Préfixé par main.registre-page pour l'emporter sur les anciennes règles
+// imbriquées dans main{...} plus haut (conservées : elles stylent aussi les popups).
+// La structure des menus de filtre (dropdown PC / popup mobile) est inchangée.
+// =============================================================================
+main.registre-page {
+    padding: 32px 40px 56px;
+
+    @media (max-width: 992px) {
+        padding: 20px 20px 40px;
+    }
+
+    @media (max-width: 575.98px) {
+        padding: 16px 16px 32px;
+    }
+
+    a { text-decoration: none; }
+
+    // ----- En-tête -----
+    .registre-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .dashboard-header {
+            margin-bottom: 0;
+            min-width: 0;
+
+            h1 {
+                font-family: "Panton", sans-serif;
+                font-weight: 700;
+                font-size: var(--font-size-h1);
+                line-height: 1.2;
+                color: #12103c;
+                margin: 0 0 6px 0;
+            }
+        }
+    }
+
+    .registre-header-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    // Desktop uniquement : sur tablette/mobile, le footer d'actions (.fab-mobile) prend le relais.
+    @media (max-width: 992px) {
+        .add-menu-desktop { display: none !important; }
+    }
+
+    // ----- Boutons -----
+    .btn-outline-neutral,
+    .btn-solid {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-family: "Panton", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+        &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+
+    .btn-outline-neutral {
+        background: #ffffff;
+        color: #12103c;
+        border: 1.5px solid #d1d5db;
+
+        &:hover:not(:disabled) { border-color: #05b1af; color: #03918a; }
+    }
+
+    .btn-solid {
+        background: #05b1af;
+        color: #ffffff;
+        border: 1.5px solid #05b1af;
+
+        &:hover:not(:disabled) { background: #049694; border-color: #049694; }
+    }
+
+    // ----- Encadré recherche + filtres -----
+    .recherche-etendue {
+        background: #ffffff;
+        border: 1px solid #edf0f3;
+        border-radius: 14px;
+        box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        gap: 16px;
+
+        @media (max-width: 575.98px) {
+            padding: 14px 16px;
+        }
+
+        .barre-recherche-principale {
+            margin-right: 0;
+
+            .icon {
+                left: 12px;
+
+                .bouton-icon .bi {
+                    font-size: 1rem;
+                    color: #9ca3af;
+                }
+            }
+
+            .input-etendu .ligne-etendue {
+                height: 44px !important;
+                min-height: 44px !important;
+                padding: 0 14px 0 38px !important;
+                background: #ffffff !important;
+                border: 1.5px solid #d1d5db !important;
+                border-radius: 8px !important;
+                font-size: 0.95rem !important;
+
+                &:focus {
+                    border-color: #05b1af !important;
+                    box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+                }
+
+                &::placeholder {
+                    color: #9ca3af;
+                    font-style: normal;
+                }
+            }
+        }
+
+        .controles-filtres .dropdown-container .btn-filtre {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            background: #ffffff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+
+            .bi, .material-icons {
+                font-size: 1.15rem;
+                color: #6b7280;
+            }
+
+            &:hover {
+                background: #f0faf9;
+                border-color: #05b1af;
+                transform: none;
+                box-shadow: none;
+
+                .bi, .material-icons { color: #03918a !important; }
+            }
+
+            // Filtre actif (vue globale, dates, parcelles ou cultures sélectionnées)
+            &.btn-filtre--active {
+                background: #03918a;
+                border-color: #03918a;
+
+                .bi, .material-icons { color: #ffffff !important; }
+
+                &:hover {
+                    background: #049694;
+                    border-color: #049694;
+                }
+            }
+        }
+
+        .controles-filtres .dropdown-container.open .btn-filtre:not(.btn-filtre--active) {
+            border-color: #05b1af;
+
+            .bi, .material-icons { color: #03918a; }
+        }
+    }
+
+    // Tablette : mêmes tailles généreuses qu'avant pour la recherche et les filtres (palier
+    // existant conservé, seul l'habillage change).
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .recherche-etendue .barre-recherche-principale .input-etendu .ligne-etendue {
+            height: 56px !important;
+            min-height: 56px !important;
+            font-size: 1.1rem !important;
+        }
+
+        .recherche-etendue .controles-filtres .dropdown-container .btn-filtre {
+            width: 56px;
+            height: 56px;
+
+            .bi, .material-icons { font-size: 1.5rem; }
+        }
+    }
+
+    // ----- Titre de section "Mes cultures" -----
+    .section-heading {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #12103c;
+        margin: 0 0 14px;
+    }
+
+    // ----- États (chargement, aucune culture) -----
+    .state-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 40px 16px;
+        color: #6b7280;
+
+        p { margin: 0; }
+
+        .spinner-border { color: #05b1af; }
+    }
+
+    .no-cultures-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 40px 24px;
+
+        .empty-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #e3f6f3;
+            color: #03918a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 14px;
+        }
+
+        h2 {
+            font-family: "Panton", sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #12103c;
+            margin: 0 0 6px;
+        }
+
+        p {
+            max-width: 520px;
+            margin: 0 0 20px;
+            color: #6b7280;
+        }
+
+        .empty-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    }
+}
+
+
+// =============================================================================
+// REFONTE V2 — POPUPS "CULTURE" (sous-étape 3), "TRAVAIL AU CHAMP" (4) ET "TRAITEMENT PHYTO" (5)
+// Même chaîne de sélecteurs que les règles d'origine (main .ajouter #overlay ...) pour les
+// surcharger sans !important. Purement visuel : seuils et calcul de progression inchangés.
+// =============================================================================
+main .ajouter #overlay .ajouterUneCulture .header .progress-integration,
+main .ajouter #overlay .ajouterTravailAuChamp .header .progress-integration,
+main .ajouter #overlay .ajouterTraitementPhyto .header .progress-integration {
+    padding-bottom: 4px;
+
+    // Barre sarcelle unie ; overflow visible pour laisser apparaître les noms d'étapes
+    // (auparavant transparents et coupés par la barre de 6px).
+    .modern-progress {
+        overflow: visible;
+        background-color: #edf0f3;
+        margin: 4px 0 36px;
+
+        .progress-bar {
+            background: #05b1af;
+            border: none;
+        }
+
+        // Noms des étapes affichés SOUS la barre : à faire = gris, en cours = bleu nuit gras,
+        // faites = sarcelle.
+        .progress-steps {
+            top: 16px;
+
+            .step {
+                flex-direction: row;
+                align-items: center;
+                gap: 6px;
+
+                span {
+                    width: 8px;
+                    height: 8px;
+                    opacity: 1;
+                    background-color: #d1d5db;
+                    flex-shrink: 0;
+                }
+
+                label {
+                    margin: 0;
+                    font-family: "Panton", sans-serif;
+                    font-size: 0.78rem;
+                    font-weight: 500;
+                    color: #9ca3af;
+                    white-space: nowrap;
+                }
+
+                &.active span { background-color: #05b1af; }
+
+                &.active:not(.completed) {
+                    span { box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.2); }
+                    label { color: #12103c; font-weight: 700; }
+                }
+
+                &.completed label { color: #03918a; font-weight: 600; }
+            }
+        }
+    }
+}
+
+@media (min-width: 576px) and (max-width: 992px) {
+    main .ajouter #overlay .ajouterUneCulture .header .progress-integration .modern-progress,
+    main .ajouter #overlay .ajouterTravailAuChamp .header .progress-integration .modern-progress,
+    main .ajouter #overlay .ajouterTraitementPhyto .header .progress-integration .modern-progress {
+        margin-bottom: 44px;
+
+        .progress-steps .step {
+            span { width: 12px; height: 12px; }
+            label { font-size: 1.05rem; }
+        }
+    }
+}
+
+// Écrans de succès (culture, travail au champ) : carte blanche, coche et bouton sarcelle
+main .ajouter #overlay .success-animation-overlay--card .success-content {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(18, 16, 60, 0.25);
+    padding: 36px 44px;
+    max-width: 440px;
+
+    .checkmark {
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 20px;
+
+        .checkmark-circle,
+        .checkmark-check { stroke: #05b1af; }
+    }
+
+    .success-title {
+        font-family: "Panton", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #12103c;
+        margin-bottom: 24px;
+    }
+
+    .btn-return-registre {
+        height: 44px;
+        padding: 0 22px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 10px;
+        gap: 8px;
+
+        &:hover { background-color: #03918a; }
+    }
+
+    // Résumé (travail au champ, traitement) : encadré gris clair, libellé gris / valeur bleu nuit
+    .treatment-summary {
+        background: #f8f9fa;
+        border: 1px solid #edf0f3;
+        border-radius: 10px;
+        box-shadow: none;
+        padding: 6px 16px;
+        margin: 0 0 24px;
+
+        .summary-row {
+            gap: 16px;
+            border-bottom-color: #edf0f3;
+
+            strong { color: #6b7280; font-weight: 600; }
+            span { color: #12103c; font-weight: 600; text-align: right; }
+
+            // Traitement : liste des produits en pastilles sarcelle claires
+            &.summary-products .products-list .product-name {
+                background: #e3f6f3;
+                border-left: 3px solid #05b1af;
+                border-radius: 6px;
+                color: #12103c;
+                text-align: left;
+
+                &:hover { background: #d5f1ed; border-left-color: #03918a; }
+            }
+        }
+    }
+}
+
+// Pied travail au champ / traitement (modification) : "Supprimer" à gauche, comme dans le détail d'une culture
+main .ajouter #overlay .ajouterTravailAuChamp .popup-footer .delete-btn,
+main .ajouter #overlay .ajouterTraitementPhyto .popup-footer .delete-btn {
+    margin-right: auto;
+}
+
+// Traitement phyto : 5 étapes — sur téléphone, seul le nom de l'étape en cours reste affiché
+// (les autres gardent leur pastille) pour éviter que les noms se chevauchent.
+@media (max-width: 575.98px) {
+    main .ajouter #overlay .ajouterTraitementPhyto .header .progress-integration .modern-progress .progress-steps .step:not(.active) label,
+    main .ajouter #overlay .ajouterTraitementPhyto .header .progress-integration .modern-progress .progress-steps .step.completed label {
+        display: none;
+    }
+}
+
+// Popup Travail au champ : aide affichée dans le pied tant que « Valider » n'est pas disponible
+main .ajouter #overlay .ajouterTravailAuChamp .popup-footer .popup-required-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 auto;
+    margin: 0 auto 0 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.4;
+
+    i { color: #9ca3af; margin-top: 2px; }
+    b { color: #12103c; font-weight: 600; }
+
+    @media (max-width: 480px) { order: 10; margin: 0 0 4px; }
+}
+
+// Popup Traitement phyto : même aide « ce qu'il manque » dans le pied que le Travail au champ
+main .ajouter #overlay .ajouterTraitementPhyto .popup-footer .popup-required-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 auto;
+    margin: 0 auto 0 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.4;
+
+    i { color: #9ca3af; margin-top: 2px; }
+    b { color: #12103c; font-weight: 600; }
+
+    @media (max-width: 480px) { order: 10; margin: 0 0 4px; }
+}
+
+// Pied du traitement : « Supprimer » à gauche reste prioritaire sur l'aide
+main .ajouter #overlay .ajouterTraitementPhyto .popup-footer .delete-btn + .popup-required-hint {
+    margin-left: 12px;
+}

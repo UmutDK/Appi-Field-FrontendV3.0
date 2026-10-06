@@ -1,0 +1,696 @@
+﻿// Le host (custom element, display:inline par défaut) doit relayer le flex:1 posé par .body du
+// wrapper parent (registre.component.scss) jusqu'à .scrollable-content ci-dessous, sinon le
+// calcul height:auto laisse un vide en bas de popup en plein écran tablette/smartphone au lieu
+// de faire grandir la zone scrollable. Doit rester TOP-LEVEL (avant l'ouverture de main{} ci-
+// dessous, qui englobe tout le reste du fichier) : un :host imbriqué dans un autre sélecteur
+// compile en "main :host" (ou pire), qui ne matche jamais le host réel — main est un descendant
+// du host, jamais l'inverse.
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+main{
+    position: relative; // Pour le positionnement du bouton fixe
+
+    // Relaie le flex:1 du :host jusqu'à .body/.scrollable-content ci-dessous (voir commentaire
+    // sur :host) au lieu d'une hauteur figée à celle du contenu.
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+
+    // 💡 Label + icône info avec tooltip
+    .label-with-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        margin-top: 10px;
+        margin-left: 2px;
+
+        .search-label {
+            display: inline;
+            margin: 0;
+        }
+    }
+
+    // Couleur/curseur/taille désormais fournis par .popup-tooltip-icon (classe ajoutée dans
+    // le template, voir src/styles/_popup-system.scss) — ne reste ici que le positionnement.
+    .crop-info-icon {
+        margin-left: 6px;
+    }
+    
+   
+    
+    // Empêche tout débordement horizontal
+    * {
+        box-sizing: border-box;
+    }
+
+    // 🎬 Container pour les animations de slide entre étapes
+    .body {
+        position: relative;
+        // Le .body du wrapper parent (registre.component.scss) est volontairement à padding:0
+        // pour éviter les conflits entre les différentes popups qu'il héberge — l'espace entre le
+        // header et le contenu de chaque étape (recherche / champs / parcelles) doit donc venir
+        // d'ici, un seul endroit commun aux 3 étapes du switch plutôt que dupliqué dans chacune.
+        padding-top: 20px;
+        // Continue le relais flex:1 (voir :host/main ci-dessus) jusqu'au <form> de l'étape
+        // affichée par le @switch, seul enfant direct de ce .body à un instant donné.
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        transition: transform 600ms cubic-bezier(0.4, 0.0, 0.2, 1),
+                    opacity 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+
+        // En-têtes (recherche/info) précédant le <form> selon l'étape — hauteur naturelle,
+        // ne doivent pas être compressés par le flex:1 ci-dessus.
+        > section.row {
+            flex-shrink: 0;
+        }
+
+        // Le <form> de chaque étape doit lui-même relayer flex:1 jusqu'à .scrollable-content —
+        // c'est systématiquement son seul enfant scrollable (précédé, selon l'étape, d'un ou
+        // plusieurs <section class="row"> d'en-tête en hauteur naturelle).
+        > form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+
+            > section.row {
+                flex-shrink: 0;
+            }
+        }
+
+        // Animation forward (venir de la droite)
+        &[data-slide-direction="forward"] {
+            animation: slideInFromRight 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        // Animation backward (venir de la gauche)
+        &[data-slide-direction="backward"] {
+            animation: slideInFromLeft 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+    }
+
+    // 🎬 Keyframe pour slide forward (out left → in from right)
+    @keyframes slideInFromRight {
+        0% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        49% {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        50% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    // 🎬 Keyframe pour slide backward (out right → in from left)
+    @keyframes slideInFromLeft {
+        0% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        49% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        50% {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    // Conteneur scrollable universel - applique les mêmes règles que les autres composants
+    // Remplace l'ancien max-height:50vh/65vh (fixe, indépendant de l'espace réellement
+    // disponible dans la popup) par un flex:1 qui occupe tout l'espace laissé par le
+    // header/form parent — sinon un vide blanc apparaît sous la grille en plein écran
+    // tablette/smartphone dès que l'espace dispo dépasse ce plafond fixe.
+    .scrollable-content {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 8px;
+
+        // Optimisation pour le scroll fluide
+        -webkit-overflow-scrolling: touch;
+        will-change: scroll-position;
+
+        // Pour Firefox
+        scrollbar-width: thin;
+    }
+    
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+
+
+
+    
+    // Libellé fixe au-dessus du champ (remplace l'ancien pattern .form-floating à libellé
+    // flottant) : même classe que le formulaire d'ajout de traitement, pour cohérence.
+    // Refonte v2 : même libellé que les autres formulaires (.auth-field label), astérisque collé.
+    .simple-label {
+        font-family: "Panton", sans-serif;
+        font-weight: 600;
+        color: #12103c;
+        margin-bottom: 6px;
+        display: block;
+        font-size: 0.9rem;
+        position: relative;
+    }
+
+    .simple-label sup,
+    .search-label sup {
+        color: #dc3545;
+    }
+
+    // Écran "Informations" : espacement régulier entre les champs (remplace les <p></p> vides)
+    .culture-infos > article {
+        margin-bottom: 16px;
+    }
+
+    // Materialize (chargé globalement dans l'app) impose un style "underline" sans cadre à tout
+    // input[type=text]/[type=date] non marqué .browser-default, avec une spécificité qui bat
+    // .popup-text-input seul — même contournement que traitement-phyto.component.scss
+    // (input[type=date].form-control), étendu ici à type=text (nomCulture, culturePrecedant).
+    input[type="text"].form-control,
+    input[type="date"].form-control {
+        border: 1.5px solid #dee2e6 !important;
+        border-radius: 8px !important;
+        background: #fff !important;
+        padding: 0 12px !important;
+        height: 44px !important;
+        margin: 0 !important;
+        color: #12103c;
+        box-shadow: none !important;
+
+        &:hover {
+            border-color: #adb5bd !important;
+        }
+
+        &:focus {
+            outline: none !important;
+            border-color: #05b1af !important;
+            box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+        }
+    }
+
+    // Style spécifique pour le textarea remarque
+    .remarque-textarea {
+        height: 88px;
+        resize: none;
+        border: 1.5px solid #dee2e6 !important;
+        border-radius: 8px !important;
+        padding: 10px 12px !important;
+        color: #12103c;
+        box-shadow: none !important;
+
+        &:hover { border-color: #adb5bd !important; }
+
+        &:focus {
+            outline: none !important;
+            border-color: #05b1af !important;
+            box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+        }
+
+        // Responsive : réduire la hauteur sur smartphone — seuil abaissé à 576px (vrai
+        // smartphone, comme le dit le commentaire), 768px couvrait la moitié de la tablette.
+        @media (max-width: 576px) {
+            height: 60px;
+        }
+
+        // Doit battre la spécificité de .form-floating > .form-control::placeholder
+        &.form-control::placeholder {
+            font-style: italic;
+        }
+    }
+
+
+// Section supprimée - pas besoin de scroll pour les infos générales
+//
+// .cadre-informations et .modern-progress (dropdown de catégorie + barre de progression)
+// ont été retirées : plus aucun HTML de ce composant ne les référence — la barre de
+// progression est désormais rendue par le parent registre.component (voir Phase 2 du
+// plan d'unification des popups).
+
+// Style pour le label de recherche
+.search-label {
+    display: inline;
+    font-family: "Panton", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #12103c;
+    margin: 0;
+}
+
+// Encadré "catégorie actuelle" (modification) : même encadré d'information que les autres pages
+.current-culture-info {
+    background: #f0faf9;
+    border: 1px solid #b9e6e1;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+
+    .info-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        i {
+            color: #03918a;
+            font-size: 1rem;
+        }
+
+        span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #12103c;
+        }
+    }
+
+    .info-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 24px;
+
+        .info-item {
+            font-size: 0.88rem;
+            color: #374151;
+
+            strong {
+                color: #6b7280;
+                font-weight: 600;
+                margin-right: 4px;
+            }
+        }
+    }
+}
+
+// En-tête de la section "Catégories récemment utilisées" (même idée que traitement-phyto)
+.recently-used-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    i.bi-clock-history {
+        color: #05b1af;
+        font-size: 0.95rem;
+    }
+}
+
+// Grille de cards pour la sélection de catégorie Phytoweb (scroll géré par .scrollable-content) —
+// même structure/esprit que .parcels-grid/.parcel-card, adaptée à une sélection unique (radio).
+.culture-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-bottom: 20px;
+
+    @media (max-width: 575.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.culture-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    position: relative;
+    // Cette classe est aussi posée sur un <button> (cartes "récemment utilisées", non liées à
+    // un radio) : neutralise les styles natifs de bouton pour un rendu identique au <label>.
+    width: 100%;
+    font: inherit;
+    text-align: left;
+    // Les items de grille ont un min-width:auto par défaut (basé sur leur contenu) : avec un
+    // titre long en white-space:nowrap, ça élargit la colonne au lieu de tronquer, et pousse
+    // toute la grille en dehors de son conteneur (texte coupé sans "...", 2e colonne mal alignée).
+    min-width: 0;
+
+    &:hover {
+        border-color: #05b1af;
+    }
+
+    &.selected {
+        border-color: #05b1af;
+        background: #f0faf9;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+    }
+
+    input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .culture-card-icon {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #e3f6f3;
+        color: #03918a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-size: 18px;
+        }
+    }
+
+    .culture-card-title {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #12103c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .culture-card-check {
+        flex-shrink: 0;
+        font-size: 18px;
+        color: #dee2e6;
+        transition: color 0.15s;
+    }
+
+    &.selected .culture-card-check {
+        color: #05b1af;
+    }
+
+    &.selected .culture-card-icon {
+        background: #05b1af;
+        color: #fff;
+    }
+}
+// Étape "Parcelles" : en-tête (libellé + compteur), recherche, grille de cartes
+// (le scroll de la grille est géré par .scrollable-content, voir plus haut dans ce fichier)
+.parcels-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.selected-count-badge {
+    flex-shrink: 0;
+    background: #e3f6f3;
+    color: #03918a;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.step-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1.5px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0 12px;
+    height: 44px;
+    margin-bottom: 16px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus-within {
+        border-color: #05b1af;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+    }
+
+    > i {
+        color: #6b7280;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    input {
+        all: unset;
+        flex: 1;
+        color: #12103c;
+        font-family: "Panton", sans-serif;
+        font-size: 0.9rem;
+
+        &::placeholder {
+            color: #adb5bd;
+            font-family: "Panton", sans-serif;
+        }
+
+        &:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .clear-search {
+        background: none;
+        border: none;
+        color: #adb5bd;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        flex-shrink: 0;
+
+        &:hover {
+            color: #dc3545;
+        }
+    }
+}
+
+.parcels-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-bottom: 20px;
+
+    @media (max-width: 575.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.parcel-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px 14px;
+    // Voir le commentaire équivalent sur .culture-card : évite qu'un titre long élargisse la
+    // colonne de la grille au lieu de tronquer avec l'ellipse.
+    min-width: 0;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    position: relative;
+
+    &:hover {
+        border-color: #05b1af;
+    }
+
+    &.selected {
+        border-color: #05b1af;
+        background: #f0faf9;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+    }
+
+    input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .parcel-card-icon {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #e3f6f3;
+        color: #03918a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-size: 18px;
+        }
+    }
+
+    .parcel-card-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .parcel-card-title {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #12103c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .parcel-card-details {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-top: 2px;
+    }
+
+    .parcel-card-check {
+        flex-shrink: 0;
+        font-size: 18px;
+        color: #dee2e6;
+        transition: color 0.15s;
+    }
+
+    &.selected .parcel-card-check {
+        color: #05b1af;
+    }
+
+    &.selected .parcel-card-icon {
+        background: #05b1af;
+        color: #fff;
+    }
+}
+
+// Tablette : cartes culture/parcelle et barre de recherche d'étape agrandies — à cette
+// largeur, la grille 2 colonnes laisse largement la place, mais gardait des tailles pensées
+// pour un écran de téléphone étroit.
+@media (min-width: 576px) and (max-width: 992px) {
+    .culture-card,
+    .parcel-card {
+        gap: 24px;
+        padding: 26px 30px;
+
+        .culture-card-icon,
+        .parcel-card-icon {
+            width: 76px;
+            height: 76px;
+
+            i { font-size: 36px; }
+        }
+
+        .culture-card-title,
+        .parcel-card-title {
+            font-size: 1.6rem;
+        }
+
+        .parcel-card-details {
+            font-size: 1.3rem;
+        }
+
+        .culture-card-check,
+        .parcel-card-check {
+            font-size: 36px;
+        }
+    }
+
+    .step-search {
+        height: 76px;
+        padding: 0 24px;
+        gap: 16px;
+
+        > i { font-size: 28px; }
+
+        input { font-size: 1.4rem; }
+    }
+
+    .selected-count-badge {
+        font-size: 1.25rem;
+        padding: 11px 22px;
+    }
+
+    // !important : ces deux sélecteurs sont plus courts que les originaux imbriqués dans
+    // main{...} (main .simple-label, main input[type="text"].form-control) et perdraient sinon
+    // silencieusement en spécificité CSS face à eux.
+    .simple-label,
+    .search-label {
+        font-size: 1.6rem !important;
+    }
+
+    input[type="text"].form-control,
+    input[type="date"].form-control {
+        height: auto !important;
+        padding: 22px 24px !important;
+        font-size: 1.4rem !important;
+    }
+}
+
+// Smartphone (≤576px) : les libellés restaient à la taille desktop compacte alors que la
+// tablette juste au-dessus est largement agrandie — même logique appliquée ici, à une échelle
+// un peu plus mesurée vu la largeur d'écran réduite.
+@media (max-width: 575.98px) {
+    .simple-label,
+    .search-label {
+        font-size: 1.2rem !important;
+    }
+
+    // .step-search input et input[type="text"/"date"].form-control avaient un palier tablette
+    // (voir plus haut) mais aucun palier smartphone.
+    .step-search {
+        input { font-size: 1.05rem !important; }
+    }
+
+    input[type="text"].form-control,
+    input[type="date"].form-control {
+        padding: 0 16px !important;
+        font-size: 1.05rem !important;
+    }
+}
+
+.parcels-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    padding: 32px 0;
+
+    i {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+}
+}

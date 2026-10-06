@@ -1,0 +1,246 @@
+.section2{
+    padding-top: 24px;
+
+    @media (max-width: 950px) {
+        .container {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    }
+
+    h2{
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        font-size: var(--font-size-h2);
+        color: #110f3b;
+    }
+    a{
+        text-decoration: none;
+        color: inherit;
+        
+        &:hover {
+            text-decoration: none;
+            color: inherit;
+            
+            .card {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+        }
+    }
+    .cadre{
+        .cadre-actualite{
+            .card{
+                width: 100%;
+                border-radius: 12px;
+                border: 1px solid #e0e0e0;
+                transition: all 0.3s ease;
+                overflow: hidden;
+                
+                &:hover {
+                    border-color: #2d9089;
+                }
+                
+                .card-img-top{
+                    height: 180px;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
+                }
+                
+                .card-img-placeholder {
+                    height: 180px;
+                    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #999;
+                    font-size: 2em;
+                }
+                
+                .card-body{
+                    padding: 1.25rem;
+                    
+                    // Titre de carte actualité (h3, sous le H2 "Actualités") — taille délibérément
+                    // compacte, propre à ce format de carte, pas redondante avec le token h3 générique.
+                    h3{
+                        font-family: Roboto, "Helvetica Neue", sans-serif;
+                        font-weight: 500;
+                        font-size: 1.1em;
+                        text-align: left;
+                        line-height: 1.4;
+                        color: #110f3b;
+                        margin-bottom: 0.75rem;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    }
+                    
+                    .card-text-date {
+                        color: #666;
+                        font-family: Roboto, "Helvetica Neue", sans-serif;
+                        font-weight: 400;
+                        font-size: 0.9em;
+                        margin-bottom: 0.75rem;
+                        
+                        i {
+                            color: #2d9089;
+                        }
+                    }
+                    
+                    .card-text {
+                        color: #555;
+                        font-family: Roboto, "Helvetica Neue", sans-serif;
+                        font-weight: 300;
+                        font-size: 0.95em;
+                        text-align: left;
+                        line-height: 1.5;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        margin-bottom: 1rem;
+                    }
+                    
+                    .btn-link-custom {
+                        color: #2d9089;
+                        font-weight: 500;
+                        font-size: 0.9em;
+                        transition: color 0.3s ease;
+                    }
+                }
+                
+                &:hover {
+                    .btn-link-custom {
+                        color: #1f6560;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Responsive mobile : liste verticale (même style que les formations). Seuil abaissé de 950px à
+// 576px (vrai téléphone) — auparavant, cette liste compacte (image 70px, description masquée)
+// s'appliquait sur toute la plage tablette au lieu de laisser la grille Bootstrap col-md-6
+// (2 colonnes, cards complètes) s'afficher normalement entre 576 et 950px.
+@media (max-width: 576px) {
+    .section2 {
+        // Chaque article prend toute la largeur
+        .actu-item {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0;
+            margin-bottom: 0 !important;
+        }
+
+        .cadre-actualite {
+            a {
+                display: block;
+
+                &:hover .card {
+                    transform: none;
+                    box-shadow: none;
+                }
+            }
+
+            .card {
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+                border-radius: 0 !important;
+                border: none;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: none;
+                transition: background-color 0.2s ease;
+
+                &:first-child {
+                    border-top: 1px solid #e9ecef;
+                }
+
+                &:hover {
+                    background-color: #f8f9fa;
+                    border-color: #e9ecef;
+                }
+
+                .card-img-top {
+                    width: 70px;
+                    min-width: 70px;
+                    height: 70px;
+                    object-fit: cover;
+                    border-radius: 0;
+                }
+
+                .card-img-placeholder {
+                    width: 70px;
+                    min-width: 70px;
+                    height: 70px;
+                    font-size: 1.2em;
+                    border-radius: 0;
+                    background: #f0f0f0;
+                }
+
+                .card-body {
+                    padding: 10px 14px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    flex: 1;
+
+                    h3 {
+                        font-size: 14px;
+                        margin-bottom: 4px;
+                        -webkit-line-clamp: 2;
+                        line-clamp: 2;
+                    }
+
+                    .card-text-date {
+                        font-size: 12px;
+                        margin-bottom: 0;
+                        color: #888;
+                    }
+
+                    .card-text {
+                        display: none;
+                    }
+
+                    .btn-link-custom {
+                        font-size: 12px;
+                        margin-top: 4px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// Refonte v2 : titre "Actualités" au même style et au même alignement que les autres encadrés
+// de l'accueil ("À propos de l'outil", "Espace formation" : .dashboard-card h2, 1.3rem).
+.section2 {
+    padding-top: 16px;
+
+    // Le .container Bootstrap se centrait avec une largeur max (marges auto) sur tablette :
+    // le titre se décalait par rapport aux autres encadrés.
+    > .container {
+        max-width: none;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        @media (max-width: 575.98px) {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+    }
+
+    h2 {
+        font-size: 1.3rem;
+        color: #12103c;
+        margin-bottom: 2px !important;
+    }
+}

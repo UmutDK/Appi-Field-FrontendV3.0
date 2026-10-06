@@ -1,0 +1,688 @@
+﻿// ============================================
+// STYLES AUTONOMES - POPUP ACHAT DE PRODUIT
+// Chrome (header/footer/champs/dropdowns/boutons) fourni par le système de popup partagé
+// (src/styles/_popup-system.scss) — même structure que le formulaire d'ajout de parcelle
+// (parcelles.component.html : .simple-label/.popup-text-input/.dropdown-container). La
+// recherche de produit (autocomplete Material remplacé) reprend aussi le pattern
+// .address-field-wrapper/.address-suggestions de parcelles.component.scss à l'identique.
+// ============================================
+
+$color-primary: #03918a;
+$color-primary-light: #d5f7f5;
+$color-primary-dark: #027a74;
+$color-text: #0e103b;
+$color-text-light: #6b7280;
+$color-border: #e5e7eb;
+$color-white: #fff;
+
+// <app-achat-de-ppp> (la balise hôte du composant, entre .body et .purchase-form-container dans
+// le DOM) est display:inline par défaut — le flex:1 posé sur .purchase-form-container/
+// .ajouterUneCulture ne servait donc à rien, son vrai parent flex direct (.body) ne le voyait
+// pas comme un enfant flex extensible. En le rendant flex lui-même ici, il relaie correctement
+// le flex:1 de .body jusqu'à .purchase-form-container.
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+// Ce build Bootstrap ne fournit pas la règle de gouttière horizontale standard
+// (padding-right/left: calc(var(--bs-gutter-x) * .5) sur .col-*) — même contournement que
+// parcelles.component.scss : sans ce padding, les colonnes adjacentes se collent/chevauchent.
+.row > [class*="col-"] {
+  padding-right: calc(var(--bs-gutter-x, 1.5rem) * .5);
+  padding-left: calc(var(--bs-gutter-x, 1.5rem) * .5);
+}
+
+// ============================================
+// CONTENEUR PRINCIPAL
+// ============================================
+.purchase-form-container {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 80vh; // Limite la hauteur pour activer le scroll (popup centrée, desktop)
+
+  // En dessous de 1200px, .popup-container passe en plein écran (100vh, voir
+  // popup-mobile-fullscreen dans _popup-system.scss) et .body/.ajouterUneCulture
+  // (accueil-inventaire.component.scss) sont flex:1 pour remplir tout l'espace restant sous le
+  // header — un max-height en vh ici n'a alors plus de rapport avec l'espace réellement
+  // disponible et laissait un grand vide sous le formulaire. height:100% relaie plutôt la
+  // taille réelle du parent flex.
+  @media (max-width: 992px) {
+    max-height: none;
+    height: 100%;
+  }
+
+  // ============================================
+  // ZONE SCROLLABLE
+  // ============================================
+  // Padding aligné sur .popup-body (src/styles/_popup-system.scss) : le wrapper de ce popup
+  // dans accueil-inventaire.component.html porte la classe "body" (pas "popup-body", pour
+  // éviter un double padding avec la gestion interne du scroll) — il faut donc le reproduire
+  // ici explicitement, sinon le formulaire colle aux bords du popup.
+  .popup-content-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    padding: 20px;
+
+    @media (max-width: 575.98px) {
+      padding: 16px;
+    }
+
+    @media (min-width: 576px) and (max-width: 992px) {
+      padding: 34px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-primary;
+      border-radius: 4px;
+
+      &:hover {
+        background: $color-primary-dark;
+      }
+    }
+
+    scrollbar-width: thin;
+  }
+
+  // Libellé fixe au-dessus du champ — même style que parcelles.component.scss (le popup
+  // n'utilise pas .popup-body, dont dépend la définition partagée, donc reproduit ici).
+  .simple-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 1em;
+  }
+
+  .section-title {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 600;
+    font-size: 1.1em;
+    color: $color-text;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    i {
+      color: $color-primary;
+      font-size: 1.2em;
+    }
+  }
+
+  // Le footer est maintenant un frère direct de .popup-content-scrollable (hors du padding),
+  // exactement comme dans parcelles — plus besoin de marges négatives pour compenser un padding
+  // parent (l'approche précédente laissait un écart blanc résiduel : le conteneur ne répercutait
+  // pas correctement la marge négative dans son propre calcul de hauteur).
+}
+
+// Materialize (chargé globalement dans l'app) impose un style "underline" sans cadre à tout
+// input[type=text/date/number] non marqué .browser-default. Le contournement par attribut+classe
+// (même spécificité que parcelles.component.scss) ne suffisait pas ici — passage par ID
+// (spécificité maximale, aucune ambiguïté possible) pour être certain de gagner.
+input[type="text"].form-control,
+input[type="date"].form-control,
+input[type="number"].form-control,
+#searchTerm,
+#personalSearchTerm,
+#newProductName,
+#newProductType,
+#adding_date,
+#quantity,
+#expiration_date {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  border: 1.5px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  padding: 0 12px !important;
+  height: 44px !important; // hauteur standard des champs de l'app (44px)
+  font-size: 0.95rem !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+
+  &:hover {
+    border-color: #adb5bd !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    border-color: #05b1af !important;
+    box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+  }
+}
+
+// Tablette : même palier que parcelles.component.scss — la surcouche anti-Materialize
+// ci-dessus fixe une hauteur/padding desktop en dur, il faut donc republier l'agrandissement
+// tablette par-dessus.
+@media (min-width: 576px) and (max-width: 992px) {
+  input[type="text"].form-control,
+  input[type="date"].form-control,
+  input[type="number"].form-control,
+  #searchTerm,
+  #personalSearchTerm,
+  #newProductName,
+  #newProductType,
+  #adding_date,
+  #quantity,
+  #expiration_date {
+    height: 62px !important;
+    padding: 0 18px !important;
+    font-size: 26px !important;
+
+    &::placeholder {
+      font-size: 26px !important;
+    }
+  }
+
+  .simple-label {
+    font-size: 1.3rem !important;
+  }
+}
+
+// Smartphone (≤576px) : même logique que la tablette juste au-dessus, à une échelle
+// un peu plus mesurée vu la largeur d'écran réduite.
+@media (max-width: 575.98px) {
+  // Même remarque que le palier tablette ci-dessus : ces 7 champs avaient un boost tablette
+  // mais aucun palier smartphone, contrairement à .simple-label.
+  input[type="text"].form-control,
+  input[type="date"].form-control,
+  input[type="number"].form-control,
+  #searchTerm,
+  #personalSearchTerm,
+  #newProductName,
+  #newProductType,
+  #adding_date,
+  #quantity,
+  #expiration_date {
+    height: 50px !important;
+    padding: 0 14px !important;
+    font-size: 19px !important;
+
+    &::placeholder {
+      font-size: 19px !important;
+    }
+  }
+
+  .simple-label {
+    font-size: 1.1rem !important;
+  }
+}
+
+// ============================================
+// RECHERCHE DE PRODUIT — champ + suggestions (même pattern que le champ adresse de
+// parcelles.component.scss)
+// ============================================
+.address-field-wrapper {
+  position: relative;
+
+  &.has-suggestions .form-control {
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99999999 !important;
+  background: white;
+  border: 2px solid #03918a;
+  border-top: none;
+  border-radius: 0 0 9px 9px;
+  max-height: 240px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .list-group {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+
+    .list-group-item {
+      border: none;
+      border-bottom: 1px solid #e9ecef;
+      padding: 0.75rem 1rem;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      background: white;
+
+      &:last-child {
+        border-bottom: none;
+        border-radius: 0 0 10px 10px;
+      }
+
+      &:hover, &:focus {
+        background-color: #f8f9fa;
+        color: #03918a;
+      }
+
+      .suggestion-text {
+        font-size: 0.9rem;
+        color: inherit;
+        line-height: 1.3;
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: $color-primary;
+
+    .spinner-border-sm {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-width: 0.2em;
+      border-color: $color-primary;
+      border-right-color: transparent;
+    }
+
+    .loading-text {
+      color: $color-text-light;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+  }
+
+  .error-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    color: $color-text-light;
+    font-size: 0.9em;
+  }
+
+  .empty-state {
+    padding: 16px;
+    text-align: center;
+    color: $color-text-light;
+    font-size: 0.9em;
+  }
+
+  // Animation d'apparition
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.product-option-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .product-info {
+    flex: 1;
+    min-width: 0;
+
+    strong {
+      color: $color-text;
+      font-size: 0.9em;
+    }
+
+    small {
+      font-size: 0.8em;
+      color: $color-text-light;
+    }
+  }
+
+  .product-type {
+    flex-shrink: 0;
+
+    .badge {
+      font-size: 0.7em;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// ============================================
+// BLOC DE RECHERCHE — sobre, même niveau visuel que les autres champs du formulaire (plus de
+// bloc navy imposant : juste un .simple-label comme le reste, la sélection courante en petite
+// ligne discrète).
+// ============================================
+.search-block {
+  margin-bottom: 20px;
+
+  // Produit sélectionné
+  .selected-product-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: $color-primary-light;
+    border: 1.5px solid $color-primary;
+    border-radius: 8px;
+    padding: 10px 14px;
+
+    > i {
+      color: $color-primary;
+      font-size: 1.1em;
+      flex-shrink: 0;
+    }
+
+    .selected-product-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      strong {
+        color: $color-text;
+        font-weight: 600;
+        word-break: break-word;
+      }
+
+      .selected-product-numaut {
+        color: $color-text-light;
+        font-size: 0.85em;
+      }
+    }
+
+    .btn-change-product {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      min-height: var(--btn-height);
+      font-size: 0.85em;
+      font-weight: 500;
+      color: $color-primary-dark;
+      background: $color-white;
+      border: 1px solid $color-primary;
+      border-radius: 6px;
+      transition: background 0.15s;
+      flex-shrink: 0;
+
+      i { font-size: 0.85em; }
+
+      &:hover { background: rgba($color-primary, 0.08); }
+
+      @media (max-width: 400px) {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  // Bouton créer nouveau produit
+  .btn-create-perso {
+    flex: 0 0 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: $color-white;
+    color: $color-primary-dark;
+    border: 1.5px solid $color-border;
+    border-radius: 8px;
+    padding: 7px 14px;
+    min-height: var(--btn-height);
+    font-size: 0.85em;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s;
+
+    i { color: $color-primary !important; }
+
+    &:hover {
+      background: $color-primary-light;
+      border-color: $color-primary;
+    }
+  }
+
+  // Ligne recherche + bouton côte à côte
+  .personal-search-create-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .perso-search-field {
+      flex: 0 0 75%;
+      width: 75%;
+    }
+
+    @media (max-width: 420px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+
+      .perso-search-field {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+
+      .btn-create-perso {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ============================================
+// TOGGLE PPP / PRODUITS PERSONNELS
+// Style désormais fourni par .format-choice/.format-btn (classes ajoutées dans le
+// template, voir src/styles/_popup-system.scss — même pattern que le choix de format
+// d'export et le sélecteur de mode de traitement).
+// ============================================
+.product-mode-toggle-row {
+  margin-bottom: 16px;
+}
+
+// ============================================
+// FORMULAIRE NOUVEAU PRODUIT PERSONNEL
+// ============================================
+.personal-product-form {
+  background: $color-white;
+  border: 1.5px solid $color-primary;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  .new-product-title {
+    font-size: 1em;
+    font-weight: 600;
+    color: $color-primary-dark;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { color: $color-primary !important; }
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .new-product-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+
+    .btn-save-perso {
+      flex: 1;
+      background-color: $color-primary;
+      color: $color-white;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      min-height: var(--btn-height);
+      font-weight: 600;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.2s;
+
+      &:hover:not(:disabled) { background-color: $color-primary-dark; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+
+    .btn-outline-cancel {
+      border: 1.5px solid $color-border;
+      background: $color-white;
+      color: $color-text-light;
+      border-radius: 8px;
+      padding: 9px 14px;
+      min-height: var(--btn-height);
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: border-color 0.15s, color 0.15s;
+
+      &:hover { border-color: #dc3545; color: #dc3545; }
+    }
+  }
+}
+
+// Tablette : les champs de recherche/formulaire réutilisent maintenant .popup-text-input
+// (déjà agrandi par le boost tablette global de src/styles/_popup-system.scss) — il ne reste
+// que ce qui est spécifique à ce composant à agrandir ici.
+@media (min-width: 576px) and (max-width: 992px) {
+  .purchase-form-container {
+    .section-title {
+      font-size: 1.4em !important;
+
+      i { font-size: 1.5em !important; }
+    }
+
+    .search-block {
+      .selected-product-row {
+        font-size: 1.1em !important;
+
+        .selected-product-numaut { font-size: 0.85em !important; }
+      }
+
+      .btn-change-product {
+        font-size: 0.95em !important;
+      }
+    }
+
+    .personal-product-form {
+      .new-product-title { font-size: 1.25em !important; }
+
+      .btn-save-perso, .btn-outline-cancel {
+        font-size: 1.05em !important;
+        padding: 12px 22px !important;
+      }
+    }
+
+    .btn-create-perso {
+      font-size: 1em !important;
+      padding: 10px 18px !important;
+    }
+  }
+
+  .address-suggestions .list-group .list-group-item .suggestion-text {
+    font-size: 1.1rem !important;
+  }
+
+  .product-option-container {
+    .product-info {
+      strong { font-size: 1.1em !important; }
+      small { font-size: 1em !important; }
+    }
+
+    .product-type .badge {
+      font-size: 0.9em !important;
+      padding: 6px 12px !important;
+    }
+  }
+}
+
+// Menus déroulants (Produit, Type, Unité…) : même hauteur que les champs texte (44px),
+// comme dans le formulaire d'ajout de parcelle.
+@media (min-width: 993px) {
+  .dropdown-container .dropdown-btn {
+    height: 44px;
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+}
+
+// Refonte v2 (test global) : astérisque rouge, messages de validation et aide « À compléter »
+// dans le pied — même rendu que les popups parcelle et la création de compte.
+.simple-label sup { color: #dc3545; }
+
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 0;
+    color: #dc3545;
+    font-size: 0.82rem;
+
+    i { font-size: 0.85rem; }
+}
+
+input.input-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 1px #dc3545 !important;
+}
+
+.popup-required-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 auto;
+    margin: 0 auto 0 0;
+    color: #6b7280;
+    font-size: 0.82rem;
+    line-height: 1.4;
+
+    i { color: #9ca3af; margin-top: 2px; }
+    b { color: #12103c; font-weight: 600; }
+    b + b::before { content: '· '; color: #9ca3af; font-weight: 400; }
+}
+
+// Les boutons du pied ne se coupent pas sur 2 lignes quand l'aide « À compléter » est affichée
+.popup-footer .btn-primary,
+.popup-footer .btn-secondary {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+// Téléphone (pied en colonne inversée) : l'aide passe au-dessus des boutons
+@media (max-width: 480px) {
+    .popup-footer .popup-required-hint { order: 10; margin: 0 0 4px; }
+}

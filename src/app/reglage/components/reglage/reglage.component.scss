@@ -1,0 +1,247 @@
+﻿@use '../../../../styles/dashboard-cards' as *;
+
+// Marges de page fournies par .dashboard (partagé avec l'accueil et Parcelles)
+.reglage-page {
+    min-height: 100vh;
+}
+
+// H1 de la page /reglage (seul titre de page ici — les sous-sections a droite ont chacune
+// leur propre h2). Une seule regle desormais (l'ancien selecteur h2{} nu faisait doublon avec
+// .reglage-title, qui cible le meme et unique element).
+.reglage-title {
+    // Même style que le h1 des autres pages (.dashboard-header h1)
+    font-weight: 700;
+    font-size: var(--font-size-h1);
+    margin: 0 0 24px 0;
+    line-height: 1.2;
+    color: #12103c;
+    font-family: Panton, sans-serif;
+}
+
+.reglage-layout {
+    align-items: flex-start;
+    gap: 0;
+}
+
+// ---- Panneau de contenu ----
+.reglage-content {
+    min-height: 200px;
+
+    // Taille de champ standard pour tous les onglets "Mon compte" (référence : champ
+    // "Mot de passe actuel") — une seule définition ici plutôt que les surcharges locales
+    // divergentes de chaque sous-composant.
+    ::ng-deep {
+        // Encadrés des onglets : même style que .dashboard-card (src/styles/_dashboard-cards.scss)
+        // utilisé sur l'accueil, la connexion et Parcelles — remplace l'ancien style (bordure 2px,
+        // grosse ombre, titre fin) propre à chaque sous-composant.
+        .connexion,
+        .mandats-card,
+        .wallesmart-card {
+            background: #ffffff !important;
+            border: 1px solid #edf0f3 !important;
+            border-radius: 14px !important;
+            box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06) !important;
+        }
+
+        .connexion {
+            padding: 24px 28px !important;
+
+            @media (max-width: 575.98px) {
+                padding: 18px 16px !important;
+            }
+
+            // !important : les sous-composants définissent déjà ".main .connexion h2" (fin, grand),
+            // plus spécifique que ce sélecteur ::ng-deep — sans ça l'ancien style l'emportait.
+            h2 {
+                font-family: "Panton", sans-serif !important;
+                font-weight: 700 !important;
+                font-size: 1.3rem !important;
+                color: #12103c !important;
+                margin-bottom: 0 !important;
+            }
+
+            // Espace vertical entre les lignes de champs (les champs n'ont plus de marge propre
+            // depuis l'uniformisation à 44px ci-dessous).
+            .row > [class*="col-"] {
+                margin-bottom: 16px;
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid #edf0f3;
+                opacity: 1;
+                margin: 16px 0;
+            }
+        }
+
+        .mandats-card,
+        .wallesmart-card {
+            padding: 24px 28px !important;
+
+            @media (max-width: 575.98px) {
+                padding: 18px 16px !important;
+            }
+        }
+
+        .mandats-card__title,
+        .wallesmart-card__title {
+            font-family: "Panton", sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #12103c;
+        }
+
+        input.form-control:not([type="checkbox"]):not([type="radio"]),
+        select.form-control,
+        .readonly-field {
+            box-sizing: border-box !important;
+            width: 100% !important;
+            height: 44px !important;
+            min-height: 44px !important;
+            margin: 0 !important;
+            padding: 0 12px !important;
+            font-size: 0.95rem !important;
+            line-height: 1.2 !important;
+        }
+
+        // Champs mot de passe : place pour l'icône "œil" à droite
+        .password-container input.form-control {
+            padding-right: 42px !important;
+        }
+
+        // Valeurs non modifiables (adresse mail, date d'enregistrement) : même boîte qu'un champ
+        .readonly-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            background: #f8f9fa;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            i { color: #03918a; }
+        }
+    }
+}
+
+// ---- Sidebar navigation ----
+.reglage-nav {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #edf0f3;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    overflow: hidden; // l'item actif (fond + bordure gauche) suit les coins arrondis
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: sticky;
+    top: 80px;
+}
+
+.reglage-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 20px;
+    background: none;
+    border: none;
+    border-left: 3px solid transparent;
+    text-align: left;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+    text-decoration: none;
+
+    i {
+        font-size: 1rem;
+        flex-shrink: 0;
+        color: #adb5bd;
+        transition: color 0.18s;
+    }
+
+    & + .reglage-nav__item {
+        border-top: 1px solid #f0f0f0;
+    }
+
+    &:hover {
+        background: #f8fffe;
+        color: #03918a;
+
+        i { color: #03918a; }
+    }
+
+    &.active {
+        background: #f0faf9;
+        color: #03918a;
+        font-weight: 600;
+        border-left-color: #03918a;
+
+        i { color: #03918a; }
+    }
+}
+
+// ---- Navigation mobile (boutons horizontaux) ----
+.reglage-mobile-nav {
+    display: none; // masqué sur desktop
+}
+
+// ---- Responsive ----
+@media (max-width: 991px) {
+    // Cacher la sidebar sur mobile
+    .reglage-nav {
+        display: none;
+    }
+
+    // Afficher les boutons mobiles
+    .reglage-mobile-nav {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        margin-bottom: 20px;
+
+        &::-webkit-scrollbar { display: none; }
+    }
+
+    .reglage-mobile-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        color: #888;
+        font-size: 0.72rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.18s, color 0.18s, background 0.18s;
+        white-space: nowrap;
+        line-height: 1.2;
+
+        i {
+            font-size: 1.1rem;
+        }
+
+        &.active {
+            border-color: #03918a;
+            background: #f0faf9;
+            color: #03918a;
+            font-weight: 700;
+        }
+
+        &:active {
+            transform: scale(0.96);
+        }
+    }
+}

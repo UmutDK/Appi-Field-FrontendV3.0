@@ -1,0 +1,126 @@
+{
+  "assistant": {
+    "version": "1.1.5",
+    "description": "Assistant Intelligent - Aide à la gestion des cultures et traitements",
+    "features": {
+      "quick_actions": {
+        "count": 6,
+        "items": [
+          "add_crop",
+          "add_treatment",
+          "add_parcel",
+          "add_work",
+          "add_purchase",
+          "view_history"
+        ]
+      },
+      "suggestions": {
+        "rules_count": 5,
+        "rules": [
+          {
+            "name": "harvest_ready",
+            "trigger": "Culture semée il y a 120-180 jours",
+            "priority": "high"
+          },
+          {
+            "name": "low_stock",
+            "trigger": "Produit avec <2 unités en stock",
+            "priority": "high"
+          },
+          {
+            "name": "post_treatment_observation",
+            "trigger": "Traitement appliqué il y a 3-10 jours",
+            "priority": "medium"
+          },
+          {
+            "name": "seasonal_crops",
+            "trigger": "Période de semis (printemps ou automne)",
+            "priority": "low"
+          },
+          {
+            "name": "empty_parcels",
+            "trigger": "Parcelles sans culture active",
+            "priority": "low"
+          }
+        ]
+      },
+      "templates": {
+        "count": 5,
+        "treatments": 3,
+        "field_works": 2
+      }
+    },
+    "api_endpoints": [
+      {
+        "path": "/assistant.php?action=get_quick_actions&token={TOKEN}",
+        "method": "GET",
+        "description": "Récupère les 6 actions rapides avec badges"
+      },
+      {
+        "path": "/assistant.php?action=get_suggestions&token={TOKEN}",
+        "method": "GET",
+        "description": "Récupère les suggestions personnalisées"
+      },
+      {
+        "path": "/assistant.php?action=get_action_templates&token={TOKEN}",
+        "method": "GET",
+        "description": "Récupère les templates pré-remplis"
+      },
+      {
+        "path": "/assistant.php?action=get_user_context&token={TOKEN}",
+        "method": "GET",
+        "description": "Récupère le contexte utilisateur"
+      }
+    ],
+    "frontend": {
+      "route": "/assistant",
+      "component": "src/app/assistant/assistant.component.ts",
+      "template": "src/app/assistant/assistant.component.html",
+      "styles": "src/app/assistant/assistant.component.scss",
+      "auth_required": true,
+      "menu_integration": {
+        "desktop": true,
+        "mobile": true,
+        "sidenav": true
+      }
+    },
+    "backend": {
+      "file": "server/assistant.php",
+      "dependencies": ["server/auth_utils.php"],
+      "data_sources": [
+        "server/crops/crops.json",
+        "server/exploitation/parcels.json",
+        "server/exploitation/inventories.json",
+        "server/events/phyto_treatments_final.json",
+        "server/events/field_works.json"
+      ]
+    },
+    "deployment": {
+      "steps": [
+        "Upload server/assistant.php to remote server",
+        "Compile Angular frontend: ng build --configuration production",
+        "Deploy dist/ to web server",
+        "Test API endpoints with curl",
+        "Verify frontend navigation and display"
+      ],
+      "estimated_time": "15-30 minutes"
+    },
+    "testing": {
+      "checklist": [
+        "Menu contains 'Assistant' link",
+        "Page loads without errors",
+        "6 action cards display with badges",
+        "Actions redirect to correct pages",
+        "Suggestions display based on data",
+        "Refresh button works",
+        "Responsive layout on mobile",
+        "API responds correctly"
+      ],
+      "test_urls": {
+        "local_dev": "http://localhost:4200/assistant",
+        "production": "https://your-server.com/assistant"
+      },
+      "test_api_command": "curl 'https://your-server.com/server/assistant.php?action=get_quick_actions&token=YOUR_TOKEN'"
+    }
+  }
+}

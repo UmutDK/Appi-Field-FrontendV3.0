@@ -1,0 +1,296 @@
+// .dashboard-card (fond blanc, bordure fine, ombre douce, radius 14px, h2 1.3rem) : même encadré
+// que l'accueil, Parcelles et Mon compte.
+@use '../../../../styles/dashboard-cards' as *;
+
+:host {
+  display: block;
+}
+
+a { text-decoration: none; }
+
+.dashboard-card h2 {
+  margin-bottom: 16px;
+}
+
+// ─── Contacts ──────────────────────────────────────────────────────────────
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 991.98px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Même principe que les cartes "Accès rapide" : icône en carré teal clair + texte
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid #edf0f3;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #e3f6f3;
+  color: #03918a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.contact-body {
+  min-width: 0;
+
+  h3 {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #12103c;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+    margin: 0 0 8px;
+  }
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #03918a;
+  font-weight: 600;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+
+  i { font-size: 0.8rem; }
+
+  &:hover { color: #05b1af; text-decoration: underline; }
+}
+
+// Liens vers les webinaires (partie législative / partie pratique)
+.video-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1.5px solid #b9e6e1;
+  border-radius: 8px;
+  color: #03918a;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  i { font-size: 0.75rem; }
+
+  &:hover {
+    background: #f0faf9;
+    border-color: #05b1af;
+  }
+}
+
+// ─── Recherche + filtres (mêmes composants que la page Parcelles) ───────────
+.faq-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.search-field {
+  position: relative;
+  max-width: 480px;
+
+  .search-field-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  input.form-control {
+    width: 100%;
+    margin: 0;
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    color: #6b7280;
+    cursor: pointer;
+
+    i { font-size: 0.7rem; }
+
+    &:hover { background: #e5e7eb; color: #12103c; }
+  }
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .filter-tag {
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 999px;
+    color: #12103c;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover { border-color: #05b1af; color: #03918a; }
+
+    &.active {
+      background: #03918a;
+      border-color: #03918a;
+      color: #ffffff;
+    }
+  }
+}
+
+// ─── Accordéon des questions ───────────────────────────────────────────────
+// --bs-accordion-* recouvre les valeurs par défaut de Bootstrap (coins carrés, bordures grises)
+// sans devoir réécrire chaque règle une à une.
+.accordion {
+  --bs-accordion-border-color: #edf0f3;
+  --bs-accordion-border-radius: 10px;
+  --bs-accordion-inner-border-radius: 9px;
+}
+
+// Bootstrap fusionne les items par défaut (accordéon "collé") : ici chaque item est une boîte
+// arrondie et bordée autonome, espacée des autres.
+.accordion-item {
+  overflow: hidden;
+  border-radius: 10px !important;
+
+  &:not(:last-of-type) {
+    margin-bottom: 10px;
+  }
+
+  &:not(:first-of-type) {
+    border-top: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color) !important;
+  }
+}
+
+.accordion-header {
+  margin: 0 !important;
+  font-size: inherit;
+}
+
+.accordion-button {
+  height: auto !important;
+  min-height: 52px !important;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: normal;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #12103c;
+  background: #ffffff;
+
+  &:hover { background: #f8fbfb; }
+
+  // Question ouverte : teal clair (au lieu du teal plein), cohérent avec l'item actif des menus
+  &:not(.collapsed) {
+    background-color: #f0faf9;
+    color: #03918a;
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  &:focus {
+    border-color: #03918a;
+    box-shadow: 0 0 0 0.2rem rgba(3, 145, 138, 0.2);
+  }
+}
+
+.accordion-body {
+  background-color: #ffffff;
+  border-top: 1px solid #edf0f3;
+  color: #374151;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.preserve-whitespace {
+  white-space: pre-line;
+}
+
+// Même badge que la catégorie des parcelles
+.category-badge {
+  padding: 3px 10px;
+  background-color: #e3f6f3;
+  color: #03918a;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.3;
+
+  @media (max-width: 575.98px) {
+    display: none;
+  }
+}
+
+.question-text {
+  flex: 1;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.faq-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: #6b7280;
+
+  i {
+    font-size: 1.6rem;
+    color: #9ca3af;
+  }
+
+  p { margin: 8px 0 0; }
+}

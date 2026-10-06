@@ -1,0 +1,1220 @@
+﻿// Règles globales pour désactiver le scroll du body depuis ce composant — copie exacte de
+// traitement-phyto.component.scss. Le seul mécanisme partagé (body.no-scroll, styles.scss)
+// ne suffisait pas ici : il avait été retiré de ce fichier par le passé (voir commit précédent),
+// pariant sur ce mécanisme partagé seul, d'où la scrollbar de fond qui restait visible.
+:global(body) {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+:global(html) {
+    overflow: hidden !important;
+}
+
+// Le host (custom element, display:inline par défaut) doit relayer le flex:1 posé par .body du
+// wrapper parent (registre.component.scss) jusqu'à .work-content/.scrollable-content ci-dessous
+// — même bug/fix que culture.component.scss : sans ça, .work-content{flex:1} ne sert à rien
+// puisque son parent direct (le host) n'est pas un conteneur flex, et un vide peut apparaître
+// en bas de popup en plein écran tablette/smartphone.
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+// Les form-section gardent leur comportement naturel
+.work-content .form-section {
+  // Pas de contraintes - comportement naturel
+  margin-bottom: 40px; // Marge standard
+}
+
+@media (max-width: 576px) {
+  .work-content {
+    padding-bottom: 100px; // Plus de padding sur mobile pour le bouton
+    min-height: 100vh; // Utilise plus d'espace vertical sur mobile
+  }
+}
+
+//  Container pour les animations de slide entre étapes
+.work-content {
+  position: relative;
+  // flex:1 (plutôt que le max-height:50vh retiré de .scrollable-content ci-dessous) : app-travail-au-champ
+  // est maintenant flex:1 dans .body (registre.component.scss), donc .work-content doit relayer
+  // cette taille par l'algorithme flex plutôt que par une hauteur en % (non fiable ici, voir le
+  // commentaire équivalent sur main{} dans traitement-phyto.component.scss — même root cause).
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  transition: transform 600ms cubic-bezier(0.4, 0.0, 0.2, 1),
+              opacity 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  // Animation forward (venir de la droite)
+  &[data-slide-direction="forward"] {
+    animation: slideInFromRight 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  // Animation backward (venir de la gauche)
+  &[data-slide-direction="backward"] {
+    animation: slideInFromLeft 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+}
+
+//  Keyframe pour slide forward (out left → in from right)
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  49% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+//  Keyframe pour slide backward (out right → in from left)
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  49% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Uniformisation de la taille de police pour tous les champs input et leurs placeholders
+input, select, textarea {
+  font-size: 16px !important;
+  font-family: "Panton", sans-serif !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  font-size: 16px !important;
+  font-family: "Panton", sans-serif !important;
+}
+
+// Règles spécifiques pour les champs dans les popups, modales et form-control
+.form-control, .popup input, .modal input,
+.popup select, .modal select,
+.popup textarea, .modal textarea {
+  font-size: 16px !important;
+  font-family: "Panton", sans-serif !important;
+}
+
+.form-control::placeholder,
+.popup input::placeholder, .modal input::placeholder,
+.popup textarea::placeholder, .modal textarea::placeholder {
+  font-size: 16px !important;
+  font-family: "Panton", sans-serif !important;
+}
+
+// Filet de sécurité tablette/smartphone pour ces règles génériques (au cas où un champ existerait
+// hors de .form-section, déjà couvert par ses propres paliers plus bas dans ce fichier) — mêmes
+// valeurs que get-parcelles.component.scss/registre.component.scss pour une taille cohérente sur
+// toute l'application.
+@media (min-width: 576px) and (max-width: 992px) {
+  input, select, textarea,
+  .form-control, .popup input, .modal input, .popup select, .modal select, .popup textarea, .modal textarea {
+    font-size: 26px !important;
+  }
+
+  input::placeholder, textarea::placeholder, select::placeholder,
+  .form-control::placeholder, .popup input::placeholder, .modal input::placeholder,
+  .popup textarea::placeholder, .modal textarea::placeholder {
+    font-size: 26px !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  input, select, textarea,
+  .form-control, .popup input, .modal input, .popup select, .modal select, .popup textarea, .modal textarea {
+    font-size: 19px !important;
+  }
+
+  input::placeholder, textarea::placeholder, select::placeholder,
+  .form-control::placeholder, .popup input::placeholder, .modal input::placeholder,
+  .popup textarea::placeholder, .modal textarea::placeholder {
+    font-size: 19px !important;
+  }
+}
+
+// Styles pour le contenu du travail au champ (sans popup overlay)
+.work-content {
+  padding-left: 20px;
+  width: 100%;
+  box-sizing: border-box; // Important pour que le padding soit inclus dans la largeur
+  position: relative; // Crée un contexte de positionnement
+  margin-top: 15px;
+  
+  // overflow:hidden (pas visible) : filet de sécurité dur, même principe que main{overflow:hidden
+  // !important} dans traitement-phyto.component.scss. Même avec flex:1;min-height:0 correctement
+  // posé, un écart de calcul minime (quelques px) pouvait fuiter vers .body (registre.component,
+  // overflow-y:auto) et y faire apparaître une deuxième scrollbar. En clippant ici, .scrollable-content
+  // (à l'intérieur, overflow-y:auto) reste la SEULE zone qui peut scroller, quoi qu'il arrive.
+  overflow: hidden;
+  // min-height:0 (pas fit-content) : .work-content est flex:1 (voir plus haut) et doit pouvoir
+  // se contraindre à l'espace réellement disponible pour que .scrollable-content, à l'intérieur,
+  // devienne le seul élément qui scroll (sinon .work-content grandit avec son contenu et on
+  // retrouve la double scrollbar).
+  min-height: 0;
+  
+  // Padding bottom pour éviter que le contenu soit caché par le bouton sticky
+  
+  .section-title {
+    flex-shrink: 0; // .work-content est flex:1 (colonne) : empêche le titre d'être compressé
+    margin-bottom: 6px;
+    h3 {
+      font-family: "Panton", sans-serif;
+      font-weight: 700;
+      font-size: 1.15em;
+      color: #0e103b;
+      margin: 0;
+    }
+  }
+  // Smartphone : le titre d'étape restait légèrement RÉTRÉCI par rapport au desktop (1.05em)
+  // avant cette session — incohérent avec le reste des popups (culture/traitement-phyto), où
+  // les titres grandissent aussi sur smartphone, pas seulement sur tablette.
+  @media (max-width: 575.98px) {
+    .section-title {
+      margin-bottom: 10px;
+      h3{
+        font-size: 1.3em;
+        line-height: 1.2;
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  // Styles pour la sélection des types de travaux
+  .work-type-selection {
+    width: 100%;
+    margin-bottom: 32px;
+    
+    .work-type-column {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); // 2 colonnes sur laptop/tablette
+      gap: 16px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding-bottom: 20px;
+      
+      // 1 colonne sur smartphone
+      @media (max-width: 576px) {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .work-type-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      
+      &:hover {
+        border-color: #03918a;
+        background-color: #d5f7f5;
+        
+        .card-icon i {
+          color: #03918a;
+        }
+      }
+      
+      .card-icon {
+        margin-right: 20px;
+        flex-shrink: 0;
+        
+        i {
+          font-size: 2.2em;
+          color: #6b7280;
+          transition: all 0.3s ease;
+        }
+      }
+      
+      .card-content {
+        flex: 1;
+        
+        h4 {
+          font-family: Roboto, "Helvetica Neue", sans-serif;
+          font-weight: 600;
+          font-size: 1.1em;
+          color: #1f2937;
+          margin: 0 0 6px 0;
+
+        }
+        
+        p {
+          font-size: 0.9em;
+          color: #6b7280;
+          margin: 0;
+          line-height: 1.4;
+        }
+      }
+    }
+
+  }
+
+  // Tags de regroupement
+  .group-by-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+
+    .group-by-tag {
+      padding: 7px 18px;
+      border-radius: 50px;
+      border: 2px solid #03918a;
+      background: transparent;
+      color: #03918a;
+      font-weight: 500;
+      font-size: 0.85em;
+      cursor: pointer;
+      line-height: 1;
+      transition: background 0.2s, color 0.2s;
+
+      &.active {
+        background: #03918a;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      &:hover:not(.active) {
+        background: rgba(3, 145, 138, 0.08);
+      }
+    }
+  }
+
+  // Styles pour la sélection des cultures
+  .culture-selection-grid {
+    margin-bottom: 100px; // Espace pour le bouton sticky
+    
+    .culture-group {
+      margin-bottom: 32px;
+      
+      .group-header {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 2px solid #03918a;
+        padding-bottom: 8px;
+
+        h4 {
+          font-family: Roboto, "Helvetica Neue", sans-serif;
+          font-weight: 600;
+          font-size: 1.1em;
+          color: #03918a;
+          margin: 0;
+          flex: 1;
+        }
+
+        .group-select-all {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+          margin-left: auto;
+          flex-shrink: 0;
+          user-select: none;
+
+          input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: #03918a;
+            cursor: pointer;
+            margin: 0;
+          }
+
+          .select-all-label {
+            font-size: 0.75em;
+            color: #03918a;
+            font-weight: 500;
+            white-space: nowrap;
+          }
+        }
+      }
+      
+      // Copie exacte de .parcel-cards-grid/.parcel-card dans traitement-phyto.component.scss
+      // (voir son commentaire "NOUVEAU STYLE MODERNE... Même style que le travail au champ") :
+      // les deux formulaires partagent la même structure de groupes (group-by-tags/culture-group/
+      // group-header "Tout sélectionner") et doivent rester visuellement identiques.
+      .parcel-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 10px;
+      }
+
+      .parcel-card {
+        display: flex;
+        align-items: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: auto;
+
+        // Empêche les débordements
+        contain: layout style;
+        transform: translateZ(0);
+
+        input[type="checkbox"] {
+          margin-right: 12px;
+          width: 18px;
+          height: 18px;
+          accent-color: #03918a;
+        }
+
+        &:hover {
+          border-color: #03918a;
+          background: #f8fffe;
+        }
+
+        &.selected {
+          border-color: #03918a;
+          background: #f0fdfa;
+          box-shadow: 0 4px 12px rgba(3, 145, 138, 0.1);
+        }
+
+        .card-icon {
+          margin-right: 12px;
+
+          i {
+            font-size: 1.5em;
+            color: #03918a;
+          }
+        }
+
+        .card-content {
+          flex: 1;
+
+          .parcel-name {
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 2px;
+            font-size: 1.15em;
+          }
+
+          .crop-name {
+            color: #6b7280;
+            font-size: 1em;
+          }
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6b7280;
+      
+      i {
+        font-size: 3em;
+        margin-bottom: 16px;
+        display: block;
+        color: #d1d5db;
+      }
+      
+      p {
+        margin: 0;
+        font-style: italic;
+      }
+
+    }
+
+    // 📱 Comportement mobile dropdown pour les groupes de cultures
+    .mobile-toggle-arrow {
+      display: none; // Caché par défaut sur desktop/tablette
+    }
+
+    @media (max-width: 575.98px) {
+      .culture-group {
+        .group-header {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          user-select: none;
+          
+          .mobile-toggle-arrow {
+            display: inline-block;
+            font-size: 1em;
+            color: #03918a;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-origin: center;
+          }
+          
+          h4 {
+            flex: 1;
+          }
+
+          .group-select-all {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            margin-left: auto;
+            flex-shrink: 0;
+            user-select: none;
+
+            input[type="checkbox"] {
+              width: 15px;
+              height: 15px;
+              accent-color: #03918a;
+              cursor: pointer;
+              margin: 0;
+            }
+
+            .select-all-label {
+              font-size: 0.75em;
+              color: #03918a;
+              font-weight: 500;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        // Par défaut sur mobile, le grid est caché
+        .parcel-cards-grid {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: max-height 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+                      opacity 0.3s ease;
+        }
+
+        // Quand le groupe est ouvert
+        &.expanded {
+          .mobile-toggle-arrow {
+            transform: rotate(90deg);
+          }
+
+          .parcel-cards-grid {
+            max-height: 5000px; // Grande valeur pour s'adapter à tout contenu
+            opacity: 1;
+            margin-top: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  // Conteneur scrollable universel - applique les mêmes règles que les autres composants
+  .scrollable-content {
+    // flex:1 au lieu de max-height:50vh : une hauteur en vh est déconnectée de l'espace
+    // réellement alloué par le popup (header + barre de progression), ce qui forçait aussi
+    // le .body externe (registre.component, overflow-y:auto) à scroller en plus — d'où les
+    // deux scrollbars. Même correctif que .scrollable-content dans traitement-phyto.component.scss.
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+
+    // Sur mobile, un peu plus de padding pour le bouton flottant
+    @media (max-width: 576px) {
+      padding-bottom: 110px;
+    }
+
+    // Style de la scrollbar personnalisée
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #03918a;
+      border-radius: 4px;
+      
+      &:hover {
+        background: #024d4a;
+      }
+    }
+    
+    // Pour Firefox
+    scrollbar-width: thin;
+  }
+
+  // Styles pour les formulaires
+  .form-section {
+    margin-bottom: 32px;
+    
+    .form-group {
+      margin-bottom: 20px;
+      
+      // Même classe que traitement-phyto/culture, pour cohérence (voir .simple-label global
+      // dans ces composants — copié ici plutôt que globalisé, chaque popup garde son SCSS scopé).
+      .simple-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 1em;
+        position: relative;
+      }
+
+      // Bordure/radius/focus alignés sur .popup-text-input (teal) — le sélecteur générique
+      // input.form-control (tag+classe) est nécessaire pour battre Materialize (chargé
+      // globalement), qui impose sinon un style "underline" à tout input non .browser-default.
+      input.form-control,
+      input[type="date"].form-control,
+      input[type="time"].form-control,
+      select.form-control {
+        width: 100%;
+        height: 40px !important;
+        padding: 8px 12px !important;
+        margin: 0 !important;
+        border: 1.5px solid #dee2e6 !important;
+        border-radius: 8px;
+        font-size: 16px !important;
+        background: #fff;
+        box-sizing: border-box;
+        transition: border-color 0.15s, box-shadow 0.15s;
+
+        &:focus {
+          outline: none;
+          border-color: #05b1af !important;
+          box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+        }
+
+        &::placeholder {
+          color: #9ca3af;
+          font-style: italic;
+          font-size: 16px !important;
+        }
+      }
+
+      textarea.form-control {
+        width: 100%;
+        padding: 7px 12px;
+        border: 1.5px solid #dee2e6;
+        border-radius: 8px;
+        resize: vertical;
+        min-height: 100px;
+        background: #fff;
+        transition: border-color 0.15s, box-shadow 0.15s;
+
+        &:focus {
+          outline: none;
+          border-color: #05b1af;
+          box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+        }
+      }
+    }
+    
+    // Le champ dose + unité utilise maintenant .encoding-row/.field-col/.field-input/.field-select
+    // (styles.scss:685, scope étendu à app-travail-au-champ) — deux champs distincts dans le
+    // même style que traitement-phyto, plutôt qu'un .dose-input-wrapper local fait maison.
+
+    // Dropdown "Unité" : réutilise .dropdown-container/.dropdown-btn/.dropdown-panel/.dropdown-list
+    // globaux (voir src/styles/_popup-system.scss), même pattern que le dropdown "Cible" de
+    // traitement-phyto — seule la hauteur/police du bouton est alignée sur .field-input/.field-select
+    // voisins (36px, mêmes valeurs que $ec-height/$ec-font-size/$ec-border-color/$ec-border-radius
+    // dans styles.scss, non réutilisables telles quelles ici car scoping SCSS séparé).
+    .dose-unit-dropdown .dropdown-btn {
+      height: 36px;
+      // .dropdown-btn (global, _popup-system.scss) impose min-height:40px — sans le réduire ici
+      // aussi, le calcul de hauteur finale du navigateur (max(height, min-height)) rend ce bouton
+      // 4px plus haut que .field-input/.field-select voisins malgré height:36px ci-dessus.
+      min-height: 36px;
+      padding: 0 0.6rem;
+      font-size: 0.875rem;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+    }
+
+    // Espace sous la ligne Date/Quantité/Unité (.encoding-row, styles.scss) avant le champ
+    // suivant (ex. Remarques) — .encoding-row n'a qu'un margin-top global, pas de margin-bottom,
+    // contrairement à .form-group ci-dessus qui en a un.
+    .encoding-row {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+
+      .form-group.half-width {
+        flex: 1;
+      }
+    }
+  }
+
+  // Tablette : cartes de sélection (type de travail, parcelles) et champs de formulaire
+  // agrandis — la grille 2 colonnes laissait largement la place à cette largeur, mais gardait
+  // des tailles pensées pour un écran de téléphone étroit. !important partout : ces sélecteurs
+  // sont plus courts que les originaux imbriqués (.work-content .work-type-selection
+  // .work-type-card, .work-content .culture-selection-grid .culture-group .parcel-card...) et
+  // perdraient sinon silencieusement en spécificité CSS face à eux.
+  @media (min-width: 576px) and (max-width: 992px) {
+    .work-type-card {
+      padding: 28px 30px !important;
+
+      .card-icon i { font-size: 3.8em !important; }
+
+      .card-content {
+        h4 { font-size: 1.85em !important; }
+        p { font-size: 1.4em !important; }
+      }
+    }
+
+    .culture-group {
+      .group-header h4 { font-size: 1.85em !important; }
+      .group-select-all .select-all-label { font-size: 1.25em !important; }
+    }
+
+    .parcel-card {
+      padding: 26px 30px !important;
+
+      .card-icon i { font-size: 2.7em !important; }
+
+      .card-content {
+        .parcel-name { font-size: 1.85em !important; }
+        .crop-name { font-size: 1.55em !important; }
+      }
+    }
+
+    .group-by-tags .group-by-tag {
+      padding: 15px 32px !important;
+      font-size: 1.35em !important;
+    }
+
+    .form-section {
+      .simple-label {
+        font-size: 1.6em !important;
+      }
+
+      input.form-control,
+      input[type="date"].form-control,
+      input[type="time"].form-control,
+      select.form-control {
+        height: 70px !important;
+        padding: 18px 22px !important;
+        font-size: 26px !important;
+
+        &::placeholder {
+          font-size: 26px !important;
+        }
+      }
+
+      // Textarea (Remarques/Rendement/Observation...) n'avait jusqu'ici aucun palier tablette —
+      // seuls les <input>/<select> ci-dessus en avaient un.
+      textarea.form-control {
+        min-height: 160px !important;
+        padding: 18px 22px !important;
+        font-size: 26px !important;
+
+        &::placeholder {
+          font-size: 26px !important;
+        }
+      }
+
+      .encoding-row {
+        margin-bottom: 28px !important;
+      }
+    }
+
+    .section-title h3 {
+      font-size: 1.7em !important;
+    }
+
+    // Dropdown "Unité" (étape Irrigation) : alignée en desktop sur la hauteur de .field-input/
+    // .field-select voisins (36px, voir plus haut) mais sans !important ni palier tablette/
+    // smartphone — le boost global de .field-input/.field-select (styles.scss, scope étendu à
+    // app-travail-au-champ) grandit donc sans elle, désalignant "Unité" de "Date"/"Quantité".
+    .dose-unit-dropdown .dropdown-btn {
+      height: 56px !important;
+      min-height: 56px !important;
+      padding: 0 1rem !important;
+      font-size: 1.1rem !important;
+    }
+  }
+
+  // Smartphone (≤576px) : les libellés restaient à la taille desktop compacte alors que la
+  // tablette juste au-dessus est largement agrandie — même logique appliquée ici, à une échelle
+  // un peu plus mesurée vu la largeur d'écran réduite.
+  @media (max-width: 575.98px) {
+    .form-section .simple-label {
+      font-size: 1.2em !important;
+    }
+
+    .form-section {
+      input.form-control,
+      input[type="date"].form-control,
+      input[type="time"].form-control,
+      select.form-control {
+        height: 50px !important;
+        // Padding vertical auparavant nul (0 14px) — normesResponsive.md §46-56 recommande
+        // 10-12px sur smartphone/tablette.
+        padding: 10px 14px !important;
+        font-size: 19px !important;
+
+        &::placeholder {
+          font-size: 19px !important;
+        }
+      }
+
+      textarea.form-control {
+        min-height: 110px !important;
+        padding: 14px 16px !important;
+        font-size: 19px !important;
+
+        &::placeholder {
+          font-size: 19px !important;
+        }
+      }
+
+      .encoding-row {
+        margin-bottom: 20px !important;
+      }
+    }
+
+    .dose-unit-dropdown .dropdown-btn {
+      height: 46px !important;
+      min-height: 46px !important;
+      padding: 0 0.8rem !important;
+      font-size: 0.95rem !important;
+    }
+
+    .work-type-card {
+      padding: 20px 22px !important;
+
+      .card-icon i { font-size: 2.6em !important; }
+
+      .card-content {
+        h4 { font-size: 1.3em !important; }
+        p { font-size: 1em !important; }
+      }
+    }
+
+    .culture-group {
+      .group-header h4 { font-size: 1.3em !important; }
+      .group-select-all .select-all-label { font-size: 1em !important; }
+    }
+
+    .parcel-card {
+      padding: 16px 18px !important;
+
+      .card-icon i { font-size: 1.9em !important; }
+
+      .card-content {
+        .parcel-name { font-size: 1.3em !important; }
+        .crop-name { font-size: 1.1em !important; }
+      }
+    }
+
+    .group-by-tags .group-by-tag {
+      padding: 10px 20px !important;
+      font-size: 1.05em !important;
+    }
+  }
+
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .work-content {
+    .work-type-selection .work-type-column {
+      max-width: none;
+      
+      .work-type-card {
+        padding: 16px 20px;
+        
+        .card-icon {
+          margin-right: 16px;
+          
+          i {
+            font-size: 2em;
+          }
+        }
+        
+        .card-content {
+          h4 {
+            font-size: 1em;
+          }
+          
+          p {
+            font-size: 0.85em;
+          }
+        }
+      }
+    }
+    
+    .culture-selection-grid .parcel-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-section .form-row {
+      flex-direction: column;
+      
+      .form-group.half-width {
+        width: 100%;
+      }
+    }
+  }
+}
+
+
+// =============================================================================
+// REFONTE V2 — POPUP "TRAVAIL AU CHAMP" (sous-étape 4 du Carnet de champ)
+// Même rendu que la popup Culture : libellés bleu nuit, astérisque rouge, cartes à rond vert
+// clair (sarcelle plein quand sélectionnée), pastilles de regroupement, champs 44px.
+// Préfixé par :host pour l'emporter sur les règles ci-dessus sans les supprimer. Couleurs à
+// toutes les tailles ; tailles (police, padding, hauteur) uniquement ≥ 993px pour laisser
+// intacts les paliers tablette/smartphone existants.
+// =============================================================================
+:host .work-content {
+  .section-title h3 {
+    font-family: "Panton", sans-serif;
+    color: #12103c;
+  }
+
+  // ─── Écran 1 : choix du type de travail ───────────────────────────────────
+  .work-type-selection .work-type-card {
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+
+    .card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      padding: 10px;
+      border-radius: 50%;
+      background: #e3f6f3;
+      transition: background-color 0.15s;
+
+      i { color: #03918a; line-height: 1; }
+    }
+
+    .card-content {
+      h4 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        color: #12103c;
+      }
+
+      p { color: #6b7280; }
+    }
+
+    &:hover {
+      border-color: #05b1af;
+      background-color: #f0faf9;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+
+      .card-icon { background: #05b1af; }
+      .card-icon i { color: #ffffff; }
+    }
+  }
+
+  // ─── Écran 2 : parcelles et cultures ──────────────────────────────────────
+  .group-by-tags .group-by-tag {
+    border: 1.5px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    font-family: "Panton", sans-serif;
+    font-weight: 600;
+    border-radius: 999px;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+
+    &:hover:not(.active) {
+      border-color: #05b1af;
+      color: #03918a;
+      background: #ffffff;
+    }
+
+    &.active {
+      background: #05b1af;
+      border-color: #05b1af;
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+
+  .culture-selection-grid {
+    .culture-group .group-header {
+      border-bottom: 1px solid #edf0f3;
+
+      h4 {
+        font-family: "Panton", sans-serif;
+        font-weight: 700;
+        color: #12103c;
+      }
+
+      .group-select-all {
+        // Une seule case : la case native (sarcelle) ; la fausse case que Materialize dessine sur
+        // le <span> suivant (::before / ::after) est retirée — sinon deux cases s'affichaient.
+        input[type="checkbox"] {
+          position: static;
+          opacity: 1;
+          pointer-events: auto;
+          accent-color: #05b1af;
+        }
+
+        input[type="checkbox"] + span {
+          padding-left: 0;
+          height: auto;
+          line-height: normal;
+
+          &::before,
+          &::after { display: none !important; }
+        }
+
+        .select-all-label { color: #03918a; font-weight: 600; }
+      }
+
+      .mobile-toggle-arrow { color: #03918a; }
+    }
+
+    .culture-group .parcel-card {
+      border: 1.5px solid #dee2e6;
+      border-radius: 10px;
+      transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+
+      // Case native masquée : la sélection se lit avec la coche et le rond sarcelle
+      input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        margin: 0;
+      }
+
+      .card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1;
+        padding: 8px;
+        border-radius: 50%;
+        background: #e3f6f3;
+        transition: background-color 0.15s;
+
+        i { color: #03918a; line-height: 1; }
+      }
+
+      .card-content {
+        min-width: 0;
+
+        .parcel-name {
+          font-weight: 700;
+          color: #12103c;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .crop-name { color: #6b7280; }
+      }
+
+      .card-check {
+        flex-shrink: 0;
+        margin-left: 10px;
+        color: #dee2e6;
+        transition: color 0.15s;
+      }
+
+      &:hover {
+        border-color: #05b1af;
+        background: #ffffff;
+      }
+
+      &.selected {
+        border-color: #05b1af;
+        background: #f0faf9;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+
+        .card-icon { background: #05b1af; }
+        .card-icon i { color: #ffffff; }
+        .card-check { color: #05b1af; }
+      }
+    }
+
+    .empty-state i { color: #d1d5db; }
+    .empty-state p { color: #6b7280; font-style: normal; }
+  }
+
+  .loading-state {
+    .spinner-border.text-primary { color: #05b1af !important; }
+    h5 { font-family: "Panton", sans-serif; color: #12103c; }
+  }
+
+  // ─── Écran 3 : détails ────────────────────────────────────────────────────
+  .form-section {
+    .form-group .simple-label,
+    .field-label {
+      font-family: "Panton", sans-serif;
+      font-weight: 600;
+      color: #12103c;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .simple-label sup,
+    .field-label sup { color: #dc3545; }
+
+    .form-group {
+      input.form-control,
+      input[type="date"].form-control,
+      textarea.form-control {
+        border-radius: 8px !important;
+        color: #12103c;
+
+        &:hover { border-color: #adb5bd !important; }
+        &:focus { border-color: #05b1af !important; }
+      }
+
+      textarea.form-control { border: 1.5px solid #dee2e6 !important; }
+    }
+
+    .field-input:focus {
+      border-color: #05b1af !important;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+    }
+  }
+}
+
+// Tailles bureau (≥ 993px) : libellés 0.9rem, champs 44px, cartes compactes
+@media (min-width: 993px) {
+  :host .work-content {
+    .section-title h3 { font-size: 1.05rem; }
+
+    .work-type-selection .work-type-card {
+      padding: 12px 14px;
+
+      .card-icon {
+        margin-right: 14px;
+
+        i { font-size: 1.3rem; }
+      }
+
+      .card-content {
+        h4 { font-size: 1rem; margin-bottom: 2px; }
+        p { font-size: 0.85rem; }
+      }
+    }
+
+    .group-by-tags .group-by-tag {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+    }
+
+    .culture-selection-grid {
+      .culture-group .group-header h4 { font-size: 0.95rem; }
+      .culture-group .group-header .group-select-all .select-all-label { font-size: 0.82rem; }
+
+      .culture-group .parcel-card {
+        padding: 10px 14px;
+
+        .card-icon { margin-right: 12px; }
+        .card-icon i { font-size: 1.05rem; }
+
+        .card-content {
+          .parcel-name { font-size: 0.92rem; margin-bottom: 0; }
+          .crop-name { font-size: 0.8rem; }
+        }
+
+        .card-check { font-size: 18px; }
+      }
+    }
+
+    .form-section {
+      .form-group .simple-label,
+      .field-label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+
+      .form-group {
+        input.form-control,
+        input[type="date"].form-control {
+          height: 44px !important;
+          padding: 0 12px !important;
+        }
+
+        textarea.form-control { padding: 10px 12px; }
+      }
+
+      .field-input {
+        height: 44px !important;
+        padding: 0 12px !important;
+        font-size: 16px !important;
+      }
+
+      .dose-unit-dropdown .dropdown-btn {
+        height: 44px;
+        min-height: 44px;
+        padding: 0 12px;
+        font-size: 16px;
+        border-color: #dee2e6;
+      }
+    }
+  }
+}
+
+// Coche des cartes et libellés d'irrigation : suivent les paliers agrandis existants
+@media (min-width: 576px) and (max-width: 992px) {
+  :host .work-content .culture-selection-grid .culture-group .parcel-card .card-check { font-size: 2.2em; }
+  :host .work-content .form-section .field-label { font-size: 1.6em; }
+}
+
+@media (max-width: 575.98px) {
+  :host .work-content .culture-selection-grid .culture-group .parcel-card .card-check { font-size: 1.5em; }
+  :host .work-content .form-section .field-label { font-size: 1.2em; }
+}
+
+// Message de validation (même rendu que les autres popups)
+:host .field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  color: #dc3545;
+  font-size: 0.82rem;
+
+  i { font-size: 0.85rem; }
+}
+
+:host input.input-error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 1px #dc3545 !important;
+}

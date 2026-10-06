@@ -1,0 +1,22 @@
+[
+    {
+        "action": "get_inventories",
+        "id_user": "temp_4c7b73d6"
+    },
+    {
+        "action": "get_inventories",
+        "id_user": "temp_4c7b73d6"
+    },
+    {
+        "action": "get_parcelles",
+        "id_user": "temp_4c7b73d6"
+    },
+    {
+        "action": "get_cultures",
+        "id_user": "temp_4c7b73d6"
+    },
+    {
+        "action": "get_inventories",
+        "id_user": "temp_4c7b73d6"
+    }
+]

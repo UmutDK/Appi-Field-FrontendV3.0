@@ -1,0 +1,429 @@
+// Vue "par cultures" du Carnet de champ — une carte par culture, même style que les encadrés
+// (.dashboard-card) et tableaux (Parcelles / Inventaire) du reste de l'app.
+// Structure HTML et comportement inchangés (répartition gauche/droite calculée côté TS,
+// infobulle des parcelles pilotée par .show, pagination).
+
+// Grille 2 colonnes indépendantes : chaque colonne s'empile toute seule sans se synchroniser
+// sur la hauteur de la carte voisine. Répartition gauche/droite calculée côté TS
+// (leftColumnCultures/rightColumnCultures) — un flex 2 colonnes déterministe, sans le décalage
+// vertical de CSS column-count.
+.cultures-columns {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    @media (max-width: 992px) {
+        flex-direction: column;
+        gap: 0;
+        // Avec flex-direction:column, l'axe transversal devient la largeur : stretch pour que
+        // chaque carte occupe 100% (sinon débordement horizontal sur mobile).
+        align-items: stretch;
+    }
+}
+
+.cultures-column {
+    flex: 1;
+    min-width: 0;
+}
+
+.culture-card-col {
+    margin-bottom: 16px;
+    min-width: 0;
+}
+
+.cadre {
+    min-width: 0;
+
+    // Carte (.card Bootstrap) → même encadré que .dashboard-card
+    .card {
+        min-width: 0;
+        background: #ffffff;
+        border: 1px solid #edf0f3 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        .card-body {
+            min-width: 0;
+            padding: 18px 20px !important;
+
+            // Les .row Bootstrap internes : pas de marges négatives parasites
+            > .row {
+                margin-left: 0;
+                margin-right: 0;
+
+                > [class*="col-"] {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
+
+            // Nom de la culture
+            h3 {
+                font-family: "Panton", sans-serif;
+                font-weight: 700;
+                font-size: 1.15rem;
+                color: #12103c;
+                margin: 0;
+            }
+
+            // Bouton "modifier" (crayon discret, en haut à droite de la carte)
+            .edit-icon-container {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .icon {
+                display: flex;
+
+                .edit-icon {
+                    width: 34px;
+                    height: 34px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1px solid transparent;
+                    border-radius: 8px;
+                    color: #6b7280;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+
+                    i { font-size: 1rem; }
+
+                    &:hover {
+                        background: #e3f6f3;
+                        border-color: #b9e6e1;
+                        color: #03918a;
+                    }
+                }
+            }
+
+            // Catégorie Phytoweb (badge)
+            .section2 {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+
+                .category-phyto {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 3px 10px;
+                    border-radius: 999px;
+                    background: #e3f6f3;
+                    color: #03918a;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+
+                    .icon .material-icons { font-size: 0.95rem; }
+                }
+
+                .eppo-code {
+                    visibility: hidden;
+                    display: flex;
+                    align-items: center;
+                }
+            }
+
+            // Parcelles (badge cliquable + infobulle)
+            .section3 {
+                display: flex;
+                margin-top: 8px;
+
+                .parcelles-container {
+                    position: relative;
+                    display: inline-block;
+                    cursor: pointer;
+
+                    .parcelles {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 4px;
+                        padding: 3px 10px;
+                        border-radius: 999px;
+                        background: #f3f4f6;
+                        color: #12103c;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        transition: background 0.15s ease;
+
+                        .icon .material-icons {
+                            font-size: 0.95rem;
+                            color: #05b1af;
+                        }
+                    }
+
+                    &:hover .parcelles { background: #e5e7eb; }
+
+                    // Infobulle — sous le badge (au-dessus, elle pouvait sortir du viewport)
+                    .parcelles-tooltip {
+                        position: absolute;
+                        top: calc(100% + 8px);
+                        left: 0;
+                        background: #ffffff;
+                        border: 1px solid #edf0f3;
+                        border-radius: 10px;
+                        box-shadow: 0 10px 30px rgba(18, 16, 60, 0.14);
+                        min-width: 200px;
+                        max-width: 300px;
+                        opacity: 0;
+                        visibility: hidden;
+                        transition: opacity 0.2s ease;
+                        z-index: 1000;
+                        pointer-events: none;
+
+                        .tooltip-header {
+                            padding: 8px 12px;
+                            border-bottom: 1px solid #edf0f3;
+                            background: #f8f9fa;
+                            border-radius: 10px 10px 0 0;
+                            color: #6b7280;
+                            font-size: 0.72rem;
+                            font-weight: 700;
+                            letter-spacing: 0.05em;
+                            text-transform: uppercase;
+                        }
+
+                        .tooltip-list {
+                            padding: 6px 0;
+                            max-height: 250px;
+                            overflow-y: auto;
+
+                            .tooltip-item {
+                                display: flex;
+                                align-items: center;
+                                padding: 6px 12px;
+                                color: #12103c;
+                                font-size: 0.85rem;
+
+                                i {
+                                    font-size: 1rem;
+                                    color: #05b1af;
+                                    margin-right: 4px;
+                                }
+                            }
+                        }
+
+                        .tooltip-list::-webkit-scrollbar { width: 4px; }
+                        .tooltip-list::-webkit-scrollbar-track { background: transparent; }
+                        .tooltip-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+                    }
+
+                    // Afficher l'infobulle au survol et surtout au clic (.show, piloté par le composant)
+                    &:hover .parcelles-tooltip,
+                    .parcelles-tooltip.show {
+                        opacity: 1;
+                        visibility: visible;
+                        pointer-events: auto;
+                    }
+                }
+            }
+
+            // Tableau des événements — même style que Parcelles / Inventaire
+            .tableau-moderne {
+                margin-top: 14px;
+                border: 1px solid #edf0f3;
+                border-radius: 10px;
+                overflow: hidden;
+                background: #ffffff;
+
+                .table-moderne {
+                    width: 100%;
+                    margin: 0;
+                    border-collapse: collapse;
+                    font-size: 0.88rem;
+
+                    thead {
+                        background: #f8f9fa;
+
+                        th {
+                            padding: 9px 12px;
+                            border: none;
+                            border-bottom: 1px solid #edf0f3;
+                            border-radius: 0;
+                            color: #6b7280;
+                            font-size: 0.72rem;
+                            font-weight: 700;
+                            letter-spacing: 0.05em;
+                            text-transform: uppercase;
+                            text-align: left;
+                            white-space: nowrap;
+                        }
+                    }
+
+                    tbody tr {
+                        border: none;
+                        background: #ffffff;
+                        transition: background 0.15s ease;
+
+                        &.row-alternate { background: #ffffff; }
+
+                        &:hover { background: #f8fbfb; }
+
+                        &:not(:last-child) td { border-bottom: 1px solid #f1f3f5; }
+
+                        td {
+                            padding: 8px 12px;
+                            border: none;
+                            border-radius: 0;
+                            color: #374151;
+                            vertical-align: middle;
+
+                            &:first-child {
+                                white-space: nowrap;
+                                color: #12103c;
+                                font-weight: 500;
+                            }
+
+                            &.no-data {
+                                padding: 24px 16px;
+                                text-align: center;
+                                color: #9ca3af;
+                                font-style: normal;
+                            }
+                        }
+                    }
+                }
+
+                // Pagination
+                .pagination-container {
+                    padding: 8px 10px;
+                    background: #f8f9fa;
+                    border-top: 1px solid #edf0f3;
+
+                    .pagination-controls {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .pagination-btn {
+                            width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0;
+                            background: #ffffff;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            color: #6b7280;
+                            cursor: pointer;
+                            transition: all 0.15s ease;
+
+                            .material-icons { font-size: 18px; }
+
+                            &:hover:not(:disabled) {
+                                border-color: #05b1af;
+                                color: #03918a;
+                            }
+
+                            &:disabled {
+                                opacity: 0.45;
+                                cursor: not-allowed;
+                            }
+                        }
+
+                        .pagination-info {
+                            font-size: 0.82rem;
+                            color: #6b7280;
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Carte cliquable (ouvre le détail de la culture)
+    &.culture-card-clickable {
+        cursor: pointer;
+
+        &:hover .card {
+            border-color: #b9e6e1 !important;
+            box-shadow: 0 4px 16px rgba(18, 16, 60, 0.1);
+        }
+    }
+}
+
+// Tablette : badges, tableau et pagination agrandis (palier existant conservé)
+@media (min-width: 576px) and (max-width: 992px) {
+    .cadre .card .card-body {
+        padding: 22px !important;
+
+        h3 { font-size: 1.4rem; }
+
+        .section2 .category-phyto,
+        .section3 .parcelles-container .parcelles {
+            padding: 6px 14px;
+            font-size: 1rem;
+        }
+
+        .tableau-moderne .table-moderne {
+            font-size: 1.05rem;
+
+            thead th { padding: 12px 14px; font-size: 0.85rem; }
+            tbody td { padding: 12px 14px; }
+        }
+
+        .tableau-moderne .pagination-container .pagination-controls {
+            .pagination-btn {
+                width: 44px;
+                height: 44px;
+
+                .material-icons { font-size: 24px; }
+            }
+
+            .pagination-info { font-size: 1rem; }
+        }
+    }
+}
+
+// Message "aucun résultat" de la recherche
+.alert {
+    border-radius: 14px;
+    padding: 24px;
+    margin: 0 0 16px;
+
+    &.alert-info {
+        background: #ffffff;
+        border: 1px solid #edf0f3;
+        box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+        color: #6b7280;
+
+        .material-icons {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #9ca3af;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+
+            strong {
+                color: #03918a;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+// Chargement
+.spinner-border.text-primary { color: #05b1af !important; }
+
+// Mobile : le crayon "modifier" reste masqué (comportement existant — la modification passe
+// par le détail de la culture)
+@media (max-width: 990px) {
+    .edit-icon-container {
+        display: none !important;
+    }
+}
+
+// Catégorie Phytoweb inconnue : « Catégorie non définie » en gris (au lieu d'une pastille vide),
+// comme dans le détail de la culture.
+.cadre .card .card-body .section2 .category-phyto.category-phyto--none {
+    background: #f3f4f6;
+    color: #6b7280;
+}

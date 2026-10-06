@@ -1,0 +1,286 @@
+﻿// ============================================
+// STYLES AUTONOMES - POPUP PPNU/PPNV
+// Chrome (header/footer/champs/dropdowns/boutons) fourni par le système de popup partagé
+// (src/styles/_popup-system.scss) — même structure que le formulaire d'ajout de parcelle
+// (parcelles.component.html : .simple-label/.popup-text-input/.dropdown-container). Ne reste
+// ici que ce qui est spécifique à ce formulaire.
+// ============================================
+
+$color-primary: #03918a;
+$color-primary-dark: #027a74;
+$color-text-light: #6b7280;
+$color-warning: #ffc107;
+
+// <app-ppnu-ppnv> (la balise hôte du composant, entre .body et .ppnu-form-container dans le
+// DOM) est display:inline par défaut — le flex:1 posé sur .ppnu-form-container/.ajouterUneCulture
+// ne servait donc à rien, son vrai parent flex direct (.body) ne le voyait pas comme un enfant
+// flex extensible. En le rendant flex lui-même ici, il relaie correctement le flex:1 de .body
+// jusqu'à .ppnu-form-container.
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+// Ce build Bootstrap ne fournit pas la règle de gouttière horizontale standard
+// (padding-right/left: calc(var(--bs-gutter-x) * .5) sur .col-*) — même contournement que
+// parcelles.component.scss : sans ce padding, les colonnes adjacentes se collent/chevauchent.
+.row > [class*="col-"] {
+  padding-right: calc(var(--bs-gutter-x, 1.5rem) * .5);
+  padding-left: calc(var(--bs-gutter-x, 1.5rem) * .5);
+}
+
+// ============================================
+// CONTENEUR PRINCIPAL
+// ============================================
+.ppnu-form-container {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 80vh; // Limite la hauteur pour activer le scroll (popup centrée, desktop)
+
+  // En dessous de 1200px, .popup-container passe en plein écran (100vh, voir
+  // popup-mobile-fullscreen dans _popup-system.scss) et .body/.ajouterUneCulture
+  // (accueil-inventaire.component.scss) sont flex:1 pour remplir tout l'espace restant sous le
+  // header — un max-height en vh ici n'a alors plus de rapport avec l'espace réellement
+  // disponible et laissait un grand vide sous le formulaire. height:100% relaie plutôt la
+  // taille réelle du parent flex.
+  @media (max-width: 992px) {
+    max-height: none;
+    height: 100%;
+  }
+
+  // ============================================
+  // ZONE SCROLLABLE
+  // ============================================
+  // Padding aligné sur .popup-body (src/styles/_popup-system.scss) : le wrapper de ce popup
+  // dans accueil-inventaire.component.html porte la classe "body" (pas "popup-body", pour
+  // éviter un double padding avec la gestion interne du scroll) — il faut donc le reproduire
+  // ici explicitement, sinon le formulaire colle aux bords du popup.
+  .popup-content-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; // Important pour que flex + overflow fonctionne
+    padding: 20px;
+
+    @media (max-width: 575.98px) {
+      padding: 16px;
+    }
+
+    @media (min-width: 576px) and (max-width: 992px) {
+      padding: 34px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      border: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-primary;
+      border-radius: 4px;
+
+      &:hover {
+        background: $color-primary-dark;
+      }
+    }
+
+    scrollbar-width: thin;
+  }
+
+  // Libellé fixe au-dessus du champ — même style que parcelles.component.scss (le popup
+  // n'utilise pas .popup-body, dont dépend la définition partagée, donc reproduit ici).
+  .simple-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 1em;
+  }
+
+  .form-text {
+    color: $color-text-light;
+    font-size: 0.85em;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i {
+      font-size: 0.9em;
+    }
+
+    &.text-warning {
+      color: $color-warning !important;
+      background: rgba(255, 193, 7, 0.1);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+
+      i {
+        color: $color-warning;
+      }
+    }
+  }
+
+  // ============================================
+  // BOUTONS D ACTION
+  // Layout/couleurs désormais fournis par .popup-footer/.btn-primary/.btn-secondary
+  // (classes ajoutées dans le template, voir src/styles/_popup-system.scss). Le footer est
+  // maintenant un frère direct de .popup-content-scrollable (hors du <form> et du padding),
+  // exactement comme dans parcelles — plus besoin de marges négatives pour compenser un padding
+  // parent (l'approche précédente laissait un écart blanc résiduel, le <form> ne répercutant
+  // pas correctement la marge négative dans son propre calcul de hauteur).
+  .action-buttons.popup-footer {
+    .spinner-border-sm {
+      width: 1rem;
+      height: 1rem;
+      border-width: 0.15em;
+    }
+  }
+}
+
+// Materialize (chargé globalement dans l'app) impose un style "underline" sans cadre à tout
+// input[type=text/date/number] non marqué .browser-default. Le contournement par attribut+classe
+// (même spécificité que parcelles.component.scss) ne suffisait pas ici — passage par ID
+// (spécificité maximale, aucune ambiguïté possible) pour être certain de gagner.
+input[type="date"].form-control,
+input[type="number"].form-control,
+#ppnuDate,
+#ppnuQuantity {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  border: 1.5px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  padding: 0 12px !important;
+  height: 44px !important; // hauteur standard des champs de l'app (44px)
+  font-size: 0.95rem !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+
+  &:hover {
+    border-color: #adb5bd !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    border-color: #05b1af !important;
+    box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+  }
+}
+
+// Tablette : même palier que parcelles.component.scss — la surcouche anti-Materialize
+// ci-dessus fixe une hauteur/padding desktop en dur, il faut donc republier l'agrandissement
+// tablette par-dessus (le boost tablette global de .popup-text-input, sans !important, ne
+// pourrait pas battre les règles !important ci-dessus).
+@media (min-width: 576px) and (max-width: 992px) {
+  input[type="date"].form-control,
+  input[type="number"].form-control,
+  #ppnuDate,
+  #ppnuQuantity {
+    height: 62px !important;
+    padding: 0 18px !important;
+    font-size: 26px !important;
+
+    &::placeholder {
+      font-size: 26px !important;
+    }
+  }
+
+  .simple-label {
+    font-size: 1.3rem !important;
+  }
+}
+
+// Smartphone (≤576px) : même logique que la tablette juste au-dessus, à une échelle
+// un peu plus mesurée vu la largeur d'écran réduite.
+@media (max-width: 575.98px) {
+  // Même remarque que le palier tablette ci-dessus : ces champs avaient un boost tablette mais
+  // aucun palier smartphone, contrairement à .simple-label.
+  input[type="date"].form-control,
+  input[type="number"].form-control,
+  #ppnuDate,
+  #ppnuQuantity {
+    height: 50px !important;
+    padding: 0 14px !important;
+    font-size: 19px !important;
+
+    &::placeholder {
+      font-size: 19px !important;
+    }
+  }
+
+  .simple-label {
+    font-size: 1.1rem !important;
+  }
+}
+
+// Menus déroulants (Produit, Type, Unité…) : même hauteur que les champs texte (44px),
+// comme dans le formulaire d'ajout de parcelle.
+@media (min-width: 993px) {
+  .dropdown-container .dropdown-btn {
+    height: 44px;
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+}
+
+// Refonte v2 (test global) : astérisque rouge, messages de validation et aide « À compléter »
+// dans le pied — même rendu que les popups parcelle et la création de compte.
+.simple-label sup { color: #dc3545; }
+
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 0;
+    color: #dc3545;
+    font-size: 0.82rem;
+
+    i { font-size: 0.85rem; }
+}
+
+input.input-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 1px #dc3545 !important;
+}
+
+.popup-required-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 auto;
+    margin: 0 auto 0 0;
+    color: #6b7280;
+    font-size: 0.82rem;
+    line-height: 1.4;
+
+    i { color: #9ca3af; margin-top: 2px; }
+    b { color: #12103c; font-weight: 600; }
+    b + b::before { content: '· '; color: #9ca3af; font-weight: 400; }
+}
+
+// Les boutons du pied ne se coupent pas sur 2 lignes quand l'aide « À compléter » est affichée
+.popup-footer .btn-primary,
+.popup-footer .btn-secondary {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+// Téléphone (pied en colonne inversée) : l'aide passe au-dessus des boutons
+@media (max-width: 480px) {
+    .popup-footer .popup-required-hint { order: 10; margin: 0 0 4px; }
+}

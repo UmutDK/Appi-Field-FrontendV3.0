@@ -1,0 +1,2011 @@
+[
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "numeroDePhytolicence": "22",
+        "numeroDexploitant": "2",
+        "datee": "2025-08-26T09:49:37.689Z",
+        "succes": true
+    },
+    {
+        "id_user": "94aff614-f28d-41ec-a1ec-a11bf7d5655d",
+        "numeroDePhytolicence": "111",
+        "numeroDexploitant": "111",
+        "datee": "2025-08-26T11:31:26.429Z",
+        "succes": true
+    },
+    {
+        "id_user": "1407c46b-7a1c-446f-9a5d-12fd43732bb5",
+        "numeroDePhytolicence": "hkj",
+        "numeroDexploitant": "hhjkhj",
+        "datee": "2025-08-26T14:02:15.468Z",
+        "succes": true
+    },
+    {
+        "id_user": "33b2253c-51f4-4b06-a93e-41500bc5896a",
+        "numeroDePhytolicence": "14455677",
+        "numeroDexploitant": "17718181",
+        "datee": "2025-08-29T09:52:53.312Z",
+        "succes": true
+    },
+    {
+        "id_user": "625e28b9-5b46-4516-94ac-aec919041bd3",
+        "numeroDePhytolicence": "20.2.123456",
+        "numeroDexploitant": "123456",
+        "datee": "2025-09-03T06:17:34.780Z",
+        "succes": true
+    },
+    {
+        "id_user": "c38bc2c2-ae39-46db-a1c4-434cd4bc7fda",
+        "numeroDePhytolicence": "17.2.00716",
+        "numeroDexploitant": "3",
+        "datee": "2025-09-11T11:38:16.980Z",
+        "succes": true
+    },
+    {
+        "id_user": "62048719-470c-43d9-9630-122205de8c90",
+        "numeroDePhytolicence": "G100",
+        "numeroDexploitant": "76",
+        "datee": "2025-09-11T12:22:03.807Z",
+        "succes": true
+    },
+    {
+        "id_user": "ce0b9987-cc91-4243-ae1d-c9d0b89708b2",
+        "numeroDePhytolicence": "2005",
+        "numeroDexploitant": "109.5",
+        "datee": "2025-09-11T12:37:05.921Z",
+        "succes": true
+    },
+    {
+        "id_user": "874334ea-ce80-4586-bceb-9a889d8321e8",
+        "numeroDePhytolicence": "14.2.3115",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-15T06:25:26.268Z",
+        "succes": true
+    },
+    {
+        "id_user": "ba3c7f10-0d4a-49eb-9565-7110a5375b59",
+        "numeroDePhytolicence": "25.5.5222",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-15T06:32:09.810Z",
+        "succes": true
+    },
+    {
+        "id_user": "80a5b535-8eae-468f-a857-6a2444726680",
+        "numeroDePhytolicence": "19.3.0012",
+        "numeroDexploitant": "2112254",
+        "datee": "2025-09-15T06:33:10.771Z",
+        "succes": true
+    },
+    {
+        "id_user": "3634e9ec-025d-41d7-a966-e46d411dc2e7",
+        "numeroDePhytolicence": "13.2.0060",
+        "numeroDexploitant": "9201600256",
+        "datee": "2025-09-15T06:52:20.735Z",
+        "succes": true
+    },
+    {
+        "id_user": "cd1d0556-e723-4171-893d-50a4e9b06ad8",
+        "numeroDePhytolicence": "00.0.0000",
+        "numeroDexploitant": "0000000000000000000000000",
+        "datee": "2025-09-15T07:10:39.597Z",
+        "succes": true
+    },
+    {
+        "id_user": "737119ae-7093-4026-aae1-438e51fc9444",
+        "numeroDePhytolicence": "14.2.2952",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-15T08:35:39.194Z",
+        "succes": true
+    },
+    {
+        "id_user": "53ee0434-1927-4a01-9604-bbb42194a7c2",
+        "numeroDePhytolicence": "14.2.3072",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-15T09:26:29.729Z",
+        "succes": true
+    },
+    {
+        "id_user": "fd7ea78d-41f5-41ee-a380-326b3fecbc38",
+        "numeroDePhytolicence": "11.2.3885",
+        "numeroDexploitant": "60193853",
+        "datee": "2025-09-15T11:29:55.780Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e3d41e5-6ff3-4a01-b906-b519c2dd87af",
+        "numeroDePhytolicence": "13.2.0439",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-15T15:20:02.323Z",
+        "succes": true
+    },
+    {
+        "id_user": "9da4ed6a-42d6-4e41-ac9d-b8102c9c68b7",
+        "numeroDePhytolicence": "14.2.3406",
+        "numeroDexploitant": "0618707768",
+        "datee": "2025-09-15T17:16:54.546Z",
+        "succes": true
+    },
+    {
+        "id_user": "bef1fa9e-278b-4e6a-905b-9377c623145d",
+        "numeroDePhytolicence": "19.20119",
+        "numeroDexploitant": "000507917.25",
+        "datee": "2025-09-16T08:05:07.529Z",
+        "succes": true
+    },
+    {
+        "id_user": "8e4209a9-125e-488c-b054-9763a8861157",
+        "numeroDePhytolicence": "24.3.0007",
+        "numeroDexploitant": "5555554545454545",
+        "datee": "2025-09-16T10:07:48.334Z",
+        "succes": true
+    },
+    {
+        "id_user": "6c14456e-f726-4608-b5d4-36c6d67e179e",
+        "numeroDePhytolicence": "24.3.0027",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-16T10:22:17.385Z",
+        "succes": true
+    },
+    {
+        "id_user": "b2f87fd0-8374-4916-bb57-4da6322f4dda",
+        "numeroDePhytolicence": "14.2.2481",
+        "numeroDexploitant": "00050489611",
+        "datee": "2025-09-18T06:22:02.787Z",
+        "succes": true
+    },
+    {
+        "id_user": "a88657a2-7d8a-4cc2-8e1d-0c87d96109be",
+        "numeroDePhytolicence": "1",
+        "numeroDexploitant": "1",
+        "datee": "2025-09-19T10:30:53.249Z",
+        "succes": true
+    },
+    {
+        "id_user": "3dab788a-2275-449c-93cb-31c8fa59c1bb",
+        "numeroDePhytolicence": "14.2.1956.",
+        "numeroDexploitant": "00050678557",
+        "datee": "2025-09-23T18:47:37.123Z",
+        "succes": true
+    },
+    {
+        "id_user": "c4e68518-3d5e-4966-bab5-32af45cd12ed",
+        "numeroDePhytolicence": "19.3.00262",
+        "numeroDexploitant": "60291863",
+        "datee": "2025-09-24T11:56:38.603Z",
+        "succes": true
+    },
+    {
+        "id_user": "029d1bc2-7365-4a52-b42c-f43365d8cc0e",
+        "numeroDePhytolicence": "14.2.18321",
+        "numeroDexploitant": "60349760",
+        "datee": "2025-09-24T12:38:55.811Z",
+        "succes": true
+    },
+    {
+        "id_user": "0f3a1611-8fd6-40a6-beab-eaef4c336185",
+        "numeroDePhytolicence": "11.A.45555",
+        "numeroDexploitant": "453254bb",
+        "datee": "2025-09-24T14:18:18.647Z",
+        "succes": true
+    },
+    {
+        "id_user": "92e32a5e-123c-46eb-b562-78a96fa0c6ee",
+        "numeroDePhytolicence": "14.2.36910",
+        "numeroDexploitant": "60212748",
+        "datee": "2025-09-26T09:01:02.581Z",
+        "succes": true
+    },
+    {
+        "id_user": "1d7339e0-32c0-4d22-93ab-077a372777d5",
+        "numeroDePhytolicence": "24.2.01011",
+        "numeroDexploitant": "2.348449974",
+        "datee": "2025-09-26T09:17:54.271Z",
+        "succes": true
+    },
+    {
+        "id_user": "ef5f8204-d46e-4b8e-8f4d-75173d6fd1f3",
+        "numeroDePhytolicence": "14.2.10339",
+        "numeroDexploitant": "800867150101",
+        "datee": "2025-09-26T11:41:49.836Z",
+        "succes": true
+    },
+    {
+        "id_user": "b581b51a-6549-4152-8e66-dbeb5fc046b1",
+        "numeroDePhytolicence": "54.1.14444",
+        "numeroDexploitant": "65285",
+        "datee": "2025-09-26T16:30:50.078Z",
+        "succes": true
+    },
+    {
+        "id_user": "c11b9e63-863a-4d59-be35-a8369326111d",
+        "numeroDePhytolicence": "14.2.05539",
+        "numeroDexploitant": "00050734131",
+        "datee": "2025-09-27T08:08:16.672Z",
+        "succes": true
+    },
+    {
+        "id_user": "de2d0b05-de28-48e2-bba3-1230f325d55d",
+        "numeroDePhytolicence": "13.3.00481",
+        "numeroDexploitant": "0",
+        "datee": "2025-09-27T09:44:54.338Z",
+        "succes": true
+    },
+    {
+        "id_user": "22119123-a5eb-4637-802b-322caa1b7450",
+        "numeroDePhytolicence": "23.2.01664",
+        "numeroDexploitant": "00",
+        "datee": "2025-09-27T11:19:48.992Z",
+        "succes": true
+    },
+    {
+        "id_user": "42440515-bc00-4d2a-854b-455a45d143b0",
+        "numeroDePhytolicence": "21.2.00135",
+        "numeroDexploitant": "2311414483",
+        "datee": "2025-09-29T06:24:45.591Z",
+        "succes": true
+    },
+    {
+        "id_user": "9aa77206-57bf-4b8b-8c11-b77bfb9813cd",
+        "numeroDePhytolicence": "17.3.00118",
+        "numeroDexploitant": "00050121920",
+        "datee": "2025-09-29T11:14:37.491Z",
+        "succes": true
+    },
+    {
+        "id_user": "14abacf3-d26c-4789-8890-929e28021bdf",
+        "numeroDePhytolicence": "14.2.17811",
+        "numeroDexploitant": "5605603526",
+        "datee": "2025-09-30T14:42:15.747Z",
+        "succes": true
+    },
+    {
+        "id_user": "591f8353-952a-48c1-8407-a16e52bc7222",
+        "numeroDePhytolicence": "21.3.00126",
+        "numeroDexploitant": "",
+        "datee": "2025-10-01T07:24:11.338Z",
+        "succes": true
+    },
+    {
+        "id_user": "071c0e15-3751-4fd7-ab93-f33d983348a8",
+        "numeroDePhytolicence": "21.2.00474",
+        "numeroDexploitant": "60132825",
+        "datee": "2025-10-01T07:32:51.782Z",
+        "succes": true
+    },
+    {
+        "id_user": "c756750e-63b4-4673-9e3a-6fb3694c7360",
+        "numeroDePhytolicence": "13.2.01352",
+        "numeroDexploitant": "22304100174",
+        "datee": "2025-10-01T08:26:44.092Z",
+        "succes": true
+    },
+    {
+        "id_user": "53cdf69b-9762-46eb-8a63-ddac046fabf7",
+        "numeroDePhytolicence": "14.2.25042",
+        "numeroDexploitant": "00050124950",
+        "datee": "2025-10-03T06:31:20.677Z",
+        "succes": true
+    },
+    {
+        "id_user": "29936407-0b2e-426b-aed9-2860e03ef488",
+        "numeroDePhytolicence": "24.2.00620",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-03T07:45:54.012Z",
+        "succes": true
+    },
+    {
+        "id_user": "d8fb35f9-0c82-4885-82d7-31000f04c0f4",
+        "numeroDePhytolicence": "24.3.00121",
+        "numeroDexploitant": "0",
+        "datee": "2025-10-03T08:39:41.635Z",
+        "succes": true
+    },
+    {
+        "id_user": "15136fef-5e81-476e-aca7-47db3929f911",
+        "numeroDePhytolicence": "20.3.00062",
+        "numeroDexploitant": "0670141722",
+        "datee": "2025-10-03T09:31:40.526Z",
+        "succes": true
+    },
+    {
+        "id_user": "54afba9a-10e1-423c-b8f7-172431cff122",
+        "numeroDePhytolicence": "14.2.34046",
+        "numeroDexploitant": "50714832",
+        "datee": "2025-10-03T10:04:39.113Z",
+        "succes": true
+    },
+    {
+        "id_user": "424bb7d0-bf34-474c-8bb4-42c5029bee64",
+        "numeroDePhytolicence": "14.2.25586",
+        "numeroDexploitant": "",
+        "datee": "2025-10-03T15:22:41.733Z",
+        "succes": true
+    },
+    {
+        "id_user": "aace5082-e44f-4775-9c01-8dd7d4f489a0",
+        "numeroDePhytolicence": "15.2.15868",
+        "numeroDexploitant": "00050671685",
+        "datee": "2025-10-03T15:26:14.059Z",
+        "succes": true
+    },
+    {
+        "id_user": "bf1c4ae3-c15d-41a1-935c-fc7f88094ca4",
+        "numeroDePhytolicence": "22.2.00148",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-04T06:43:57.514Z",
+        "succes": true
+    },
+    {
+        "id_user": "e1b24823-3dfb-48bf-85b6-2df74a30e148",
+        "numeroDePhytolicence": "14.2.09599",
+        "numeroDexploitant": "00010487720",
+        "datee": "2025-10-04T08:01:20.145Z",
+        "succes": true
+    },
+    {
+        "id_user": "84649cba-af57-4def-97b9-083b8fd5c553",
+        "numeroDePhytolicence": "21.2.00057",
+        "numeroDexploitant": "1009666862",
+        "datee": "2025-10-04T10:37:02.479Z",
+        "succes": true
+    },
+    {
+        "id_user": "4f49b20d-0b2b-4099-b47e-0aac9b3b8fe2",
+        "numeroDePhytolicence": "14.2.21795",
+        "numeroDexploitant": "0",
+        "datee": "2025-10-04T20:27:20.661Z",
+        "succes": true
+    },
+    {
+        "id_user": "33caaf18-6956-480e-bb47-60c696471fae",
+        "numeroDePhytolicence": "14.2.03942",
+        "numeroDexploitant": "00050083827",
+        "datee": "2025-10-05T19:20:26.584Z",
+        "succes": true
+    },
+    {
+        "id_user": "4fbd2ed3-5491-4fb8-80cd-f362783adbea",
+        "numeroDePhytolicence": "14.3.01395",
+        "numeroDexploitant": "-10379606",
+        "datee": "2025-10-06T06:21:11.883Z",
+        "succes": true
+    },
+    {
+        "id_user": "edc54929-fd3e-4cdb-8aed-750e7c64e8c1",
+        "numeroDePhytolicence": "25.2.00861",
+        "numeroDexploitant": "2520086",
+        "datee": "2025-10-06T09:12:01.342Z",
+        "succes": true
+    },
+    {
+        "id_user": "50e4eab9-4101-4b9b-a88b-e498c9eddbc9",
+        "numeroDePhytolicence": "\t14.2.3397",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-07T13:09:41.046Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5323431-e376-496d-939d-2e49b7373ecc",
+        "numeroDePhytolicence": "15.2.15777",
+        "numeroDexploitant": "",
+        "datee": "2025-10-08T07:11:18.877Z",
+        "succes": true
+    },
+    {
+        "id_user": "9dd020e7-e2eb-4aaa-b246-76737b732aae",
+        "numeroDePhytolicence": "14.2.29036",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-08T08:51:58.072Z",
+        "succes": true
+    },
+    {
+        "id_user": "5466fc53-c023-4a47-9100-a2605ce5efab",
+        "numeroDePhytolicence": "22.3.00120",
+        "numeroDexploitant": "0",
+        "datee": "2025-10-08T14:03:10.915Z",
+        "succes": true
+    },
+    {
+        "id_user": "29def8d1-d04c-4c62-8c81-94dd1de438b6",
+        "numeroDePhytolicence": "14.2.08765",
+        "numeroDexploitant": "2.225.536.524",
+        "datee": "2025-10-08T15:53:58.371Z",
+        "succes": true
+    },
+    {
+        "id_user": "0b10096b-2a6d-4c64-bdb0-cd60dd3cc29b",
+        "numeroDePhytolicence": "13.3.00334",
+        "numeroDexploitant": "09210522034",
+        "datee": "2025-10-09T06:23:03.253Z",
+        "succes": true
+    },
+    {
+        "id_user": "909a3f8a-627b-4bc4-b356-f0d3b460725d",
+        "numeroDePhytolicence": "14.2.17938",
+        "numeroDexploitant": "00050151323",
+        "datee": "2025-10-09T15:17:11.700Z",
+        "succes": true
+    },
+    {
+        "id_user": "6a9bd82e-f596-4c45-ab62-094f1c9fdda1",
+        "numeroDePhytolicence": "16.2.01285",
+        "numeroDexploitant": "000509066-10",
+        "datee": "2025-10-09T15:17:35.774Z",
+        "succes": true
+    },
+    {
+        "id_user": "7344f77b-8ab4-4074-95c0-ae5e987aa4bd",
+        "numeroDePhytolicence": "14.2.00369",
+        "numeroDexploitant": "2253501822",
+        "datee": "2025-10-09T19:07:27.625Z",
+        "succes": true
+    },
+    {
+        "id_user": "a145630e-d8c2-4a26-9c58-b9661efdd460",
+        "numeroDePhytolicence": "14.2.15784",
+        "numeroDexploitant": "6106504654",
+        "datee": "2025-10-10T07:30:47.287Z",
+        "succes": true
+    },
+    {
+        "id_user": "294-ba0f1705-8ba6-4716-a21b-5e527593f006-967",
+        "numeroDePhytolicence": "13.3.00079",
+        "numeroDexploitant": "00050541040",
+        "datee": "2025-10-11T09:07:10.515Z",
+        "succes": true
+    },
+    {
+        "id_user": "657-001a7285-e1bd-4593-9e19-183a149fab7a-7579",
+        "numeroDePhytolicence": "14.2.05884",
+        "numeroDexploitant": "9208800686",
+        "datee": "2025-10-11T14:49:00.957Z",
+        "succes": true
+    },
+    {
+        "id_user": "2422-3ec8743e-e10f-43fd-ad4f-693bb3e856aa-6487",
+        "numeroDePhytolicence": "14.2.05890",
+        "numeroDexploitant": "51194273",
+        "datee": "2025-10-13T09:01:04.762Z",
+        "succes": true
+    },
+    {
+        "id_user": "2296-da895c7b-acc1-4b96-bb8c-1ad42537d89f-5944",
+        "numeroDePhytolicence": "14.2.12784",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-15T07:21:32.089Z",
+        "succes": true
+    },
+    {
+        "id_user": "f54cde1d-8fb1-4525-90a5-830291ca0385",
+        "numeroDePhytolicence": "25.2.01183",
+        "numeroDexploitant": "",
+        "datee": "2025-10-15T08:57:32.541Z",
+        "succes": true
+    },
+    {
+        "id_user": "5431-da1a50de-abc2-49d6-930c-02820cf72eb5-6925",
+        "numeroDePhytolicence": "14.2.32855",
+        "numeroDexploitant": "60166672",
+        "datee": "2025-10-15T09:24:52.863Z",
+        "succes": true
+    },
+    {
+        "id_user": "7856-7d15490c-1f49-4d4d-aa59-c5c8b39ac3f6-8873",
+        "numeroDePhytolicence": "21.2.01173",
+        "numeroDexploitant": "60192237",
+        "datee": "2025-10-15T18:04:04.765Z",
+        "succes": true
+    },
+    {
+        "id_user": "6919-c7ac295c-2b9a-45b0-b954-54630d11555a-8026",
+        "numeroDePhytolicence": "21.2.00114",
+        "numeroDexploitant": "00060369463",
+        "datee": "2025-10-16T14:05:25.458Z",
+        "succes": true
+    },
+    {
+        "id_user": "f703c3ff-137e-4268-b684-bc856839c958",
+        "numeroDePhytolicence": "14.2.17907",
+        "numeroDexploitant": "00010755579",
+        "datee": "2025-10-16T14:13:48.499Z",
+        "succes": true
+    },
+    {
+        "id_user": "7147-dcd1e9b2-ee62-4e70-b6cc-d8f14c947e44-7406",
+        "numeroDePhytolicence": "14.2.25383",
+        "numeroDexploitant": "50033711",
+        "datee": "2025-10-17T19:22:26.820Z",
+        "succes": true
+    },
+    {
+        "id_user": "4247-b0586351-0022-4ed2-af6c-536f242d4f14-1711",
+        "numeroDePhytolicence": "\t21.2.0089",
+        "numeroDexploitant": "1",
+        "datee": "2025-10-18T18:05:47.338Z",
+        "succes": true
+    },
+    {
+        "id_user": "7791-106d81d3-ae88-4ac7-a0c2-183dc330aa0f-7990",
+        "numeroDePhytolicence": "23.2.00887",
+        "numeroDexploitant": "00060219519",
+        "datee": "2025-10-19T08:34:21.927Z",
+        "succes": true
+    },
+    {
+        "id_user": "7187-e1467e83-bcc1-4e29-9cee-e40879958dea-8332",
+        "numeroDePhytolicence": "14.3.00046",
+        "numeroDexploitant": "00050486981",
+        "datee": "2025-10-19T10:55:13.422Z",
+        "succes": true
+    },
+    {
+        "id_user": "874-620da9ba-591f-447f-a7af-8a2fe730c4d4-1219",
+        "numeroDePhytolicence": "14.2.10615",
+        "numeroDexploitant": "7021",
+        "datee": "2025-10-19T14:48:39.836Z",
+        "succes": true
+    },
+    {
+        "id_user": "1912-3917e558-8a05-41a5-90c5-fea39c21f123-274",
+        "numeroDePhytolicence": "14.2.29907",
+        "numeroDexploitant": "05304701139",
+        "datee": "2025-10-20T09:42:43.720Z",
+        "succes": true
+    },
+    {
+        "id_user": "6328-9f5c7145-95f5-46e2-a9eb-77500af6b84b-5958",
+        "numeroDePhytolicence": "14.2.20849",
+        "numeroDexploitant": "501134852",
+        "datee": "2025-10-20T14:35:46.160Z",
+        "succes": true
+    },
+    {
+        "id_user": "8080-07bcb5ff-7f19-4f73-95a9-bf57ff324034-7606",
+        "numeroDePhytolicence": "17.2.00929",
+        "numeroDexploitant": "60348750",
+        "datee": "2025-10-20T19:05:23.889Z",
+        "succes": true
+    },
+    {
+        "id_user": "9784-d560e884-9f84-419f-ac23-d4b65acc74c2-1654",
+        "numeroDePhytolicence": "23.2.00959",
+        "numeroDexploitant": "60342787",
+        "datee": "2025-10-21T06:58:10.567Z",
+        "succes": true
+    },
+    {
+        "id_user": "5005-653b90ca-0eec-4c28-ac91-13093b27e22c-3657",
+        "numeroDePhytolicence": "21.3.00189",
+        "numeroDexploitant": "60294994",
+        "datee": "2025-10-21T09:18:30.196Z",
+        "succes": true
+    },
+    {
+        "id_user": "6e32736f-62d9-4e85-b589-4e32def8598f",
+        "numeroDePhytolicence": "14.2.11034",
+        "numeroDexploitant": "15400600575",
+        "datee": "2025-10-21T11:03:10.526Z",
+        "succes": true
+    },
+    {
+        "id_user": "c05a53c4-7846-4ef3-b936-e46fbf109b16",
+        "numeroDePhytolicence": "44.5.55555",
+        "numeroDexploitant": "123456789",
+        "datee": "2025-10-21T13:14:31.909Z",
+        "succes": true
+    },
+    {
+        "id_user": "7196-b0814685-7e02-4136-ab10-47bc54c3c80f-654",
+        "numeroDePhytolicence": "13.2.00057",
+        "numeroDexploitant": "64002033",
+        "datee": "2025-10-22T06:28:39.400Z",
+        "succes": true
+    },
+    {
+        "id_user": "8797-d4984646-d012-4eb8-ae8f-9b32e2ef71d7-7798",
+        "numeroDePhytolicence": "14.2.18177",
+        "numeroDexploitant": "18503900155",
+        "datee": "2025-10-22T08:38:38.303Z",
+        "succes": true
+    },
+    {
+        "id_user": "4f790d1b-7494-4c22-bd57-e58c7df65a50",
+        "numeroDePhytolicence": "11.1.11112",
+        "numeroDexploitant": "11111111111",
+        "datee": "2025-10-23T07:24:53.073Z",
+        "succes": true
+    },
+    {
+        "id_user": "8861-096de846-0eca-4b57-b577-303393aa0286-4446",
+        "numeroDePhytolicence": "24.2.00023",
+        "numeroDexploitant": "2",
+        "datee": "2025-10-23T13:35:08.913Z",
+        "succes": true
+    },
+    {
+        "id_user": "3160-afdf4f4d-1a2d-4a57-82f3-1f7ea40e83a4-1080",
+        "numeroDePhytolicence": "19.2.01148",
+        "numeroDexploitant": "00050401297",
+        "datee": "2025-10-23T15:31:12.762Z",
+        "succes": true
+    },
+    {
+        "id_user": "8800-2d62e0d1-9ab2-43e0-8417-1cb2e75f4376-8590",
+        "numeroDePhytolicence": "12.3.6456",
+        "numeroDexploitant": "456456456",
+        "datee": "2025-10-23T16:40:18.290Z",
+        "succes": true
+    },
+    {
+        "id_user": "9417-fff672f0-d811-4bdb-88cb-8e4d2be32312-9106",
+        "numeroDePhytolicence": "24.2.01251",
+        "numeroDexploitant": "000602225-49",
+        "datee": "2025-10-24T08:29:43.851Z",
+        "succes": true
+    },
+    {
+        "id_user": "9079-3e3de13f-242c-49c2-847d-d4a8d43def40-3982",
+        "numeroDePhytolicence": "14.2.18122",
+        "numeroDexploitant": "13161785",
+        "datee": "2025-10-24T09:38:20.750Z",
+        "succes": true
+    },
+    {
+        "id_user": "8406-a51b73fc-fbe3-4ece-9e43-9bb3e26171bb-659",
+        "numeroDePhytolicence": "14.2.24178",
+        "numeroDexploitant": "0",
+        "datee": "2025-10-24T14:37:04.097Z",
+        "succes": true
+    },
+    {
+        "id_user": "5873-bba0950e-c678-4729-8fc8-fda6bbb0dae2-9382",
+        "numeroDePhytolicence": "23.2.00699",
+        "numeroDexploitant": "19307003066",
+        "datee": "2025-10-24T14:59:03.050Z",
+        "succes": true
+    },
+    {
+        "id_user": "4674-010d2840-2053-4f6d-b016-139b505d4ff9-3257",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2025-10-24T17:55:12.725Z",
+        "succes": true
+    },
+    {
+        "id_user": "6ee2413e-0e09-45e7-84fa-ef070c162640",
+        "numeroDePhytolicence": "13.2.00409",
+        "numeroDexploitant": "00010320392",
+        "datee": "2025-10-26T17:21:38.840Z",
+        "succes": true
+    },
+    {
+        "id_user": "7037-4e50b564-f55b-4795-83ef-2b83fa60cd0f-6202",
+        "numeroDePhytolicence": "14.2.07787",
+        "numeroDexploitant": "50066175",
+        "datee": "2025-10-27T20:50:31.654Z",
+        "succes": true
+    },
+    {
+        "id_user": "0bd62178-cfbd-48b1-9687-83d8c468a0d6",
+        "numeroDePhytolicence": "22.2.01587",
+        "numeroDexploitant": "60228007",
+        "datee": "2025-10-28T09:26:11.157Z",
+        "succes": true
+    },
+    {
+        "id_user": "5648-ecc58089-bf91-477c-9506-b51ca7f3d058-5894",
+        "numeroDePhytolicence": "13.2.00941",
+        "numeroDexploitant": "0471642773",
+        "datee": "2025-10-28T14:23:18.543Z",
+        "succes": true
+    },
+    {
+        "id_user": "7505-a800b122-15c2-4ad5-9db7-3d5e25034160-1107",
+        "numeroDePhytolicence": "14.2.18604",
+        "numeroDexploitant": "000116179.70",
+        "datee": "2025-10-28T15:36:34.381Z",
+        "succes": true
+    },
+    {
+        "id_user": "1470-704a5e02-60ae-46bf-943a-0c4e6642b611-9588",
+        "numeroDePhytolicence": "25.2.00317",
+        "numeroDexploitant": "1016159825",
+        "datee": "2025-10-28T20:23:07.739Z",
+        "succes": true
+    },
+    {
+        "id_user": "4683-aa54cdfa-27ce-4a02-9580-71ced3e1c543-6013",
+        "numeroDePhytolicence": "14.2.25131",
+        "numeroDexploitant": "000503466-36",
+        "datee": "2025-10-29T21:55:08.085Z",
+        "succes": true
+    },
+    {
+        "id_user": "8743-883bb58f-5f45-46d8-9446-25de08e6aeb0-7605",
+        "numeroDePhytolicence": "21.2.01005",
+        "numeroDexploitant": "",
+        "datee": "2025-10-30T04:19:46.726Z",
+        "succes": true
+    },
+    {
+        "id_user": "4868-03fc1399-7754-4d22-a740-568ed8fb61d9-5847",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2025-10-30T10:21:05.724Z",
+        "succes": true
+    },
+    {
+        "id_user": "2459-e84ec77e-ea77-4f71-9de6-fd7f2b3841cd-6227",
+        "numeroDePhytolicence": "14.3.00726",
+        "numeroDexploitant": "00060290045",
+        "datee": "2025-10-30T19:46:47.000Z",
+        "succes": true
+    },
+    {
+        "id_user": "5884-a6940c52-57d4-46ee-993e-2fd7efd1449e-6357",
+        "numeroDePhytolicence": "13.2.01180",
+        "numeroDexploitant": "00050181130",
+        "datee": "2025-10-31T10:30:48.085Z",
+        "succes": true
+    },
+    {
+        "id_user": "2218-030f2553-fade-4f73-b3dc-75f500ad6460-2355",
+        "numeroDePhytolicence": "21.3.00160",
+        "numeroDexploitant": "00060106048",
+        "datee": "2025-10-31T14:27:26.810Z",
+        "succes": true
+    },
+    {
+        "id_user": "7392-9a6ff094-1b86-442f-9c62-407b0a568e73-4886",
+        "numeroDePhytolicence": "23.2.01796",
+        "numeroDexploitant": "1000",
+        "datee": "2025-11-02T18:48:18.592Z",
+        "succes": true
+    },
+    {
+        "id_user": "2929-73416b29-817e-4a50-9ea6-dd059fe8af47-3575",
+        "numeroDePhytolicence": "23.2.01798",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-03T10:09:13.557Z",
+        "succes": true
+    },
+    {
+        "id_user": "8272-cc86f344-46bb-40d3-8682-63a6a1f78c87-1801",
+        "numeroDePhytolicence": "14.2.25605",
+        "numeroDexploitant": "00050384628",
+        "datee": "2025-11-03T12:38:03.739Z",
+        "succes": true
+    },
+    {
+        "id_user": "6628-dc2559b0-6dbe-474d-8e94-469e72d100e3-6507",
+        "numeroDePhytolicence": "14.3.00432",
+        "numeroDexploitant": "05603700710",
+        "datee": "2025-11-03T13:20:58.077Z",
+        "succes": true
+    },
+    {
+        "id_user": "3042-7eef8995-7274-4384-b7fd-f6a37334119f-1165",
+        "numeroDePhytolicence": "15.3.00637",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-04T08:39:41.301Z",
+        "succes": true
+    },
+    {
+        "id_user": "7070-cf23b242-dc89-4ee9-b3eb-795595b10d4e-4426",
+        "numeroDePhytolicence": "15.2.17678",
+        "numeroDexploitant": "60234774",
+        "datee": "2025-11-04T12:52:05.094Z",
+        "succes": true
+    },
+    {
+        "id_user": "8103-ea0eb64d-23fd-447b-ac22-e3ee09c9f0fb-3605",
+        "numeroDePhytolicence": "15.2.03933",
+        "numeroDexploitant": "50104136",
+        "datee": "2025-11-04T14:27:00.939Z",
+        "succes": true
+    },
+    {
+        "id_user": "2719-442e6f7a-a657-4df0-b3d1-a51cc753ae5e-3477",
+        "numeroDePhytolicence": "14.2.12546",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-04T15:25:57.362Z",
+        "succes": true
+    },
+    {
+        "id_user": "2834-5b34ed73-4679-4bb2-954e-2b37b5dd8ef8-2283",
+        "numeroDePhytolicence": "14.2.17203",
+        "numeroDexploitant": "00060377143",
+        "datee": "2025-11-04T16:17:05.369Z",
+        "succes": true
+    },
+    {
+        "id_user": "5957-fe0fc898-dbea-4853-805f-a0e42f1224e2-1416",
+        "numeroDePhytolicence": "14.2.35214",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-07T06:51:46.964Z",
+        "succes": true
+    },
+    {
+        "id_user": "2578-710f4182-ac88-4f92-9daa-1590bce8015b-4380",
+        "numeroDePhytolicence": "15.2.09713",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-07T08:01:46.711Z",
+        "succes": true
+    },
+    {
+        "id_user": "6ed1bb1c-e3bf-463e-8015-4ab322851417",
+        "numeroDePhytolicence": "14.2.22369",
+        "numeroDexploitant": "",
+        "datee": "2025-11-07T08:19:59.011Z",
+        "succes": true
+    },
+    {
+        "id_user": "2977-06f1d748-6c73-4c34-97c6-52ad48135c39-1544",
+        "numeroDePhytolicence": "15.2.09273",
+        "numeroDexploitant": "1",
+        "datee": "2025-11-07T08:28:03.884Z",
+        "succes": true
+    },
+    {
+        "id_user": "7397-109e7bbe-886f-4856-909d-988a8ba65af1-6086",
+        "numeroDePhytolicence": "13.0.20353",
+        "numeroDexploitant": "2820120062",
+        "datee": "2025-11-07T19:49:10.794Z",
+        "succes": true
+    },
+    {
+        "id_user": "856-040abb23-49a6-4051-882b-15631ddd93e9-6284",
+        "numeroDePhytolicence": "14.2.08602",
+        "numeroDexploitant": "9204421340",
+        "datee": "2025-11-10T10:01:06.092Z",
+        "succes": true
+    },
+    {
+        "id_user": "7592-58d99431-327a-461d-b75d-78fa226c9159-5343",
+        "numeroDePhytolicence": "14.2.16426",
+        "numeroDexploitant": "00011434781",
+        "datee": "2025-11-10T17:22:31.397Z",
+        "succes": true
+    },
+    {
+        "id_user": "8724-c8a669f0-6d90-4c7a-8664-f9642f2c9497-8764",
+        "numeroDePhytolicence": "15.2.00087",
+        "numeroDexploitant": "2277530405",
+        "datee": "2025-11-11T09:33:43.971Z",
+        "succes": true
+    },
+    {
+        "id_user": "8211-934e8bb1-e04c-489b-bd97-e3b032445ee5-4750",
+        "numeroDePhytolicence": "15.2.17702",
+        "numeroDexploitant": "1007172972",
+        "datee": "2025-11-13T08:54:07.160Z",
+        "succes": true
+    },
+    {
+        "id_user": "5370-527d4991-fc65-4606-a7d3-79e2109b6336-7564",
+        "numeroDePhytolicence": "23.2.01205",
+        "numeroDexploitant": "0881637750",
+        "datee": "2025-11-13T12:01:08.325Z",
+        "succes": true
+    },
+    {
+        "id_user": "2059-00f65ebf-6a95-46a0-9f41-1d5a10e12872-1846",
+        "numeroDePhytolicence": "14.3.01741",
+        "numeroDexploitant": "00050161326",
+        "datee": "2025-11-13T17:48:44.095Z",
+        "succes": true
+    },
+    {
+        "id_user": "9739-b2239b7f-bdf0-42b8-9f5f-1b05aabf697d-6137",
+        "numeroDePhytolicence": "14.2.27321",
+        "numeroDexploitant": "13091158",
+        "datee": "2025-11-13T20:22:46.669Z",
+        "succes": true
+    },
+    {
+        "id_user": "8422-b1e1cb9d-64c7-45d0-ab41-2f153ba377d5-722",
+        "numeroDePhytolicence": "15.2.15659",
+        "numeroDexploitant": "00010637765",
+        "datee": "2025-11-16T12:15:45.963Z",
+        "succes": true
+    },
+    {
+        "id_user": "9f153bf3-f45d-4ffa-8962-888bbdcc2d3f",
+        "numeroDePhytolicence": "19.2.00550",
+        "numeroDexploitant": "60337030",
+        "datee": "2025-11-19T09:41:19.368Z",
+        "succes": true
+    },
+    {
+        "id_user": "840e65aa-560d-4e39-980f-e79e8bfb1b46",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2025-11-19T10:13:06.225Z",
+        "succes": true
+    },
+    {
+        "id_user": "a1b3fe1d-8d04-49d0-9142-bf49969672bf",
+        "numeroDePhytolicence": "21.2.00548",
+        "numeroDexploitant": "00060026226",
+        "datee": "2025-11-20T15:43:19.753Z",
+        "succes": true
+    },
+    {
+        "id_user": "5276-0dbd209d-9de7-41cc-a3b1-2210ce060ac2-8265",
+        "numeroDePhytolicence": "16.2.01690",
+        "numeroDexploitant": "00060097055",
+        "datee": "2025-11-26T09:22:03.425Z",
+        "succes": true
+    },
+    {
+        "id_user": "2316-cd4aca44-220a-4b2b-980f-c21c9219abbe-112",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2025-11-26T09:30:16.939Z",
+        "succes": true
+    },
+    {
+        "id_user": "5697dbc9-9fb4-43ce-86d8-0121b4fd6fc9",
+        "numeroDePhytolicence": "14.2.13356",
+        "numeroDexploitant": "000507107-88",
+        "datee": "2025-11-26T15:37:37.666Z",
+        "succes": true
+    },
+    {
+        "id_user": "3134-f90b331d-6b46-4511-b0f2-c8207298fa59-5730",
+        "numeroDePhytolicence": "14.2.17818",
+        "numeroDexploitant": "05301203176",
+        "datee": "2025-11-28T16:12:34.837Z",
+        "succes": true
+    },
+    {
+        "id_user": "6067-8b35c453-12b4-4861-b697-dbd2714a08b5-3272",
+        "numeroDePhytolicence": "22.2.01011",
+        "numeroDexploitant": "",
+        "datee": "2025-11-29T10:08:13.713Z",
+        "succes": true
+    },
+    {
+        "id_user": "9725-b12c84a0-ec0c-4f9f-939f-e0f927c363e3-5593",
+        "numeroDePhytolicence": "13.2.03664",
+        "numeroDexploitant": "000114140-68",
+        "datee": "2025-11-29T12:46:02.861Z",
+        "succes": true
+    },
+    {
+        "id_user": "2130-69f3c7e2-788b-45bd-a3c6-a4bc2ca8ca11-7967",
+        "numeroDePhytolicence": "14.2.25078",
+        "numeroDexploitant": "",
+        "datee": "2025-12-02T12:55:40.678Z",
+        "succes": true
+    },
+    {
+        "id_user": "2951-15491093-69d4-45dc-91af-85575f45a567-3811",
+        "numeroDePhytolicence": "14.2.11141",
+        "numeroDexploitant": "00050291971",
+        "datee": "2025-12-13T14:00:15.957Z",
+        "succes": true
+    },
+    {
+        "id_user": "97ea72df-30bb-47c1-81ad-3122583c7648",
+        "numeroDePhytolicence": "21.3.0019",
+        "numeroDexploitant": "1.5",
+        "datee": "2025-12-15T08:18:45.286Z",
+        "succes": true
+    },
+    {
+        "id_user": "4773-711c2125-7ecd-4133-9bd3-5a2eed63b80f-7402",
+        "numeroDePhytolicence": "15.2.17559",
+        "numeroDexploitant": "12306941280",
+        "datee": "2025-12-15T09:42:24.428Z",
+        "succes": true
+    },
+    {
+        "id_user": "236-ec21a5f7-6715-4cfe-a18d-dc390ebf5fce-5334",
+        "numeroDePhytolicence": "14.2.36225",
+        "numeroDexploitant": "0606501804",
+        "datee": "2025-12-19T12:02:26.452Z",
+        "succes": true
+    },
+    {
+        "id_user": "3131-0c02dbc8-c9d9-4f99-ae5b-e5f036cad3c9-3788",
+        "numeroDePhytolicence": "14.2.06491",
+        "numeroDexploitant": "15303100623",
+        "datee": "2025-12-20T15:36:37.135Z",
+        "succes": true
+    },
+    {
+        "id_user": "4388-a78e415e-fa6c-4626-859d-dc33e89c9543-427",
+        "numeroDePhytolicence": "19.2.00712",
+        "numeroDexploitant": "",
+        "datee": "2025-12-27T10:54:45.595Z",
+        "succes": true
+    },
+    {
+        "id_user": "e5d90193-79f0-45c4-9a2a-f6a720934dd6",
+        "numeroDePhytolicence": "14.2.03023",
+        "numeroDexploitant": "0",
+        "datee": "2025-12-30T08:45:29.887Z",
+        "succes": true
+    },
+    {
+        "id_user": "2566-60c05b87-e802-46e1-b46e-5bbdf8c7e6f1-1491",
+        "numeroDePhytolicence": "14.2.27060",
+        "numeroDexploitant": "161029003-79",
+        "datee": "2026-01-05T22:04:04.707Z",
+        "succes": true
+    },
+    {
+        "id_user": "f862a59c-0936-4980-a00e-294ba18788c1",
+        "numeroDePhytolicence": "21.2.01332",
+        "numeroDexploitant": "60140909",
+        "datee": "2026-01-06T11:43:24.570Z",
+        "succes": true
+    },
+    {
+        "id_user": "7542-dda82317-411c-40cb-ad32-85ffdb71407b-6742",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2026-01-10T11:44:16.478Z",
+        "succes": true
+    },
+    {
+        "id_user": "7523-6279f444-2f99-4dad-bc0e-c739fd15b81b-2497",
+        "numeroDePhytolicence": "14.2.03354",
+        "numeroDexploitant": "1",
+        "datee": "2026-01-13T17:49:53.587Z",
+        "succes": true
+    },
+    {
+        "id_user": "5408-d414ca6a-8c66-432c-a7c9-66abd9bf757a-7861",
+        "numeroDePhytolicence": "15.2.07117",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T07:55:59.031Z",
+        "succes": true
+    },
+    {
+        "id_user": "8112-0cd1730c-625b-462c-a422-42a71f143042-1366",
+        "numeroDePhytolicence": "21.1.00044",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T08:07:06.536Z",
+        "succes": true
+    },
+    {
+        "id_user": "5161-d1ba1d03-81fb-47ac-a7ae-630edc19de5c-3873",
+        "numeroDePhytolicence": "16.2.00311",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T10:08:34.530Z",
+        "succes": true
+    },
+    {
+        "id_user": "5842-8bbca328-9a59-4c73-b74f-dd6c62d5c64a-2862",
+        "numeroDePhytolicence": "13.2.03534",
+        "numeroDexploitant": "091053004-74",
+        "datee": "2026-01-14T10:10:19.913Z",
+        "succes": true
+    },
+    {
+        "id_user": "9813-5156a7b9-9905-471b-a6e8-73ac1863c653-8585",
+        "numeroDePhytolicence": "16.2.01543",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T10:15:40.469Z",
+        "succes": true
+    },
+    {
+        "id_user": "6795-6543e553-aff4-4410-902b-e7dac74470b4-6633",
+        "numeroDePhytolicence": "15.3.00425",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T10:37:18.613Z",
+        "succes": true
+    },
+    {
+        "id_user": "5693-8681206d-0735-4183-a3da-12a3082a09d0-8554",
+        "numeroDePhytolicence": "15.2.07148",
+        "numeroDexploitant": "",
+        "datee": "2026-01-14T10:45:07.737Z",
+        "succes": true
+    },
+    {
+        "id_user": "5798-3a7a2226-d179-4a72-982a-3da5f4546da4-339",
+        "numeroDePhytolicence": "25.2.00531",
+        "numeroDexploitant": "60354814",
+        "datee": "2026-01-14T14:13:49.877Z",
+        "succes": true
+    },
+    {
+        "id_user": "4712-4475ab3d-7eb9-460d-a327-2f3d58e0534f-8985",
+        "numeroDePhytolicence": "14.2.33257",
+        "numeroDexploitant": "",
+        "datee": "2026-01-18T18:52:41.725Z",
+        "succes": true
+    },
+    {
+        "id_user": "3044-fc62ff8c-1ec3-4170-9110-cb66e0ba3b03-4136",
+        "numeroDePhytolicence": "15.2.08390",
+        "numeroDexploitant": "",
+        "datee": "2026-01-18T23:05:56.147Z",
+        "succes": true
+    },
+    {
+        "id_user": "4991-20f06346-a812-47ec-87bb-911914e59c20-7001",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2026-01-20T09:24:49.166Z",
+        "succes": true
+    },
+    {
+        "id_user": "7610-de323e7a-7d1b-4642-9665-ef1e1cf3bacb-9193",
+        "numeroDePhytolicence": "75.2.78278",
+        "numeroDexploitant": "72782",
+        "datee": "2026-01-20T10:39:12.990Z",
+        "succes": true
+    },
+    {
+        "id_user": "7649-92f81254-53ce-499b-b2d3-2b8d0d326ac1-8903",
+        "numeroDePhytolicence": "15.2.16516",
+        "numeroDexploitant": "",
+        "datee": "2026-01-20T10:44:08.125Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "24.2.00895",
+        "numeroDexploitant": "",
+        "datee": "2026-01-20T11:00:17.902Z",
+        "succes": true,
+        "id_user": "2943-0762-9c1f51927da44c49b7cd819c088c2469-0308-5377"
+    },
+    {
+        "id_user": "8322-9094-f3d3dac7f2d24161ab35316c373d1d39-1579-8869",
+        "numeroDePhytolicence": "11.1.11111",
+        "numeroDexploitant": "111111",
+        "datee": "2026-01-20T11:05:08.948Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.G.00039",
+        "numeroDexploitant": "453190631",
+        "datee": "2026-01-20T11:38:44.515Z",
+        "succes": true,
+        "id_user": "622-2110-86bcbf887cf84006bf4c7e7a50c275be-5093-8096"
+    },
+    {
+        "numeroDePhytolicence": "14.2.01850",
+        "numeroDexploitant": "659307542",
+        "datee": "2026-01-20T12:23:01.770Z",
+        "succes": true,
+        "id_user": "9772-2304-750a3cc777414d1a973dedfeb826601c-2090-4470"
+    },
+    {
+        "numeroDePhytolicence": "11.1.11111",
+        "numeroDexploitant": "1111",
+        "datee": "2026-01-20T12:47:23.679Z",
+        "succes": true,
+        "id_user": "8915-4326-0a7853be5da74252b24eef52107e2bb5-0367-2768"
+    },
+    {
+        "numeroDePhytolicence": "21.2.00234",
+        "numeroDexploitant": null,
+        "datee": "2026-01-20T12:48:25.882Z",
+        "succes": true,
+        "id_user": "8299-3168-f8808f160c314940bf12949e44f2a4d5-0088-7479"
+    },
+    {
+        "numeroDePhytolicence": "15.3.00054",
+        "numeroDexploitant": null,
+        "datee": "2026-01-20T12:57:54.499Z",
+        "succes": true,
+        "id_user": "9471-9484-d4d9f2686c954dfb93ff6abb440b5d89-7439-2928"
+    },
+    {
+        "numeroDePhytolicence": "14.2.27278",
+        "numeroDexploitant": "",
+        "datee": "2026-01-20T16:19:25.452Z",
+        "succes": true,
+        "id_user": "8179-3997-fa202cb06188402ebe44188c5e225d6d-1088-4570"
+    },
+    {
+        "numeroDePhytolicence": "26.2.00022",
+        "numeroDexploitant": null,
+        "datee": "2026-01-20T16:31:58.384Z",
+        "succes": true,
+        "id_user": "5062-6389-37952b9c5fa349509aba42061ba05412-5494-7654"
+    },
+    {
+        "numeroDePhytolicence": "14.2.09344",
+        "numeroDexploitant": "0717503159",
+        "datee": "2026-01-20T18:25:30.962Z",
+        "succes": true,
+        "id_user": "102-2719-e78eb7cc1f6941b3bc667a7b66b7afad-5010-2202"
+    },
+    {
+        "numeroDePhytolicence": "15.1.00588",
+        "numeroDexploitant": "",
+        "datee": "2026-01-20T18:34:33.425Z",
+        "succes": true,
+        "id_user": "1714-7606-a11077e8c12e46a0824c4fe976c2fb1a-5826-1930"
+    },
+    {
+        "id_user": "5338-7170-0182728b1ab844d9ba190c72c6061e5e-5207-5061",
+        "numeroDePhytolicence": "14.2.15645",
+        "numeroDexploitant": "156041026-36",
+        "datee": "2026-01-20T19:38:45.899Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "22.2.01544",
+        "numeroDexploitant": null,
+        "datee": "2026-01-20T22:35:13.081Z",
+        "succes": true,
+        "id_user": "8044-1843-9d265e0b6069418a839bf0d2782ea332-0315-140"
+    },
+    {
+        "id_user": "7073-6222-0e87ea2530a14237a6bb77450f2784f4-5439-8181",
+        "numeroDePhytolicence": "25.1.00248",
+        "numeroDexploitant": "",
+        "datee": "2026-01-21T06:35:02.392Z",
+        "succes": true
+    },
+    {
+        "id_user": "7406-8645-d5ab6f8f64884ebfafd017e4f96d1251-7604-6876",
+        "numeroDePhytolicence": "23.1.00118",
+        "numeroDexploitant": "",
+        "datee": "2026-01-21T06:36:34.533Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.26654",
+        "numeroDexploitant": null,
+        "datee": "2026-01-21T06:46:57.975Z",
+        "succes": true,
+        "id_user": "2779-4311-3b3d33bc539647f8be11aa85d9109871-8338-3297"
+    },
+    {
+        "id_user": "7479-5510-05d4c3748c78420fbb5ada3ec88370ee-0960-6150",
+        "numeroDePhytolicence": "15.1.00611",
+        "numeroDexploitant": "670345422",
+        "datee": "2026-01-21T07:30:00.070Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "23.2.00662",
+        "numeroDexploitant": null,
+        "datee": "2026-01-21T07:53:01.533Z",
+        "succes": true,
+        "id_user": "9433-9799-14400a4a00ac41fcbae2ef49941614c3-6282-4865"
+    },
+    {
+        "numeroDePhytolicence": "14.G.00759",
+        "numeroDexploitant": null,
+        "datee": "2026-01-21T08:02:01.240Z",
+        "succes": true,
+        "id_user": "3262-0042-9032cd11b6e84963bba37b801bc5cf6e-8395-1293"
+    },
+    {
+        "numeroDePhytolicence": "18.2.01180",
+        "numeroDexploitant": null,
+        "datee": "2026-01-21T09:11:58.010Z",
+        "succes": true,
+        "id_user": "2948-5870-abcfc67b21584d3283b8088e81281b06-5620-1509"
+    },
+    {
+        "numeroDePhytolicence": "14.2.19765",
+        "numeroDexploitant": "",
+        "datee": "2026-01-21T09:19:05.615Z",
+        "succes": true,
+        "id_user": "3560-2050-3c28c623bd724bdaa6d282f9955476dc-4015-3966"
+    },
+    {
+        "id_user": "7723-6b6a79a9-9b4a-4d79-997c-4c3f6d225a1f-6610",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2026-01-21T09:30:57.192Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "15.2.01101",
+        "numeroDexploitant": "1",
+        "datee": "2026-01-21T09:32:11.602Z",
+        "succes": true,
+        "id_user": "4084-5133-6d4a263460804ad798bf80021e58e5ea-9511-141"
+    },
+    {
+        "id_user": "3332-3436-ed57471dfc6842228a8b5d8d02f14bdf-7812-5436",
+        "numeroDePhytolicence": "24.2.00704",
+        "numeroDexploitant": "092071017-72",
+        "datee": "2026-01-21T16:30:51.040Z",
+        "succes": true
+    },
+    {
+        "id_user": "9397-979e530a-2042-44cd-afe0-959246e310c1-2920",
+        "numeroDePhytolicence": "14.2.23281",
+        "numeroDexploitant": "",
+        "datee": "2026-01-21T16:48:55.924Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "15.2.15686",
+        "numeroDexploitant": null,
+        "datee": "2026-01-21T20:47:08.100Z",
+        "succes": true,
+        "id_user": "2203-7909-1d816c1acdde43eb9f2867fe72643a23-4112-2936"
+    },
+    {
+        "id_user": "2564-5345-113a1ed7f6e94a4fbe7af6ecab79556e-5542-8875",
+        "numeroDePhytolicence": "14.2.14691",
+        "numeroDexploitant": "",
+        "datee": "2026-01-22T14:27:42.760Z",
+        "succes": true
+    },
+    {
+        "id_user": "1281-5312-7f7fdb739ac9443db3c0ffc4178042f6-2607-6407",
+        "numeroDePhytolicence": "21.3.00083",
+        "numeroDexploitant": "",
+        "datee": "2026-01-23T10:09:24.196Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.33865",
+        "numeroDexploitant": "00051160931",
+        "datee": "2026-01-23T16:19:33.885Z",
+        "succes": true,
+        "id_user": "1648-4477-ba262fe2bc764fb39d9f8be6d70a4cd4-3642-5086"
+    },
+    {
+        "numeroDePhytolicence": "14.2.07546",
+        "numeroDexploitant": "0890566896",
+        "datee": "2026-01-26T14:21:07.483Z",
+        "succes": true,
+        "id_user": "8400-6024-1d556a97cbac47a8afb9d5bdcbe8798e-2733-88"
+    },
+    {
+        "numeroDePhytolicence": "18.2.00558",
+        "numeroDexploitant": "000511589",
+        "datee": "2026-01-26T16:03:22.703Z",
+        "succes": true,
+        "id_user": "8232-1060-edfda8b247dd4a3cabbdfba9fdc0e0d3-6381-6800"
+    },
+    {
+        "numeroDePhytolicence": "14.2.25598",
+        "numeroDexploitant": "00060202947",
+        "datee": "2026-01-26T16:09:55.157Z",
+        "succes": true,
+        "id_user": "9415-0025-285db50436684690a710c9907ad6c4e4-2788-2254"
+    },
+    {
+        "numeroDePhytolicence": "14.2.10648",
+        "numeroDexploitant": "16204602657",
+        "datee": "2026-01-26T18:59:07.516Z",
+        "succes": true,
+        "id_user": "5017-5278-0831b5879b744af7afe23bef7673e141-8132-2972"
+    },
+    {
+        "numeroDePhytolicence": "21.3.00102",
+        "numeroDexploitant": null,
+        "datee": "2026-01-27T08:14:46.564Z",
+        "succes": true,
+        "id_user": "3738-1246-241882fb5f114056ad9a465862ef6472-2163-3357"
+    },
+    {
+        "id_user": "9900-eda193e4-fae9-4f7b-a106-40b9f6657559-1122",
+        "numeroDePhytolicence": "14.2.09209",
+        "numeroDexploitant": "000110356-67",
+        "datee": "2026-01-27T09:26:40.555Z",
+        "succes": true
+    },
+    {
+        "id_user": "28eada71-ba13-4070-98b0-ec81f167d972",
+        "numeroDePhytolicence": "54647635435",
+        "numeroDexploitant": "287687",
+        "datee": "2026-01-27T10:12:21.197Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.35012",
+        "numeroDexploitant": "51160830",
+        "datee": "2026-01-27T14:18:13.302Z",
+        "succes": true,
+        "id_user": "7381-8570-bbb7ab16348846c0956a333a05bac760-7048-5384"
+    },
+    {
+        "id_user": "d87b1beb-7bf4-4626-b61a-5a15ba52ec1f",
+        "numeroDePhytolicence": "13.2.01893",
+        "numeroDexploitant": "",
+        "datee": "2026-01-27T18:55:57.647Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.21389",
+        "numeroDexploitant": "0670367790",
+        "datee": "2026-01-28T08:03:56.530Z",
+        "succes": true,
+        "id_user": "4710-1689-620295000cfa424487d2a82374c9f63c-9115-1129"
+    },
+    {
+        "id_user": "6187-8aa902ee-d8b4-433e-8fd7-a4aa1c38c59d-1750",
+        "numeroDePhytolicence": "15.2.10739",
+        "numeroDexploitant": "10438311",
+        "datee": "2026-01-28T11:44:04.110Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.06298",
+        "numeroDexploitant": null,
+        "datee": "2026-01-29T08:40:47.702Z",
+        "succes": true,
+        "id_user": "51-5754-30cf3da148414b6e8e23dcdcb6ca22bc-2855-3241"
+    },
+    {
+        "numeroDePhytolicence": "21.2.00629",
+        "numeroDexploitant": null,
+        "datee": "2026-01-29T14:06:27.448Z",
+        "succes": true,
+        "id_user": "2882-2641-5b5e897cc4474a1a9739247ff037c439-5393-6556"
+    },
+    {
+        "numeroDePhytolicence": "14.3.00375",
+        "numeroDexploitant": null,
+        "datee": "2026-01-29T16:20:13.362Z",
+        "succes": true,
+        "id_user": "1434-7900-ed8ceeb8e31442edb3e7e66326e66afc-0338-970"
+    },
+    {
+        "numeroDePhytolicence": "14.2.32847",
+        "numeroDexploitant": "00060288530",
+        "datee": "2026-01-29T20:22:39.788Z",
+        "succes": true,
+        "id_user": "41-9420-a11c9fad690344eba0fbe97713fb068f-1397-772"
+    },
+    {
+        "numeroDePhytolicence": "14.2.17096",
+        "numeroDexploitant": "7063",
+        "datee": "2026-01-30T10:14:09.414Z",
+        "succes": true,
+        "id_user": "2813-8712-929addbfdbe74c36af638ac40eaf2f1f-9374-6949"
+    },
+    {
+        "numeroDePhytolicence": "23.1.00133",
+        "numeroDexploitant": "2201597518",
+        "datee": "2026-02-01T09:49:19.845Z",
+        "succes": true,
+        "id_user": "6091-3980-4cb0ca0cc1f54a31b5a784ee6176f11d-1322-9491"
+    },
+    {
+        "id_user": "6873-9fc1ae91-5afa-48eb-ba14-89bed1687343-6947",
+        "numeroDePhytolicence": "15.2.15552",
+        "numeroDexploitant": "",
+        "datee": "2026-02-01T13:49:57.747Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.04222",
+        "numeroDexploitant": "4450",
+        "datee": "2026-02-02T09:31:30.504Z",
+        "succes": true,
+        "id_user": "5987-1213-b54c7c3f34344e9fba9a460a40def1eb-3116-6759"
+    },
+    {
+        "numeroDePhytolicence": "14.2.33283",
+        "numeroDexploitant": "49019",
+        "datee": "2026-02-02T16:54:47.514Z",
+        "succes": true,
+        "id_user": "4698-1476-c2961f2301d9458597967e1c4476855f-1991-3972"
+    },
+    {
+        "numeroDePhytolicence": "15.2.01997",
+        "numeroDexploitant": "29301301167",
+        "datee": "2026-02-03T09:15:08.839Z",
+        "succes": true,
+        "id_user": "8381-5497-d7bf24a7a2404cd795c41cd16591d6f9-7963-7127"
+    },
+    {
+        "numeroDePhytolicence": "15.2.02854",
+        "numeroDexploitant": "2061165767",
+        "datee": "2026-02-03T14:33:41.485Z",
+        "succes": true,
+        "id_user": "9134-1492-b136678539464eb08f205789299471a7-3332-8963"
+    },
+    {
+        "numeroDePhytolicence": "14.2.16586",
+        "numeroDexploitant": "",
+        "datee": "2026-02-04T14:22:09.899Z",
+        "succes": true,
+        "id_user": "1667-3926-01796d95082048e3b0812b92f85cd163-9497-8072"
+    },
+    {
+        "numeroDePhytolicence": "14.2.14979",
+        "numeroDexploitant": "",
+        "datee": "2026-02-05T10:15:08.484Z",
+        "succes": true,
+        "id_user": "8228-3098-b0c267c0f33644109983f24cee61e5ba-5790-6944"
+    },
+    {
+        "numeroDePhytolicence": "21.2.00934",
+        "numeroDexploitant": "0",
+        "datee": "2026-02-06T16:34:41.985Z",
+        "succes": true,
+        "id_user": "1255-0928-c82602fa403a4917a70b7f9963ef96fa-5092-8909"
+    },
+    {
+        "numeroDePhytolicence": "15.2.00072",
+        "numeroDexploitant": "00050492338",
+        "datee": "2026-02-06T17:50:41.372Z",
+        "succes": true,
+        "id_user": "8166-4765-ead927aa879e41b2ab9081738ae7c245-9288-3450"
+    },
+    {
+        "id_user": "29-d853a9cd-728a-48d1-935c-3885da841be6-8868",
+        "numeroDePhytolicence": "14.2.23490",
+        "numeroDexploitant": "000506150-04",
+        "datee": "2026-02-09T10:56:13.518Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.3.00059",
+        "numeroDexploitant": "",
+        "datee": "2026-02-10T17:17:32.112Z",
+        "succes": true,
+        "id_user": "6334-2316-97becfbbcd6e4600a8ed4d3a22710e0f-2292-70"
+    },
+    {
+        "numeroDePhytolicence": "18.2.00673",
+        "numeroDexploitant": "4537",
+        "datee": "2026-02-10T19:33:24.958Z",
+        "succes": true,
+        "id_user": "1734-5927-ed37dad81d6445b996ac9ea2851d1d98-7697-3258"
+    },
+    {
+        "numeroDePhytolicence": "13.3.00517",
+        "numeroDexploitant": null,
+        "datee": "2026-02-12T16:50:55.384Z",
+        "succes": true,
+        "id_user": "5724-1681-896fdfe21ffe4ac6aa0221cebfa99a4b-6151-4990"
+    },
+    {
+        "numeroDePhytolicence": "11.1.11111",
+        "numeroDexploitant": null,
+        "datee": "2026-02-13T11:23:11.221Z",
+        "succes": true,
+        "id_user": "1866-5852-8ae2de77101a42f69e1cf1d69b85367e-6115-1515"
+    },
+    {
+        "numeroDePhytolicence": "11.1.11111",
+        "numeroDexploitant": null,
+        "datee": "2026-02-13T13:59:47.966Z",
+        "succes": true,
+        "id_user": "7494-0797-24c7da3570854ba79a014fb95307ac8f-1168-1310"
+    },
+    {
+        "numeroDePhytolicence": "789",
+        "numeroDexploitant": null,
+        "datee": "2026-02-13T14:05:23.937Z",
+        "succes": true,
+        "id_user": "7521-6834-6b76946b131949db8e1e21239eb3ce64-8404-2869"
+    },
+    {
+        "numeroDePhytolicence": "15.2.09126",
+        "numeroDexploitant": "",
+        "datee": "2026-02-16T09:17:50.989Z",
+        "succes": true,
+        "id_user": "8145-2188-5043e409ae4949d6bf7bc0287d307c07-0775-929"
+    },
+    {
+        "id_user": "5941-3a194b75-72b4-4021-b52f-0bbaa999b67f-7895",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2026-02-16T14:01:55.828Z",
+        "succes": true
+    },
+    {
+        "id_user": "2823-4025-2f896155b0764503b1f59036eddf11cf-4565-5315",
+        "numeroDePhytolicence": "21.2.01434",
+        "numeroDexploitant": "50485668",
+        "datee": "2026-02-16T17:46:51.412Z",
+        "succes": true
+    },
+    {
+        "id_user": "9813-b96b2db2-a6a8-44f6-864f-eb0392e57522-9913",
+        "numeroDePhytolicence": "13.2.03063",
+        "numeroDexploitant": "",
+        "datee": "2026-02-17T14:34:44.111Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "24.2.00139",
+        "numeroDexploitant": "10",
+        "datee": "2026-02-17T20:57:06.436Z",
+        "succes": true,
+        "id_user": "4432-0951-443304189e58485bbbf523ed69b4f741-8430-2864"
+    },
+    {
+        "numeroDePhytolicence": "14.2.19157",
+        "numeroDexploitant": null,
+        "datee": "2026-02-18T10:03:04.866Z",
+        "succes": true,
+        "id_user": "8872-0751-7106347500ec40bb98544a11a8482fd0-4281-1251"
+    },
+    {
+        "numeroDePhytolicence": "14.2.09288",
+        "numeroDexploitant": "15203900440",
+        "datee": "2026-02-18T17:14:14.277Z",
+        "succes": true,
+        "id_user": "4611-1629-7ed295f430ce4e379756319040a744fc-4727-5304"
+    },
+    {
+        "numeroDePhytolicence": "13.2.00492",
+        "numeroDexploitant": "",
+        "datee": "2026-02-19T10:55:55.262Z",
+        "succes": true,
+        "id_user": "5789-6496-e5e8f39609ce41c386ae20b6bea95860-1467-6694"
+    },
+    {
+        "numeroDePhytolicence": "14.2.06518",
+        "numeroDexploitant": null,
+        "datee": "2026-02-19T11:42:17.879Z",
+        "succes": true,
+        "id_user": "9874-3536-35136401381c43418ae24eaec66c7c37-2135-3384"
+    },
+    {
+        "numeroDePhytolicence": "14.2.33133",
+        "numeroDexploitant": "895502614",
+        "datee": "2026-02-20T11:24:57.550Z",
+        "succes": true,
+        "id_user": "7014-0059-de4638795988416c93e7d3130efa425f-5590-7169"
+    },
+    {
+        "numeroDePhytolicence": "14.2.28223",
+        "numeroDexploitant": "",
+        "datee": "2026-02-20T14:57:44.955Z",
+        "succes": true,
+        "id_user": "2957-9545-84f570f1b7c5460ea9c81cdfb5485ffd-8821-7605"
+    },
+    {
+        "numeroDePhytolicence": "14.2.14964",
+        "numeroDexploitant": "0466239111",
+        "datee": "2026-02-22T11:40:11.761Z",
+        "succes": true,
+        "id_user": "661-0035-d5330bda13fc4dbf85bb8ad7e461de24-7003-6050"
+    },
+    {
+        "numeroDePhytolicence": "24.2.00896",
+        "numeroDexploitant": "00060282365",
+        "datee": "2026-02-22T21:37:29.060Z",
+        "succes": true,
+        "id_user": "1275-6981-ffd69279eb8f432e861cd703b865be5c-2186-8155"
+    },
+    {
+        "id_user": "9301-2dd5f371-c2ca-42da-87be-00f9335e8c8e-9218",
+        "numeroDePhytolicence": "26.3.00003",
+        "numeroDexploitant": "",
+        "datee": "2026-02-23T09:29:24.244Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.03366",
+        "numeroDexploitant": "",
+        "datee": "2026-02-23T20:15:50.681Z",
+        "succes": true,
+        "id_user": "4995-6763-244614ad2b344e038521d092851427d3-2850-3018"
+    },
+    {
+        "id_user": "5707-2893-a06bd622bb97461da6037a16f1980b26-4934-4866",
+        "numeroDePhytolicence": "16.2.01378",
+        "numeroDexploitant": "",
+        "datee": "2026-02-25T09:14:29.651Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": " ",
+        "numeroDexploitant": null,
+        "datee": "2026-02-25T09:15:07.856Z",
+        "succes": true,
+        "id_user": "4162-0619-4feea539264b4ec482f9ba919e3684ad-7125-9794"
+    },
+    {
+        "numeroDePhytolicence": "12",
+        "numeroDexploitant": "12",
+        "datee": "2026-02-25T09:19:29.527Z",
+        "succes": true,
+        "id_user": "6188-5610-c4f5e8d9bbbb4e0a918856a5fa387395-5337-8187"
+    },
+    {
+        "numeroDePhytolicence": "15.2.15674",
+        "numeroDexploitant": null,
+        "datee": "2026-02-25T09:19:31.149Z",
+        "succes": true,
+        "id_user": "2274-5978-acb190b7e7454d089b9c753ab6434ecb-2825-9979"
+    },
+    {
+        "id_user": "3877-2352-7f2ff9bae8c2431aaa6032b94273f8f2-2158-5186",
+        "numeroDePhytolicence": "23.3.00238",
+        "numeroDexploitant": "",
+        "datee": "2026-02-25T09:20:19.269Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "444",
+        "numeroDexploitant": "33",
+        "datee": "2026-02-25T09:20:46.567Z",
+        "succes": true,
+        "id_user": "4725-5904-08b710cbf9794e03918c52df34f8179f-1901-2389"
+    },
+    {
+        "numeroDePhytolicence": "14.2.28222",
+        "numeroDexploitant": null,
+        "datee": "2026-02-25T09:20:56.720Z",
+        "succes": true,
+        "id_user": "334-5302-481344eaf26c4b29a4ceda5a51072080-4668-8605"
+    },
+    {
+        "numeroDePhytolicence": "143",
+        "numeroDexploitant": null,
+        "datee": "2026-02-25T09:22:16.795Z",
+        "succes": true,
+        "id_user": "3092-0697-af32a7eec27949a4af3432b656696642-6794-3964"
+    },
+    {
+        "numeroDePhytolicence": "15.1.01839",
+        "numeroDexploitant": "1",
+        "datee": "2026-02-25T09:27:14.458Z",
+        "succes": true,
+        "id_user": "5502-3976-5de41ce4dd5444679da95c4004813276-8461-7350"
+    },
+    {
+        "id_user": "1198-9628-49974edb94724f13a3c9a3d5916d4f24-8210-826",
+        "numeroDePhytolicence": "",
+        "numeroDexploitant": "",
+        "datee": "2026-02-25T09:36:24.464Z",
+        "succes": true
+    },
+    {
+        "id_user": "8659-3767-1c90a52202f04e02a614036dfec3a09e-3745-3938",
+        "numeroDePhytolicence": "15.2.05177",
+        "numeroDexploitant": "BE0848236195",
+        "datee": "2026-02-25T10:00:02.565Z",
+        "succes": true
+    },
+    {
+        "id_user": "8433-6159-e8c4384fdada4e3192cfa78a9aca1fe1-6817-144",
+        "numeroDePhytolicence": "20.2.00019",
+        "numeroDexploitant": "",
+        "datee": "2026-02-25T10:10:27.198Z",
+        "succes": true
+    },
+    {
+        "id_user": "9616-339ea858-a276-4e1d-92ef-b84fb8e2b364-2499",
+        "numeroDePhytolicence": "14.2.24190",
+        "numeroDexploitant": "",
+        "datee": "2026-02-25T20:02:46.063Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.27693",
+        "numeroDexploitant": null,
+        "datee": "2026-02-26T11:01:25.576Z",
+        "succes": true,
+        "id_user": "3835-7357-768a673ca79f4bd989141de8e64928f6-0136-928"
+    },
+    {
+        "numeroDePhytolicence": "11.1.11111",
+        "numeroDexploitant": "111",
+        "datee": "2026-02-26T13:34:20.247Z",
+        "succes": true,
+        "id_user": "3999-5010-88382805a64f46d88eccff1bd76c5242-8540-5270"
+    },
+    {
+        "numeroDePhytolicence": "14.2.20882",
+        "numeroDexploitant": "1",
+        "datee": "2026-02-26T20:38:21.715Z",
+        "succes": true,
+        "id_user": "1507-5716-51592061487c4746abc4146034e9193f-8217-1225"
+    },
+    {
+        "id_user": "830-9797-48e3bb1b49d74ad79a1c9d79279436eb-3560-3784",
+        "numeroDePhytolicence": "13.2.03367",
+        "numeroDexploitant": "251057011-59",
+        "datee": "2026-02-27T06:50:16.460Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.10349",
+        "numeroDexploitant": "",
+        "datee": "2026-02-27T13:11:09.464Z",
+        "succes": true,
+        "id_user": "2428-1366-153aa023aac64b7899f868bbda47c7c7-5948-3167"
+    },
+    {
+        "numeroDePhytolicence": "23.3.00080",
+        "numeroDexploitant": null,
+        "datee": "2026-02-27T14:48:05.350Z",
+        "succes": true,
+        "id_user": "5411-8355-053bf7a4bf51497db3a55227606ca14f-5726-2006"
+    },
+    {
+        "numeroDePhytolicence": "14.2.12327",
+        "numeroDexploitant": "00050118583",
+        "datee": "2026-02-28T15:32:53.023Z",
+        "succes": true,
+        "id_user": "9510-2210-6f448baa014c45c8bddb39444ca318a8-5479-3994"
+    },
+    {
+        "numeroDePhytolicence": "15.3.00171",
+        "numeroDexploitant": "6230",
+        "datee": "2026-02-28T17:08:29.931Z",
+        "succes": true,
+        "id_user": "942-0776-0467943dec3e4615a1bb9be8f4dd446f-9079-4878"
+    },
+    {
+        "id_user": "6675-4232-78e81bed996548abb554fb1d9af6a578-7714-8415",
+        "numeroDePhytolicence": "14.2.24548",
+        "numeroDexploitant": "",
+        "datee": "2026-02-28T21:57:17.597Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "1",
+        "numeroDexploitant": "-1",
+        "datee": "2026-03-01T14:57:34.892Z",
+        "succes": true,
+        "id_user": "4474-2022-cee22b9bd1b94371b677b611fd60ba6b-7144-5517"
+    },
+    {
+        "numeroDePhytolicence": "14.2.34566",
+        "numeroDexploitant": "",
+        "datee": "2026-03-02T10:28:09.341Z",
+        "succes": true,
+        "id_user": "3501-1119-db92b6c61ba345268d5808fc7aeff6b1-4079-6090"
+    },
+    {
+        "numeroDePhytolicence": "14.2.27693",
+        "numeroDexploitant": null,
+        "datee": "2026-03-02T12:04:45.903Z",
+        "succes": true,
+        "id_user": "221-6443-213ba604084a499a959c0ce5fbe6d37f-8527-6412"
+    },
+    {
+        "numeroDePhytolicence": "22.2.01690",
+        "numeroDexploitant": "",
+        "datee": "2026-03-03T07:26:14.097Z",
+        "succes": true,
+        "id_user": "392-9892-6ffa17cf6b4c4292ba38137e6b8cdd6d-4724-4250"
+    },
+    {
+        "numeroDePhytolicence": "14.2.09863",
+        "numeroDexploitant": null,
+        "datee": "2026-03-04T08:24:16.413Z",
+        "succes": true,
+        "id_user": "3949-8793-24b4f96686a748aa89d17fe4ea6df349-3718-7069"
+    },
+    {
+        "numeroDePhytolicence": "22.2.00018",
+        "numeroDexploitant": null,
+        "datee": "2026-03-06T12:48:30.669Z",
+        "succes": true,
+        "id_user": "8416-6110-f1d277249ed84182af635c17cf50c42e-1356-2115"
+    },
+    {
+        "numeroDePhytolicence": "15.2.16477",
+        "numeroDexploitant": null,
+        "datee": "2026-03-07T07:16:29.440Z",
+        "succes": true,
+        "id_user": "8764-3281-193343bec5c0445c9bdbadc7a1f61f28-6534-9738"
+    },
+    {
+        "id_user": "206-2503-bc4e7302981c4aad8d6d6431712c8ebf-6155-4643",
+        "numeroDePhytolicence": "20.2.00050",
+        "numeroDexploitant": "60099378",
+        "datee": "2026-03-07T11:27:50.021Z",
+        "succes": true
+    },
+    {
+        "id_user": "896-0606-66bdacd57d034b579ff7fea6ec0563a7-0854-669",
+        "numeroDePhytolicence": "14.3.00739",
+        "numeroDexploitant": "000600585-58",
+        "datee": "2026-03-08T11:34:35.880Z",
+        "succes": true
+    },
+    {
+        "id_user": "a97e8ce7-928c-43f8-a8e3-ca40661fe8c5",
+        "numeroDePhytolicence": "14.2.01474",
+        "numeroDexploitant": "",
+        "datee": "2026-03-09T08:56:30.346Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.18738",
+        "numeroDexploitant": "50391294",
+        "datee": "2026-03-09T10:05:44.854Z",
+        "succes": true,
+        "id_user": "8566-0808-e6dc17e74d79493d82235c41ded9ceea-4867-9341"
+    },
+    {
+        "id_user": "5246-5548-844944a4c7134dc195b3c042dcaba0ab-4175-8499",
+        "numeroDePhytolicence": "22.2.00018",
+        "numeroDexploitant": "20182417700",
+        "datee": "2026-03-09T13:31:03.230Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "23.2.00389",
+        "numeroDexploitant": "60218408",
+        "datee": "2026-03-10T08:58:04.853Z",
+        "succes": true,
+        "id_user": "8551-5311-2a8e887836e6481683fb5cfdfd4d05f9-4739-4982"
+    },
+    {
+        "id_user": "252-d8b112e3-8616-4952-80ab-89195eacfc2b-906",
+        "numeroDePhytolicence": "14.2.20506",
+        "numeroDexploitant": "54029039",
+        "datee": "2026-03-10T20:52:35.957Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "15.2.16789",
+        "numeroDexploitant": "00013164314",
+        "datee": "2026-03-11T08:45:53.943Z",
+        "succes": true,
+        "id_user": "9400-0637-13721981caf8401ab26c37771fc48557-8975-6017"
+    },
+    {
+        "id_user": "2934-388593ca-978e-46a4-9c02-227c08be9ea7-2548",
+        "numeroDePhytolicence": "14.2.28161",
+        "numeroDexploitant": "253034017-11",
+        "datee": "2026-03-11T12:48:56.209Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.30971",
+        "numeroDexploitant": "0",
+        "datee": "2026-03-11T13:02:14.500Z",
+        "succes": true,
+        "id_user": "3996-4356-4412166c0de84419863b4b82b9d87a27-2078-6102"
+    },
+    {
+        "numeroDePhytolicence": "14.2.17747",
+        "numeroDexploitant": "6440",
+        "datee": "2026-03-11T14:25:52.366Z",
+        "succes": true,
+        "id_user": "2814-5967-c0f246eac54c4c47ae8550e36ce05a3a-8320-4105"
+    },
+    {
+        "id_user": "6524-6792-4dac49b646ae4e90aca027061d225c21-9429-3717",
+        "numeroDePhytolicence": "14.2.25556",
+        "numeroDexploitant": "156076005-95",
+        "datee": "2026-03-11T15:04:26.171Z",
+        "succes": true
+    },
+    {
+        "numeroDePhytolicence": "14.2.34098",
+        "numeroDexploitant": "19203120413",
+        "datee": "2026-03-12T14:50:39.593Z",
+        "succes": true,
+        "id_user": "771-8064-fd045e9de52c4ad09df3ab191a2b9a3d-5670-1194"
+    },
+    {
+        "numeroDePhytolicence": "13.2.02741",
+        "numeroDexploitant": "",
+        "datee": "2026-03-12T16:45:06.229Z",
+        "succes": true,
+        "id_user": "5404-8598-c2df9f081bac46b18083f1aa26aca614-6534-700"
+    },
+    {
+        "numeroDePhytolicence": "15.2.05969",
+        "numeroDexploitant": null,
+        "datee": "2026-03-12T17:01:07.605Z",
+        "succes": true,
+        "id_user": "6962-8150-0d2679bef6884241840ddb7e3d4d78fc-8308-1020"
+    },
+    {
+        "numeroDePhytolicence": "14.2.09201",
+        "numeroDexploitant": "00050905192",
+        "datee": "2026-03-13T06:25:37.285Z",
+        "succes": true,
+        "id_user": "1584-7189-9d3fbd749f3846ae95092475630b0d05-0132-7435"
+    },
+    {
+        "numeroDePhytolicence": "14.2.33816",
+        "numeroDexploitant": "5570",
+        "datee": "2026-03-13T08:41:23.891Z",
+        "succes": true,
+        "id_user": "6349-5945-11cb908439de4d02a372ffb410c07df6-1216-7011"
+    }
+]

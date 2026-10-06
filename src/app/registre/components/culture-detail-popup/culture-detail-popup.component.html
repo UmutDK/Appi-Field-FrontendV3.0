@@ -1,0 +1,204 @@
+<div class="popup-overlay" (click)="onClose()">
+  <div class="popup-container" (click)="$event.stopPropagation()">
+    <div class="popup-header">
+      <button class="btn-close-popup" (click)="onClose()" aria-label="Fermer">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="header-content">
+        <!-- Identité : icône + nom + badge catégorie sur une seule ligne -->
+        <div class="header-title-row">
+          <i class="material-icons header-icon">grass</i>
+          <h2 class="header-title">{{ culture.crop_name }}</h2>
+          <span class="category-badge">
+            {{ culture.phytoweb_name || culture.nomPhytoweb_crops_id || 'Catégorie non définie' }}
+          </span>
+        </div>
+
+        <!-- Fiche de propriétés : label au-dessus de la valeur, séparateurs verticaux -->
+        <div class="properties-card">
+          <div class="property">
+            <span class="property-label">Semis</span>
+            @if (!isEditingSowingDate) {
+              <span class="property-value editable" (click)="startEditSowingDate()">
+                {{ formatDateOrDefault(culture.sowing_date) }}
+                <i class="bi bi-pencil edit-icon"></i>
+              </span>
+            } @else {
+              <span class="date-editor">
+                <input type="date"
+                       [(ngModel)]="tempSowingDate"
+                       class="date-input"
+                       (keydown.enter)="saveSowingDate()"
+                       (keydown.escape)="cancelEditSowingDate()">
+                <button type="button" class="btn-save" (click)="saveSowingDate()" title="Enregistrer"><i class="bi bi-check-lg"></i></button>
+                <button type="button" class="btn-cancel" (click)="cancelEditSowingDate()" title="Annuler"><i class="bi bi-x-lg"></i></button>
+              </span>
+            }
+          </div>
+
+          <span class="property-divider"></span>
+
+          <div class="property">
+            <span class="property-label">Récolte</span>
+            @if (!isEditingHarvestDate) {
+              <span class="property-value editable" (click)="startEditHarvestDate()">
+                {{ formatDateOrDefault(culture.harvest_date) }}
+                <i class="bi bi-pencil edit-icon"></i>
+              </span>
+            } @else {
+              <span class="date-editor">
+                <input type="date"
+                       [(ngModel)]="tempHarvestDate"
+                       class="date-input"
+                       (keydown.enter)="saveHarvestDate()"
+                       (keydown.escape)="cancelEditHarvestDate()">
+                <button type="button" class="btn-save" (click)="saveHarvestDate()" title="Enregistrer"><i class="bi bi-check-lg"></i></button>
+                <button type="button" class="btn-cancel" (click)="cancelEditHarvestDate()" title="Annuler"><i class="bi bi-x-lg"></i></button>
+              </span>
+            }
+          </div>
+
+          <span class="property-divider"></span>
+
+          <!-- Parcelles associées : affichées nativement, sans infobulle -->
+          <div class="property property-grow">
+            <span class="property-label">Parcelle{{ getParcelCount(culture.parcels_id) > 1 ? 's' : '' }} ({{ getParcelCount(culture.parcels_id) }})</span>
+            <div class="parcelles-chips">
+              @for (parcel of getParcelList(culture.parcels_id); track $index) {
+                <span class="parcelle-chip">{{ parcel }}</span>
+              } @empty {
+                <span class="parcelle-chip parcelle-chip-empty">Aucune parcelle associée</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Remarque -->
+        @if (culture.remark && culture.remark.trim()) {
+          <div class="header-remark">
+            <i class="material-icons">comment</i>
+            <span>{{ culture.remark }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="popup-content">
+      <div class="section-title">
+        <h3>Historique de la culture</h3>
+        <span class="section-count">{{ culture.interventions?.length || 0 }} intervention{{ (culture.interventions?.length || 0) > 1 ? 's' : '' }}</span>
+      </div>
+
+      <div class="ht-table">
+        <!-- En-tête -->
+        <div class="ht-head">
+          <span class="ht-col ht-date">Date</span>
+          <span class="ht-col ht-parcelle">Parcelle</span>
+          <span class="ht-col ht-type">Type</span>
+          <span class="ht-col ht-bbch">BBCH</span>
+          <span class="ht-col ht-cible">Cible</span>
+          <span class="ht-col ht-details">Détails</span>
+          @if (!isArchived) { <span class="ht-col ht-action"></span> }
+        </div>
+
+        <!-- Lignes -->
+        @for (intervention of culture.interventions; track $index) {
+          <div class="ht-row" [class.ht-row-traitement]="intervention.type?.toLowerCase() === 'traitement'">
+            <span class="ht-col ht-date">{{ formatDate(intervention.date) }}</span>
+            <span class="ht-col ht-parcelle">{{ intervention.parcelle }}</span>
+            <span class="ht-col ht-type">
+              <span class="ht-type-badge">{{ intervention.type }}</span>
+            </span>
+            <span class="ht-col ht-bbch">{{ getBBCH(intervention) || '–' }}</span>
+            <span class="ht-col ht-cible">{{ getCibles(intervention) || '–' }}</span>
+            <span class="ht-col ht-details">{{ intervention.details || '' }}</span>
+            @if (!isArchived) {
+              <span class="ht-col ht-action">
+                <button type="button" class="ht-edit-btn" (click)="onModifyIntervention(intervention, $index)" title="Modifier" aria-label="Modifier">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </span>
+            }
+          </div>
+        }
+
+        @empty {
+          <div class="history-empty">
+            <i class="material-icons">history</i>
+            <span>Aucune intervention enregistrée</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="popup-footer">
+      <!-- Action destructive à gauche, action principale à droite (même ordre que les autres popups) -->
+      @if (isArchived) {
+        <button type="button" class="btn-supprimer" (click)="deleteCulture.emit(culture)">
+          <i class="bi bi-trash"></i>
+          Supprimer la culture
+        </button>
+        <button type="button" class="btn-restaurer" (click)="restoreCulture.emit(culture)">
+          <i class="bi bi-arrow-counterclockwise"></i>
+          Restaurer la culture
+        </button>
+      } @else {
+        <button type="button" class="btn-supprimer" (click)="deleteCulture.emit(culture)">
+          <i class="bi bi-trash"></i>
+          Supprimer la culture
+        </button>
+        <button type="button" class="btn-archiver" (click)="onArchiveCulture()">
+          <i class="bi bi-archive"></i>
+          Archiver la culture
+        </button>
+        <button type="button" class="btn-modifier" (click)="modifyCulture.emit(culture)">
+          <i class="bi bi-pencil"></i>
+          Modifier la culture
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Popup d'archivage -->
+@if (showArchivePopup) {
+  <div class="archive-popup-overlay" (click)="closeArchivePopup()">
+    <div class="archive-popup-container" (click)="$event.stopPropagation()">
+      <div class="archive-popup-header">
+        <h3><i class="bi bi-archive"></i> Archiver une culture</h3>
+        <button type="button" class="btn-close-archive" (click)="closeArchivePopup()" aria-label="Fermer">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="archive-popup-content">
+        <p>Sélectionnez ou créez une collection pour archiver la culture <strong>{{ culture.crop_name }}</strong> :</p>
+        
+        <div class="collection-selector">
+          <label for="collection-select">Collection :</label>
+          <select id="collection-select" class="form-control" [(ngModel)]="selectedCollection" (change)="onCollectionChange()">
+            <option value="">-- Choisir une collection --</option>
+            @for (col of availableCollections; track col) {
+              <option [value]="col">{{ col }}</option>
+            }
+            <option value="__new__">+ Créer une nouvelle collection</option>
+          </select>
+        </div>
+        
+        @if (showNewCollectionInput) {
+          <div class="new-collection-input">
+            <label for="new-collection">Nom de la nouvelle collection :</label>
+            <input type="text" id="new-collection" class="form-control" [(ngModel)]="newCollectionName" placeholder="Ex: Récolte 2025">
+          </div>
+        }
+      </div>
+      <div class="archive-popup-footer">
+        <button type="button" class="btn-cancel" (click)="closeArchivePopup()">Annuler</button>
+        <button type="button" class="btn-confirm-archive" (click)="confirmArchive()" [disabled]="!canArchive()">
+          <i class="bi bi-archive"></i>
+          Archiver
+        </button>
+      </div>
+    </div>
+  </div>
+}

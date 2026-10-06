@@ -1,0 +1,272 @@
+<!-- Sidebar desktop (≥993px) -->
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-top">
+    <a [routerLink]="isConnect() ? '/back-office' : '/'" class="sidebar-logo">
+      <img src="image/LogoAppiField.png" alt="Logo AppiField" class="sidebar-logo-img">
+    </a>
+    <button class="sidebar-collapse-btn" type="button" (click)="toggleCollapsed()"
+            [attr.aria-label]="collapsed ? 'Déplier le menu' : 'Replier le menu'">
+      <i class="bi" [class.bi-chevron-double-right]="collapsed" [class.bi-chevron-double-left]="!collapsed"></i>
+    </button>
+  </div>
+
+  @if(workspaceEntries.length > 0) {
+    <div class="sidebar-workspace">
+      @if(isLoadingWorkspace) {
+        <div class="workspace-loading"><span class="spinner-workspace"></span></div>
+      } @else {
+        <div class="workspace-dropdown" [class.open]="dropdownOpen">
+          <button class="workspace-btn" type="button" (click)="dropdownOpen = !dropdownOpen; $event.stopPropagation()">
+            <span class="workspace-btn-label">{{ getCurrentWorkspaceName() }}</span>
+            <i class="bi bi-chevron-down workspace-chevron"></i>
+          </button>
+          @if(dropdownOpen) {
+            <div class="workspace-dropdown-menu">
+              <button class="workspace-item" [class.active]="selectedWorkspaceId === ''"
+                      type="button" (click)="selectWorkspace('')">
+                Mon exploitation
+              </button>
+              @for(w of workspaceEntries; track w.id) {
+                <button class="workspace-item" [class.active]="selectedWorkspaceId === w.id"
+                        type="button" (click)="selectWorkspace(w.id)">
+                  {{ w.label }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <nav class="sidebar-nav">
+    <a [routerLink]="isConnect() ? '/back-office' : '/'"
+       class="sidebar-link"
+       [class.active]="isRouteActive('/back-office')"
+       title="Accueil">
+      <i class="bi bi-house-door sidebar-link-icon"></i>
+      <span class="sidebar-link-label">Accueil</span>
+    </a>
+    @if(isConnect()) {
+      <a routerLink="/parcelles" routerLinkActive="active" class="sidebar-link" title="Parcelles">
+        <i class="bi bi-geo-alt sidebar-link-icon"></i>
+        <span class="sidebar-link-label">Parcelles</span>
+      </a>
+      <a routerLink="/registre" routerLinkActive="active" class="sidebar-link" title="Carnet de champ">
+        <i class="bi bi-journal-richtext sidebar-link-icon"></i>
+        <span class="sidebar-link-label">Carnet de champ</span>
+      </a>
+      <a routerLink="/inventaire" routerLinkActive="active" class="sidebar-link" title="Inventaire">
+        <i class="bi bi-box-seam sidebar-link-icon"></i>
+        <span class="sidebar-link-label">Inventaire</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-bottom">
+    @if(isConnect() && adminService.isAdmin()) {
+      <!-- Admin : sous-menu qui s'ouvre à droite au survol (ou au clic / clavier) -->
+      <div class="sidebar-admin"
+           (mouseenter)="openAdminMenu(adminBtn)"
+           (mouseleave)="closeAdminMenuSoon()">
+        <button #adminBtn type="button" class="sidebar-link sidebar-admin-btn" title="Admin"
+                [class.active]="isAdminRouteActive()"
+                aria-haspopup="menu" [attr.aria-expanded]="adminMenuOpen"
+                (click)="toggleAdminMenu(adminBtn)">
+          <i class="bi bi-shield-lock sidebar-link-icon"></i>
+          <span class="sidebar-link-label">Admin</span>
+          <i class="bi bi-chevron-right sidebar-admin-chevron"></i>
+        </button>
+        @if (adminMenuOpen) {
+          <div class="sidebar-admin-menu" role="menu"
+               [style.top.px]="adminMenuPos.top" [style.left.px]="adminMenuPos.left">
+            <div class="sidebar-admin-menu-inner">
+              <span class="sidebar-admin-menu-title">Admin</span>
+              <a routerLink="/admin/formations" routerLinkActive="active" class="sidebar-admin-item" role="menuitem"
+                 (click)="adminMenuOpen = false">
+                <i class="bi bi-mortarboard"></i>
+                <span>Gestion des formations</span>
+              </a>
+              <a routerLink="/admin/phytoweb-categories" routerLinkActive="active" class="sidebar-admin-item" role="menuitem"
+                 (click)="adminMenuOpen = false">
+                <i class="bi bi-tags"></i>
+                <span>Gestion des catégories Phytoweb</span>
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    }
+    @if(isConnect()) {
+      <a routerLink="/reglage" routerLinkActive="active" class="sidebar-link" title="Mon compte">
+        <i class="bi bi-person-gear sidebar-link-icon"></i>
+        <span class="sidebar-link-label">Mon compte</span>
+      </a>
+    }
+    <a routerLink="/faq" routerLinkActive="active" class="sidebar-link" title="Besoin d'aide">
+      <i class="bi bi-question-circle sidebar-link-icon"></i>
+      <span class="sidebar-link-label">Besoin d'aide</span>
+    </a>
+    <a routerLink="/cgu" routerLinkActive="active" class="sidebar-link" title="Conditions générales d'utilisation">
+      <i class="bi bi-file-earmark-text sidebar-link-icon"></i>
+      <span class="sidebar-link-label">Conditions générales d'utilisation</span>
+    </a>
+
+    @if(isConnect()) {
+      <div class="sidebar-user-row">
+        <a class="sidebar-user" routerLink="/reglage" title="Mon compte" aria-label="Mon compte">
+          <span class="sidebar-user-avatar">{{ getInitial() }}</span>
+          <span class="sidebar-user-info">
+            <span class="sidebar-user-name">{{ getPrenom() || getNom() }}</span>
+            <span class="sidebar-user-role">Exploitant</span>
+          </span>
+        </a>
+        <button class="sidebar-logout-btn" type="button" (click)="onLogout()"
+                title="Se déconnecter" aria-label="Se déconnecter">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    } @else {
+      <button class="sidebar-user" type="button" (click)="goToConnexion()" title="Connexion">
+        <span class="sidebar-user-avatar"><i class="bi bi-person-fill"></i></span>
+        <span class="sidebar-user-info">
+          <span class="sidebar-user-name">Connexion</span>
+        </span>
+      </button>
+    }
+  </div>
+</aside>
+
+<!-- Barre mobile/tablette (<993px) : la sidebar cède la place à une barre fine + offcanvas -->
+<header class="mobile-topbar">
+  <a [routerLink]="isConnect() ? '/back-office' : '/'" class="mobile-topbar-logo">
+    <img src="image/LogoAppiField.png" alt="Logo AppiField" class="mobile-topbar-logo-img">
+  </a>
+  <div class="mobile-topbar-actions">
+    @if(isConnect()) {
+      <a class="btn-mobile-icon" routerLink="/reglage" aria-label="Mon compte" title="Mon compte">
+        <i class="bi bi-person-circle"></i>
+      </a>
+    } @else {
+      <button class="btn-mobile-icon" type="button" (click)="goToConnexion()" aria-label="Connexion">
+        <i class="bi bi-person-circle"></i>
+      </button>
+    }
+    <button class="btn-mobile-icon" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#mobileNavOffcanvas"
+            aria-label="Menu mobile">
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+</header>
+
+<!-- Ancien panneau "Menu utilisateur" (offcanvas) supprimé : Mon compte, CGU, Déconnexion et
+     Admin sont dans la sidebar (desktop) et dans le menu mobile ci-dessous ; les contacts
+     (téléphone, horaires, mail) sont sur la page "Besoin d'aide". -->
+
+<!-- Offcanvas Navigation mobile -->
+<div class="offcanvas offcanvas-start mobile-nav-offcanvas"
+     tabindex="-1"
+     id="mobileNavOffcanvas"
+     aria-labelledby="mobileNavOffcanvasLabel">
+  <div class="offcanvas-header">
+    <div class="offcanvas-brand">
+      <img src="image/LogoAppiField.png" alt="Logo AppiField" class="offcanvas-logo">
+      <h5 class="offcanvas-title" id="mobileNavOffcanvasLabel">Navigation</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    @if(workspaceEntries.length > 0) {
+      <div class="usermenu-section mobile-workspace-select">
+        <span class="usermenu-section-label">Exploitation active</span>
+        @if(isLoadingWorkspace) {
+          <div class="workspace-loading"><span class="spinner-workspace"></span></div>
+        } @else {
+          <select class="form-select" [value]="selectedWorkspaceId" (change)="onWorkspaceChange($event)">
+            <option value="">Mon exploitation</option>
+            @for(w of workspaceEntries; track w.id) {
+              <option [value]="w.id">{{ w.label }}</option>
+            }
+          </select>
+        }
+      </div>
+    }
+    <nav class="mobile-nav-links">
+      <a [routerLink]="isConnect() ? '/back-office' : '/'"
+         class="mobile-nav-link"
+         [class.active]="isRouteActive('/back-office')"
+         data-bs-dismiss="offcanvas">
+        <i class="bi bi-house-door mobile-nav-icon"></i>
+        <span class="mobile-nav-label">Accueil</span>
+      </a>
+      @if(isConnect()) {
+        <a routerLink="/parcelles"
+           routerLinkActive="active"
+           class="mobile-nav-link"
+           data-bs-dismiss="offcanvas">
+          <i class="bi bi-geo-alt mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Parcelles</span>
+        </a>
+        <a routerLink="/registre"
+           routerLinkActive="active"
+           class="mobile-nav-link"
+           data-bs-dismiss="offcanvas">
+          <i class="bi bi-journal-richtext mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Carnet de champ</span>
+        </a>
+        <a routerLink="/inventaire"
+           routerLinkActive="active"
+           class="mobile-nav-link"
+           data-bs-dismiss="offcanvas">
+          <i class="bi bi-box-seam mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Inventaire</span>
+        </a>
+        @if (adminService.isAdmin()) {
+          <a routerLink="/admin/formations"
+             routerLinkActive="active"
+             class="mobile-nav-link"
+             data-bs-dismiss="offcanvas">
+            <i class="bi bi-mortarboard mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Gestion des formations</span>
+          </a>
+          <a routerLink="/admin/phytoweb-categories"
+             routerLinkActive="active"
+             class="mobile-nav-link"
+             data-bs-dismiss="offcanvas">
+            <i class="bi bi-tags mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Gestion des catégories Phytoweb</span>
+          </a>
+        }
+        <a routerLink="/reglage"
+           routerLinkActive="active"
+           class="mobile-nav-link"
+           data-bs-dismiss="offcanvas">
+          <i class="bi bi-person-gear mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Mon compte</span>
+        </a>
+      }
+      <a routerLink="/faq"
+         class="mobile-nav-link"
+         data-bs-dismiss="offcanvas">
+        <i class="bi bi-question-circle mobile-nav-icon"></i>
+        <span class="mobile-nav-label">Besoin d'aide</span>
+      </a>
+      <a routerLink="/cgu"
+         class="mobile-nav-link"
+         data-bs-dismiss="offcanvas">
+        <i class="bi bi-file-earmark-text mobile-nav-icon"></i>
+        <span class="mobile-nav-label">Conditions générales d'utilisation</span>
+      </a>
+      @if(isConnect()) {
+        <button type="button"
+                class="mobile-nav-link usermenu-link-danger"
+                data-bs-dismiss="offcanvas"
+                (click)="onLogout()">
+          <i class="bi bi-box-arrow-right mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Déconnexion</span>
+        </button>
+      }
+    </nav>
+  </div>
+</div>

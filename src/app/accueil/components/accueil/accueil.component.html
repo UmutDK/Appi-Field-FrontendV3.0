@@ -1,0 +1,175 @@
+@if (!token) {
+<main>
+    <!-- 🔐 Message de session expirée -->
+    @if (sessionExpired) {
+        <div class="session-expired-alert">
+            <div class="container">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>Session expirée</strong> - Votre session a expiré. Veuillez vous reconnecter pour continuer.
+                    <button type="button" class="btn-close" (click)="sessionExpired = false"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- 🔐 Message de déconnexion automatique -->
+    @if (autoLogout) {
+        <div class="session-expired-alert">
+            <div class="container">
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <strong>Vous avez été déconnecté</strong> - Veuillez vous reconnecter.
+                    <button type="button" class="btn-close" (click)="autoLogout = false"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ✅ Message de création de compte réussie -->
+    @if (accountCreated) {
+        <div class="session-expired-alert">
+            <div class="container">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <strong>Compte créé avec succès !</strong> Vous pouvez maintenant vous connecter avec vos identifiants.
+                    <button type="button" class="btn-close" (click)="accountCreated = false"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="dashboard">
+        <div class="dashboard-container">
+
+            <app-banniere></app-banniere>
+
+            <!-- À propos de l'outil -->
+            <section class="dashboard-card">
+                <h2>À propos de l'outil</h2>
+                <p>
+                    <b>Appi'Field est votre compagnon numérique pour la gestion agricole au quotidien.</b><br>
+                    Développé en collaboration avec le CePiCOP et le CORDER, cet outil gratuit vous accompagne dans la gestion complète de votre exploitation : de la <b>cartographie de vos parcelles</b> au suivi de vos interventions phytosanitaires, en passant par la gestion de votre <b>local phyto numérique</b>. Conforme aux <b>exigences légales de 2026</b>, Appi'Field simplifie vos démarches administratives et vous fait gagner un temps précieux.
+                    <br><br>
+                    💡 Si vous souhaitez vous informer sur les législations en vigueur, vous pouvez directement consulter notre site web, <a href="https://corder.be/fr/crputilisateurs-professionnels-agricoles-et-horticoles/stockage-et-tracabilite#paragraph-136">en cliquant ici</a>.
+                </p>
+
+                <div class="quick-access-grid">
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-geo-alt"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Gestion de vos parcelles</span>
+                            <span class="quick-access-desc">Ajout et modification de parcelles, gestion de vos cultures, visualisation géographique.</span>
+                        </span>
+                    </div>
+
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-hand-thumbs-up"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Entièrement gratuit</span>
+                            <span class="quick-access-desc">Organisez vos interventions, planifiez vos travaux et recevez des rappels pour ne rien oublier.</span>
+                        </span>
+                    </div>
+
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-journal-text"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Suivi de vos travaux au champ</span>
+                            <span class="quick-access-desc">Encodez vos traitements phytos, sauvegardez vos observations et exportez des documents conformes aux exigences légales de 2026.</span>
+                        </span>
+                    </div>
+
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-file-earmark-arrow-down"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Des exports conformes</span>
+                            <span class="quick-access-desc">Exportez vos données au format PDF et Excel, conformes aux exigences légales de 2026. Personnalisez vos exports en choisissant les données à inclure et le format de présentation.</span>
+                        </span>
+                    </div>
+
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-box-seam"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Local phyto numérique</span>
+                            <span class="quick-access-desc">Suivez votre stock de produits phytos, encodez vos PPNU et vos PPNV.</span>
+                        </span>
+                    </div>
+
+                    <div class="quick-access-card">
+                        <span class="quick-access-icon"><i class="bi bi-headset"></i></span>
+                        <span class="quick-access-body">
+                            <span class="quick-access-title">Aide et accompagnement</span>
+                            <span class="quick-access-desc">Besoin d'aide ? Profitez de nos différents canaux de support : une FAQ régulièrement mise à jour, des ateliers &amp; formations, une assistance mail et téléphonique.</span>
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Espace formation -->
+            <section class="dashboard-card">
+                <h2>Espace formation</h2>
+                <p>Vous aimeriez être accompagné pour prendre en main Appi'Field ? Retrouvez ici la liste de toutes les prochaines formations :</p>
+
+                <div class="formations-slider">
+                    <div class="slider-nav" [style.display]="needsSlider ? 'flex' : 'none'">
+                        <button class="nav-btn prev-btn" (click)="prevSlide()" [disabled]="currentSlideIndex <= 0">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="nav-btn next-btn" (click)="nextSlide()" [disabled]="currentSlideIndex >= maxSlideIndex">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="formations-viewport">
+                        <div class="formations-container" [style.transform]="sliderTransform">
+                        @for (formation of formations; track $index) {
+                            <div class="formation-card">
+                                <!-- Formation sans date (rediffusion, à la demande) : jour "📅" — enregistré "????" quand la
+                                     base ne gère pas les émojis — ou vide → libellé explicite au lieu du texte brut. -->
+                                @let sansDate = formation.day === '📅' || formation.day === '????' || !(formation.day || '').trim();
+                                <div class="formation-date" [class.formation-date--sans-date]="sansDate" [style.background-color]="sansDate ? 'rgb(88, 88, 88)' : ''">
+                                    @if (sansDate) {
+                                        <div class="date-info">
+                                            <i class="bi bi-calendar2-x day"></i>
+                                            <span class="month">Sans date fixe</span>
+                                        </div>
+                                    } @else {
+                                        <div class="date-info">
+                                            <span class="day">{{ formation.day }}</span>
+                                            @if (formation.month) {
+                                                <span class="month">{{ formation.month }}</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="formation-content">
+                                    <h3>{{ formation.title }}</h3>
+                                    @if (formation.location) {
+                                        <p class="location"><i class="bi bi-geo-alt"></i>{{ formation.location }}</p>
+                                    }
+                                    @if (formation.time) {
+                                        <p class="time"><i class="bi bi-clock"></i>{{ formation.time }}</p>
+                                    }
+                                    @if (formation.link) {
+                                        <a [href]="formation.link" target="_blank" rel="noopener noreferrer">
+                                            <button class="btn-inscrire">Informations</button>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actualités -->
+            <section class="dashboard-card dashboard-card-flush">
+                <app-liste-actualites></app-liste-actualites>
+            </section>
+
+        </div>
+    </div>
+</main>
+}@else {
+    {{ onRouteAdmin() }}
+}

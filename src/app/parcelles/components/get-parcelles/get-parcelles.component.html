@@ -1,0 +1,1223 @@
+﻿<main>
+    <!-- Message de succès -->
+    @if (showSuccessMessage()) {
+        <div class="success-toast">
+            <div class="success-toast-content">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>{{ successMessageText }}</span>
+            </div>
+        </div>
+    }
+    
+    <div class="container-fluid">
+        <section class="row">
+            <div class="col-lg-3">
+                <div class="parcelles">
+                    <!-- Header fixe -->
+                    <div class="parcelles-header">
+                        <!-- Titre + bouton "Ajouter une parcelle" (liste déroulante) en haut à droite -->
+                        <div class="panel-title-row">
+                            <h1 class="principal">Ma carte</h1>
+                            <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
+                                <button type="button" class="add-menu-btn" (click)="toggleFab()"
+                                        aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <span>Ajouter une parcelle</span>
+                                    <i class="bi bi-chevron-down add-menu-chevron"></i>
+                                </button>
+                                @if (isFabOpen) {
+                                    <div class="add-menu-list" role="menu">
+                                        <button type="button" class="add-menu-item" role="menuitem" (click)="startDrawPolygon(); closeFab()">
+                                            <span class="add-menu-icon"><i class="bi bi-pentagon"></i></span>
+                                            <span class="add-menu-text">
+                                                <span class="add-menu-title">Tracer un polygone</span>
+                                                <span class="add-menu-desc">Dessinez le contour de la parcelle point par point.</span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="add-menu-item" role="menuitem" (click)="addClickMarqueur(); closeFab()">
+                                            <span class="add-menu-icon"><i class="bi bi-pin-map"></i></span>
+                                            <span class="add-menu-text">
+                                                <span class="add-menu-title">Placer un point sur la carte</span>
+                                                <span class="add-menu-desc">Cliquez à l'emplacement de la parcelle.</span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="add-menu-item" role="menuitem" (click)="afficher(); closeFab()">
+                                            <span class="add-menu-icon"><i class="bi bi-house-add"></i></span>
+                                            <span class="add-menu-text">
+                                                <span class="add-menu-title">Par adresse</span>
+                                                <span class="add-menu-desc">Localisez la parcelle à partir de son adresse.</span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="add-menu-item" role="menuitem"
+                                                (click)="onParcellaire(); closeFab()"
+                                                [disabled]="!isZoomSufficient || isLoadingParcellaire">
+                                            <span class="add-menu-icon">
+                                                @if (isLoadingParcellaire) {
+                                                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                                                } @else {
+                                                    <i class="bi bi-grid-3x3"></i>
+                                                }
+                                            </span>
+                                            <span class="add-menu-text">
+                                                <span class="add-menu-title">Le parcellaire (PAC on Web)</span>
+                                                <span class="add-menu-desc">
+                                                    @if (isLoadingParcellaire) {
+                                                        Chargement...
+                                                    } @else if (isZoomSufficient) {
+                                                        Charge les parcelles officielles de la zone affichée.
+                                                    } @else {
+                                                        {{ zoomMessage || 'Zoomez davantage sur la carte pour l\'activer.' }}
+                                                    }
+                                                </span>
+                                            </span>
+                                        </button>
+                                        @if (tilesDisplayed) {
+                                            <div class="add-menu-separator"></div>
+                                            <button type="button" class="add-menu-item add-menu-item--danger" role="menuitem" (click)="onRemoveTiles(); closeFab()">
+                                                <span class="add-menu-icon"><i class="bi bi-trash3"></i></span>
+                                                <span class="add-menu-text">
+                                                    <span class="add-menu-title">Retirer les tuiles du parcellaire</span>
+                                                    <span class="add-menu-desc">Masque les parcelles PAC affichées sur la carte.</span>
+                                                </span>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Boutons de contrôle du mode carte -->
+                        <div class="map-mode-controls mb-3">
+                            @if (!isFullScreenMapMode) {
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary btn-sm w-100"
+                                    (click)="enterFullScreenMapMode()"
+                                >
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                    Mode carte plein écran
+                                </button>
+                        } @else {
+                            <button
+                                type="button"
+                                class="btn-back"
+                                (click)="returnToParcellesTable()"
+                            >
+                                <i class="bi bi-arrow-left"></i>
+                                Retour à mes parcelles
+                            </button>
+                        }
+                    </div>
+                    <p>Naviguez à travers vos parcelles.</p>                    
+                            
+                            <!-- Barre de recherche -->
+                            <div class="search-container">
+                                <div class="search-input-wrapper">
+                                    <i class="bi bi-search search-icon" style="color: #110f3b;"></i>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        placeholder="Rechercher une parcelle"
+                                        (input)="onSearchParcelles($event)"
+                                        value="{{searchTerm}}"
+                                        style="padding-left: 2.2em;"
+                                    >
+                                </div>
+                            </div>
+                            
+                            <!-- Filtre par catégorie -->
+                            <div class="filter-container">
+                                <div class="dropdown-container" [class.open]="isCategoryFilterOpen">
+                                    <button type="button" class="dropdown-btn" (click)="toggleCategoryFilterDropdown(); $event.stopPropagation()">
+                                        <span class="dropdown-value">{{ selectedCategory || 'Toutes les catégories' }}</span>
+                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                    </button>
+                                    @if (isCategoryFilterOpen) {
+                                        <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                            <div class="dropdown-list">
+                                                <div class="dropdown-list-item" (click)="selectCategoryFilterOption('')">
+                                                    Toutes les catégories
+                                                </div>
+                                                @for (category of getUniqueCategories(); track category) {
+                                                    <div class="dropdown-list-item" (click)="selectCategoryFilterOption(category)">
+                                                        {{ category }}
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Zone scrollable pour les parcelles -->
+                        <div class="parcelles-list">
+                            @if (isLoading) {
+                                <!-- État de chargement -->
+                                <div class="loading-state text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Chargement...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Chargement de vos parcelles...</p>
+                                </div>
+                            } @else if (isEmpty) {
+                                <!-- État vide - aucune parcelle -->
+                                <div class="empty-state text-center py-4">
+                                    <div class="empty-icon mb-3">
+                                        <i class="bi bi-geo-alt" style="font-size: 3rem; color: #6c757d;"></i>
+                                    </div>
+                                    <h2 class="empty-title mb-2">Aucune parcelle n'a été détectée</h2>
+                                    <p class="empty-description text-muted mb-3">
+                                        Pour commencer à utiliser votre carnet de champ, vous devez d'abord créer vos parcelles et ensuite ajouter vos premières cultures.
+                                    </p>
+                                    <button class="btn btn-primary" (click)="createFirstParcel()">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        Créer ma première parcelle
+                                    </button>
+                                </div>
+                            } @else {
+                                <!-- Liste des parcelles existantes -->
+                                @for (parcelle of filteredParcelles(); track parcelle.id_parcel) {
+                                    <div class="parcel-card mb-2" (click)="centerMapOnParcelle(parcelle)">
+                                        <div class="card-content">
+                                            <div class="parcel-header d-flex justify-content-between align-items-start mb-2">
+                                                <h2 class="parcel-name mb-0">{{parcelle.parcel_name}}</h2>
+                                                <button type="button" class="icon-btn" (click)="openEditParcel(parcelle); $event.stopPropagation()"
+                                                        title="Modifier la parcelle" aria-label="Modifier la parcelle">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </div>
+                                            <div class="parcel-badges">
+                                                @if (parcelle.parcel_category && parcelle.parcel_category !== 'null') {
+                                                    <span class="category-badge">{{parcelle.parcel_category}}</span>
+                                                } @else {
+                                                    <span class="category-badge category-badge--none">Non définie</span>
+                                                }
+                                                <span class="area-badge">
+                                                    {{parcelle.parcel_area}} {{parcelle.parcel_area_unit_fr}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @empty {
+                                    <div class="parcels-empty-search">
+                                        <i class="bi bi-search"></i>
+                                        <p>Aucune parcelle ne correspond à votre recherche.</p>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <!-- Contrôles de carte -->
+                    <div class="map-controls">
+                        <!-- Version desktop -->
+                        <div class="search-location desktop-search">
+                            <div class="location-search-container" [class.suggestions-active]="showLocationSuggestions && locationSuggestions.length > 0">
+                                <i class="bi bi-geo-alt"></i>
+                                <input 
+                                    type="text" 
+                                    class="form-control location-input" 
+                                    placeholder="Rechercher une adresse..."
+                                    [(ngModel)]="locationSearchTerm"
+                                    (input)="onLocationSearchInput($event)"
+                                    (blur)="hideLocationSuggestions()"
+                                    (keydown.enter)="searchLocation()"
+                                    #locationInput
+                                >
+                                <button 
+                                    class="btn layer-btn" 
+                                    [class.active]="satelliteLayerActive"
+                                    (click)="toggleSatelliteLayer()"
+                                    title="Basculer vers la vue satellite"
+                                >
+                                    <i class="bi bi-globe"></i>
+                                    <span>Satellite</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Suggestions dropdown - OUTSIDE the search container -->
+                            <div 
+                                class="location-suggestions" 
+                                *ngIf="showLocationSuggestions && locationSuggestions.length > 0"
+                            >
+                                <div 
+                                    *ngFor="let suggestion of locationSuggestions" 
+                                    class="suggestion-item"
+                                    (mousedown)="selectLocationSuggestion(suggestion)"
+                                >
+                                    {{ suggestion.display_name }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Version mobile/tablette -->
+                        <div class="search-location mobile-search">
+                            <div class="location-search-container-mobile" [class.suggestions-active]="showLocationSuggestions && locationSuggestions.length > 0">
+                                <i class="bi bi-geo-alt"></i>
+                                <input 
+                                    type="text" 
+                                    class="form-control location-input-mobile" 
+                                    placeholder="Rechercher une adresse..."
+                                    [(ngModel)]="locationSearchTerm"
+                                    (input)="onLocationSearchInput($event)"
+                                    (blur)="hideLocationSuggestions()"
+                                    (keydown.enter)="searchLocation()"
+                                >
+                                <button 
+                                    class="btn layer-btn-mobile" 
+                                    [class.active]="satelliteLayerActive"
+                                    (click)="toggleSatelliteLayer()"
+                                    title="Basculer vers la vue satellite"
+                                >
+                                    <i class="bi bi-globe"></i>
+                                    <span>Satellite</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Suggestions dropdown pour mobile -->
+                            <div 
+                                class="location-suggestions mobile-suggestions" 
+                                *ngIf="showLocationSuggestions && locationSuggestions.length > 0"
+                            >
+                                <div 
+                                    *ngFor="let suggestion of locationSuggestions" 
+                                    class="suggestion-item"
+                                    (mousedown)="selectLocationSuggestion(suggestion)"
+                                >
+                                    {{ suggestion.display_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-image" style="position: relative;">
+                        <div id="map" #mapContainer></div>
+
+                        <!-- Overlay de dessin polygone -->
+                        @if (drawPolygonMode) {
+                            <div class="polygon-drawing-overlay">
+                                <div class="drawing-info">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span class="point-count">{{ polygonPoints.length }} point(s)</span>
+                                    <span class="drawing-hint">
+                                        @if (polygonPoints.length < 3) {
+                                            Cliquez sur la carte pour placer des points
+                                        } @else {
+                                            Cliquez sur le 1<sup>er</sup> point ou sur « Fermer » pour terminer
+                                        }
+                                    </span>
+                                </div>
+                                <div class="drawing-actions">
+                                    @if (polygonPoints.length >= 3) {
+                                        <button class="btn btn-sm btn-success" (click)="finishPolygon()">
+                                            <i class="bi bi-check-circle"></i> Fermer
+                                        </button>
+                                    }
+                                    <button class="btn btn-sm btn-danger" (click)="cancelDrawPolygon()">
+                                        <i class="bi bi-x-circle"></i> Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        } @else if (polygonEditMode) {
+                            <div class="polygon-drawing-overlay">
+                                <div class="drawing-info">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span class="point-count">{{ editingPolygonPoints.length }} point(s)</span>
+                                    <span class="drawing-hint">
+                                        Glissez une poignée &bull; <i class="bi bi-circle" style="font-size:0.75em"></i> clic pour insérer &bull; double-clic sur une poignée pour supprimer
+                                    </span>
+                                </div>
+                                <div class="drawing-actions">
+                                    @if (editingPolygonPoints.length >= 3) {
+                                        <button class="btn btn-sm btn-success" (click)="finishEditablePolygon()">
+                                            <i class="bi bi-check-circle"></i> Terminer
+                                        </button>
+                                    }
+                                    <button class="btn btn-sm btn-danger" (click)="cancelEditablePolygon()">
+                                        <i class="bi bi-x-circle"></i> Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Ancien bouton flottant "Ajouter" (desktop) remplacé par la liste déroulante
+                         "Ajouter une parcelle" en haut du panneau de gauche. Mobile : footer inchangé. -->
+                </div>
+            </section>
+        </div>
+
+    <!-- POPUP AJOUT PARCELLE PAR ADRESSE -->
+    @if (afficherCachet) {
+        <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? (editMode ? closeEditParcel() : cahcher()) : null">
+            <div class="popup-container">
+                <!-- Header avec titre -->
+                <div class="popup-header">
+                    <div class="header-title">
+                        @if (editMode) {
+                            <i class="bi bi-pencil-fill"></i>
+                            <h3>Modifier la parcelle</h3>
+                        } @else {
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <h3>Ajouter une parcelle par adresse</h3>
+                        }
+                    </div>
+                    <button type="button" class="btn-close-popup" (click)="editMode ? closeEditParcel() : cahcher()" aria-label="Fermer">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Contenu scrollable -->
+                <div class="popup-body">
+                        <form [formGroup]="form" *ngIf="form">
+                            <div class="row g-3">
+                            <div class="col-12">
+                                <label class="simple-label" for="parcel_name">Nom de la parcelle<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="parcel_name"
+                                    placeholder="Ex : Champ du Nord"
+                                    formControlName="parcel_name"
+                                    required
+                                    [class.input-error]="form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')"
+                                >
+                                @if (form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')) {
+                                    <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                }
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label" for="parcel_area">Superficie<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    inputmode="decimal"
+                                    class="form-control popup-text-input"
+                                    id="parcel_area"
+                                    placeholder="Ex : 2.5"
+                                    formControlName="parcel_area"
+                                    appNumericInput
+                                    required
+                                    [class.input-error]="form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')"
+                                >
+                                @if (form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')) {
+                                    <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                }
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+                                    <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+                                        <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
+                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                    </button>
+                                    @if (isUnitDropdownOpen) {
+                                        <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                            <div class="dropdown-list">
+                                                @for (opt of areaUnitOptions; track opt.value) {
+                                                    <div class="dropdown-list-item" (click)="selectAreaUnitAddress(opt.value)">
+                                                        {{ opt.label }}
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Champ adresse - masqué pour les parcelles GML, PAC et créées par point GPS -->
+                            @if (!editMode || (!selectedParcelForEdit?.imported_from_gml &&
+                                 !selectedParcelForEdit?.imported_from_paconweb &&
+                                 selectedParcelForEdit?.record_type !== 'Point_parcel' &&
+                                 selectedParcelForEdit?.record_type !== 'PAC_parcel')) {
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="parcel_address">Adresse de la parcelle<sup>*</sup></label>
+                                    <div class="address-field-wrapper" [class.has-suggestions]="showSuggestions && addressSuggestions.length > 0">
+                                        <input
+                                            type="text"
+                                            class="form-control popup-text-input"
+                                            id="parcel_address"
+                                            placeholder="Ex : Rue de la Ferme 12, 5000 Namur"
+                                            formControlName="parcel_address"
+                                            (input)="onAddressInput($event)"
+                                            (focus)="onAddressFocus()"
+                                            (blur)="onAddressBlur()"
+                                            autocomplete="off"
+                                            [class.input-error]="form.get('parcel_address')?.touched && form.get('parcel_address')?.hasError('required')"
+                                        >
+                                        @if (form.get('parcel_address')?.touched && form.get('parcel_address')?.hasError('required')) {
+                                            <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                        }
+
+                                        @if (addressSuggestions && addressSuggestions.length > 0 && showSuggestions) {
+                                            <div class="address-suggestions">
+                                                <ul class="list-group">
+                                                    @for (suggestion of addressSuggestions; track suggestion.place_id) {
+                                                        <li
+                                                            class="list-group-item list-group-item-action address-suggestion-item"
+                                                            (click)="selectAddressSuggestion(suggestion)"
+                                                            (mousedown)="$event.preventDefault()"
+                                                        >
+                                                            <i class="bi bi-geo-alt"></i>
+                                                            <span class="suggestion-text">{{ suggestion.display_name }}</span>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (form.get('parcel_address')?.errors?.['addressNotSelected'] && !showSuggestions) {
+                                        <small class="text-danger">
+                                            Veuillez sélectionner une adresse dans la liste proposée.
+                                        </small>
+                                    }
+                                </div>
+                            }
+
+                            <!-- Champ Code SIGEC - toujours visible -->
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code"
+                                    placeholder="Ex : 12345A"
+                                    formControlName="sigec_code"
+                                >
+                            </div>
+                            
+                            
+                            <div class="col-lg-12">
+                                <div class="category-section">
+                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <div class="category-options">
+                                        @for (cat of availableParcelCategories(); track cat) {
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="radio"
+                                                    [id]="'cat_addr_' + cat"
+                                                    formControlName="parcel_category"
+                                                    [value]="cat"
+                                                >
+                                                <label class="form-check-label" [for]="'cat_addr_' + cat">
+                                                    <i class="bi bi-tag-fill"></i>
+                                                    {{ cat }}
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer avec boutons -->
+                <div class="popup-footer">
+                    @if (!form.valid) {
+                        <p class="popup-required-hint">
+                            <i class="bi bi-info-circle"></i>
+                            <span>À compléter :
+                                @if (form.get('parcel_name')?.invalid) { <b>nom</b> }
+                                @if (form.get('parcel_area')?.invalid) { <b>superficie</b> }
+                                @if (form.get('parcel_area_unit_fr')?.invalid) { <b>unité</b> }
+                                @if (form.get('parcel_address')?.hasError('required')) { <b>adresse</b> }
+                                @if (form.get('parcel_address')?.hasError('addressNotSelected')) { <b>adresse à choisir dans la liste</b> }
+                                @if (form.get('parcel_category')?.invalid) { <b>catégorie</b> }
+                            </span>
+                        </p>
+                    }
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        (click)="editMode ? saveEditedParcel() : onSearchCity()"
+                        [disabled]="form.invalid || isSaving"
+                    >
+                        @if (isSaving) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            Enregistrement...
+                        } @else {
+                            <i class="bi bi-check-circle"></i>
+                            Enregistrer
+                        }
+                    </button>
+                    @if (editMode && selectedParcelForEdit?.polygone) {
+                        <button
+                            type="button"
+                            class="btn-secondary"
+                            (click)="startEditPolygon()"
+                            title="Redessiner le tracé du polygone"
+                        >
+                            <i class="bi bi-pencil-square"></i>
+                            Modifier le tracé
+                        </button>
+                    }
+                    @if (editMode) {
+                        <button
+                            type="button"
+                            class="btn-primary danger"
+                            (click)="deleteEditedParcel()"
+                            [disabled]="isDeleting"
+                        >
+                            @if (isDeleting) {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                Suppression...
+                            } @else {
+                                <i class="bi bi-trash"></i>
+                                Supprimer la parcelle
+                            }
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }@else if (pointFormFromClick) {
+        <!-- POPUP AJOUT PARCELLE PAR CLIC SUR CARTE -->
+        <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? closePointForm() : null">
+            <div class="popup-container">
+                <!-- Header avec titre -->
+                <div class="popup-header">
+                    <div class="header-title">
+                        <i class="bi bi-cursor-fill"></i>
+                        <h3>Ajouter par point GPS</h3>
+                    </div>
+                    <button type="button" class="btn-close-popup" (click)="closePointForm()" aria-label="Fermer">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Contenu scrollable -->
+                <div class="popup-body">
+                        <form [formGroup]="form" *ngIf="form">
+                            <div class="row g-3">
+                            <div class="col-12">
+                                <label class="simple-label" for="parcel_name_point">Nom de la parcelle<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="parcel_name_point"
+                                    placeholder="Ex : Champ du Nord"
+                                    formControlName="parcel_name"
+                                    required
+                                    [class.input-error]="form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')"
+                                >
+                                @if (form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')) {
+                                    <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                }
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label" for="parcel_area_point">Superficie<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    inputmode="decimal"
+                                    class="form-control popup-text-input"
+                                    id="parcel_area_point"
+                                    placeholder="Ex : 2.5"
+                                    formControlName="parcel_area"
+                                    appNumericInput
+                                    required
+                                    [class.input-error]="form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')"
+                                >
+                                @if (form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')) {
+                                    <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                }
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+                                    <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+                                        <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
+                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                    </button>
+                                    @if (isUnitDropdownOpen) {
+                                        <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                            <div class="dropdown-list">
+                                                @for (opt of areaUnitOptions; track opt.value) {
+                                                    <div class="dropdown-list-item" (click)="selectAreaUnitPoint(opt.value)">
+                                                        {{ opt.label }}
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Champ Code SIGEC -->
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code_point">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code_point"
+                                    placeholder="Ex : 12345A"
+                                    formControlName="sigec_code"
+                                >
+                            </div>
+                            
+                            <div class="col-lg-12">
+                                <div class="category-section">
+                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <div class="category-options">
+                                        @for (cat of availableParcelCategories(); track cat) {
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="radio"
+                                                    [id]="'cat_point_' + cat"
+                                                    formControlName="parcel_category"
+                                                    [value]="cat"
+                                                >
+                                                <label class="form-check-label" [for]="'cat_point_' + cat">
+                                                    <i class="bi bi-tag-fill"></i>
+                                                    {{ cat }}
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer avec boutons -->
+                <div class="popup-footer">
+                    @if (!form.valid) {
+                        <p class="popup-required-hint">
+                            <i class="bi bi-info-circle"></i>
+                            <span>À compléter :
+                                @if (form.get('parcel_name')?.invalid) { <b>nom</b> }
+                                @if (form.get('parcel_area')?.invalid) { <b>superficie</b> }
+                                @if (form.get('parcel_area_unit_fr')?.invalid) { <b>unité</b> }
+                                @if (form.get('parcel_address')?.hasError('required')) { <b>adresse</b> }
+                                @if (form.get('parcel_address')?.hasError('addressNotSelected')) { <b>adresse à choisir dans la liste</b> }
+                                @if (form.get('parcel_category')?.invalid) { <b>catégorie</b> }
+                            </span>
+                        </p>
+                    }
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        (click)="onSavePointForm()"
+                        [disabled]="form.invalid || isSaving"
+                    >
+                        @if (isSaving) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            Enregistrement...
+                        } @else {
+                            <i class="bi bi-check-circle"></i>
+                            Enregistrer
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }@else if (pointForm) {
+        <!-- POPUP AJOUT PARCELLE PAC -->
+        <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? onFermeturePointForm() : null">
+            <div class="popup-container">
+                <!-- Header avec titre -->
+                <div class="popup-header">
+                    <div class="header-title">
+                        <i class="bi bi-map"></i>
+                        <h3>Encoder une parcelle PAC</h3>
+                    </div>
+                    <button type="button" class="btn-close-popup" (click)="onFermeturePointForm()" aria-label="Fermer">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Contenu scrollable -->
+                <div class="popup-body">
+                        <form #send = "ngForm" (ngSubmit)="onSendPointForm(send)">
+                            <div class="row g-3">
+                            <div class="col-12">
+                                <label class="simple-label" for="parcel_name_pac">Nom de la parcelle<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="parcel_name_pac"
+                                    placeholder="Ex : Champ du Nord"
+                                    name="parcel_name"
+                                    [(ngModel)]="parcel_name"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label" for="parcel_area_pac">Superficie<sup>*</sup></label>
+                                <input
+                                    type="text"
+                                    inputmode="decimal"
+                                    class="form-control popup-text-input"
+                                    id="parcel_area_pac"
+                                    placeholder="Ex : 2.5"
+                                    [(ngModel)]="parcel_area"
+                                    name="parcel_area"
+                                    appNumericInput
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-6">
+                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+                                    <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+                                        <span class="dropdown-value">{{ getAreaUnitLabel(parcel_area_unit_fr) }}</span>
+                                        <i class="bi bi-chevron-down dropdown-icon"></i>
+                                    </button>
+                                    @if (isUnitDropdownOpen) {
+                                        <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                            <div class="dropdown-list">
+                                                @for (opt of areaUnitOptions; track opt.value) {
+                                                    <div class="dropdown-list-item" (click)="selectAreaUnitPac(opt.value)">
+                                                        {{ opt.label }}
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <input type="hidden" name="parcel_area_unit_fr" [(ngModel)]="parcel_area_unit_fr">
+                            </div>
+
+                            @if (selectedPacFeature) {
+                                <!-- Coordonnées et adresse PAC : conservées dans le formulaire, non affichées -->
+                                <input type="hidden" [(ngModel)]="lat" name="lat">
+                                <input type="hidden" [(ngModel)]="lon" name="lon">
+                                <input type="hidden" [(ngModel)]="parcel_address" name="parcel_address">
+                            } @else {
+                                <!-- Formulaire adresse pour parcelles non-PAC -->
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="parcel_address_pac">Adresse de la parcelle</label>
+                                    <div class="address-field-wrapper" [class.has-suggestions]="showSuggestions && addressSuggestions.length > 0">
+                                        <input
+                                            type="text"
+                                            class="form-control popup-text-input"
+                                            id="parcel_address_pac"
+                                            placeholder="Ex : Rue de la Ferme 12, 5000 Namur"
+                                            [(ngModel)]="parcel_address"
+                                            name="parcel_address"
+                                            (input)="onAddressInput($event)"
+                                            (focus)="onAddressFocus()"
+                                            (blur)="onAddressBlur()"
+                                            autocomplete="off"
+                                        >
+
+                                        @if (addressSuggestions && addressSuggestions.length > 0 && showSuggestions) {
+                                            <div class="address-suggestions">
+                                                <ul class="list-group">
+                                                    @for (suggestion of addressSuggestions; track suggestion.place_id) {
+                                                        <li 
+                                                            class="list-group-item list-group-item-action address-suggestion-item" 
+                                                            (click)="selectAddressSuggestion(suggestion)"
+                                                            (mousedown)="$event.preventDefault()"
+                                                        >
+                                                            <i class="bi bi-geo-alt"></i>
+                                                            <span class="suggestion-text">{{ suggestion.display_name }}</span>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Coordonnées GPS : conservées dans le formulaire, non affichées -->
+                                <input type="hidden" [(ngModel)]="lat" name="lat">
+                                <input type="hidden" [(ngModel)]="lon" name="lon">
+                            }
+                            
+                            <!-- Champ Code SIGEC -->
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code_pac">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code_pac"
+                                    placeholder="Ex : 12345A"
+                                    [(ngModel)]="sigec_code"
+                                    name="sigec_code"
+                                >
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="category-section">
+                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <div class="category-options">
+                                        @for (cat of availableParcelCategories(); track cat) {
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="radio"
+                                                    [id]="'cat_pac_' + cat"
+                                                    [(ngModel)]="parcel_category"
+                                                    [value]="cat"
+                                                    name="parcel_category"
+                                                >
+                                                <label class="form-check-label" [for]="'cat_pac_' + cat">
+                                                    <i class="bi bi-tag-fill"></i>
+                                                    {{ cat }}
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer avec boutons -->
+                <div class="popup-footer">
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        (click)="onSendPointForm(send)"
+                        [disabled]="send.invalid || isSaving"
+                    >
+                        @if (isSaving) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            Enregistrement...
+                        } @else {
+                            <i class="bi bi-check-circle"></i>
+                            Enregistrer
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }@else if (polygonDrawFormOpen) {
+        <!-- POPUP AJOUT PARCELLE PAR TRACÉ POLYGONE -->
+        <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? closePolygonDrawForm() : null">
+            <div class="popup-container">
+                <div class="popup-header">
+                    <div class="header-title">
+                        <i class="bi bi-pencil-square"></i>
+                        <h3>Parcelle tracée en polygone</h3>
+                    </div>
+                    <button type="button" class="btn-close-popup" (click)="closePolygonDrawForm()" aria-label="Fermer">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="popup-body">
+                        <form [formGroup]="form">
+                            <div class="row g-3">
+
+                                <div class="col-12">
+                                    <label class="simple-label" for="parcel_name_polygon">Nom de la parcelle<sup>*</sup></label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="parcel_name_polygon"
+                                        placeholder="Ex : Champ du Nord"
+                                        formControlName="parcel_name"
+                                        required
+                                        [class.input-error]="form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')"
+                                    >
+                                    @if (form.get('parcel_name')?.touched && form.get('parcel_name')?.hasError('required')) {
+                                        <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                    }
+                                </div>
+
+                                <div class="col-6">
+                                    <label class="simple-label" for="parcel_area_polygon">Superficie<sup>*</sup></label>
+                                    <input
+                                        type="text"
+                                        inputmode="decimal"
+                                        class="form-control popup-text-input"
+                                        id="parcel_area_polygon"
+                                        placeholder="Ex : 2.5"
+                                        formControlName="parcel_area"
+                                        appNumericInput
+                                        required
+                                        [class.input-error]="form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')"
+                                    >
+                                    @if (form.get('parcel_area')?.touched && form.get('parcel_area')?.hasError('required')) {
+                                        <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+                                    }
+                                </div>
+
+                                <div class="col-6">
+                                    <label class="simple-label">Unité<sup>*</sup></label>
+                                    <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+                                        <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+                                            <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
+                                            <i class="bi bi-chevron-down dropdown-icon"></i>
+                                        </button>
+                                        @if (isUnitDropdownOpen) {
+                                            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                                                <div class="dropdown-list">
+                                                    @for (opt of areaUnitOptions; track opt.value) {
+                                                        <div class="dropdown-list-item" (click)="selectAreaUnitPolygon(opt.value)">
+                                                            {{ opt.label }}
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Code SIGEC -->
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="sigec_code_polygon">Code SIGEC de la parcelle</label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="sigec_code_polygon"
+                                        placeholder="Ex : 12345A"
+                                        formControlName="sigec_code"
+                                    >
+                                </div>
+
+                                <!-- Catégorie -->
+                                <div class="col-lg-12">
+                                    <div class="category-section">
+                                        <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                        <div class="category-options">
+                                            @for (cat of availableParcelCategories(); track cat) {
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" [id]="'cat_polygon_' + cat" formControlName="parcel_category" [value]="cat">
+                                                    <label class="form-check-label" [for]="'cat_polygon_' + cat"><i class="bi bi-tag-fill"></i> {{ cat }}</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                </div>
+
+                <div class="popup-footer">
+                    @if (!form.valid) {
+                        <p class="popup-required-hint">
+                            <i class="bi bi-info-circle"></i>
+                            <span>À compléter :
+                                @if (form.get('parcel_name')?.invalid) { <b>nom</b> }
+                                @if (form.get('parcel_area')?.invalid) { <b>superficie</b> }
+                                @if (form.get('parcel_area_unit_fr')?.invalid) { <b>unité</b> }
+                                @if (form.get('parcel_address')?.hasError('required')) { <b>adresse</b> }
+                                @if (form.get('parcel_address')?.hasError('addressNotSelected')) { <b>adresse à choisir dans la liste</b> }
+                                @if (form.get('parcel_category')?.invalid) { <b>catégorie</b> }
+                            </span>
+                        </p>
+                    }
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        (click)="onSavePolygonParcel()"
+                        [disabled]="form.invalid || isSaving"
+                    >
+                        @if (isSaving) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            Enregistrement...
+                        } @else {
+                            <i class="bi bi-check-circle"></i>
+                            Enregistrer
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }@else if (polygon) {
+        <div class="ajouter">
+            <div id="overlay">
+                <!-- Popup non atteignable dans l'UI actuelle : this.polygon n'est jamais mis à true
+                     (le tracé de polygone passe par polygonDrawFormOpen, déjà unifié plus haut).
+                     Conservée telle quelle ; popup-container ajoutée par précaution anti-clipping
+                     si jamais réactivée. -->
+                <div class="addHome popup-container">
+                    <div class="container">
+                        <section class="row">
+                            <article class="col-lg-12">
+                                <button type="button" class="btn btn-outline-light" (click)="onPolygonClose()" ><i class="bi bi-x-circle-fill"></i></button>
+                            </article>
+                        </section>
+                        <form #send = "ngForm" (ngSubmit)="onSendPolygon(send)">
+                                <section class="row">
+                                    <article class="col-lg-6">  
+                                        <div class="nomDeLaParcelle">
+                                            <div class="icon"><i class="material-icons">cottage</i></div>
+                                            <div class="text">
+                                                <input type="text" class="form-control" placeholder="Ex : Champ du Nord" name="parcel_name" [(ngModel)]="parcel_name">
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <article class="col-lg-3"> 
+                                        <div class="Superficie">
+                                            <div class="icon"><i class="material-icons">cottage</i></div>
+                                            <div class="text"><input type="text" class="form-control" placeholder="Superficie" [(ngModel)]="parcel_area" name="parcel_area"></div>
+                                        </div>
+                                    </article>
+                                    <article class="col-lg-3"> 
+                                        <div class="ha">
+                                            <div class="text">
+                                                <select [(ngModel)]="parcel_area_unit_fr" name="parcel_area_unit_fr">
+                                                    <option value="ha">Ha</option>
+                                                    <option value="a">A</option>
+                                                    <option value="m2">M 2</option>
+                                                </select>  
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <article class="col-lg-12">
+                                        <div class="adresseDeLaParcelle">
+                                            <div class="icon"><i class="material-icons">cottage</i></div>
+                                            <div class="text"><input type="text" class="form-control" placeholder="Ex : Rue de la Ferme 12, 5000 Namur" [(ngModel)]="parcel_address"  name="parcel_address"></div>
+                                        </div>
+                                    </article>
+
+                                    <input type="hidden" class="form-control" [(ngModel)]="polygone"  name="polygone">
+                                    <!-- @for (item of polygone; track $index) {
+                                        @for(valeur of item; track $index){
+                                            <article class="col-lg-5">
+                                                <div class="point">
+                                                    <div class="text">
+                                                        Latitude : {{ valeur.lat }}
+                                                    </div>  
+                                                </div>
+                                            </article>
+                                            <article class="col-lg-5">
+                                                <div class="point">
+                                                    <div class="text">
+                                                        Latitude : {{ valeur.lng }}
+                                                    </div>  
+                                                </div>
+                                            </article>
+                                        }
+                                    } -->
+                                    <article class="col-lg-12">
+                                        <div class="categoriesDeLaParcelle">
+                                            <div class="headerCategorie">
+                                                <div class="entete">
+                                                    <div class="icon"><i class="material-icons">cottage</i></div>
+                                                    <div class="titre">Catégorie(s) de la parcelle</div>
+                                                </div>
+                                                <div class="corps">
+                                                    <section class="row">
+                                                        <article class="col-lg-3">
+                                                            <label>
+                                                                <input type="radio" [(ngModel)]="parcel_category" value="Plein air" name="parcel_category" checked  />
+                                                                <span>Plein air</span>
+                                                            </label>
+                                                        </article>
+                                                        <article class="col-lg-3">
+                                                            <label>
+                                                                <input  type="radio"  [(ngModel)]="parcel_category" value="Sous-protection" name="parcel_category" />
+                                                                <span>Sous-protection</span>
+                                                            </label>
+                                                        </article>
+                                                        <article class="col-lg-3">
+                                                            <label>
+                                                                <input type="radio"  [(ngModel)]="parcel_category" value="Hangar de stockage" name="parcel_category" />
+                                                                <span>Hangar de stockage</span>
+                                                            </label>
+                                                        </article>
+                                                        <article class="col-lg-3">
+                                                            <label>
+                                                                <input  type="radio"  formControlName="parcel_category" value="Autre catégorie(s)" name="parcel_category" />
+                                                                <span>Autre</span>
+                                                            </label>
+                                                        </article>
+                                                    </section>
+                                                    <!-- <section class="row">
+                                                        <article class="col-lg-12">
+                                                            <button class="btn btn-outline-success">nouvelle catégorie</button>
+                                                        </article>
+                                                    </section> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <article class="col-lg-12">
+                                        <div class="bouton">
+                                            <div class="suivant">
+                                                <button type="submit" class="btn btn-success" [disabled]="send.invalid" >Suivant</button>
+                                            </div>
+                                        </div>
+                                    </article>
+                            </section>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</main>
+
+    <!-- FOOTER FLOTTANT POUR MOBILE/TABLETTE (max-width: 992px) -->
+    <footer class="footer-fab fab-mobile" *ngIf="!afficherCachet && !pointFormFromClick && !pointForm && !polygon && !polygonDrawFormOpen">
+        @if (drawPolygonMode) {
+            <!-- Contrôles de dessin polygone en mode mobile -->
+            <div class="row-footer">
+                @if (polygonPoints.length >= 3) {
+                    <button class="footer-btn" (click)="finishPolygon()">
+                        Fermer polygone <span class="footer-icon"><i class="bi bi-check-circle"></i></span>
+                    </button>
+                }
+                <button class="footer-btn quitter" (click)="cancelDrawPolygon()">
+                    <span class="footer-icon"><i class="bi bi-x-circle"></i></span>Annuler tracé
+                </button>
+            </div>
+            <div class="row-footer">
+                <span class="footer-btn" style="cursor:default; opacity:0.7;">
+                    {{ polygonPoints.length }} point(s) placé(s)
+                </span>
+            </div>
+        } @else if (polygonEditMode) {
+            <!-- Contrôles d'édition interactive en mode mobile -->
+            <div class="row-footer">
+                @if (editingPolygonPoints.length >= 3) {
+                    <button class="footer-btn" (click)="finishEditablePolygon()">
+                        Terminer <span class="footer-icon"><i class="bi bi-check-circle"></i></span>
+                    </button>
+                }
+                <button class="footer-btn quitter" (click)="cancelEditablePolygon()">
+                    <span class="footer-icon"><i class="bi bi-x-circle"></i></span>Annuler
+                </button>
+            </div>
+            <div class="row-footer">
+                <span class="footer-btn" style="cursor:default; opacity:0.7;">
+                    {{ editingPolygonPoints.length }} point(s) &bull; double-tap pour supprimer
+                </span>
+            </div>
+        } @else {
+            <div class="row-footer">
+                <button class="footer-btn" (click)="onParcellaire()" [disabled]="!isZoomSufficient || isLoadingParcellaire" [style.opacity]="isZoomSufficient ? 1 : 0.5" [style.cursor]="isZoomSufficient ? 'pointer' : 'not-allowed'" [style.filter]="isZoomSufficient ? 'none' : 'grayscale(1)'">
+                    @if (isLoadingParcellaire) {
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                    } @else {
+                        Parcellaire <span class="footer-icon"><i class="bi bi-eye"></i></span>
+                    }
+                </button>
+                <button class="footer-btn" (click)="addClickMarqueur()">
+                    Placer un point <span class="footer-icon"><i class="bi bi-pin-angle"></i></span>
+                </button>
+            </div>
+            <div class="row-footer">
+                <button class="footer-btn quitter" (click)="returnToParcellesTable()">
+                    <span class="footer-icon"><i class="bi bi-arrow-left"></i></span>Quitter le mode carte
+                </button>
+                <button class="footer-btn" (click)="afficher()">
+                    Adresse <span class="footer-icon"><i class="bi bi-journal-richtext"></i></span>
+                </button>
+            </div>
+            <div class="row-footer">
+                <button class="footer-btn" (click)="startDrawPolygon()">
+                    Tracer un polygone <span class="footer-icon"><i class="bi bi-pencil-square"></i></span>
+                </button>
+            </div>
+        }
+    </footer>

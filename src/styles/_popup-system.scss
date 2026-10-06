@@ -1,0 +1,849 @@
+﻿// ============================================
+// SYSTÈME DE POPUPS UNIFIÉ
+// Classes globales (non scopées) partagées par toutes les popups de l'application
+// (registre : traitement/culture/travail au champ/export ; parcelles ; inventaire :
+// PPNU-PPNV/achat PPP ; back-office : opérateur ; réglage : fertilisants personnels).
+// Voir le plan de migration pour le détail composant par composant.
+//
+// Chaque wrapper racine de popup DOIT porter la classe .popup-container : c'est la
+// condition qui l'exempte de la règle body.no-scroll * { overflow:hidden !important }
+// définie plus bas dans ce fichier (règle anti-scroll-de-fond) — sans elle, tout panneau
+// en position:absolute (dropdown, autocomplete...) à l'intérieur serait invisible dès
+// que la popup est ouverte (bug déjà rencontré deux fois sur export-popup).
+// ============================================
+
+@use 'popup-tokens' as *;
+@use 'popup-mixins' as *;
+
+// ─── Overlay + centrage ─────────────────────────────────────────────────────
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: $popup-backdrop-color;
+  backdrop-filter: blur($popup-backdrop-blur);
+  -webkit-backdrop-filter: blur($popup-backdrop-blur);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+
+  // Le conteneur passe en plein écran (100vw/100vh) sous ce seuil (voir popup-mobile-fullscreen) —
+  // plein écran sur tablette ET smartphone, pas seulement le téléphone : un padding ici le ferait
+  // rétrécir (flex-shrink) en laissant deux bandes de fond visibles.
+  @media (max-width: 992px) {
+    padding: 0;
+  }
+}
+
+// ─── Conteneur ──────────────────────────────────────────────────────────────
+.popup-container {
+  background: $popup-white;
+  border-radius: $popup-radius-lg;
+  box-shadow: $popup-shadow-lg;
+  width: 100%;
+  min-width: 0; // .popup-container est un flex item de .popup-overlay ; sans ça, min-width:auto
+                // bloque son rétrécissement au min-content de son contenu (ex. une rangée de
+                // champs qui refuse de rétrécir), ce qui pousse toute la popup plus large que le
+                // viewport. Même bug min-width:auto déjà rencontré et corrigé plusieurs fois cette
+                // session sur d'autres grilles flex/grid.
+  max-width: 640px;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  font-family: $popup-font;
+
+  // Popups plus riches (assistants multi-étapes, formulaires longs).
+  &.popup-container--wide {
+    max-width: 900px;
+  }
+
+  @include popup-mobile-fullscreen(992px);
+}
+
+// ─── Header ─────────────────────────────────────────────────────────────────
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid $popup-gray-200;
+  border-radius: $popup-radius-lg $popup-radius-lg 0 0;
+  flex-shrink: 0;
+
+  // Coins carrés en plein écran tablette/mobile, cohérent avec .popup-container (voir popup-mobile-fullscreen).
+  @media (max-width: 992px) {
+    border-radius: 0;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $popup-gray-900;
+
+    // Certaines popups utilisent un <h2> sémantique plutôt qu'un <span> pour le titre
+    // (export-popup utilise un <span>) : neutralise les styles UA du <h2> pour que la
+    // taille/graisse voulues s'appliquent quel que soit l'élément utilisé.
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-size: inherit;
+      font-weight: inherit;
+      font-family: inherit;
+      color: inherit;
+    }
+
+    i {
+      font-size: 1.25rem;
+      color: $popup-accent;
+    }
+  }
+}
+
+.btn-close-popup {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: $popup-gray-500;
+  border-radius: $popup-radius-sm;
+  transition: $popup-transition;
+  display: flex;
+
+  &:hover {
+    background: $popup-gray-100;
+    color: $popup-gray-800;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// ─── Corps ──────────────────────────────────────────────────────────────────
+.popup-body {
+  flex: 1;
+  min-width: 0; // même raison que .popup-container : évite que le contenu (ex. .popup-field-row)
+                // bloque le rétrécissement de ce flex item en dessous de son min-content.
+  overflow-y: auto;
+  // overflow-x:visible serait recalculé en "auto" (overflow-y n'étant pas visible) : le moindre
+  // débordement horizontal afficherait une scrollbar. hidden ne coupe rien de plus que auto.
+  overflow-x: hidden;
+  padding: 20px;
+
+  @include popup-scrollbar();
+
+  @media (max-width: 575.98px) {
+    padding: 16px;
+  }
+}
+
+// ─── Champs texte / textarea ────────────────────────────────────────────────
+// À appliquer en classe additive sur les <input>/<textarea> existants — même look
+// que .dropdown-btn pour une cohérence visuelle avec les menus déroulants.
+// Hauteur explicite et partagée entre .popup-text-input et .dropdown-btn : les deux ont
+// le même padding/border/font-size, donc leur hauteur naturelle coïncide déjà en théorie,
+// mais un <button> et un <input> ne garantissent pas la même box de rendu selon le
+// navigateur/l'OS. Fixer une hauteur commune explicite élimine ce risque une fois pour toutes
+// plutôt que de dépendre d'un calcul de métriques de police implicite.
+$popup-field-height: 40px;
+
+.popup-text-input {
+  // !important : Materialize impose box-sizing:content-box à input[type=text]:not(.browser-default)
+  // avec une spécificité supérieure — width:100% + padding + bordure débordait alors de la popup.
+  box-sizing: border-box !important;
+  width: 100%;
+  max-width: 100%;
+  min-height: $popup-field-height;
+  padding: 10px 12px;
+  background: $popup-white;
+  border: 1.5px solid $popup-gray-300;
+  border-radius: $popup-radius-md;
+  font-size: 16px;
+  font-family: $popup-font;
+  color: $popup-gray-800;
+  transition: $popup-transition;
+
+  &::placeholder {
+    color: $popup-placeholder-color;
+  }
+
+  &:hover {
+    border-color: $popup-gray-500;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $popup-accent;
+    box-shadow: 0 0 0 3px rgba($popup-accent, 0.1);
+  }
+
+  &:disabled {
+    background: $popup-gray-100;
+    color: $popup-gray-500;
+    cursor: not-allowed;
+  }
+
+  // État d'erreur — convention .is-invalid (aucune convention de validation n'existait encore
+  // dans le système partagé ; ce nom aligné sur Bootstrap, déjà présent ailleurs dans l'app
+  // via ses autres classes). À coupler avec un message texte sous le champ (déjà pratiqué par
+  // tous les formulaires, via leur propre .form-error local) — la bordure seule ne suffit pas
+  // à signaler une erreur indépendamment de la couleur (normesResponsive.md §129).
+  &.is-invalid {
+    border-color: $popup-danger;
+
+    &:focus {
+      border-color: $popup-danger;
+      box-shadow: 0 0 0 3px rgba($popup-danger, 0.15);
+    }
+  }
+}
+
+textarea.popup-text-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+// ─── Grille de champs horizontale ───────────────────────────────────────────
+// Remplace la grille Bootstrap (.row/.col-lg-*) dans les formulaires de popup : ce build
+// Bootstrap est partiel (les classes utilitaires .g-3 et le padding de gouttière des .col-*
+// sont absentes du CSS compilé — confirmé par recherche directe dans le bundle servi), ce qui
+// provoque des champs collés/superposés et des colonnes .col-lg-12 qui débordent de la largeur
+// de la ligne au-dessus. Flexbox + gap n'a besoin d'aucune classe utilitaire externe et ne peut
+// pas se retrouver "à moitié" disponible de cette façon.
+// Pas de breakpoint flex-direction:column ici : un seuil fixe (ex. 767.98px) empile toute la
+// ligne d'un coup dès qu'on le franchit, même quand il resterait largement la place pour 2
+// colonnes sur 3. Même pattern que .encoding-row (styles.scss, déjà utilisé avec succès pour
+// travail-au-champ) : flex-wrap + min-width sur les colonnes suffit à faire réagir chaque champ
+// individuellement à l'espace réellement disponible, sans seuil arbitraire.
+.popup-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.popup-field-col {
+  flex: 1;
+  min-width: 120px; // en dessous, .popup-field-row (flex-wrap) fait passer la colonne à la ligne
+                     // suivante plutôt que de la comprimer indéfiniment — même mécanisme que
+                     // .encoding-row/.field-col (styles.scss).
+}
+
+.popup-field-col-wide {
+  flex: 2;
+  min-width: 200px;
+}
+
+// Bloc pleine largeur hors grille (remplace .col-lg-12) : un simple bloc n'a besoin d'aucun
+// système de colonnes, seulement d'un espacement vertical cohérent avec .popup-field-row.
+.popup-field-block {
+  margin-bottom: 16px;
+}
+
+// ─── Icône info-bulle "i" ────────────────────────────────────────────────────
+// Formalise le pattern déjà utilisé (inline) dans traitement-phyto :
+// <i class="bi bi-info-circle-fill popup-tooltip-icon" matTooltip="…" matTooltipPosition="above"></i>
+.popup-tooltip-icon {
+  font-size: 13px;
+  color: #6c8ebf;
+  cursor: help;
+  vertical-align: middle;
+}
+
+// ─── Dropdown (menu déroulant multi-sélection) ──────────────────────────────
+.dropdown-container {
+  position: relative;
+  z-index: 10;
+
+  &.open {
+    z-index: 999999;
+  }
+
+  &.open .dropdown-btn {
+    border-color: $popup-accent;
+    box-shadow: 0 0 0 3px rgba($popup-accent, 0.1);
+  }
+
+  &.open .dropdown-icon {
+    transform: rotate(180deg);
+  }
+}
+
+// Bloc parent portant .dropdown-container : passe au-dessus de ses voisins une fois ouvert.
+.filter-block {
+  position: relative;
+  z-index: 1;
+
+  &:has(.dropdown-container.open) {
+    z-index: 99999;
+  }
+}
+
+// Petit libellé majuscule générique (au-dessus d'un dropdown, d'une section...).
+.filter-title {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $popup-gray-600;
+  margin-bottom: 8px;
+}
+
+.dropdown-btn {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: $popup-field-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: $popup-white;
+  border: 1.5px solid $popup-gray-300;
+  border-radius: $popup-radius-md;
+  font-size: 16px;
+  font-family: $popup-font;
+  color: $popup-gray-800;
+  cursor: pointer;
+  transition: $popup-transition;
+
+  &:hover {
+    border-color: $popup-gray-500;
+  }
+
+  .dropdown-value {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dropdown-icon {
+    color: $popup-gray-500;
+    font-size: 0.85rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  // État d'erreur — même convention que .popup-text-input ci-dessus.
+  &.is-invalid {
+    border-color: $popup-danger;
+  }
+}
+
+// Materialize impose `button:focus { background-color: #2ab7a9 }` à tous les boutons : le menu
+// déroulant devenait sarcelle plein après un clic (ex. « Unité » des parcelles). Fond blanc conservé.
+.dropdown-btn:focus,
+.dropdown-btn:focus-visible {
+  background-color: $popup-white;
+}
+
+.dropdown-panel {
+  // Overlay flottant : sans ça, le panneau reste dans le flux normal et pousse la hauteur
+  // du popup (et de tout ce qui est en dessous) à chaque ouverture/agrandissement de liste.
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: $popup-white;
+  border: 1.5px solid $popup-gray-300;
+  border-radius: $popup-radius-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: $popup-gray-100;
+  border-bottom: 1px solid $popup-gray-200;
+  font-size: 0.8rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  .link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: $popup-accent;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .separator {
+    color: $popup-gray-400;
+  }
+
+  .selected-count {
+    margin-left: auto;
+    color: $popup-gray-600;
+    font-size: 0.74rem;
+    font-weight: 500;
+  }
+}
+
+.dropdown-list {
+  max-height: 260px;
+  overflow-y: auto;
+
+  @include popup-scrollbar($track: $popup-gray-100, $width: 6px);
+}
+
+// Élément à cocher (sélection multiple).
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  gap: 8px;
+
+  &:hover {
+    background: $popup-gray-100;
+  }
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: $popup-accent;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .label-text {
+    flex: 1;
+    font-size: 0.85rem;
+    color: $popup-gray-800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-badge {
+    font-size: 0.7rem;
+    color: $popup-gray-500;
+    flex-shrink: 0;
+  }
+}
+
+// Élément de suggestion à sélection simple (autocomplete), même look que .checkbox-item
+// mais sans case à cocher — ex. liste "type de produit" dans les fertilisants personnels.
+.dropdown-list-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-size: 0.85rem;
+  color: $popup-gray-800;
+
+  &:hover {
+    background: $popup-gray-100;
+  }
+}
+
+.empty-state {
+  padding: 16px;
+  text-align: center;
+  color: $popup-gray-500;
+  font-size: 0.85rem;
+}
+
+// ─── Toggle segmenté (pilules) ───────────────────────────────────────────────
+.segmented-control {
+  display: flex;
+  background: $popup-gray-100;
+  border-radius: $popup-radius-md;
+  padding: 3px;
+  gap: 2px;
+
+  .segment {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: $popup-radius-sm;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $popup-gray-600;
+    cursor: pointer;
+    transition: $popup-transition;
+    white-space: nowrap;
+
+    &:hover:not(.active) {
+      color: $popup-gray-800;
+    }
+
+    &.active {
+      background: $popup-white;
+      color: $popup-gray-900;
+      box-shadow: $popup-shadow-sm;
+    }
+  }
+}
+
+// ─── Choix en cartes (format d'export, mode de traitement...) ───────────────
+.format-choice {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.format-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  height: 40px;
+  background: $popup-white;
+  border: 2px solid $popup-gray-200;
+  border-radius: $popup-radius-lg;
+  cursor: pointer;
+  transition: $popup-transition;
+  gap: 10px;
+
+  &:hover {
+    border-color: $popup-gray-400;
+    background: $popup-gray-100;
+  }
+
+  &.active {
+    border-color: $popup-accent;
+    background: rgba($popup-accent, 0.05);
+
+    i {
+      color: $popup-accent;
+    }
+
+    .format-label {
+      color: $popup-accent;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  i {
+    font-size: 1.8rem;
+    color: $popup-gray-500;
+    transition: color 0.2s ease;
+  }
+
+  .format-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $popup-gray-800;
+  }
+
+  .format-desc {
+    font-size: 0.75rem;
+    color: $popup-gray-500;
+  }
+}
+
+// ─── Footer ─────────────────────────────────────────────────────────────────
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid $popup-gray-200;
+  background: $popup-gray-100;
+  border-radius: 0 0 $popup-radius-lg $popup-radius-lg;
+  flex-shrink: 0;
+  // Toujours atteignable sans scroll, y compris sur mobile plein écran.
+  position: sticky;
+  bottom: 0;
+
+  // Coins carrés en plein écran tablette/mobile, cohérent avec .popup-container (voir popup-mobile-fullscreen).
+  @media (max-width: 992px) {
+    border-radius: 0;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+  }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  min-height: var(--btn-height);
+  background: $popup-white;
+  border: 1.5px solid $popup-gray-300;
+  border-radius: $popup-radius-md;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: $popup-font;
+  color: $popup-gray-700;
+  cursor: pointer;
+  transition: $popup-transition;
+
+  &:hover {
+    background: $popup-gray-100;
+    border-color: $popup-gray-400;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+
+  // Seuil aligné sur le vrai palier smartphone du projet (575,98px), pas 480px — laissait une
+  // zone morte 481-575px où le bouton restait en largeur auto au lieu de pleine largeur.
+  @media (max-width: 575.98px) {
+    width: 100%;
+  }
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  min-height: var(--btn-height);
+  // Turquoise de l'app (et non plus le vert Bootstrap $popup-success) : même couleur que les
+  // boutons d'action des pages redessinées (Ajouter une parcelle, Connexion, Nouvel opérateur…).
+  background: $popup-accent;
+  border: none;
+  border-radius: $popup-radius-md;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: $popup-font;
+  color: $popup-white;
+  cursor: pointer;
+  transition: $popup-transition;
+
+  &:hover:not(:disabled) {
+    background: #049694;
+  }
+
+  // Modificateur générique pour les actions destructrices (remplace l'ancien .pdf
+  // d'export-popup, désormais utilisé aussi pour "Supprimer" dans les autres popups).
+  &.danger {
+    background: $popup-danger;
+
+    &:hover:not(:disabled) {
+      background: darken($popup-danger, 8%);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+
+  // Seuil aligné sur le vrai palier smartphone du projet (575,98px), pas 480px — laissait une
+  // zone morte 481-575px où le bouton restait en largeur auto au lieu de pleine largeur.
+  @media (max-width: 575.98px) {
+    width: 100%;
+  }
+}
+
+// ─── Tablette (576-992px) ─────────────────────────────────────────────────
+// Le plein écran (voir popup-mobile-fullscreen(992px) ci-dessus) couvre maintenant tout ce
+// palier, pas seulement le téléphone : sur une tablette/petit PC, la même popup qu'à 1600px
+// paraissait perdue/petite dans une boîte centrée. On agrandit aussi nettement chrome +
+// champs + boutons pour cette plage, à l'échelle de ce qui a été fait pour le footer-fab et
+// back-office.
+@media (min-width: 576px) and (max-width: 992px) {
+  .popup-header {
+    padding: 30px 36px;
+
+    .header-title {
+      font-size: 1.95rem;
+      gap: 16px;
+
+      i {
+        font-size: 2.3rem;
+      }
+    }
+  }
+
+  .btn-close-popup {
+    padding: 14px;
+
+    i {
+      font-size: 1.9rem;
+    }
+  }
+
+  .popup-body {
+    padding: 36px;
+  }
+
+  .popup-text-input,
+  .dropdown-btn {
+    min-height: 76px;
+    padding: 22px 24px;
+    font-size: 26px;
+  }
+
+  .dropdown-btn .dropdown-icon {
+    font-size: 1.35rem;
+  }
+
+  .filter-title {
+    font-size: 1.25rem;
+  }
+
+  .dropdown-header {
+    padding: 18px 22px;
+    font-size: 1.25rem;
+
+    .link-btn {
+      font-size: 1.25rem;
+    }
+
+    .selected-count {
+      font-size: 1.05rem;
+    }
+  }
+
+  .dropdown-list {
+    max-height: 460px;
+  }
+
+  .checkbox-item {
+    padding: 18px 24px;
+
+    input[type='checkbox'] {
+      width: 28px;
+      height: 28px;
+    }
+
+    .label-text {
+      font-size: 1.35rem;
+    }
+
+    .item-badge {
+      font-size: 1.05rem;
+    }
+  }
+
+  .dropdown-list-item {
+    padding: 18px 24px;
+    font-size: 1.35rem;
+  }
+
+  .empty-state {
+    padding: 32px;
+    font-size: 1.35rem;
+  }
+
+  .segmented-control .segment {
+    padding: 18px 22px;
+    font-size: 1.25rem;
+  }
+
+  .format-btn {
+    height: 76px;
+    padding: 18px 22px;
+
+    i {
+      font-size: 3.2rem;
+    }
+
+    .format-label {
+      font-size: 1.5rem;
+    }
+
+    .format-desc {
+      font-size: 1.15rem;
+    }
+  }
+
+  .popup-tooltip-icon {
+    font-size: 22px;
+  }
+
+  .popup-footer {
+    padding: 28px 34px;
+    gap: 18px;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    padding: 22px 40px;
+    font-size: 1.4rem;
+
+    i {
+      font-size: 1.6rem;
+    }
+  }
+}
+
+// Smartphone (≤575.98px) : .popup-text-input/.dropdown-btn n'avaient qu'un palier tablette
+// (576-992px) ci-dessus, jamais de palier téléphone — en dessous de 576px ils retombaient
+// silencieusement à la taille desktop (0.9rem). Ce plafond, propagé partout où ces classes
+// partagées sont utilisées (parcelles/registre/inventaire), explique une bonne partie des
+// placeholders/champs "trop petits sur smartphone" remontés cette session. Le placeholder
+// lui-même n'a pas besoin d'une règle séparée : il hérite déjà correctement du font-size de
+// son input tant qu'aucune règle locale ne le fixe explicitement (voir .popup-text-input
+// ::placeholder ci-dessus, qui ne définit que la couleur).
+@media (max-width: 575.98px) {
+  .popup-text-input,
+  .dropdown-btn {
+    min-height: 56px;
+    padding: 14px 16px;
+    font-size: 19px;
+  }
+
+  .dropdown-btn .dropdown-icon {
+    font-size: 1rem;
+  }
+
+  // .format-btn n'avait, comme .popup-text-input/.dropdown-btn ci-dessus, qu'un palier
+  // tablette (76px) : restait à 40px sur smartphone, sous la cible tactile minimale.
+  .format-btn {
+    height: 56px;
+    padding: 14px 16px;
+
+    i {
+      font-size: 2.4rem;
+    }
+
+    .format-label {
+      font-size: 1.15rem;
+    }
+
+    .format-desc {
+      font-size: 0.85rem;
+    }
+  }
+}

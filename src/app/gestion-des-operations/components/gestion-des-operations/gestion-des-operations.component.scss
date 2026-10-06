@@ -1,0 +1,122 @@
+// Même gabarit que la connexion / création de compte : voir src/styles/_auth-form.scss
+@use '../../../../styles/auth-form' as *;
+
+.form-section-title {
+    font-family: "Panton", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #12103c;
+    margin: 0 0 12px;
+}
+
+.team-title {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+}
+
+// Champs + bouton "Ajouter" sur une ligne (empilés sur mobile)
+.add-operator-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: end;
+
+    @media (max-width: 767.98px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.add-operator-btn {
+    min-width: 0;
+    height: 44px;
+    gap: 6px;
+}
+
+// Cartes opérateur : même présentation que « Mon équipe » (accueil / Mon compte)
+.operateurs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.operateur-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-left: 3px solid #05b1af;
+    border-radius: 10px;
+}
+
+.operateur-avatar {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #05b1af;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.operateur-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.operateur-nom {
+    font-family: "Panton", sans-serif;
+    font-weight: 600;
+    color: #12103c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.operateur-phyto {
+    font-size: 0.82rem;
+    color: #6b7280;
+
+    i { margin-right: 2px; }
+}
+
+.team-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 16px;
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+}
+
+.icon-btn {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &--danger:hover {
+        background: #fdecea;
+        border-color: #f5c2c0;
+        color: #dc3545;
+    }
+}

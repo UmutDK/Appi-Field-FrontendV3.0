@@ -1,0 +1,207 @@
+<main>
+   <div class="body" 
+        [attr.data-slide-direction]="slideDirection" 
+        (@slideStep.done)="onSlideAnimationDone()">
+   @switch (culture()) {
+    @case ("catégorie Phytoweb de la culture") {
+
+        @if (cultureToModify && getCurrentCultureInfo(); as cultureInfo) {
+            <section class="row">
+                <article class="col-lg-12">
+                    <div class="current-culture-info">
+                        <div class="info-header">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Catégorie Phytoweb actuellement sélectionnée</span>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-item">
+                                <strong>Nom :</strong> {{ cultureInfo.name }}
+                            </div>
+                            <div class="info-item">
+                                <strong>Code EPPO :</strong> {{ cultureInfo.eppoCode }}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        }
+
+        <section class="row">
+                <article class="col-lg-12">
+                    <div class="label-with-info">
+                        <label for="recherche-culture" class="search-label">
+                            @if (cultureToModify) {
+                                Chercher une nouvelle catégorie Phytoweb<sup>*</sup>
+                            } @else {
+                                Chercher une catégorie Phytoweb<sup>*</sup>
+                            }
+                        </label>
+                        <i class="bi bi-info-circle-fill crop-info-icon popup-tooltip-icon"
+                           matTooltip="Chercher la catégorie phytoweb de votre culture. Vous pourrez généralement la trouver en cherchant le nom de votre culture."
+                           matTooltipPosition="above">
+                        </i>
+                    </div>
+                    <div class="step-search">
+                        <i class="bi bi-search"></i>
+                        <input id="recherche-culture" type="text" [ngModel]="listeRechercheCulture()" (ngModelChange)="listeRechercheCulture.set($event)" [ngModelOptions]="{standalone: true}" placeholder="Tapez au moins 3 caractères...">
+                        @if (listeRechercheCulture()) {
+                            <button type="button" class="clear-search" (click)="listeRechercheCulture.set('')">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        }
+                    </div>
+                </article>
+
+        </section>
+        <form [formGroup]="form">
+            <!-- Catégories récemment utilisées (avant recherche) -->
+            @if (shouldShowSearchMessage()) {
+                <section class="row">
+                <article class="col-lg-12">
+                    @if (isLoadingRecentCultures()) {
+                        <div class="recently-used-header">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Récemment utilisées</span>
+                            <div class="spinner-border spinner-border-sm ms-2" role="status"><span class="visually-hidden">Chargement...</span></div>
+                        </div>
+                    } @else if (recentlyUsedCultures().length > 0) {
+                        <div class="recently-used-header">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Récemment utilisées</span>
+                        </div>
+                        <div class="culture-cards-grid">
+                            @for (item of recentlyUsedCultures(); track item.cropId) {
+                                <button type="button" class="culture-card" [class.selected]="isCultureSelected(item.cropId)" (click)="selectRecentCulture(item.cropId)">
+                                    <div class="culture-card-icon">
+                                        <i class="material-icons">eco</i>
+                                    </div>
+                                    <div class="culture-card-title">{{ item.nameFr }}</div>
+                                    <i class="bi bi-check-circle-fill culture-card-check"></i>
+                                </button>
+                            }
+                        </div>
+                    } @else {
+                        <div class="parcels-empty">
+                            <i class="bi bi-search"></i>
+                            Tapez le nom de la catégorie Phytoweb (minimum 3 caractères)
+                        </div>
+                    }
+                </article>
+                </section>
+            }
+
+            <!-- Cards des cultures -->
+            <div class="scrollable-content">
+                <section class="row">
+                <article class="col-lg-12">
+                <div class="culture-cards-grid">
+                    @for (item of filtreCultutre(); track item.cropId; let i = $index) {
+                        <label [for]="i" class="culture-card" [class.selected]="isCultureSelected(item.cropId)">
+                            <input type="radio" name="autre" [id]="i" formControlName="autre" value="{{item.cropId}}" (change)="onCultureSelection()" />
+                            <div class="culture-card-icon">
+                                <i class="material-icons">eco</i>
+                            </div>
+                            <div class="culture-card-title">{{ item.nameFr }}</div>
+                            <i class="bi bi-check-circle-fill culture-card-check"></i>
+                        </label>
+                    }
+                </div>
+                </article>
+                </section>
+            </div>
+        </form>
+    }
+    @case ("parcels") {
+        <form [formGroup]="form">
+            <section class="row">
+                <article class="col-lg-12">
+                    <div class="parcels-step-header">
+                        <label for="parcelles-selection" class="search-label">Sélectionner une ou plusieurs parcelle(s)<sup>*</sup></label>
+                        @if (getSelectedParcelCount() > 0) {
+                            <span class="selected-count-badge">
+                                {{ getSelectedParcelCount() }} sélectionnée{{ getSelectedParcelCount() > 1 ? 's' : '' }}
+                            </span>
+                        }
+                    </div>
+                    <div class="step-search">
+                        <i class="bi bi-search"></i>
+                        <input type="text"
+                               id="parcelles-selection"
+                               [ngModel]="parcelSearchTerm()"
+                               (ngModelChange)="parcelSearchTerm.set($event)"
+                               [ngModelOptions]="{standalone: true}"
+                               placeholder="Rechercher une parcelle par nom...">
+                        @if (parcelSearchTerm()) {
+                            <button type="button" class="clear-search" (click)="clearParcelSearch()">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        }
+                    </div>
+                </article>
+            </section>
+
+            <!-- Container avec scroll pour les parcelles -->
+            <div class="scrollable-content">
+                <section class="row">
+                <article class="col-lg-12">
+                <div class="parcels-grid">
+                    @for (item of filteredParcelles(); track item.id_parcel) {
+                        <label class="parcel-card" [class.selected]="isParcelSelected(item.id_parcel)">
+                            <input type="checkbox"
+                                [value]="item.id_parcel"
+                                [checked]="isParcelSelected(item.id_parcel)"
+                                (change)="oncheckboxchange($event)"
+                                name="parcels"
+                            >
+                            <div class="parcel-card-icon">
+                                <i class="material-icons">grass</i>
+                            </div>
+                            <div class="parcel-card-info">
+                                <div class="parcel-card-title">{{ item.parcel_name }}</div>
+                                <div class="parcel-card-details">
+                                    {{ item.parcel_area }} {{ item.parcel_area_unit_fr }}
+                                </div>
+                            </div>
+                            <i class="bi bi-check-circle-fill parcel-card-check"></i>
+                        </label>
+                    }
+                    @if (filteredParcelles().length === 0) {
+                        <div class="parcels-empty">
+                            <i class="bi bi-search"></i>
+                            Aucune parcelle ne correspond à votre recherche.
+                        </div>
+                    }
+                </div>
+                </article>
+                </section>
+            </div>
+        </form>
+    }
+    @default {
+            <form [formGroup]="form">
+                <div class="scrollable-content">
+                    <section class="row culture-infos">
+                        <article class="col-lg-12">
+                            <label class="simple-label" for="nomCulture">Nom de l'espèce et de la variété emblavée<sup>*</sup></label>
+                            <input type="text" class="form-control popup-text-input" id="nomCulture" placeholder="Nom de l'espèce et de la variété emblavée" name="nomCulture" formControlName="nomCulture" autocomplete="off" required>
+                        </article>
+                        <article class="col-lg-6">
+                            <label class="simple-label" for="semis">Date de semis</label>
+                            <input type="date" id="semis" name="semis" formControlName="semis" class="form-control popup-text-input">
+                        </article>
+                        <article class="col-lg-6">
+                            <label class="simple-label" for="culturePrecedant">Précédent cultural</label>
+                            <input type="text" id="culturePrecedant" name="culturePrecedant" formControlName="culturePrecedant"
+                                   placeholder="Entrez le précédent cultural..." class="form-control popup-text-input" autocomplete="off">
+                        </article>
+                        <article class="col-lg-12">
+                            <label class="simple-label" for="remarque">Remarque</label>
+                            <textarea name="remarque" formControlName="remarque" id="remarque" class="form-control remarque-textarea popup-text-input" placeholder="Remarque optionnelle..."></textarea>
+                        </article>
+                    </section>
+                </div>
+            </form>
+        }
+   }
+   </div>
+</main>

@@ -1,0 +1,311 @@
+@use '../../../../styles/dashboard-cards' as *;
+
+// Style pour la carte Leaflet
+::ng-deep .leaflet-bottom {
+    z-index: 400 !important;
+}
+::ng-deep .leaflet-top {
+    z-index: 400 !important;
+}
+
+a { text-decoration: none; }
+
+// Tuiles stats (.stats-row/.stat-tile) : voir src/styles/_dashboard-cards.scss (partagées avec
+// la page Parcelles).
+
+// =============================================
+// ACCÈS RAPIDE + CARTE
+// =============================================
+.dashboard-main-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+    align-items: start;
+
+    @media (max-width: 991.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.map-card {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    border: 1px solid #edf0f3;
+
+    #map {
+        width: 100%;
+        height: 260px;
+    }
+}
+
+.btn-view-all-parcels {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: #e3f6f3;
+    color: #03918a;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 12px 0 20px;
+    transition: background 0.2s ease;
+
+    &:hover { background: #d3efeb; }
+}
+
+// Libellés "Accès rapide" / "Ma carte parcellaire" : plus lisibles que le libellé partagé.
+.dashboard-main-grid .dashboard-section-label {
+    font-size: 1rem;
+    color: #12103c;
+}
+
+// Petits boutons de navigation sous les accès rapides (FAQ, Mon équipe, Formation, Actualités)
+.quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.quick-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    line-height: 1.2;
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 999px;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+    color: #12103c;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    i {
+        color: #05b1af;
+        font-size: 1.1rem;
+    }
+
+    &:hover {
+        border-color: #05b1af;
+        background: #e3f6f3;
+        color: #03918a;
+    }
+}
+
+// ==================== MON ÉQUIPE ====================
+
+.equipe-section {
+    margin-bottom: 8px;
+}
+
+.btn-add-operateur {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #05b1af;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: "Panton", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s;
+
+    &:hover {
+        background-color: darken(#05b1af, 10%);
+    }
+
+    i { font-size: 16px; }
+}
+
+.operateurs-grid {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.operateur-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-left: 4px solid #05b1af;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 14px 16px;
+    flex: 0 0 calc(33.33% - 12px);
+    min-width: 220px;
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+    transform: scale(1.01);
+     .operateur-avatar {
+        color: #110f3b;
+    }
+    }
+
+    .operateur-avatar {
+        background-color: #05b1af;
+        color: #fff;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 20px;
+    }
+
+    .operateur-info {
+        flex: 1;
+        min-width: 0;
+
+        .operateur-nom {
+            display: block;
+            font-family: "Panton", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #12103c;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .operateur-phyto {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .operateur-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .btn-icon {
+        background: none;
+        border: none;
+        border-radius: 6px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.15s;
+        font-size: 15px;
+
+        &.btn-edit {
+            color: #05b1af;
+            &:hover { background-color: rgba(5, 177, 175, 0.12); }
+        }
+
+        &.btn-delete {
+            color: #e74c3c;
+            &:hover { background-color: rgba(231, 76, 60, 0.1); }
+        }
+    }
+}
+
+.equipe-empty {
+    color: #aaa;
+    font-style: italic;
+    font-size: 14px;
+    text-align: center;
+    padding: 24px 0;
+    width: 100%;
+}
+
+// Responsive Mon équipe
+@media (max-width: 950px) {
+    .operateur-card {
+        flex: 0 0 calc(50% - 8px);
+    }
+}
+
+@media (max-width: 480px) {
+    .operateur-card {
+        flex: 0 0 100%;
+    }
+}
+
+// Tablette : cartes agrandies au lieu de rester à la taille desktop compacte.
+@media (min-width: 576px) and (max-width: 950px) {
+    .btn-add-operateur {
+        padding: 12px 22px;
+        font-size: 18px;
+
+        i { font-size: 20px; }
+    }
+
+    .operateur-card {
+        gap: 22px;
+        padding: 24px 26px;
+
+        .operateur-avatar {
+            width: 68px;
+            height: 68px;
+            font-size: 30px;
+        }
+
+        .operateur-info {
+            .operateur-nom {
+                font-size: 21px;
+            }
+
+            .operateur-phyto {
+                font-size: 16px;
+            }
+        }
+
+        .btn-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 20px;
+        }
+    }
+}
+
+// ==================== MODAL OPÉRATEUR ====================
+
+.modal-operateur {
+    max-width: 440px;
+
+    .form-group {
+        margin-bottom: 16px;
+
+        label {
+            display: block;
+            font-family: "Panton", sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a3c;
+            margin-bottom: 6px;
+        }
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: -8px;
+        margin-bottom: 8px;
+    }
+}

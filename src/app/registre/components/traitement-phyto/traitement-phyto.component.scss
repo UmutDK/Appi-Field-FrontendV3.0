@@ -1,0 +1,5487 @@
+﻿@use '../../../../styles/popup-mixins' as *;
+
+// Uniformisation de la taille de police pour tous les champs de formulaire et leurs placeholders
+input, select, textarea {
+    font-size: 16px !important;
+    font-family: "Panton", sans-serif !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    font-size: 16px !important;
+    font-family: "Panton", sans-serif !important;
+}
+
+// Règles spécifiques pour les champs dans les popups et modales
+.popup input, .modal input, .form-control,
+.popup select, .modal select,
+.popup textarea, .modal textarea {
+    font-size: 16px !important;
+    font-family: "Panton", sans-serif !important;
+}
+
+.popup input::placeholder, .modal input::placeholder, .form-control::placeholder,
+.popup textarea::placeholder, .modal textarea::placeholder {
+    font-size: 16px !important;
+    font-family: "Panton", sans-serif !important;
+}
+
+// ====================================
+// � Les styles du dropdown d'unités (ng-select) sont dans:
+// src/styles.scss (section "STYLES NG-SELECT DROPDOWN UNITÉS")
+// ====================================
+
+// 🚀 Optimisations de performance CSS
+* {
+    will-change: auto; // Éviter les optimisations GPU inutiles
+}
+
+// Force un seul scroll dans le composant
+:host {
+    overflow: hidden !important; // Empêche tout scroll au niveau du composant
+}
+
+// 🎬 Animations de slide horizontal entre les étapes
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    49% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    49% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    50% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+// Règles globales pour désactiver le scroll du body depuis ce composant
+:global(body) {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+:global(html) {
+    overflow: hidden !important;
+}
+
+// S'assure qu'aucun élément enfant n'a de scroll sauf scrollable-content
+main * {
+    overflow: visible !important;
+}
+
+// Exception : le panneau du dropdown "Cible" a besoin de son propre overflow (hidden sur le
+// cadre, auto sur la liste interne) — sans ça, la règle "main *" ci-dessus le force en
+// overflow:visible et tout son contenu déborde hors du cadre (texte affiché sans fond, qui
+// semble "dépasser" du popup) ET la liste n'est plus un vrai conteneur de scroll (molette inerte).
+main .target-dropdown-panel {
+    overflow: hidden !important;
+
+    .dropdown-list {
+        overflow-y: auto !important;
+    }
+}
+
+// Exception : .scrollable-content et .body doivent pouvoir gérer leur overflow correctement
+main .scrollable-content {
+    overflow-y: auto !important; // Seul ce conteneur peut avoir un scroll
+    overflow-x: hidden !important;
+    // Ni max-height ni height en % ici : main (son parent flex) n'a pas de hauteur "définie" au
+    // sens CSS (.popup-container n'a qu'un max-height), donc un % ne se résout pas de façon fiable.
+    // flex:1 (ci-dessous, dans main{ .scrollable-content{} }) suffit : il dimensionne l'élément via
+    // l'algorithme flex, qui n'a pas besoin d'une hauteur "définie" en amont.
+    min-height: 0;
+    scrollbar-width: thin;
+    scroll-behavior: smooth; // Scroll fluide mais sans auto-scroll brutal
+}
+
+main .scrollable-content .body {
+    overflow: visible !important; // Le body lui-même ne scroll pas, c'est son parent qui scroll
+}
+
+// Titre de l'étape "Sélectionner les parcelles et cultures concernées" : Materialize (chargé
+// globalement) impose sa propre police par défaut à tout <h4> nu (font:400 2rem/2.5rem Roboto...),
+// écrasant la police "Panton" normalement héritée de .popup-container — même mécanisme que le
+// bug de bordure des input[type=text] (voir culture.component.scss).
+.step-heading {
+    font-family: "Panton", sans-serif !important;
+    font-size: 1.15em !important;
+    font-weight: 700 !important;
+}
+
+// Tags de regroupement
+.group-by-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  .group-by-tag {
+    padding: 7px 18px;
+    border-radius: 50px;
+    border: 2px solid #03918a;
+    background: transparent;
+    color: #03918a;
+    font-weight: 500;
+    font-size: 0.85em;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.2s, color 0.2s;
+
+    &.active {
+      background: #03918a;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(3, 145, 138, 0.08);
+    }
+  }
+}
+
+// 🎯 Container virtuel pour améliorer le scrolling
+.culture-selection-grid,
+.parcel-cards-grid {
+    contain: layout style paint; // CSS Containment pour de meilleures performances
+    transform: translateZ(0); // Activer l'accélération matérielle si nécessaire
+}
+
+// 📊 Grid optimisé avec CSS Grid au lieu de Flexbox pour les grandes listes
+.parcel-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    padding: 8px 0;
+    
+    // Optimisation pour les performances de rendu
+    &::after {
+        content: "";
+        flex: auto;
+    }
+}
+
+// 🎨 Optimisation des cartes produits avec lazy rendering
+.volumeDeBouille {
+    // Utiliser CSS transform au lieu de position pour les animations
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    // Éviter le reflow lors du hover
+    contain: layout style;
+}
+
+main{
+    position: relative;
+    // height:85vh puis height:100% dépassaient tous deux l'espace réellement alloué par le
+    // parent (registre.component .body) : .popup-container n'a qu'un max-height (pas de height
+    // explicite), donc sa hauteur n'est jamais "définie" au sens CSS — une résolution en % ne
+    // remonte alors pas correctement toute la chaîne flex, et main se retrouvait sized-to-content
+    // au lieu d'être contraint. flex:1 (comme .body, son parent flex) n'a pas ce problème : la
+    // taille est calculée par l'algorithme flex lui-même, indépendamment de la "définitude" des
+    // ancêtres. (Voir aussi app-traitement-phyto dans registre.component.scss, qui relaie ce
+    // flex:1 entre .body et main.)
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important; // Force l'absence de scroll sur main
+    gap: 0; // Force aucun espacement entre les enfants flex
+
+    .sticky-header {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-bottom: 1px solid #e9ecef;
+        z-index: 100;
+        margin: 0; // Garantit aucun espace en haut/bas
+        padding: 0; // Pas de padding externe
+        flex-shrink: 0; // Empêche le header de rétrécir
+        
+        .modern-progress {
+            background-color: #f0f3f4;
+            height: 6px;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #03918a, #36918a);
+                border-radius: 3px;
+                transition: width 0.8s ease-in-out;
+                position: relative;
+            }
+            
+            .progress-steps {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: absolute;
+                top: -8px;
+                left: 0;
+                right: 0;
+                
+                .step {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    transition: all 0.4s ease;
+                    
+                    span {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        display: block;
+                        margin-bottom: 6px;
+                        transition: all 0.4s ease;
+                        position: relative;
+                        z-index: 2;
+                    }
+                    
+                    label {
+                        font-size: 12px;
+                        font-weight: 500;
+                        transition: all 0.4s ease;
+                        white-space: nowrap;
+                    }
+                    
+                    &.active {
+                        span {
+                            background-color: #03918a;
+                        }
+                        
+                        label {
+                            color: #03918a;
+                            font-weight: 600;
+                        }
+                    }
+                    
+                    &.completed {
+                        span {           
+                            &::after {
+                                content: '✓';
+                                color: #03918a;
+                                font-size: 12px;
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                font-weight: bold;
+                            }
+                        }
+                        
+                        label {
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .scrollable-content {
+        flex: 1; // Prend tout l'espace disponible (dimensionné par l'algorithme flex, pas par %)
+        min-height: 0; // Autorise le flex-item à rétrécir sous sa taille de contenu naturelle
+        overflow-y: auto !important; // Force le scroll vertical uniquement ici
+        overflow-x: hidden !important; // Masque le scroll horizontal
+        display: block; // Block pour un scroll plus naturel
+        //padding-bottom: 120px; // Marge encore plus importante pour le bouton flottant
+        margin: 0 !important; // Force aucun margin - le scrollable commence exactement au bas du header
+        padding-top: 0 !important; // Force aucun padding-top - alignement parfait avec le bottom du header
+        border-top: none; // Aucune bordure qui pourrait créer un décalage
+        
+        // Ajustement responsive du padding
+        // @media (max-width: 992px) {
+        //     padding-bottom: 150px; // Beaucoup plus d'espace sur mobile
+        // }
+        
+        // @media (min-width: 1200px) {
+        //     padding-bottom: 120px; // Plus d'espace sur desktop
+        // }
+        
+        // Amélioration du scroll pour tous les appareils
+        @include popup-scrollbar($track: #f1f1f1, $width: 8px);
+    }
+    
+    .travailAuChampCadre, .traitementCarde, .volumeDeBouille{
+        padding: 5px;
+        border-radius: 8px;
+        border-left: 4px solid #2a928a; // Bordure turquoise par défaut
+        
+        // Style spécial pour les produits avec statut "AKK" (prioritaires)
+        &.product-akk-status {
+            border-left: 4px solid #28a745; // Bordure verte
+            background-color: #28a74623;
+            //background-color: #9ac2a38d ;
+            color: #0d2813;
+        }
+        
+        // Style spécial pour les produits avec statut "TOINT" (autorisation en cours de retrait)
+        &.product-toint-status {
+            border-left: 4px solid #fd7e14; // Bordure orange
+            //background-color: #e2a97b8c;
+            background-color: #fd7d1425;
+            color: #753b0c;
+        }
+        
+        // Style spécial pour les produits avec statut "INT" (interdits)
+        &.product-int-status {
+            border-left: 4px solid #dc3545; // Bordure rouge
+            //background-color: #e78e9799;
+            background-color: #dc354637;
+            color: #61131a;
+        }
+        
+        // Style pour les produits personnels (engrais, amendements...)
+        &.product-personal-status {
+            border-left: 4px solid #0d6efd;
+            background-color: #0d6efd1a;
+            //background-color: #cfe2ff;
+            color: #084298;
+            cursor: pointer;
+        }
+
+    }
+
+    // Légende des statuts d'autorisation (mêmes couleurs que .product-akk/toint/int-status ci-dessus)
+    .status-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 6px 0 10px;
+
+        .status-legend-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+
+            &--authorized {
+                background: rgba(40, 167, 69, 0.12);
+                color: #196c2f;
+            }
+
+            &--withdrawing {
+                background: rgba(253, 126, 20, 0.12);
+                color: #a1550d;
+            }
+
+            &--forbidden {
+                background: rgba(220, 53, 69, 0.12);
+                color: #a02330;
+            }
+        }
+    }
+    .traitementCarde{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        .icon{
+            margin-right: 16px;
+            color: #03918a;
+        }
+        .text{
+            [type=checkbox] + span {
+                display: none;
+            }
+            label{
+                font-size: 1.2em;
+            }
+            .sousTitre{
+                color: #4f4f4f;
+            }
+        }
+        samp{
+            color: #03918a;
+        }
+    }
+    
+    // ── Dropdown opérateur Angular pur ──────────────────────────────────────
+    .operator-dropdown-container {
+        position: relative;
+
+        .operator-select-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 42px;
+            padding: 8px 12px;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            gap: 8px;
+
+            &:focus, &:focus-visible {
+                outline: none;
+                border-color: #28a745;
+                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+            }
+
+            &.has-value {
+                border-color: #ced4da;
+            }
+
+            .operator-btn-text {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+                min-width: 0;
+                overflow: hidden;
+
+                .operator-placeholder {
+                    color: #adb5bd;
+                    font-size: 0.9rem;
+                }
+
+                .operator-name {
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: #212529;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .simple-option-name {
+                    font-size: 0.9rem;
+                    font-weight: 400;
+                    color: #212529;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .operator-licence {
+                    font-size: 0.75rem;
+                    color: #6c757d;
+                }
+            }
+
+            .operator-btn-icons {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-shrink: 0;
+                color: #6c757d;
+                font-size: 0.85rem;
+
+                .operator-clear-icon {
+                    color: #adb5bd;
+                    transition: color 0.12s;
+                    &:hover { color: #dc3545; }
+                }
+            }
+        }
+
+        .operator-dropdown-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            z-index: 1060;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 4px 0;
+            margin: 0;
+            list-style: none;
+            animation: fadeInDown 0.15s ease-out;
+
+            .operator-option {
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+                width: 100%;
+                padding: 9px 14px;
+                background: none;
+                border: none;
+                border-bottom: 1px solid #f8f9fa;
+                text-align: left;
+                cursor: pointer;
+                transition: background 0.12s;
+
+                strong { font-size: 0.88rem; color: #212529; }
+                small  { font-size: 0.76rem; color: #6c757d; }
+
+                &:hover { background: #f0faf0; }
+
+                &.selected {
+                    background: #e8f5e9;
+                    strong { color: #155724; }
+                }
+
+                &:last-of-type { border-bottom: none; }
+            }
+
+            .operator-empty {
+                padding: 10px 14px;
+                color: #6c757d;
+                font-style: italic;
+                font-size: 0.85rem;
+            }
+        }
+    }
+    // ── Champs date / heure / texte : même style que .operator-select-btn ──
+    input[type="time"].form-control,
+    input[formControlName="bbch"].form-control,
+    input[type="date"].form-control {
+        height: 40px !important;
+        padding: 8px 12px !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+        border: 1px solid #ced4da !important;
+        border-radius: 6px;
+        background: #fff;
+        transition: border-color 0.15s, box-shadow 0.15s;
+
+        &:focus {
+            outline: none;
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+        }
+    }
+
+    // ── fin dropdown opérateur ───────────────────────────────────────────────
+
+    // Autocomplétion pour les cibles
+    .autocomplete-container {
+        position: relative;
+
+        // ── Multi-tag cible container ────────────────────────────────────────
+        &.cible-tags-container {
+            .cible-tags-wrap {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 5px;
+                min-height: 42px;
+                padding: 0 0 0 7px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                background: #fff;
+                cursor: text;
+                overflow: hidden;
+                transition: border-color 0.15s, box-shadow 0.15s;
+
+                &:focus-within {
+                    border-color: #28a745;
+                    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+                }
+
+                .cible-tag {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    max-width: 100%;
+                    min-width: 0;
+                    background: #e8f5e9;
+                    color: #1b5e20;
+                    border: 1px solid #a5d6a7;
+                    border-radius: 20px;
+                    padding: 2px 8px 2px 10px;
+                    font-size: 0.82em;
+                    font-weight: 500;
+                    line-height: 1.4;
+
+                    .cible-tag-text {
+                        flex: 1;
+                        min-width: 0;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .cible-tag-remove {
+                        background: none;
+                        border: none;
+                        padding: 0;
+                        line-height: 1;
+                        font-size: 1.1em;
+                        color: #4caf50;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        border-radius: 50%;
+                        width: 16px;
+                        height: 16px;
+                        justify-content: center;
+                        transition: background 0.12s, color 0.12s;
+                        flex-shrink: 0;
+
+                        &:hover {
+                            background: #c8e6c9;
+                            color: #b71c1c;
+                        }
+                    }
+                }
+
+                .cible-tag-input {
+                    flex: 1;
+                    min-width: 80px;
+                    border: none;
+                    outline: none;
+                    background: transparent;
+                    font-size: 16px;
+                    padding: 0;
+                    margin: 0;
+                    color: #495057;
+                    font-size: 16px !important;
+                    height: 40px !important;
+                    &::placeholder {
+                        color: #adb5bd;
+                        font-size: 16px !important;
+                        line-height: 16px !important;
+                    }
+                }
+
+                // Responsive petits écrans — auparavant le champ RÉTRÉCISSAIT sur smartphone
+                // (36px puis un input à 28px !important) au lieu de grandir, sous la cible
+                // tactile minimale de 44px (normesResponsive.md §46-56).
+                @media (max-width: 576px) {
+                    min-height: 50px;
+                    max-height: 120px;
+                    overflow-y: auto;
+                    gap: 5px;
+                    padding: 4px 6px 4px 8px;
+
+                    .cible-tag {
+                        font-size: 0.9em;
+                        padding: 4px 8px 4px 10px;
+                        max-width: calc(100% - 24px);
+                    }
+
+                    .cible-tag-input {
+                        min-width: 80px !important;
+                        height: 44px !important;
+                        font-size: 1rem !important;
+                    }
+                }
+            }
+        }
+        // ── fin multi-tag ────────────────────────────────────────────────────
+        
+        .cible-suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #28a745;
+            border-top: 1px solid #ddd;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1050;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin: 0;
+            padding: 0;
+            animation: fadeInDown 0.2s ease-out;
+            
+            // 🎯 Empêcher le débordement en dehors de la popup
+            contain: layout style paint;
+            
+            .suggestion-item {
+                padding: 10px 14px;
+                list-style: none;
+                cursor: pointer;
+                border-bottom: 1px solid #f1f1f1;
+                color: #495057;
+                font-size: 14px;
+                transition: all 0.15s ease;
+                
+                &:hover {
+                    background-color: #e8f5e8;
+                    color: #155724;
+                    transform: translateX(2px);
+                }
+                
+                &:last-child {
+                    border-bottom: none;
+                    border-radius: 0 0 6px 6px;
+                }
+                
+                &:first-child {
+                    border-top: 1px solid #e9ecef;
+                }
+            }
+            
+            // Style pour quand il n'y a pas de résultats
+            .no-results {
+                padding: 10px 14px;
+                color: #6c757d;
+                font-style: italic;
+                text-align: center;
+            }
+        }
+    }
+    
+    // Animation pour l'apparition du dropdown
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    // Styles pour les labels simples
+    .simple-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 1em;
+        position: relative;
+    }
+
+    // Sélecteur de mode (Surface/Bouillie/Quantité) : réutilise le style de cartes
+    // .format-choice/.format-btn (voir src/styles/_popup-system.scss, même pattern que le
+    // choix de format d'export). Les <input type="radio"> restent le mécanisme de sélection
+    // réel (formControlName="type") mais sont masqués visuellement au profit des <label>.
+    .toggle-radio.format-choice {
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        &.disabled .format-btn {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+
+    // Petit bloc explicatif sous le sélecteur de mode, décrit les spécificités du mode actif
+    .mode-explanation {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: #eef6fd;
+        border: 1px solid #cfe4f7;
+        border-left: 3px solid #6c8ebf;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #3d5a80;
+        line-height: 1.4;
+
+        i {
+            color: #6c8ebf;
+            font-size: 1rem;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        strong {
+            color: #2c4870;
+        }
+    }
+
+    // Toggle Oui/Non compact (ex. "traitement localisé ?") : même esprit que .segmented-control
+    // (voir src/styles/_popup-system.scss) mais implémenté en radio+label masqué pour rester lié
+    // au formControlName existant, sans passer par des boutons + gestionnaire de clic en TS.
+    .yes-no-toggle {
+        display: inline-flex;
+        background: #f1f3f5;
+        border-radius: 8px;
+        padding: 3px;
+        gap: 2px;
+
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin: 0;
+
+            i {
+                font-size: 0.9rem;
+                color: #adb5bd;
+            }
+
+            &:hover:not(.active) {
+                color: #343a40;
+            }
+
+            &.active {
+                background: #fff;
+                color: #05b1af;
+                font-weight: 600;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+                i {
+                    color: #05b1af;
+                }
+            }
+        }
+    }
+
+    // Textarea plus compact
+    .textarea-compact {
+        min-height: 80px !important; // Réduit la hauteur minimale
+        resize: vertical; // Permet le redimensionnement vertical uniquement
+    }
+    
+    fieldset{
+        legend{
+            color: rgb(255, 255, 255);
+            font-size: 1em;
+            font-family: Roboto, "Helvetica Neue", sans-serif;
+            background-color: #4f4f4f;
+            padding: 3px 6px;
+            margin-top: 8px;
+        }
+    }
+    @supports(selector(:has(input:checked))) {
+        .traitementCarde:has(input:checked) {
+            background: #36918a97;
+            strong{
+                color: #fff;
+            }
+            span{
+                color: #03918a;
+                .sousTitre{
+                    color: #024d4a;
+                }
+            }
+        }
+    }
+    .volumeDeBouille{
+        cursor: pointer;
+    }
+    .body{ 
+        padding: 20px;
+        padding-top: 20px; // Valeur par défaut
+        margin: 0; // Aucune marge - le body commence exactement au top du scrollable-content
+        overflow: visible !important; // Force - laisse le parent gérer le scroll
+        min-height: auto; // Auto pour s'adapter au contenu
+        box-sizing: border-box; // Le padding est inclus dans la hauteur
+        width: 100%; // Assure que le contenu prend toute la largeur
+        position: relative; // Contexte de positionnement pour les animations et suggestions
+        
+        // 🎬 Animations de slide horizontal avec CSS pur (plus fluide et synchronisé)
+        transition: transform 600ms cubic-bezier(0.4, 0.0, 0.2, 1),
+                    opacity 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+        
+        // Animation forward (avancer) : slide vers la gauche en sortant, slide depuis la droite en entrant
+        &[data-slide-direction="forward"] {
+            animation: slideInFromRight 600ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            // Masquer immédiatement le contenu au début de l'animation
+            animation-fill-mode: both;
+        }
+        
+        // Animation backward (reculer) : slide vers la droite en sortant, slide depuis la gauche en entrant
+        &[data-slide-direction="backward"] {
+            animation: slideInFromLeft 600ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            // Masquer immédiatement le contenu au début de l'animation
+            animation-fill-mode: both;
+        }
+        
+        .table-dark {
+            --bs-table-color: #fff;
+            --bs-table-bg: #36918a;
+            --bs-table-border-color: #fff;
+            --bs-table-striped-bg: #2c3034;
+            --bs-table-striped-color: #fff;
+            --bs-table-active-bg: #373b3e;
+            --bs-table-active-color: #fff;
+            --bs-table-hover-bg: #323539;
+            --bs-table-hover-color: #fff;
+            color: var(--bs-table-color);
+            border-color: var(--bs-table-border-color);
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            --bs-table-color-type: var(--bs-table-striped-color);
+            --bs-table-bg-type: #36918a69;
+        }
+        /* Ajoute ceci dans ton fichier CSS global ou local */
+        .table-responsive {
+            background: #fff !important;
+            border-radius: 6px !important;
+            overflow: hidden !important;
+            border: 1px solid #e5e7eb !important;
+            margin-top: 6px !important;
+            margin-bottom: 0.75rem !important;
+
+            .table {
+                width: 100% !important;
+                border-collapse: separate !important;
+                border-spacing: 0 !important;
+                margin: 0 !important;
+                background-color: transparent !important;
+                border: none !important;
+
+                thead {
+                    background: linear-gradient(135deg, #03918a, #36918a) !important;
+                    
+                    tr {
+                        background: transparent !important;
+                        
+                        th:first-child {
+                            border-top-left-radius: 6px !important;
+                        }
+                        
+                        th:last-child {
+                            border-top-right-radius: 6px !important;
+                        }
+                    }
+                    
+                    th {
+                        padding: 8px 8px !important;
+                        font-weight: 500 !important;
+                        font-size: 0.8rem !important;
+                        color: #fff !important;
+                        text-align: center !important;
+                        border: none !important;
+                        letter-spacing: 0.3px !important;
+                        vertical-align: middle !important;
+                        background: transparent !important;
+                    }
+                }
+
+                tbody {
+                    background-color: #f1fdfa !important;
+                    
+                    tr {
+                        transition: all 0.2s ease !important;
+                        border-bottom: 1px solid #f1f5f9 !important;
+                        background-color: #f1fdfa !important;
+
+                        &:hover {
+                            background-color: #f8fafc !important;
+                        }
+
+                        &:nth-of-type(odd) {
+                            background-color: #f1fdfa !important;
+                            
+                            &:hover {
+                                background-color: #f8fafc !important;
+                            }
+                        }
+
+                        &:last-child {
+                            border-bottom: none !important;
+                        }
+
+                        td {
+                            padding: 6px 8px !important;
+                            font-size: 0.85rem !important;
+                            color: #375150 !important;
+                            border: none !important;
+                            vertical-align: middle !important;
+                            text-align: center !important;
+                            background-color: #e7fff9 !important;
+
+                            &.no-data {
+                                text-align: center !important;
+                                color: #9ca3af !important;
+                                font-style: italic !important;
+                                padding: 30px 20px !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Surcharge explicite des styles Bootstrap pour .table-striped
+        .table-responsive .table-striped {
+            > tbody > tr:nth-of-type(odd) > * {
+                --bs-table-color-type: #375150 !important;
+                --bs-table-bg-type: #fff !important;
+                background-color: #f1fdfa !important;
+            }
+            
+            > tbody > tr:hover {
+                background-color: #f8fafc !important;
+            }
+        }
+        
+        .table th, .table td {
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
+
+        .valeur{
+            label{
+                input{
+                    margin-left: -16px;
+                }
+            }
+        }
+
+        // Styles pour les volumes de bouillie - Version discrète
+        .volume-bouillie-container {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            width: auto !important;
+            h5 {
+                margin-bottom: 8px;
+                font-weight: 400;
+                color: #6c757d;
+                font-size: 0.9em;
+            }
+
+            .volume-inputs-wrapper {
+                margin: 0px !important;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-start;
+                align-items: flex-start;
+                flex-wrap: wrap;
+                @media (max-width: 576px) {
+                    gap: 8px;
+                    flex-direction: column;
+                }
+            }
+
+            .volume-input-group {
+                display: flex;
+                flex-direction: column;
+                background-color: #ffffff;
+                border: 1px solid #dee2e6;
+                align-items: flex-start;
+                min-width: 80px;
+                border-radius: 6px;
+                padding: 6px 8px;
+                
+                .volume-label {
+                    font-size: 11px;
+                    font-weight: 500;
+                    color: #6c757d;
+                    text-align: left;
+                    margin-bottom: 2px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .input-with-unit {
+                    display: flex;
+                    align-items: center;
+                    
+                    .volume-input {
+                        background: transparent;
+                        border: none;
+                        outline: none;
+                        color: #495057;
+                        font-size: 16px !important; // Uniforme avec les autres champs
+                        font-weight: 400;
+                        text-align: center;
+                        width: 50px;
+                        
+                        &::placeholder {
+                            color: #adb5bd;
+                            font-size: 16px !important; // Uniforme avec les autres champs
+                        }
+                        
+                        &:focus {
+                            outline: none;
+                            color: #212529;
+                        }
+                    }
+
+                    .unit-label {
+                        color: #6c757d;
+                        font-size: 10px;
+                        font-weight: 400;
+                        margin-left: 3px;
+                        min-width: 8px;
+                    }
+                }
+                
+                // Effet hover subtil
+                &:hover {
+                    border-color: #adb5bd;
+                    background-color: #f8f9fa;
+                }
+            }
+        }
+    }
+
+    // Style pour les inputs de quantité dans le tableau
+    .quantity-input {
+        width: 90px !important;
+        padding: 4px 6px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 0.85rem;
+        
+        &:focus {
+            outline: none;
+            border-color: #28a7b5;
+            box-shadow: 0 0 0 2px rgba(40, 167, 181, 0.2);
+        }
+        
+        &:hover {
+            border-color: #28a7b5;
+        }
+    }
+
+    // Style pour l'affichage de la quantité totale
+    .total-quantity {
+        font-size: 1em;
+        font-weight: 600;
+        color: #28a7b5;
+        background-color: #f8f9fa;
+        padding: 6px 10px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+
+    // === 🎯 FORMULAIRE D'ÉDITION PLEINE LARGEUR (REMPLACE LA GRILLE) ===
+    .product-edit-fullwidth {
+        display: flex;
+        gap: 24px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 12px;
+        border: 2px solid #03918a;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        // container-type: inline-size; // Désactivé pour compatibilité production
+        scroll-margin-top: 0; // Empêche le scroll automatique vers cet élément
+        scroll-snap-align: none; // Pas de snap automatique
+        min-height: 200px; // Force un minimum de hauteur
+        
+        // Responsive global : adapter sur écrans moyens
+        @media (max-width: 1400px) {
+            .left-section {
+                flex: 0 1 40%;
+            }
+            .right-section {
+                flex: 1 1 60%;
+            }
+        }
+        
+        // Responsive mobile : empiler verticalement
+        @media (max-width: 576px) {
+            flex-direction: column;
+            gap: 16px;
+            
+            .left-section {
+                flex: none;
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #e9ecef;
+                padding-right: 0;
+                padding-bottom: 16px;
+                
+                .action-buttons {
+                    flex-direction: row;
+                }
+            }
+            
+            .right-section {
+                flex: none;
+                width: 100%;
+            }
+        }
+        
+        // Section gauche : Informations produit + saisie (35% max)
+        .left-section {
+            flex: 0 1 35%;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-right: 20px;
+            border-right: 2px solid #e9ecef;
+            // container-type: inline-size; // Désactivé pour compatibilité production
+            
+            .product-header {
+                .product-name {
+                    font-size: 1.15em;
+                    font-weight: 700;
+                    color: #110f3b;
+                    line-height: 1.3;
+                    margin-bottom: 4px;
+                }
+                
+                .product-number {
+                    font-size: 0.9em;
+                    color: #666;
+                    display: block;
+                    margin-top: 4px;
+                }
+
+                img {
+                    vertical-align: middle;
+                    margin-left: 8px;
+                }
+
+                .status-badge {
+                    display: inline-block;
+                    margin-top: 6px;
+                    padding: 2px 10px;
+                    border-radius: 12px;
+                    font-size: 0.75em;
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
+
+                    &.status-badge-authorized {
+                        background-color: #dcfce7;
+                        color: #166534;
+                    }
+
+                    &.status-badge-withdrawing {
+                        background-color: #ffedd5;
+                        color: #9a3412;
+                    }
+
+                    &.status-badge-forbidden {
+                        background-color: #fee2e2;
+                        color: #991b1b;
+                    }
+                }
+            }
+            
+            .dose-input-row {
+                label {
+                    font-size: 0.95em;
+                    font-weight: 600;
+                    color: #333;
+                    margin-bottom: 8px;
+                    display: block;
+                }
+                
+                .dose-unit-wrapper {
+                    display: flex;
+                    gap: 10px;
+                    align-items: stretch;
+                    
+                    .dose-input {
+                        flex: 1;
+                        border: 2px solid #03918a;
+                        border-radius: 8px;
+                        max-width: 20%;
+                        padding: 5px;
+                        font-size: 1.1em;
+                        font-weight: 600;
+                        text-align: center;
+                        background: white;
+                        height: 30px;
+                        line-height: 24px;
+                        
+                        &:focus {
+                            outline: none;
+                            border-color: #218838;
+                        }
+                        
+                        &::placeholder {
+                            color: #999;
+                            font-weight: 400;
+                        }
+                    }
+                    
+                    .unit-select {
+                        color: white !important;
+                        flex: 0 0 auto;
+                        width: auto;
+                        min-width: 140px;
+                        max-width: 180px;
+                        border: 2px solid #03918a;
+                        border-radius: 8px;
+                        padding: 8px 32px 8px 12px;
+                        font-size: 0.95em;
+                        font-weight: 600;
+                        cursor: pointer;
+                        background: linear-gradient(135deg, #03918a 0%, #027a74 100%);
+                        // Flèche personnalisée
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: right 10px center;
+                        appearance: none;
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        display: block;
+                        position: relative;
+                        z-index: 10;
+                        height: 42px;
+                        line-height: 24px;
+                        box-shadow: 0 2px 4px rgba(3, 145, 138, 0.2);
+                        transition: all 0.2s ease;
+                        // Force le dropdown vers le bas
+                        direction: ltr;
+                        text-align: left;
+                        
+                        &:focus {
+                            outline: none;
+                            border-color: #218838;
+                            box-shadow: 0 0 0 3px rgba(3, 145, 138, 0.25);
+                        }
+                        
+                        &:hover {
+                            background: linear-gradient(135deg, #04a49c 0%, #038b84 100%);
+                            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+                            background-repeat: no-repeat;
+                            background-position: right 10px center;
+                            box-shadow: 0 4px 8px rgba(3, 145, 138, 0.3);
+                        }
+                        
+                        &:active {
+                            transform: scale(0.98);
+                        }
+                        
+                        option {
+                            background: white;
+                            color: #333;
+                            padding: 12px 16px;
+                            font-size: 16px;
+                            font-weight: 500;
+                            
+                            &:hover, &:focus {
+                                background: #e8f5f4;
+                            }
+                            
+                            &:checked {
+                                background: #03918a;
+                                color: white;
+                            }
+                        }
+                        
+                        optgroup {
+                            background: #f8f9fa;
+                            color: #03918a;
+                            font-weight: 700;
+                            font-size: 13px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            padding: 8px 12px;
+                        }
+                    }
+                    
+                    // Responsive pour mobile
+                    @media (max-width: 576px) {
+                        flex-direction: column;
+                        gap: 8px;
+                        
+                        .dose-input {
+                            max-width: 100%;
+                            width: 100%;
+                            height: 48px;
+                            font-size: 16px; // Évite le zoom sur iOS
+                        }
+                        
+                        .unit-select {
+                            width: 100%;
+                            max-width: 100%;
+                            min-width: unset;
+                            height: 48px;
+                            font-size: 16px; // Évite le zoom sur iOS
+                            padding: 12px 36px 12px 16px;
+                            background-position: right 14px center;
+                            
+                            &:hover {
+                                background-position: right 14px center;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            .derived-value-preview {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 6px 10px;
+                background: #f0faf9;
+                border: 1px solid #b2e0de;
+                border-radius: 6px;
+                font-size: 0.85em;
+                color: #03918a;
+                line-height: 1.3;
+
+                i { font-size: 1em; flex-shrink: 0; }
+
+                .derived-label {
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                .derived-value {
+                    font-weight: 700;
+                    color: #027a74;
+                }
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 10px;
+                margin-top: auto;
+                
+                button {
+                    flex: 1;
+                    padding: 10px 16px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 1em;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    
+                    &:active {
+                        transform: scale(0.98);
+                    }
+                }
+                
+                // Empiler les boutons automatiquement si l'espace devient trop petit
+                @media (max-width: 1200px) {
+                    flex-direction: column;
+                    gap: 8px;
+                    
+                    button {
+                        width: 100%;
+                    }
+                }
+                
+                // Container query : empiler si la left-section devient étroite
+                @container (max-width: 320px) {
+                    flex-direction: column;
+                    gap: 8px;
+                    
+                    button {
+                        width: 100%;
+                        font-size: 0.95em;
+                        padding: 8px 12px;
+                    }
+                }
+                
+                .btn-cancel {
+                    background-color: #dc3545;
+                    color: white;
+                    
+                    &:hover {
+                        background-color: #c82333;
+                        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+                    }
+                }
+                
+                .btn-confirm {
+                    background-color: #28a745;
+                    color: white;
+                    
+                    &:hover:not(:disabled) {
+                        background-color: #218838;
+                        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+                    }
+                    
+                    &:disabled {
+                        background-color: #6c757d;
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                    }
+                }
+            }
+        }
+        
+        // Section droite : Informations réglementaires (65% minimum)
+        .right-section {
+            flex: 1 1 65%;
+            min-width: 0; // Permet le rétrécissement si nécessaire
+            display: flex !important; // Force l'affichage
+            flex-direction: column;
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+            visibility: visible !important; // Force la visibilité
+            opacity: 1 !important; // Force l'opacité
+            
+            // Scrollbar styling
+            @include popup-scrollbar($track: #f1f1f1);
+
+            .info-box {
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 0.875rem;
+                margin-top: 8px;
+                border: 1px solid transparent;
+                border-left-width: 4px;
+
+                .info-header {
+                    font-weight: 600;
+                    font-size: 0.8rem;
+                    letter-spacing: 0.03em;
+                    text-transform: uppercase;
+                    margin-bottom: 6px;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                .info-content {
+                    font-size: 0.875rem;
+                    line-height: 1.5;
+                }
+            }
+
+            // Cultures non autorisées (ambre)
+            .warning-box {
+                background-color: #fffbeb;
+                border-color: #f59e0b;
+                border-left-color: #d97706;
+
+                .info-header {
+                    color: #92400e;
+                }
+
+                .info-content {
+                    color: #78350f;
+                    font-weight: 500;
+                }
+            }
+
+            // Doses Phytoweb (vert) - VERSION TABLEAU
+            .doses-box {
+                background-color: #f0fdf4;
+                border-color: #86efac;
+                border-left-color: #16a34a;
+                padding: 6px 8px 6px 10px;
+
+                .info-header {
+                    color: #166534;
+                    font-weight: 600;
+                    margin-bottom: 6px;
+                    font-size: 0.72rem;
+                }
+
+                .doses-table-wrapper {
+                    overflow-x: auto;
+                    border-radius: 4px;
+                    border: 1px solid #86efac;
+                }
+
+                .doses-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.72rem;
+                    line-height: 1.2;
+
+                    thead tr {
+                        background-color: #15803d;
+                        color: #fff;
+
+                        th {
+                            padding: 3px 7px;
+                            font-weight: 600;
+                            font-size: 0.68rem;
+                            letter-spacing: 0.03em;
+                            text-transform: uppercase;
+                            white-space: nowrap;
+                            border-right: 1px solid #16a34a;
+
+                            &:last-child { border-right: none; }
+                        }
+                    }
+
+                    tbody tr {
+                        border-bottom: 1px solid #bbf7d0;
+
+                        &:nth-child(even) { background-color: #f0fdf4; }
+                        &:nth-child(odd)  { background-color: #fff; }
+                        &:last-child      { border-bottom: none; }
+
+                        td {
+                            padding: 3px 7px;
+                            vertical-align: middle;
+                            border-right: 1px solid #dcfce7;
+
+                            &:last-child { border-right: none; }
+                        }
+                    }
+
+                    .cell-culture {
+                        color: #166534;
+                        text-transform: capitalize;
+                        max-width: 80px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .cell-target {
+                        font-weight: 600;
+                        color: #166534;
+                        max-width: 110px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .cell-dose {
+                        font-weight: 700;
+                        color: #15803d;
+                        white-space: nowrap;
+                    }
+
+                    .cell-unit {
+                        font-style: italic;
+                        color: #6b7280;
+                        font-size: 0.68rem;
+                        white-space: nowrap;
+                    }
+
+                    .text-center { text-align: center; }
+                }
+            }
+
+            // Date de tolérance (autorisation en cours de retrait, orange)
+            .tolerated-box {
+                background-color: #fff7ed;
+                border-color: #fdba74;
+                border-left-color: #ea580c;
+
+                .info-header {
+                    color: #7c2d12;
+                }
+
+                .info-content {
+                    color: #9a3412;
+                    font-weight: 700;
+                    font-size: 1em;
+                }
+            }
+
+            // Produit interdit (statut Retrait, rouge)
+            .forbidden-box {
+                background-color: #fef2f2;
+                border-color: #fca5a5;
+                border-left-color: #dc2626;
+
+                .info-header {
+                    color: #991b1b;
+                }
+            }
+        }
+    }
+
+    // === 📊 NOUVEAUX STYLES POUR LES AVERTISSEMENTS DE RÉPARTITION ===
+    
+    // Wrapper pour la section répartition - pas de padding ici
+    .repartition-section-wrapper {
+        padding-top: 0; 
+        
+        // Le premier enfant (warning-box ou info-box) doit toujours avoir 10px de margin-top
+        > .warning-box:first-child,
+        > .info-box:first-child {
+            margin-top: 10px !important;
+        }
+        
+        // Si le premier enfant est le formulaire (pas de warning boxes), appliquer le margin sur le form
+        > form:first-child {
+            margin-top: 10px;
+        }
+    }
+
+    // ─── Tableau répartition compact (UI raffinée) ───────────────────────
+    .rep-header-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 8px 12px;
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        margin-bottom: 8px;
+
+        .rep-header-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            width: 100%;
+        }
+
+        .rep-header-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .rep-header-label {
+            font-size: 0.65em;
+            color: #9ca3af;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rep-header-value {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #111827;
+
+            &.primary {
+                color: #374151;
+            }
+        }
+
+        .rep-header-sep {
+            font-size: 1.1em;
+            color: #d1d5db;
+            align-self: center;
+            line-height: 1;
+        }
+    }
+
+    // Interrupteur "Fixer la quantité" — même contrôle simple et familier (case à cocher
+    // cachée + piste/curseur animés) utilisé au global (header) et par parcelle (ligne).
+    // Bouton simple (pas d'input caché) : évite tout artefact de case à cocher native.
+    .rep-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        cursor: pointer;
+        user-select: none;
+
+        .rep-switch-track {
+            position: relative;
+            flex-shrink: 0;
+            width: 32px;
+            height: 18px;
+            background: #d1d5db;
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .rep-switch-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease;
+        }
+
+        &.active .rep-switch-track {
+            background: #d97706;
+        }
+
+        &.active .rep-switch-thumb {
+            transform: translateX(14px);
+        }
+
+        .rep-switch-label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #374151;
+        }
+    }
+
+    .rep-remaining-text {
+        font-size: 0.72em;
+        font-weight: 600;
+        color: #92400e;
+    }
+
+    .rep-overallocation-warning {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background-color: #fffbeb;
+        border: 1px solid #f59e0b;
+        border-left: 4px solid #d97706;
+        border-radius: 6px;
+        font-size: 0.8em;
+        font-weight: 500;
+        color: #92400e;
+        margin-bottom: 8px;
+
+        i {
+            color: #d97706;
+            flex-shrink: 0;
+        }
+    }
+
+    .repartition-table-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 60px;
+
+        .rep-row {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            transition: box-shadow 0.15s, border-color 0.15s;
+
+            &:hover {
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                border-color: #9ca3af;
+            }
+        }
+
+        .rep-row-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 10px;
+            background: #4b5563;
+            flex-wrap: wrap;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .rep-parcel {
+            font-size: 0.8em;
+            font-weight: 700;
+            color: #f3f4f6;
+        }
+
+        .rep-crop {
+            font-size: 0.7em;
+            color: #d1d5db;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 1px 8px;
+            font-weight: 500;
+        }
+
+        .rep-vol-badge {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7em;
+            color: #e5e7eb;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-weight: 500;
+
+            i { font-size: 0.9em; }
+        }
+
+        .rep-row-body {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 8px 10px;
+        }
+
+        // Ligne de contrôle mode Bouillie : léger liseré ambre quand la parcelle est
+        // verrouillée, pour que l'état saute aux yeux sans surcharger visuellement.
+        .rep-row-body-volume {
+            transition: box-shadow 0.15s ease;
+
+            &.locked {
+                box-shadow: inset 3px 0 0 #d97706;
+            }
+        }
+
+        // L'interrupteur occupe toujours sa propre ligne, sous le champ et le slider.
+        .rep-switch-row {
+            flex-basis: 100%;
+            margin-top: 2px;
+        }
+
+        .rep-inline-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rep-slider-col {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .rep-slider-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .rep-pct-badge {
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #374151;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 1px 6px;
+            white-space: nowrap;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        // Slider de répartition (mode Bouillie) : le remplissage vient de [style.background]
+        // (bleu = attribué, ambre = réservé par d'autres parcelles fixées, gris = libre).
+        // Sélecteur à 2 classes pour primer sur .rep-slider quel que soit l'ordre des règles.
+        .rep-slider.rep-slider-volume {
+            &::-webkit-slider-thumb {
+                background: #0ea5e9;
+                border-color: #0284c7;
+            }
+            &::-moz-range-thumb {
+                background: #0ea5e9;
+                border-color: #0284c7;
+            }
+        }
+
+        .rep-label {
+            font-size: 0.67em;
+            font-weight: 700;
+            color: #9ca3af;
+            letter-spacing: 0.05em;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        // Espaceur invisible (colonne slider, pas de libellé réel) : juste assez de hauteur
+        // pour caler grossièrement le slider avec le champ voisin, sans reprendre toute la
+        // hauteur du vrai libellé.
+        .rep-label--spacer {
+            visibility: hidden;
+            line-height: 1;
+            height: 6px;
+        }
+
+        .rep-input-unit {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rep-number-input {
+            width: 84px;
+            padding: 0 8px;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #fff;
+            color: #111827;
+            text-align: right;
+            height: 36px;
+            transition: border-color 0.15s;
+
+            &:focus {
+                outline: none;
+                border-color: #6b7280;
+                box-shadow: 0 0 0 2px rgba(107,114,128,0.12);
+            }
+        }
+
+        .rep-unit {
+            font-size: 0.75em;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .rep-total-hint {
+            font-size: 0.67em;
+            color: #9ca3af;
+        }
+
+        .rep-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: #4b5563;
+                cursor: pointer;
+                border: 2px solid #fff;
+                box-shadow: 0 1px 4px rgba(75,85,99,0.3);
+                transition: background 0.15s, transform 0.1s;
+            }
+
+            &::-moz-range-thumb {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: #4b5563;
+                cursor: pointer;
+                border: 2px solid #fff;
+                box-shadow: 0 1px 4px rgba(75,85,99,0.3);
+            }
+
+            &:hover::-webkit-slider-thumb {
+                background: #374151;
+                transform: scale(1.15);
+            }
+        }
+
+        // La disposition (une ligne par champ/slider) est désormais la même à toutes les
+        // tailles d'écran ; plus besoin d'une réorganisation spécifique au mobile ici.
+    }
+    // ─── fin tableau répartition compact ────────────────────────────────
+
+    
+    
+    // 🎯 NOUVEAU DESIGN COMPACT POUR LES AVERTISSEMENTS BBCH (jaune)
+    .bbch-warning-box {
+        background-color: #fff9e6;
+        border: 2px solid #ffc107;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        margin-top: 0;
+        box-shadow: 0 3px 8px rgba(255, 193, 7, 0.15);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        
+        // Header compact (toujours visible)
+        .warning-header-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            
+            &:hover {
+                background-color: rgba(255, 193, 7, 0.08);
+            }
+            
+            .warning-icon {
+                font-size: 1.3em;
+                margin-right: 10px;
+                flex-shrink: 0;
+            }
+            
+            .warning-title {
+                flex: 1;
+                color: #856404;
+                font-weight: 600;
+                font-size: 0.92em;
+                line-height: 1.3;
+            }
+            
+            .toggle-btn {
+                background: none;
+                border: none;
+                padding: 0;
+                margin-left: 12px;
+                cursor: pointer;
+                color: #ffc107;
+                font-size: 1.5em;
+                display: flex;
+                align-items: center;
+                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), color 0.2s ease;
+                
+                &:hover {
+                    color: #ff9800;
+                    transform: scale(1.1);
+                }
+                
+                i {
+                    line-height: 1;
+                }
+            }
+        }
+        
+        // Contenu détaillé (affiché uniquement quand expanded)
+        .warning-content {
+            padding: 0 16px 14px 16px;
+            border-top: 1px solid rgba(255, 193, 7, 0.2);
+            
+            .warning-list {
+                list-style: none;
+                padding-left: 0;
+                margin: 12px 0 0 0;
+                
+                li {
+                    padding: 8px 0 8px 24px;
+                    position: relative;
+                    color: #856404;
+                    line-height: 1.5;
+                    font-size: 0.88em;
+                    
+                    &::before {
+                        content: "•";
+                        position: absolute;
+                        left: 8px;
+                        font-weight: bold;
+                        color: #ffc107;
+                        font-size: 1.2em;
+                    }
+                    
+                    strong {
+                        color: #664d03;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+        
+        // État étendu
+        &.expanded {
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+        }
+    }
+    
+    // 🎯 NOUVEAU DESIGN COMPACT POUR LES RECOMMANDATIONS D'HEURES (bleu)
+    .application-hour-box {
+        background-color: #e7f3ff;
+        border: 2px solid #2196F3;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        margin-top: 0;
+        box-shadow: 0 3px 8px rgba(33, 150, 243, 0.15);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        
+        // Header compact (toujours visible)
+        .info-header-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            
+            &:hover {
+                background-color: rgba(33, 150, 243, 0.08);
+            }
+            
+            .info-icon {
+                font-size: 1.3em;
+                margin-right: 10px;
+                flex-shrink: 0;
+            }
+            
+            .info-title {
+                flex: 1;
+                color: #0d47a1;
+                font-weight: 600;
+                font-size: 0.92em;
+                line-height: 1.3;
+            }
+            
+            .toggle-btn {
+                background: none;
+                border: none;
+                padding: 0;
+                margin-left: 12px;
+                cursor: pointer;
+                color: #2196F3;
+                font-size: 1.5em;
+                display: flex;
+                align-items: center;
+                transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), color 0.2s ease;
+                
+                &:hover {
+                    color: #1976d2;
+                }
+                
+                i {
+                    line-height: 1;
+                }
+            }
+        }
+        
+        // Contenu détaillé (affiché uniquement quand expanded)
+        .info-content {
+            padding: 0 16px 14px 16px;
+            border-top: 1px solid rgba(33, 150, 243, 0.2);
+            color: #1565c0;
+            line-height: 1.6;
+            font-size: 0.88em;
+            
+            a {
+                color: #1976d2;
+                text-decoration: underline;
+                font-weight: 500;
+                transition: color 0.2s ease;
+                
+                &:hover {
+                    color: #0d47a1;
+                }
+            }
+            
+            .warning-list {
+                list-style: none;
+                padding-left: 0;
+                margin: 12px 0 0 0;
+                
+                li {
+                    padding: 8px 0 8px 24px;
+                    position: relative;
+                    color: #0d47a1;
+                    line-height: 1.5;
+                    font-size: 1em;
+                    
+                    &::before {
+                        content: "•";
+                        position: absolute;
+                        left: 8px;
+                        font-weight: bold;
+                        color: #2196F3;
+                        font-size: 1.2em;
+                    }
+                    
+                    strong {
+                        color: #0d47a1;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+        
+        // État étendu
+        &.expanded {
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+    }
+
+    // === ÉDITION INLINE ÉTENDUE POUR LES CARTES PRODUITS (OLD, KEPT FOR BACKWARD COMPAT) ===
+    .volumeDeBouille {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: visible !important;
+        z-index: 50 !important;
+        
+        // Mode d'affichage normal
+        .product-card-clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px;
+            
+            &:hover {
+                border-color: rgba(3, 145, 138, 0.8);
+                background-color: rgba(3, 145, 138, 0.05);
+            }
+        }
+        
+        // Mode d'édition activé - intégré dans la grille
+        &.editing-mode {
+            // Reste dans le flux mais prend 2 colonnes
+            grid-column: span 2; // Prend 2 colonnes de la grille
+            z-index: 100 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+            border: 2px solid #03918a !important;
+            background-color: white !important;
+            border-radius: 12px;
+            overflow: visible !important;
+            min-height: auto;
+            
+            .inline-edit-form-expanded {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+                
+                // Section gauche : Infos produit + saisie (maintenant en haut)
+                .left-section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    padding-bottom: 12px;
+                    border-bottom: 2px solid #e9ecef;
+                    
+                    .product-header {
+                        .product-name {
+                            font-size: 1em;
+                            font-weight: 700;
+                            color: #110f3b;
+                            line-height: 1.3;
+                            margin-bottom: 2px;
+                        }
+                        
+                        .product-number {
+                            font-size: 0.8em;
+                            color: #666;
+                            display: block;
+                            margin-top: 2px;
+                        }
+
+                        img {
+                            vertical-align: middle;
+                            margin-left: 6px;
+                        }
+
+                        .status-badge {
+                            display: inline-block;
+                            margin-top: 4px;
+                            padding: 2px 8px;
+                            border-radius: 10px;
+                            font-size: 0.7em;
+                            font-weight: 700;
+                            letter-spacing: 0.02em;
+
+                            &.status-badge-authorized {
+                                background-color: #dcfce7;
+                                color: #166534;
+                            }
+
+                            &.status-badge-withdrawing {
+                                background-color: #ffedd5;
+                                color: #9a3412;
+                            }
+
+                            &.status-badge-forbidden {
+                                background-color: #fee2e2;
+                                color: #991b1b;
+                            }
+                        }
+                    }
+                    
+                    .dose-input-row {
+                        label {
+                            font-size: 0.85em;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 6px;
+                            display: block;
+                        }
+                        
+                        .dose-unit-wrapper {
+                            display: flex;
+                            gap: 8px;
+                            align-items: stretch;
+                            
+                            .dose-input {
+                                flex: 1;
+                                border: 2px solid #03918a;
+                                border-radius: 6px;
+                                padding: 10px 12px;
+                                font-size: 1em;
+                                font-weight: 600;
+                                text-align: center;
+                                background: white;
+                                height: 42px;
+                                line-height: 22px;
+                                
+                                &:focus {
+                                    outline: none;
+                                    border-color: #218838;
+                                    box-shadow: 0 0 4px rgba(3, 145, 138, 0.3);
+                                }
+                                
+                                &::placeholder {
+                                    color: #999;
+                                    font-weight: 400;
+                                }
+                            }
+                            
+                            .unit-select {
+                                flex: 0 0 auto;
+                                min-width: 140px;
+                                max-width: 180px;
+                                border: 2px solid #03918a;
+                                border-radius: 8px;
+                                padding: 8px 32px 8px 12px;
+                                font-size: 0.95em;
+                                font-weight: 600;
+                                cursor: pointer;
+                                background: linear-gradient(135deg, #03918a 0%, #027a74 100%);
+                                // Flèche personnalisée
+                                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+                                background-repeat: no-repeat;
+                                background-position: right 10px center;
+                                appearance: none;
+                                -webkit-appearance: none;
+                                -moz-appearance: none;
+                                display: block;
+                                position: relative;
+                                z-index: 10;
+                                color: white;
+                                height: 42px;
+                                line-height: 24px;
+                                box-shadow: 0 2px 4px rgba(3, 145, 138, 0.2);
+                                transition: all 0.2s ease;
+                                
+                                &:focus {
+                                    outline: none;
+                                    border-color: #218838;
+                                    box-shadow: 0 0 0 3px rgba(3, 145, 138, 0.25);
+                                }
+                                
+                                &:hover {
+                                    background: linear-gradient(135deg, #04a49c 0%, #038b84 100%);
+                                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+                                    background-repeat: no-repeat;
+                                    background-position: right 10px center;
+                                    box-shadow: 0 4px 8px rgba(3, 145, 138, 0.3);
+                                }
+                                
+                                &:active {
+                                    transform: scale(0.98);
+                                }
+                                
+                                option {
+                                    background: white;
+                                    color: #333;
+                                    padding: 12px 16px;
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                }
+                                
+                                optgroup {
+                                    background: #f8f9fa;
+                                    color: #03918a;
+                                    font-weight: 700;
+                                    font-size: 13px;
+                                    text-transform: uppercase;
+                                }
+                                
+                                // Mobile adaptation
+                                @media (max-width: 576px) {
+                                    width: 100%;
+                                    max-width: 100%;
+                                    min-width: unset;
+                                    height: 48px;
+                                    font-size: 16px;
+                                    padding: 12px 36px 12px 16px;
+                                    background-position: right 14px center;
+                                    
+                                    &:hover {
+                                        background-position: right 14px center;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    .action-buttons {
+                        display: flex;
+                        gap: 8px;
+                        
+                        button {
+                            flex: 1;
+                            padding: 8px 12px;
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 0.9em;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            
+                            &:active {
+                                transform: scale(0.98);
+                            }
+                        }
+                        
+                        .btn-cancel {
+                            background-color: #dc3545;
+                            color: white;
+                            
+                            &:hover {
+                                background-color: #c82333;
+                            }
+                        }
+                        
+                        .btn-confirm {
+                            background-color: #28a745;
+                            color: white;
+                            
+                            &:hover:not(:disabled) {
+                                background-color: #218838;
+                            }
+                            
+                            &:disabled {
+                                background-color: #6c757d;
+                                cursor: not-allowed;
+                                opacity: 0.6;
+                            }
+                        }
+                    }
+                }
+                
+                // Section droite : Informations réglementaires (maintenant en bas)
+                .right-section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                    padding-right: 4px;
+                    
+                    .info-box {
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        font-size: 0.85em;
+                        border: 1px solid transparent;
+                        border-left-width: 4px;
+                        margin-top: 6px;
+
+                        .info-header {
+                            font-weight: 600;
+                            font-size: 0.75rem;
+                            letter-spacing: 0.03em;
+                            text-transform: uppercase;
+                            margin-bottom: 5px;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                        }
+
+                        .info-content {
+                            font-size: 0.85em;
+                            line-height: 1.4;
+                        }
+                    }
+
+                    // Cultures non autorisées (ambre)
+                    .warning-box {
+                        background-color: #fffbeb;
+                        border-color: #f59e0b;
+                        border-left-color: #d97706;
+
+                        .info-header {
+                            color: #92400e;
+                        }
+
+                        .crop-item {
+                            background-color: rgba(245, 158, 11, 0.15);
+                            padding: 2px 6px;
+                            margin: 3px 0;
+                            border-radius: 4px;
+                            font-style: italic;
+                            color: #78350f;
+                            font-size: 0.9em;
+                        }
+                    }
+
+                    // Doses Phytoweb (vert)
+                    .doses-box {
+                        background-color: #f0fdf4;
+                        border-color: #86efac;
+                        border-left-color: #16a34a;
+
+                        .info-header {
+                            color: #166534;
+                        }
+
+                        .doses-table {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+                            margin-top: 6px;
+
+                            .dose-row {
+                                display: grid;
+                                grid-template-columns: 2fr 1fr 1fr;
+                                gap: 6px;
+                                padding: 4px;
+                                background-color: rgba(22, 163, 74, 0.07);
+                                border-radius: 4px;
+                                font-size: 0.8em;
+                                align-items: center;
+
+                                .dose-enemy {
+                                    font-weight: 600;
+                                    color: #166534;
+                                }
+
+                                .dose-range {
+                                    text-align: center;
+                                    font-weight: 700;
+                                    color: #16a34a;
+                                }
+
+                                .dose-unit {
+                                    text-align: right;
+                                    font-size: 0.85em;
+                                    color: #6b7280;
+                                    font-style: italic;
+                                }
+                            }
+                        }
+                    }
+
+                    // Date de tolérance (autorisation en cours de retrait, orange)
+                    .tolerated-box {
+                        background-color: #fff7ed;
+                        border-color: #fdba74;
+                        border-left-color: #ea580c;
+
+                        .info-header {
+                            color: #7c2d12;
+                        }
+
+                        .info-content {
+                            text-align: center;
+
+                            strong {
+                                font-size: 1em;
+                                color: #ea580c;
+                            }
+                        }
+                    }
+
+                    // Produit interdit (statut Retrait, rouge)
+                    .forbidden-box {
+                        background-color: #fef2f2;
+                        border-color: #fca5a5;
+                        border-left-color: #dc2626;
+
+                        .info-header {
+                            color: #991b1b;
+                        }
+                    }
+
+                    // Style de la scrollbar pour right-section
+                    @include popup-scrollbar($track: #f1f1f1, $width: 5px);
+                }
+            }
+        }
+    }
+}
+
+// Style pour les boutons de suppression dans les tableaux récapitulatifs
+.btn-danger.btn-sm {
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid #dc3545;
+    background: none;
+    color: #dc3545;
+    box-shadow: none !important;
+    
+    &:hover {
+        background: #dc3545;
+        color: white;
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+    
+    i {
+        font-size: 0.9rem;
+    }
+}
+
+// Style pour la colonne Actions dans les tableaux
+.table th:last-child,
+.table td:last-child {
+    width: 80px;
+    text-align: center !important;
+}
+
+// Masquer la colonne "Catégorie" sur smartphone uniquement
+@media (max-width: 575.98px) {
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none !important;
+    }
+}
+
+// Pour les très petits écrans (moins de 400px) : masquer aussi "Culture" et réduire la police
+@media (max-width: 399.98px) {
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        display: none !important;
+    }
+    
+    .table {
+        font-size: 12px !important;
+    }
+    
+    .table th,
+    .table td {
+        padding: 4px !important;
+        font-size: 12px !important;
+    }
+    
+    .quantity-input {
+        font-size: 12px !important;
+        width: 70px !important;
+        padding: 2px 4px !important;
+    }
+}
+
+// Marge bottom plus importante pour la section "informations sur votre traitement" sur smartphone
+@media (max-width: 575.98px) {
+    .body form[formGroup] section.row {
+        margin-bottom: 30px !important;
+    }
+    
+    // Style spécifique pour les éléments de la section traitement
+    .body form[formGroup] section.row article {
+        margin-bottom: 20px !important;
+    }
+}
+
+// ============================================
+// NOUVEAU STYLE MODERNE POUR LA SÉLECTION DES PARCELLES/CULTURES
+// (Même style que le travail au champ)
+// ============================================
+
+.culture-selection-grid {
+    margin-bottom: 60px; // Marge pour éviter que le contenu soit caché par le bouton fixe
+    
+    .culture-group {
+        
+        .group-header {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #03918a;
+            padding-bottom: 8px;
+
+            h4 {
+                font-family: Roboto, "Helvetica Neue", sans-serif;
+                font-weight: 600;
+                font-size: 1.1em;
+                color: #03918a;
+                margin: 0;
+                flex: 1;
+            }
+
+            .group-select-all {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                margin-left: auto;
+                flex-shrink: 0;
+                user-select: none;
+
+                input[type="checkbox"] {
+                    width: 15px;
+                    height: 15px;
+                    accent-color: #03918a;
+                    cursor: pointer;
+                    margin: 0;
+                }
+
+                .select-all-label {
+                    font-size: 0.75em;
+                    color: #03918a;
+                    font-weight: 500;
+                    white-space: nowrap;
+                }
+            }
+        }
+        
+        .parcel-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        .parcel-card {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: auto;
+            
+            // Empêche les débordements
+            contain: layout style;
+            transform: translateZ(0);
+            
+            input[type="checkbox"] {
+                margin-right: 12px;
+                width: 18px;
+                height: 18px;
+                accent-color: #03918a;
+            }
+            
+            &:hover {
+                border-color: #03918a;
+                background: #f8fffe;
+            }
+            
+            &.selected {
+                border-color: #03918a;
+                background: #f0fdfa;
+                box-shadow: 0 4px 12px rgba(3, 145, 138, 0.1);
+            }
+            
+            .card-icon {
+                margin-right: 12px;
+                
+                i {
+                    font-size: 1.5em;
+                    color: #03918a;
+                }
+            }
+            
+            .card-content {
+                flex: 1;
+                
+                .parcel-name {
+                    font-weight: 800;
+                    color: #1f2937;
+                    margin-bottom: 2px;
+                    font-size: 1.15em;
+                }
+                
+                .crop-name {
+                    color: #6b7280;
+                    font-size: 1em;
+                }
+            }
+        }
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6b7280;
+        
+        i {
+            font-size: 3em;
+            margin-bottom: 16px;
+            display: block;
+            color: #d1d5db;
+        }
+        
+        p {
+            margin: 0;
+            font-style: italic;
+        }
+    }
+
+    // 📱 Comportement mobile dropdown pour les groupes de cultures
+    .mobile-toggle-arrow {
+        display: none; // Caché par défaut sur desktop/tablette
+    }
+
+    @media (max-width: 575.98px) {
+        .culture-group {
+            .group-header {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                user-select: none;
+                
+                .mobile-toggle-arrow {
+                    display: inline-block;
+                    font-size: 1em;
+                    color: #03918a;
+                    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+                    transform-origin: center;
+                }
+                
+                h4 {
+                    flex: 1;
+                }
+            }
+
+            // Par défaut sur mobile, le grid est caché
+            .parcel-cards-grid {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+                            opacity 0.3s ease;
+            }
+
+            // Quand le groupe est ouvert
+            &.expanded {
+                .mobile-toggle-arrow {
+                    transform: rotate(90deg);
+                }
+
+                .parcel-cards-grid {
+                    max-height: 5000px; // Grande valeur pour s'adapter à tout contenu
+                    opacity: 1;
+                    margin-top: 16px;
+                }
+            }
+        }
+    }
+
+    // Styles pour le dropdown opérateur
+    .autocomplete-container .dropdown {
+        .dropdown-toggle {
+            position: relative;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            
+            &:focus {
+                border-color: #03918a;
+                box-shadow: 0 0 0 0.2rem rgba(3, 145, 138, 0.25);
+                outline: none;
+            }
+            
+            &:after {
+                content: '\25BC';
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+                font-size: 0.75em;
+                pointer-events: none;
+            }
+        }
+        
+        .dropdown-menu {
+            border: 1px solid #03918a;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(3, 145, 138, 0.15);
+            animation: fadeInDown 0.2s ease-out;
+            
+            .dropdown-item {
+                padding: 12px 16px;
+                border-radius: 0;
+                transition: all 0.15s ease;
+                color: #495057;
+                
+                &:hover {
+                    background-color: #e8f5e8;
+                    color: #155724;
+                }
+                
+                &.active {
+                    background-color: #03918a;
+                    color: white;
+                }
+                
+                strong {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 2px;
+                }
+                
+                small {
+                    font-size: 0.85em;
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* 💡 Styles pour le message d'information de recherche */
+.search-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  color: #1565c0;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin: 0.5rem 0 1rem 0;
+  box-shadow: 0 2px 4px rgba(21, 101, 192, 0.1);
+  animation: fadeInUp 0.3s ease-out;
+  
+  i {
+    color: #1976d2;
+    font-size: 1.1em;
+    flex-shrink: 0;
+  }
+}
+
+/* Produits récemment utilisés */
+.recently-used-section {
+  margin: 0.25rem 0 1rem 0;
+  animation: fadeInUp 0.3s ease-out;
+
+  .recently-used-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82em;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+
+    i {
+      color: #888;
+      font-size: 0.95em;
+    }
+  }
+}
+
+/* 🔄 Styles pour l'animation de chargement des produits */
+.loading-products {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #e8f5f3 0%, #f0f9f8 100%);
+  border: 1px solid #b2dfdb;
+  border-radius: 8px;
+  color: #36918a;
+  font-size: 0.9em;
+  margin: 0.5rem 0 1rem 0;
+  box-shadow: 0 2px 4px rgba(54, 145, 138, 0.1);
+  animation: fadeInUp 0.3s ease-out;
+  
+  .spinner-border-sm {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-width: 0.2em;
+    border-color: #36918a;
+    border-right-color: transparent;
+    animation: spin 0.75s linear infinite;
+  }
+  
+  .loading-text {
+    color: #2d7a72;
+    font-style: italic;
+    font-weight: 500;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Toggle PPP / Produits personnalisés ─────────────────────────────── */
+.product-mode-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 12px;
+  width: 100%;
+  box-sizing: border-box;
+
+  // Ligne 1 : couleurs/rayon/police du toggle désormais fournies par .format-choice/.format-btn
+  // (classes ajoutées dans le template, voir src/styles/_popup-system.scss).
+
+  // Ligne 2 : recherche + bouton
+  .search-action-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .product-search-input {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.85rem;
+    height: 30px !important;
+    padding: 4px 12px !important;
+    margin: 0 !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 6px;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+  }
+
+  // Bouton "Enregistrer un nouveau produit"
+  .btn-add-personal {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    height: 30px;
+    white-space: nowrap;
+    color: #2a928a;
+    background: #fff;
+    border: 1px solid #2a928a;
+    border-radius: 5px;
+    cursor: pointer;
+
+    i { margin-right: 4px; }
+
+    &:hover {
+      background: #2a928a;
+      color: #fff;
+    }
+  }
+}
+
+/* ── Formulaire création produit personnel ───────────────────────────── */
+.personal-product-form {
+  background: #fafafa;
+  border: 1px solid #dee2e6;
+  border-left: 3px solid #2a928a;
+  border-radius: 6px;
+  padding: 14px 16px 12px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+
+  // La grille Bootstrap doit rester dans le conteneur
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+
+    > [class*="col-"] {
+      padding-left: 6px;
+      padding-right: 6px;
+      min-width: 0;
+      max-width: fit-content;
+    }
+  }
+
+  // Sur petits écrans, les colonnes s'empilent
+  @media (max-width: 576px) {
+    .col-md-5,
+    .col-md-4,
+    .col-md-3 {
+      width: 100%;
+    }
+
+    .d-flex.gap-2 {
+      width: 100%;
+    }
+  }
+
+  .form-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .form-control {
+    font-size: 0.85rem;
+    height: 38px !important;
+    padding: 7px 12px !important;
+    margin: 0 !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 6px;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+  }
+
+  .btn {
+    font-size: 0.82rem;
+    padding: 5px 14px;
+  }
+}
+
+/* �🔄 Styles pour le bouton de pagination des produits */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  contain: layout style;
+}
+
+.load-more-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color, #007bff);
+  background: transparent;
+  color: var(--primary-color, #007bff);
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  contain: layout style;
+  
+  &:hover:not(:disabled) {
+    background: var(--primary-color, #007bff);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  i {
+    margin-right: 0.5rem;
+    
+    &.spin {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Optimisation des performances avec CSS containment
+.product-list-container {
+  contain: layout style;
+}
+
+// 🔄 Styles pour l'indicateur de chargement des parcelles/cultures
+.loading-state {
+  background: rgba(248, 249, 250, 0.95);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.25em;
+  }
+
+  h5 {
+    color: #495057;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    font-size: 0.9rem;
+  }
+}
+
+// Animation douce pour l'apparition/disparition du chargement
+.loading-state {
+  animation: fadeIn 0.3s ease-in;
+}
+
+// ============================================
+// 🎯 NOUVEAU SÉLECTEUR D'UNITÉS ANIMÉ (Unit Picker)
+// Design moderne avec chips/badges
+// ============================================
+.unit-picker {
+    position: relative;
+    display: inline-block;
+    // === Bouton compact (état fermé) ===
+    .unit-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #03918a;
+        color: white;
+        border: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        
+        .unit-value {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        i {
+            font-size: 10px;
+        }
+        
+        &:hover {
+            background: white;
+            color: #03918a ;
+            border: #03918a 2px solid;
+
+        }
+    }
+    
+    // === Menu étendu (état ouvert) ===
+    .unit-menu {
+        position: relative;
+        min-width: 375px;
+        background: white;
+        border-radius: 10px;
+        border: #c1c1c1 2px solid;
+        z-index: 1000;
+        overflow: hidden;
+        animation: expandUnitMenu 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .unit-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            color: #03918a;
+            border-radius: 10px 10px 0 0;
+            
+            span {
+                font-weight: 600;
+                font-size: 14px;
+            }        
+        }
+        
+        .unit-chips-container {
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            scrollbar-width: thin;
+            scroll-behavior: smooth;
+            @include popup-scrollbar($track: #f1f1f1);
+        }
+
+        .unit-group {
+            border: none;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            
+            .group-label {
+                display: block;
+                font-size: 11px;
+                font-weight: 700;
+                color: #03918a;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
+                padding-left: 4px;
+            }
+            
+            .chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                border: none;
+            }
+        }
+        
+        .unit-chip {
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            &:hover {
+                background: #e8f5f4;
+                border-color: #03918a;
+            }
+            
+            &.selected {
+                background: #03918a;
+                color: white;
+            }
+        }
+    }
+    
+    &.expanded {
+        z-index: 1001;
+    }
+}
+
+@keyframes expandUnitMenu {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+// === RESPONSIVE MOBILE UNIT PICKER ===
+@media (max-width: 576px) {
+    .unit-picker {
+        .unit-btn {
+            padding: 12px 18px;
+            font-size: 15px;
+        }
+        
+        .unit-menu {
+            position: fixed;
+            top: auto;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            min-width: 100%;
+            max-height: 60vh;
+            border-radius: 20px 20px 0 0;
+            animation: slideUpUnitMenu 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            .unit-menu-header {
+                padding: 16px 20px;
+                
+                span {
+                    font-size: 16px;
+                }
+                
+                .close-btn {
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+            
+            .unit-chips-container {
+                padding: 16px;
+                max-height: calc(60vh - 60px);
+                padding-bottom: 80px;
+            }
+            
+            .unit-group {
+                margin-bottom: 16px;
+                
+                .group-label {
+                    font-size: 12px;
+                    margin-bottom: 10px;
+                }
+                
+                .chips {
+                    gap: 10px;
+                }
+            }
+            
+            .unit-chip {
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+@keyframes slideUpUnitMenu {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 576px) {
+    // Overlay sombre pour le picker mobile - SOLUTION GLOBALE
+    body:has(.unit-picker.expanded) {
+        &::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            animation: fadeInOverlay 0.2s ease;
+        }
+    }
+    
+    .unit-picker.expanded {
+        position: relative;
+        z-index: 1001;
+        
+        .unit-menu {
+            z-index: 1000;
+        }
+    }
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+// Compact product encoding card
+.product-edit-compact {
+  padding: 1rem 1.1rem;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  margin-bottom: 0.5rem;
+}
+
+.encoding-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: flex-end;
+  margin-top: 0.75rem;
+}
+
+.field-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 90px;
+  flex: 1;
+}
+
+.field-col-actions {
+  flex: 0 0 auto;
+  min-width: 130px;
+
+  .action-buttons {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+}
+
+.field-col-unit { flex: 0 0 auto; min-width: 120px; }
+.field-col-target { flex: 2; min-width: 155px; }
+
+// Styles partagés inputs + selects
+$ec-height: 36px;
+$ec-border: 1.5px solid #d1d5db;
+$ec-radius: 8px;
+$ec-font: 0.875rem;
+$ec-focus: #2e7d32;
+
+.field-label {
+  display: block;
+  font-size: 0.7em;
+  color: #6b7280;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.field-input {
+  display: block !important;
+  height: $ec-height !important;
+  padding: 0 0.6rem !important;
+  font-size: $ec-font !important;
+  font-family: inherit !important;
+  color: #111827 !important;
+  background: #fff !important;
+  border: $ec-border !important;
+  border-bottom: $ec-border !important;
+  border-radius: $ec-radius !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+
+  &:focus {
+    border-color: $ec-focus !important;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12) !important;
+  }
+
+  &::placeholder { color: #9ca3af !important; }
+}
+
+.field-input-derived {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  cursor: default !important;
+}
+
+.field-select {
+  display: block;
+  height: $ec-height;
+  padding: 0 2rem 0 0.6rem;
+  font-size: $ec-font;
+  font-family: inherit;
+  color: #111827;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.45rem center;
+  background-size: 18px;
+  border: $ec-border;
+  border-radius: $ec-radius;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: $ec-focus;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+  }
+
+  optgroup {
+    font-weight: 600;
+    color: #374151;
+    background: #f9fafb;
+  }
+
+  option {
+    font-weight: 400;
+    color: #111827;
+    background: #fff;
+  }
+}
+
+// Dropdown "Cible" (remplace le <select class="field-select"> natif, voir template) : aligné
+// sur la hauteur/police des autres champs de la ligne (.field-input/.field-select ci-dessus).
+.target-dropdown .dropdown-btn {
+  height: $ec-height;
+  padding: 0 0.6rem;
+  font-size: $ec-font;
+  border: $ec-border;
+  border-radius: $ec-radius;
+
+  .dropdown-value {
+    color: #111827;
+  }
+}
+
+// Liste déroulante "Cible" : réutilise .dropdown-panel/.dropdown-list globaux (voir
+// src/styles/_popup-system.scss) — le même couple déjà utilisé avec succès pour les autres
+// dropdowns de l'appli (parcelles, catégorie de culture...). .dropdown-panel gère le cadre
+// (overflow:hidden, décor) et .dropdown-list le défilement interne (overflow-y:auto + scrollbar
+// stylée) : séparer les deux responsabilités sur deux éléments plutôt qu'un seul évite les soucis
+// de rendu (fuite visuelle du contenu, scrollbar absente) rencontrés avec une implémentation
+// maison à un seul niveau.
+.target-dropdown-panel {
+  z-index: 1060;
+  max-height: 222px;
+
+  .dropdown-list {
+    max-height: 150px;
+
+    // Rendre la scrollbar plus visible/repérable dans ce petit panneau (elle passait inaperçue).
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #adb5bd;
+    }
+  }
+}
+
+.free-text-target {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.btn-back-list {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $ec-height;
+  background: none;
+  border: 1.5px solid #d1d5db;
+  border-radius: $ec-radius;
+  padding: 0 0.45rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: #6b7280;
+  font-size: 1rem;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: #9ca3af; }
+}
+
+// Boutons d'encodage produit
+.btn-ec-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $ec-height;
+  padding: 0 0.9rem;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: $ec-radius;
+  font-size: 0.82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: #c62828;
+  }
+}
+
+.btn-ec-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $ec-height;
+  padding: 0 0.9rem;
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: $ec-radius;
+  font-size: 0.82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: #1b5e20;
+  }
+
+  &:disabled {
+    background: #a5d6a7;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+// Cible obligatoire (modes Bouillie/Quantité) — astérisque sur le label + avertissement si
+// des produits déjà encodés n'ont pas de cible renseignée.
+.required-asterisk {
+  color: #dc2626;
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+.target-missing-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-left: 4px solid #d97706;
+  border-radius: 6px;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: #92400e;
+  margin: 8px 0;
+
+  i {
+    color: #d97706;
+    flex-shrink: 0;
+  }
+}
+
+// Tablette : labels, dropdown opérateur, cartes parcelle et champs volume agrandis — le
+// mode-selector (.format-choice/.format-btn) est déjà couvert globalement par
+// src/styles/_popup-system.scss. !important utilisé ici car ces règles doivent battre des
+// styles imbriqués profondément dans main{...} sans avoir à reproduire toute la chaîne de
+// sélecteurs d'origine.
+@media (min-width: 576px) and (max-width: 992px) {
+  main .simple-label {
+    font-size: 1.6em !important;
+  }
+
+  main .operator-select-btn {
+    min-height: 74px !important;
+    padding: 20px 24px !important;
+
+    .operator-placeholder,
+    .operator-name,
+    .simple-option-name {
+      font-size: 1.4rem !important;
+    }
+
+    .operator-licence {
+      font-size: 1.2rem !important;
+    }
+  }
+
+  main .volume-input-group {
+    min-width: 150px !important;
+    padding: 18px 20px !important;
+
+    .volume-label {
+      font-size: 18px !important;
+    }
+
+    .input-with-unit .volume-input {
+      width: 96px !important;
+      font-size: 26px !important;
+    }
+
+    .unit-label {
+      font-size: 17px !important;
+    }
+  }
+
+  .culture-selection-grid .culture-group {
+    .group-header h4 {
+      font-size: 1.85em !important;
+    }
+
+    .group-select-all .select-all-label {
+      font-size: 1.25em !important;
+    }
+
+    .parcel-card {
+      padding: 26px 30px !important;
+
+      .card-icon i {
+        font-size: 2.7em !important;
+      }
+
+      .card-content {
+        .parcel-name {
+          font-size: 1.85em !important;
+        }
+
+        .crop-name {
+          font-size: 1.55em !important;
+        }
+      }
+    }
+  }
+
+  // Titre "Sélectionnez les parcelles et cultures concernées"
+  main .step-heading {
+    font-size: 1.6em !important;
+  }
+
+  // Tags de regroupement (Catégorie Phytoweb / Culture / Parcelles)
+  main .group-by-tags .group-by-tag {
+    padding: 14px 26px !important;
+    font-size: 1.3rem !important;
+    border-width: 2.5px !important;
+  }
+
+  // Intro "Mentionnez les informations sur votre traitement"
+  main .step-intro {
+    font-size: 1.7em !important;
+    margin: 0 0 22px 0 !important;
+  }
+
+  // Champs date/heure/bbch (voir le bloc "Champs date / heure / texte" plus haut, dont les
+  // !important desktop battraient sinon le boost tablette global de .popup-text-input)
+  main input[type="time"].form-control,
+  main input[formControlName="bbch"].form-control,
+  main input[type="date"].form-control {
+    height: 62px !important;
+    padding: 0 18px !important;
+    font-size: 26px !important;
+
+    &::placeholder {
+      font-size: 26px !important;
+    }
+  }
+
+  // Remarque (textarea) — seule la taille de la police du placeholder augmente, pas le champ
+  // lui-même (min-height/padding volontairement inchangés).
+  main .textarea-compact.popup-text-input::placeholder {
+    font-size: 26px !important;
+  }
+
+  // Bloc explicatif sous le sélecteur de mode (Surface/Bouillie/Quantité)
+  main .mode-explanation {
+    font-size: 1.2rem !important;
+    padding: 16px 20px !important;
+    gap: 12px !important;
+
+    i {
+      font-size: 1.4rem !important;
+    }
+  }
+
+  // Toggle Oui/Non (ex. "traitement localisé ?")
+  main .yes-no-toggle label {
+    padding: 14px 26px !important;
+    font-size: 1.3rem !important;
+    gap: 8px !important;
+
+    i {
+      font-size: 1.35rem !important;
+    }
+  }
+
+  // Zone "Ajoutez un ou plusieurs produit(s)" (recherche produit + légende + récemment utilisés)
+  main .add-product-heading {
+    font-size: 1.4em !important;
+    margin-bottom: 10px !important;
+    display: inline-block;
+  }
+
+  // Toggle Produits phytos / Fertilisants personnalisés : déjà couvert tablette par le boost
+  // global .format-btn (src/styles/_popup-system.scss) — pas de surcouche locale nécessaire ici.
+
+  main .product-search-input {
+    height: 62px !important;
+    padding: 0 18px !important;
+    font-size: 26px !important;
+
+    // Le placeholder ("Rechercher un produit (phytoweb)" / "...un fertilisant personnel") a
+    // sa propre règle ::placeholder globale plus haut dans ce fichier (.form-control::placeholder,
+    // 16px !important, sans media query) qui bat sinon l'agrandissement ci-dessus.
+    &::placeholder {
+      font-size: 26px !important;
+    }
+  }
+
+  main .status-legend .status-legend-tag {
+    padding: 10px 18px !important;
+    font-size: 1.1rem !important;
+  }
+
+  main .search-hint {
+    padding: 16px 20px !important;
+    font-size: 1.2rem !important;
+    gap: 10px !important;
+
+    i {
+      font-size: 1.4rem !important;
+    }
+  }
+
+  main .recently-used-header {
+    font-size: 1.15em !important;
+
+    i {
+      font-size: 1.2em !important;
+    }
+  }
+
+  // Cartes produit cliquables (résultats de recherche, récemment utilisés, produits
+  // personnels) — même sélecteur large pour couvrir les 5 endroits du template qui
+  // utilisent .product-card-clickable, pas seulement "Récemment utilisés".
+  main .volumeDeBouille .product-card-clickable {
+    padding: 18px !important;
+    font-size: 1.1em !important;
+
+    strong {
+      font-size: 1.2em !important;
+    }
+  }
+
+  // Mini-formulaire "Nouveau produit personnel" (Nom/Type) — n'avait jusqu'ici aucun palier
+  // tablette/smartphone, contrairement aux autres champs de cette même popup.
+  main .personal-product-form {
+    .form-label {
+      font-size: 1rem !important;
+    }
+
+    .form-control {
+      height: 56px !important;
+      padding: 0 1rem !important;
+      font-size: 1.1rem !important;
+
+      &::placeholder {
+        font-size: 1.1rem !important;
+      }
+    }
+
+    .btn {
+      font-size: 1.05rem !important;
+      padding: 12px 22px !important;
+    }
+  }
+
+  // Section "Répartition de mon traitement" (en-têtes + tableau compact + alertes BBCH/heure)
+  main .section-subheading {
+    font-size: 1.4em !important;
+    display: inline-block;
+    margin-bottom: 6px !important;
+  }
+
+  main .repartition-section-wrapper {
+    .rep-header-bar {
+      padding: 14px 18px !important;
+      gap: 10px !important;
+    }
+
+    .rep-header-row {
+      gap: 8px 20px !important;
+    }
+
+    .rep-header-label {
+      font-size: 1rem !important;
+    }
+
+    .rep-header-value {
+      font-size: 1.3rem !important;
+    }
+
+    .rep-header-sep {
+      font-size: 1.6rem !important;
+    }
+
+    .rep-switch {
+      gap: 10px !important;
+
+      .rep-switch-track {
+        width: 46px !important;
+        height: 26px !important;
+      }
+
+      .rep-switch-thumb {
+        width: 22px !important;
+        height: 22px !important;
+      }
+
+      &.active .rep-switch-thumb {
+        transform: translateX(20px) !important;
+      }
+
+      .rep-switch-label {
+        font-size: 1.1rem !important;
+      }
+    }
+
+    .rep-remaining-text {
+      font-size: 1.05rem !important;
+    }
+
+    .rep-overallocation-warning {
+      padding: 12px 18px !important;
+      font-size: 1.15rem !important;
+      gap: 12px !important;
+    }
+
+    .rep-row-header {
+      padding: 10px 16px !important;
+      gap: 12px !important;
+    }
+
+    .rep-parcel {
+      font-size: 1.2rem !important;
+    }
+
+    .rep-crop {
+      font-size: 1.05rem !important;
+      padding: 3px 12px !important;
+    }
+
+    .rep-vol-badge {
+      font-size: 1.05rem !important;
+      padding: 4px 12px !important;
+    }
+
+    .rep-row-body {
+      padding: 16px 18px !important;
+      gap: 14px !important;
+    }
+
+    .rep-label {
+      font-size: 1rem !important;
+    }
+
+    .rep-input-unit {
+      gap: 10px !important;
+    }
+
+    .rep-number-input {
+      width: 130px !important;
+      height: 56px !important;
+      font-size: 1.3rem !important;
+      padding: 0 14px !important;
+    }
+
+    .rep-unit {
+      font-size: 1.1rem !important;
+    }
+
+    .rep-total-hint {
+      font-size: 1rem !important;
+    }
+
+    .rep-pct-badge {
+      font-size: 1.1rem !important;
+      padding: 4px 10px !important;
+      min-width: 54px !important;
+    }
+
+    .rep-slider {
+      height: 8px !important;
+
+      &::-webkit-slider-thumb {
+        width: 26px !important;
+        height: 26px !important;
+      }
+
+      &::-moz-range-thumb {
+        width: 26px !important;
+        height: 26px !important;
+      }
+    }
+  }
+
+  main .bbch-warning-box,
+  main .application-hour-box {
+    .warning-header-compact,
+    .info-header-compact {
+      padding: 18px 20px !important;
+    }
+
+    .warning-icon,
+    .info-icon {
+      font-size: 1.6em !important;
+    }
+
+    .warning-title,
+    .info-title {
+      font-size: 1.2rem !important;
+    }
+
+    .toggle-btn {
+      font-size: 1.8em !important;
+    }
+  }
+
+  main .bbch-warning-box .warning-content,
+  main .application-hour-box .info-content {
+    padding: 0 20px 18px 20px !important;
+  }
+
+  main .warning-list li {
+    font-size: 1.1rem !important;
+  }
+
+  main .application-hour-box .info-content {
+    font-size: 1.1rem !important;
+  }
+
+  // Alerte "Merci de renseigner une cible pour..." (étape Composition)
+  main .target-missing-warning {
+    padding: 12px 16px !important;
+    font-size: 1.1rem !important;
+    gap: 10px !important;
+  }
+}
+
+// Smartphone (≤576px) : même logique que la tablette juste au-dessus, à une échelle
+// un peu plus mesurée vu la largeur d'écran réduite.
+@media (max-width: 575.98px) {
+  main .simple-label {
+    font-size: 1.2em !important;
+  }
+
+  // .operator-select-btn (Opérateur/Efficacité/Base décisionnelle) n'avait qu'un palier
+  // tablette (74px) plus haut dans ce fichier, jamais de palier smartphone — retombait
+  // silencieusement à 38px sous la cible tactile minimale (normesResponsive.md §46-56).
+  main .operator-select-btn {
+    min-height: 46px !important;
+    padding: 14px 18px !important;
+
+    .operator-placeholder,
+    .operator-name,
+    .simple-option-name {
+      font-size: 1.1rem !important;
+    }
+
+    .operator-licence {
+      font-size: 0.95rem !important;
+    }
+  }
+
+  main .step-heading {
+    font-size: 1.3em !important;
+  }
+
+  main .group-by-tags .group-by-tag {
+    padding: 10px 20px !important;
+    font-size: 1.05rem !important;
+  }
+
+  main .step-intro {
+    font-size: 1.35em !important;
+    margin: 0 0 16px 0 !important;
+  }
+
+  main input[type="time"].form-control,
+  main input[formControlName="bbch"].form-control,
+  main input[type="date"].form-control {
+    height: 50px !important;
+    padding: 0 14px !important;
+    font-size: 19px !important;
+
+    &::placeholder {
+      font-size: 19px !important;
+    }
+  }
+
+  main .textarea-compact.popup-text-input::placeholder {
+    font-size: 19px !important;
+  }
+
+  main .mode-explanation {
+    font-size: 1rem !important;
+    padding: 12px 16px !important;
+
+    i {
+      font-size: 1.15rem !important;
+    }
+  }
+
+  main .yes-no-toggle label {
+    padding: 10px 18px !important;
+    font-size: 1.05rem !important;
+
+    i {
+      font-size: 1.1rem !important;
+    }
+  }
+
+  main .add-product-heading {
+    font-size: 1.15em !important;
+    margin-bottom: 8px !important;
+    display: inline-block;
+  }
+
+  main .product-search-input {
+    height: 50px !important;
+    padding: 0 14px !important;
+    font-size: 19px !important;
+
+    &::placeholder {
+      font-size: 19px !important;
+    }
+  }
+
+  main .status-legend .status-legend-tag {
+    padding: 7px 14px !important;
+    font-size: 0.95rem !important;
+  }
+
+  main .search-hint {
+    padding: 12px 16px !important;
+    font-size: 1rem !important;
+
+    i {
+      font-size: 1.2rem !important;
+    }
+  }
+
+  main .recently-used-header {
+    font-size: 0.95em !important;
+  }
+
+  main .volumeDeBouille .product-card-clickable {
+    padding: 14px !important;
+    font-size: 0.95em !important;
+
+    strong {
+      font-size: 1.1em !important;
+    }
+  }
+
+  main .personal-product-form {
+    .form-label {
+      font-size: 0.85rem !important;
+    }
+
+    .form-control {
+      height: 46px !important;
+      padding: 0 0.8rem !important;
+      font-size: 19px !important;
+
+      &::placeholder {
+        font-size: 19px !important;
+      }
+    }
+
+    .btn {
+      font-size: 0.88rem !important;
+      padding: 9px 16px !important;
+    }
+  }
+
+  // Section "Répartition de mon traitement" (en-têtes + tableau compact + alertes BBCH/heure)
+  main .section-subheading {
+    font-size: 1.2em !important;
+    display: inline-block;
+    margin-bottom: 5px !important;
+  }
+
+  main .repartition-section-wrapper {
+    .rep-header-bar {
+      padding: 10px 14px !important;
+      gap: 8px !important;
+    }
+
+    .rep-header-row {
+      gap: 6px 14px !important;
+    }
+
+    .rep-header-label {
+      font-size: 0.85rem !important;
+    }
+
+    .rep-header-value {
+      font-size: 1.05rem !important;
+    }
+
+    .rep-header-sep {
+      font-size: 1.3rem !important;
+    }
+
+    .rep-switch {
+      gap: 8px !important;
+
+      .rep-switch-track {
+        width: 38px !important;
+        height: 22px !important;
+      }
+
+      .rep-switch-thumb {
+        width: 18px !important;
+        height: 18px !important;
+      }
+
+      &.active .rep-switch-thumb {
+        transform: translateX(16px) !important;
+      }
+
+      .rep-switch-label {
+        font-size: 0.92rem !important;
+      }
+    }
+
+    .rep-remaining-text {
+      font-size: 0.88rem !important;
+    }
+
+    .rep-overallocation-warning {
+      padding: 10px 14px !important;
+      font-size: 0.95rem !important;
+      gap: 10px !important;
+    }
+
+    .rep-row-header {
+      padding: 8px 12px !important;
+      gap: 8px !important;
+    }
+
+    .rep-parcel {
+      font-size: 1rem !important;
+    }
+
+    .rep-crop {
+      font-size: 0.88rem !important;
+      padding: 2px 10px !important;
+    }
+
+    .rep-vol-badge {
+      font-size: 0.88rem !important;
+      padding: 3px 10px !important;
+    }
+
+    .rep-row-body {
+      padding: 12px 14px !important;
+      gap: 10px !important;
+    }
+
+    .rep-label {
+      font-size: 0.85rem !important;
+    }
+
+    .rep-input-unit {
+      gap: 8px !important;
+    }
+
+    .rep-number-input {
+      width: 100px !important;
+      height: 46px !important;
+      font-size: 1.05rem !important;
+      padding: 0 10px !important;
+    }
+
+    .rep-unit {
+      font-size: 0.92rem !important;
+    }
+
+    .rep-total-hint {
+      font-size: 0.85rem !important;
+    }
+
+    .rep-pct-badge {
+      font-size: 0.92rem !important;
+      padding: 3px 8px !important;
+    }
+
+    .rep-slider {
+      height: 6px !important;
+
+      &::-webkit-slider-thumb {
+        width: 20px !important;
+        height: 20px !important;
+      }
+
+      &::-moz-range-thumb {
+        width: 20px !important;
+        height: 20px !important;
+      }
+    }
+  }
+
+  main .bbch-warning-box,
+  main .application-hour-box {
+    .warning-header-compact,
+    .info-header-compact {
+      padding: 12px 14px !important;
+    }
+
+    .warning-icon,
+    .info-icon {
+      font-size: 1.3em !important;
+    }
+
+    .warning-title,
+    .info-title {
+      font-size: 1rem !important;
+    }
+
+    .toggle-btn {
+      font-size: 1.5em !important;
+    }
+  }
+
+  main .bbch-warning-box .warning-content,
+  main .application-hour-box .info-content {
+    padding: 0 14px 12px 14px !important;
+  }
+
+  main .warning-list li {
+    font-size: 0.92rem !important;
+  }
+
+  main .application-hour-box .info-content {
+    font-size: 0.92rem !important;
+  }
+
+  main .target-missing-warning {
+    padding: 8px 12px !important;
+    font-size: 0.92rem !important;
+    gap: 8px !important;
+  }
+}
+
+
+// =============================================================================
+// REFONTE V2 — POPUP "TRAITEMENT PHYTO", PARTIE 5a (écrans Type et Composition)
+// Même rendu que les popups Culture et Travail au champ : libellés bleu nuit, astérisque rouge,
+// une seule teinte sarcelle (#05b1af), champs 44px, tableaux au style Parcelles/Inventaire.
+// Les couleurs de statut (autorisé / en retrait / interdit) gardent leur sens : vert / orange / rouge.
+// Préfixé par :host pour l'emporter sur les règles d'origine (conservées). Couleurs à toutes
+// les tailles ; tailles uniquement ≥ 993px, les paliers tablette/smartphone restent inchangés.
+// =============================================================================
+:host main {
+  // ─── Textes communs ───────────────────────────────────────────────────────
+  .step-intro,
+  .section-subheading,
+  .add-product-heading {
+    font-family: "Panton", sans-serif;
+    color: #12103c;
+  }
+
+  .simple-label {
+    font-family: "Panton", sans-serif;
+    font-weight: 600;
+    color: #12103c;
+  }
+
+  .simple-label sup,
+  .field-label sup,
+  .personal-product-form .form-label sup {
+    color: #dc3545;
+  }
+
+  // Les <p></p> vides servant d'espaceurs dans l'écran Type
+  .body > form > section.row > article > p:empty { display: none; }
+  .body > form > section.row > article { margin-bottom: 14px; }
+
+  // ─── Écran Type ───────────────────────────────────────────────────────────
+  .format-choice .format-btn {
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    background: #ffffff;
+
+    i { color: #6b7280; }
+    .format-label { color: #12103c; font-family: "Panton", sans-serif; }
+
+    &:hover { border-color: #05b1af; background: #ffffff; }
+
+    &.active {
+      border-color: #05b1af;
+      background: #f0faf9;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+
+      i, .format-label { color: #03918a; }
+    }
+  }
+
+  // Encadré explicatif du mode : encadré d'information sarcelle clair (au lieu du bleu)
+  .mode-explanation {
+    background: #f0faf9;
+    border: 1px solid #b9e6e1;
+    border-left: 3px solid #05b1af;
+    border-radius: 10px;
+    color: #374151;
+
+    i { color: #03918a; }
+    strong { color: #12103c; }
+  }
+
+  // Opérateur / Efficacité / Base décisionnelle (menus maison) et champ date
+  .operator-dropdown-container {
+    .operator-select-btn {
+      border: 1.5px solid #dee2e6;
+      border-radius: 8px;
+
+      &:hover { border-color: #adb5bd; }
+
+      &:focus,
+      &:focus-visible {
+        border-color: #05b1af;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+      }
+
+      .operator-btn-text {
+        .operator-name,
+        .simple-option-name { color: #12103c; }
+        .operator-placeholder { color: #9ca3af; }
+      }
+
+      .operator-btn-icons { color: #6b7280; }
+    }
+
+    .operator-dropdown-list {
+      border: 1px solid #edf0f3;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(18, 16, 60, 0.14);
+
+      .operator-option {
+        border-bottom-color: #f1f3f5;
+
+        strong { color: #12103c; }
+        small { color: #6b7280; }
+
+        &:hover { background: #f8fbfb; }
+
+        &.selected {
+          background: #e3f6f3;
+          strong { color: #03918a; }
+        }
+      }
+    }
+  }
+
+  input[type="date"].form-control,
+  input[type="time"].form-control,
+  input[formControlName="bbch"].form-control {
+    border: 1.5px solid #dee2e6 !important;
+    border-radius: 8px;
+    color: #12103c;
+
+    &:focus {
+      border-color: #05b1af !important;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+    }
+  }
+
+  .textarea-compact {
+    border: 1.5px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    color: #12103c;
+
+    &:focus {
+      border-color: #05b1af !important;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+    }
+  }
+
+  // Oui / Non
+  .yes-no-toggle {
+    background: #f1f3f5;
+    border-radius: 10px;
+
+    label {
+      color: #6b7280;
+      border-radius: 8px;
+
+      &.active {
+        color: #03918a;
+        i { color: #05b1af; }
+      }
+    }
+  }
+
+  // ─── Écran Composition ────────────────────────────────────────────────────
+  // Recherche produit
+  .product-mode-toggle-row {
+    .product-search-input {
+      border: 1.5px solid #dee2e6 !important;
+      border-radius: 8px;
+      color: #12103c;
+
+      &:focus {
+        border-color: #05b1af !important;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+      }
+    }
+
+    .btn-add-personal {
+      color: #03918a;
+      border: 1.5px solid #05b1af;
+      border-radius: 8px;
+      font-weight: 600;
+
+      &:hover { background: #05b1af; color: #ffffff; }
+    }
+  }
+
+  .search-hint {
+    background: #f0faf9;
+    border: 1px solid #b9e6e1;
+    border-radius: 10px;
+    box-shadow: none;
+    color: #374151;
+
+    i { color: #03918a; }
+  }
+
+  .recently-used-section .recently-used-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #6b7280;
+
+    i { color: #05b1af; }
+  }
+
+  .loading-products {
+    background: #f0faf9;
+    border-radius: 10px;
+
+    .spinner-border { color: #05b1af; }
+  }
+
+  // Cartes produits : carte blanche, bord gauche à la couleur du statut, fond très léger
+  .volumeDeBouille {
+    border: 1.5px solid #dee2e6;
+    border-left: 4px solid #05b1af;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    .product-card-clickable {
+      color: #12103c;
+
+      strong { color: #12103c; }
+      .product-meta { color: #6b7280; }
+
+      &:hover { background-color: transparent; }
+    }
+
+    &:hover { box-shadow: 0 4px 14px rgba(18, 16, 60, 0.08); }
+
+    &.product-akk-status { border-left-color: #16a34a; background-color: #f6fdf8; color: #12103c; }
+    &.product-toint-status { border-left-color: #ea7a12; background-color: #fffaf3; color: #12103c; }
+    &.product-int-status { border-left-color: #dc2626; background-color: #fef6f6; color: #12103c; }
+    &.product-personal-status { border-left-color: #05b1af; background-color: #f8fbfb; color: #12103c; }
+  }
+
+  // Légende des statuts : mêmes pastilles que les badges
+  .status-legend .status-legend-tag {
+    &--authorized { background: #dcfce7; color: #166534; }
+    &--withdrawing { background: #ffedd5; color: #9a3412; }
+    &--forbidden { background: #fee2e2; color: #991b1b; }
+  }
+
+  // Formulaire "nouveau fertilisant personnel"
+  .personal-product-form {
+    background: #f8f9fa;
+    border: 1px solid #edf0f3;
+    border-left: 3px solid #05b1af;
+    border-radius: 10px;
+
+    .form-label {
+      font-family: "Panton", sans-serif;
+      color: #12103c;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .form-control {
+      border: 1.5px solid #dee2e6 !important;
+      border-radius: 8px;
+      color: #12103c;
+
+      &:focus {
+        border-color: #05b1af !important;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+      }
+    }
+  }
+
+  // Avertissement "cible manquante"
+  .target-missing-warning {
+    border: 1px solid #fde68a;
+    border-left: 4px solid #d97706;
+    border-radius: 10px;
+  }
+
+  // Tableau de composition (styles globaux en !important → surcharges en !important)
+  .composition-table-wrapper {
+    border: 1px solid #edf0f3 !important;
+    border-radius: 10px !important;
+  }
+
+  .composition-table-header {
+    background: #f8f9fa !important;
+    color: #6b7280 !important;
+    border-bottom: 1px solid #edf0f3 !important;
+    border-radius: 0 !important;
+  }
+
+  .composition-table-row {
+    border-top: 1px solid #f1f3f5 !important;
+    background: #ffffff !important;
+
+    &:nth-child(even) { background: #ffffff !important; }
+    &:hover { background: #f8fbfb !important; }
+  }
+
+  .ctab-product-name,
+  .ctab-dose-val { color: #12103c !important; }
+
+  .ctab-btn-edit,
+  .ctab-btn-delete {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    color: #6b7280 !important;
+  }
+
+  .ctab-btn-edit:hover {
+    background: #e3f6f3 !important;
+    border-color: #b9e6e1 !important;
+    color: #03918a !important;
+  }
+
+  .ctab-btn-delete:hover {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #dc2626 !important;
+  }
+
+  // Fiche produit en cours d'encodage
+  .product-edit-compact {
+    background: #ffffff;
+    border: 1px solid #edf0f3;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+
+    .product-header {
+      .product-name { color: #12103c; font-family: "Panton", sans-serif; }
+      .product-number { color: #6b7280; }
+    }
+
+    .info-box {
+      border-radius: 10px;
+
+      .info-header i { font-size: 0.95rem; }
+    }
+
+    // Doses Phytoweb : tableau au style des autres tableaux (en-tête gris clair)
+    .doses-box {
+      background: #f8f9fa;
+      border-color: #edf0f3;
+      border-left-color: #05b1af;
+
+      .info-header { color: #12103c; }
+
+      .doses-table-wrapper {
+        border: 1px solid #edf0f3;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .doses-table {
+        thead tr {
+          background: #f8f9fa;
+          color: #6b7280;
+
+          th { border-right: none; border-bottom: 1px solid #edf0f3; }
+        }
+
+        tbody tr {
+          border-bottom: 1px solid #f1f3f5;
+
+          &:nth-child(even),
+          &:nth-child(odd) { background: #ffffff; }
+
+          td { border-right: none; color: #374151; }
+        }
+
+        .cell-culture { color: #12103c; }
+      }
+    }
+  }
+
+  // Ligne Dose / Unité / Quantité / Cible
+  .encoding-row {
+    .field-label {
+      font-family: "Panton", sans-serif;
+      font-weight: 600;
+      color: #12103c;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .field-input,
+    .field-select {
+      border: 1.5px solid #dee2e6 !important;
+      color: #12103c !important;
+
+      &:focus {
+        border-color: #05b1af !important;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+      }
+    }
+
+    .field-input-derived {
+      background: #f8f9fa !important;
+      color: #6b7280 !important;
+    }
+
+    .target-dropdown .dropdown-btn {
+      border: 1.5px solid #dee2e6 !important;
+      color: #12103c;
+    }
+
+    // Annuler (secondaire) / Valider (sarcelle) au lieu du rouge / vert foncé
+    .btn-ec-cancel {
+      background: #ffffff !important;
+      color: #374151 !important;
+      border: 1.5px solid #d1d5db !important;
+
+      &:hover { border-color: #9ca3af !important; background: #ffffff !important; }
+    }
+
+    .btn-ec-confirm {
+      background: #05b1af !important;
+      color: #ffffff !important;
+
+      &:hover { background: #03918a !important; }
+      &:disabled { background: #a7dedd !important; }
+    }
+
+    .btn-back-list {
+      border: 1.5px solid #dee2e6;
+      border-radius: 8px;
+      color: #6b7280;
+
+      &:hover { border-color: #05b1af; color: #03918a; }
+    }
+  }
+}
+
+// Tailles bureau (≥ 993px) : libellés 0.9rem, champs et boutons 44px
+@media (min-width: 993px) {
+  :host main {
+    .step-intro { font-size: 1rem; }
+    .section-subheading,
+    .add-product-heading { font-size: 1rem; }
+
+    .simple-label { font-size: 0.9rem; margin-bottom: 6px; }
+
+    .format-choice .format-btn {
+      height: 44px;
+
+      i { font-size: 1.2rem; }
+      .format-label { font-size: 0.9rem; }
+    }
+
+    .operator-dropdown-container .operator-select-btn {
+      min-height: 44px;
+      padding: 0 12px;
+    }
+
+    input[type="date"].form-control,
+    input[type="time"].form-control,
+    input[formControlName="bbch"].form-control {
+      height: 44px !important;
+      padding: 0 12px !important;
+    }
+
+    .textarea-compact { padding: 10px 12px !important; }
+
+    .product-mode-toggle-row {
+      .product-search-input {
+        height: 44px !important;
+        padding: 0 12px !important;
+        font-size: 16px;
+      }
+
+      .btn-add-personal {
+        height: 44px;
+        padding: 0 14px;
+        font-size: 0.85rem;
+      }
+    }
+
+    .personal-product-form {
+      .form-label { font-size: 0.9rem; }
+      .form-control { height: 44px !important; padding: 0 12px !important; }
+      .btn { height: 44px; }
+    }
+
+    .composition-table-header {
+      padding: 8px 12px !important;
+      font-size: 0.7rem !important;
+    }
+
+    .composition-table-row { padding: 8px 12px !important; }
+
+    .ctab-product-name,
+    .ctab-dose-val { font-size: 0.86rem !important; }
+
+    .ctab-col-actions { flex: 0 0 72px !important; }
+
+    .ctab-btn-edit,
+    .ctab-btn-delete {
+      width: 30px !important;
+      height: 30px !important;
+      font-size: 0.85rem !important;
+    }
+
+    .encoding-row {
+      .field-label { font-size: 0.9rem; margin-bottom: 6px; }
+
+      .field-input,
+      .field-select,
+      .target-dropdown .dropdown-btn {
+        height: 44px !important;
+        min-height: 44px !important;
+        font-size: 16px !important;
+      }
+
+      .field-col-actions .action-buttons { height: 44px; }
+
+      .btn-ec-cancel,
+      .btn-ec-confirm {
+        height: 44px !important;
+        padding: 0 16px !important;
+        font-size: 0.88rem !important;
+      }
+
+      .btn-back-list { height: 44px; }
+    }
+  }
+}
+
+
+
+// =============================================================================
+// REFONTE V2 — POPUP "TRAITEMENT PHYTO", PARTIE 5b (écrans Volume, Répartition, Parcelles)
+// Même principe que la partie 5a. Les curseurs de répartition (remplissage bleu/ambre calculé
+// dans le TypeScript) et l'ambre des parcelles verrouillées gardent leur sens : inchangés.
+// =============================================================================
+:host main {
+  // ─── Écran Volume (bouillie) ──────────────────────────────────────────────
+  .volume-bouillie-container {
+    background: #f8f9fa;
+    border: 1px solid #edf0f3;
+    border-radius: 10px;
+
+    h5 {
+      font-family: "Panton", sans-serif;
+      color: #12103c;
+    }
+
+    .volume-input-group {
+      border: 1.5px solid #dee2e6;
+      border-radius: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+
+      .volume-label {
+        font-family: "Panton", sans-serif;
+        font-weight: 600;
+        color: #12103c;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+
+      .input-with-unit .volume-input { color: #12103c; }
+      .input-with-unit .unit-label { color: #6b7280; }
+
+      &:hover { border-color: #adb5bd; background-color: #ffffff; }
+
+      &:focus-within {
+        border-color: #05b1af;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+      }
+    }
+  }
+
+  // ─── Écran Répartition ────────────────────────────────────────────────────
+  // Avertissements Phytoweb repliables : encadré à bord gauche coloré, comme les autres alertes
+  .bbch-warning-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #d97706;
+    border-radius: 10px;
+    box-shadow: none;
+
+    .warning-header-compact {
+      .warning-icon { color: #d97706; font-size: 1.05rem; }
+      .warning-title { color: #92400e; }
+      .toggle-btn { color: #d97706; }
+    }
+
+    .warning-content {
+      border-top-color: #fde68a;
+
+      .warning-list li {
+        color: #92400e;
+
+        &::before { color: #d97706; }
+        strong { color: #78350f; }
+      }
+    }
+
+    &.expanded { box-shadow: none; }
+  }
+
+  .application-hour-box {
+    background: #f0faf9;
+    border: 1px solid #b9e6e1;
+    border-left: 4px solid #05b1af;
+    border-radius: 10px;
+    box-shadow: none;
+
+    .info-header-compact {
+      &:hover { background-color: rgba(5, 177, 175, 0.06); }
+
+      .info-icon { color: #03918a; font-size: 1.05rem; }
+      .info-title { color: #12103c; }
+      .toggle-btn { color: #05b1af; }
+      .toggle-btn:hover { color: #03918a; }
+    }
+
+    .info-content {
+      border-top-color: #b9e6e1;
+      color: #374151;
+
+      .warning-list li {
+        color: #374151;
+
+        &::before { color: #05b1af; }
+        strong { color: #12103c; }
+      }
+    }
+
+    &.expanded { box-shadow: none; }
+  }
+
+  // En-tête "Quantité totale utilisée"
+  .rep-header-bar {
+    background: #f8f9fa;
+    border: 1px solid #edf0f3;
+    border-radius: 10px;
+
+    .rep-header-label { color: #6b7280; }
+    .rep-header-value,
+    .rep-header-value.primary { color: #12103c; }
+  }
+
+  .rep-switch .rep-switch-label { color: #12103c; }
+
+  .rep-overallocation-warning {
+    border: 1px solid #fde68a;
+    border-left: 4px solid #d97706;
+    border-radius: 10px;
+  }
+
+  // Une carte par parcelle : en-tête gris clair au lieu de gris foncé
+  .repartition-table-compact {
+    gap: 10px;
+
+    .rep-row {
+      border: 1px solid #edf0f3;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+
+      &:hover {
+        border-color: #b9e6e1;
+        box-shadow: 0 4px 14px rgba(18, 16, 60, 0.08);
+      }
+    }
+
+    .rep-row-header {
+      background: #f8f9fa;
+      border-bottom: 1px solid #edf0f3;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .rep-parcel {
+      font-family: "Panton", sans-serif;
+      color: #12103c;
+    }
+
+    .rep-crop {
+      background: #e3f6f3;
+      border: none;
+      color: #03918a;
+      font-weight: 600;
+    }
+
+    .rep-vol-badge {
+      background: #ffffff;
+      border: 1px solid #edf0f3;
+      color: #374151;
+
+      i { color: #05b1af; }
+    }
+
+    .rep-label {
+      font-family: "Panton", sans-serif;
+      color: #6b7280;
+    }
+
+    .rep-number-input {
+      border: 1.5px solid #dee2e6;
+      border-radius: 8px;
+      color: #12103c;
+
+      &:focus {
+        border-color: #05b1af;
+        box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+      }
+    }
+
+    .rep-pct-badge {
+      background: #e3f6f3;
+      border: none;
+      border-radius: 999px;
+      color: #03918a;
+    }
+
+    // Curseur "surface" (sans remplissage calculé) : pastille sarcelle
+    .rep-slider:not(.rep-slider-volume) {
+      &::-webkit-slider-thumb { background: #05b1af; }
+      &::-moz-range-thumb { background: #05b1af; }
+      &:hover::-webkit-slider-thumb { background: #03918a; }
+    }
+  }
+}
+
+// ─── Écran Parcelles : même rendu que le Travail au champ ──────────────────
+:host .culture-selection-grid {
+  .culture-group .group-header {
+    border-bottom: 1px solid #edf0f3;
+
+    h4 {
+      font-family: "Panton", sans-serif;
+      font-weight: 700;
+      color: #12103c;
+    }
+
+    .group-select-all {
+      // Une seule case : la case native (sarcelle) ; la fausse case que Materialize dessine sur
+      // le <span> suivant (::before / ::after) est retirée — sinon deux cases s'affichaient.
+      input[type="checkbox"] {
+        position: static;
+        opacity: 1;
+        pointer-events: auto;
+        accent-color: #05b1af;
+      }
+
+      input[type="checkbox"] + span {
+        padding-left: 0;
+        height: auto;
+        line-height: normal;
+
+        &::before,
+        &::after { display: none !important; }
+      }
+
+      .select-all-label { color: #03918a; font-weight: 600; }
+    }
+
+    .mobile-toggle-arrow { color: #03918a; }
+  }
+
+  .culture-group .parcel-card {
+    border: 1.5px solid #dee2e6;
+    border-radius: 10px;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+
+    input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      margin: 0;
+    }
+
+    .card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      padding: 8px;
+      border-radius: 50%;
+      background: #e3f6f3;
+      transition: background-color 0.15s;
+
+      i { color: #03918a; line-height: 1; }
+    }
+
+    .card-content {
+      min-width: 0;
+
+      .parcel-name {
+        font-weight: 700;
+        color: #12103c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .crop-name { color: #6b7280; }
+    }
+
+    .card-check {
+      flex-shrink: 0;
+      margin-left: 10px;
+      color: #dee2e6;
+      transition: color 0.15s;
+    }
+
+    &:hover {
+      border-color: #05b1af;
+      background: #ffffff;
+    }
+
+    &.selected {
+      border-color: #05b1af;
+      background: #f0faf9;
+      box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1);
+
+      .card-icon { background: #05b1af; }
+      .card-icon i { color: #ffffff; }
+      .card-check { color: #05b1af; }
+    }
+  }
+
+  .empty-state p { font-style: normal; }
+}
+
+:host .group-by-tags .group-by-tag {
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-family: "Panton", sans-serif;
+  font-weight: 600;
+  border-radius: 999px;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+
+  &:hover:not(.active) {
+    border-color: #05b1af;
+    color: #03918a;
+    background: #ffffff;
+  }
+
+  &.active {
+    background: #05b1af;
+    border-color: #05b1af;
+    color: #ffffff;
+    font-weight: 600;
+  }
+}
+
+:host .step-heading { color: #12103c; }
+
+:host .loading-state {
+  .spinner-border.text-primary { color: #05b1af !important; }
+  h5 { font-family: "Panton", sans-serif; color: #12103c; }
+}
+
+// Tailles bureau (≥ 993px)
+@media (min-width: 993px) {
+  :host main {
+    .volume-bouillie-container {
+      padding: 14px 16px;
+
+      h5 { font-size: 0.95rem; }
+
+      .volume-input-group {
+        min-width: 140px;
+        padding: 8px 12px;
+
+        .volume-label { font-size: 0.9rem; margin-bottom: 4px; }
+        .input-with-unit .volume-input { width: 90px; text-align: left; }
+        .input-with-unit .unit-label { font-size: 0.85rem; }
+      }
+    }
+
+    .rep-header-bar { padding: 10px 14px; }
+
+    .repartition-table-compact {
+      .rep-row-header { padding: 8px 12px; }
+      .rep-row-body { padding: 10px 12px; }
+      .rep-parcel { font-size: 0.9rem; }
+      .rep-crop { font-size: 0.75rem; padding: 2px 10px; }
+      .rep-label { font-size: 0.72rem; }
+      .rep-number-input { height: 44px; width: 100px; font-size: 0.95rem; }
+      .rep-pct-badge { font-size: 0.75rem; padding: 2px 8px; }
+    }
+  }
+
+  :host .step-heading { font-size: 1.05rem !important; }
+
+  :host .group-by-tags .group-by-tag {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  :host .culture-selection-grid {
+    .culture-group .group-header h4 { font-size: 0.95rem; }
+    .culture-group .group-header .group-select-all .select-all-label { font-size: 0.82rem; }
+
+    .culture-group .parcel-card {
+      padding: 10px 14px;
+
+      .card-icon { margin-right: 12px; }
+      .card-icon i { font-size: 1.05rem; }
+
+      .card-content {
+        .parcel-name { font-size: 0.92rem; margin-bottom: 0; }
+        .crop-name { font-size: 0.8rem; }
+      }
+
+      .card-check { font-size: 18px; }
+    }
+  }
+}
+
+@media (min-width: 576px) and (max-width: 992px) {
+  :host .culture-selection-grid .culture-group .parcel-card .card-check { font-size: 2.2em; }
+}
+
+@media (max-width: 575.98px) {
+  :host .culture-selection-grid .culture-group .parcel-card .card-check { font-size: 1.5em; }
+}
+
+// =============================================================================
+// REFONTE V2 — corrections du test global (onglet 6c)
+// =============================================================================
+// Mode Bouillie : les cartes de fertilisant personnel n'ont pas de bloc cliquable intérieur
+// (.product-card-clickable) qui porte la marge → marge mise sur la carte elle-même.
+:host main .volumeDeBouille.product-personal-status:not(:has(.product-card-clickable)) {
+  padding: 10px 12px;
+  cursor: pointer;
+
+  strong { display: block; color: #12103c; }
+  small, .text-muted { color: #6b7280 !important; }
+}
+
+// Libellés « Préparée / Utilisée » : la règle d'origine (plus spécifique) imposait les majuscules
+:host main .volume-bouillie-container .volume-input-group .volume-label {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-family: "Panton", sans-serif !important;
+  font-weight: 600 !important;
+  color: #12103c !important;
+}
