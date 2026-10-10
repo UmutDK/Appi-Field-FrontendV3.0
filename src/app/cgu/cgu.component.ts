@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { HeaderComponent } from '../core/header/component/header/header.component';
 import { FooterComponent } from '../core/footer/component/footer/footer.component';
-import { BackToTopComponent } from '../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-cgu',
@@ -10,8 +9,7 @@ import { BackToTopComponent } from '../shared/components/back-to-top/back-to-top
   imports: [
     SharedModule,
     HeaderComponent,
-    FooterComponent,
-    BackToTopComponent
+    FooterComponent
   ],
   templateUrl: './cgu.component.html',
   styleUrls: ['./cgu.component.scss']

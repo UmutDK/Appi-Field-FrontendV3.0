@@ -2,6 +2,7 @@
 @use 'styles/typography-tokens';
 @use 'styles/button-tokens';
 @use 'styles/grid-tokens';
+@use 'styles/mobile'; // VERSION MOBILE (voir src/styles/_mobile.scss) — retirer cette ligne = retour arrière
 
 html, body
 {

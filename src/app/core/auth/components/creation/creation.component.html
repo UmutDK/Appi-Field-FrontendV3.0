@@ -12,7 +12,7 @@
                 <div class="auth-grid">
                     <div class="auth-field">
                         <label for="prenom">Prénom<sup>*</sup></label>
-                        <input id="prenom" placeholder="Votre prénom" type="text" class="form-control" formControlName="Prenom" required
+                        <input id="prenom" autocomplete="given-name" placeholder="Votre prénom" type="text" class="form-control" formControlName="Prenom" required
                             [ngClass]="{'input-error': form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')}">
                         @if (form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')) {
                             <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
@@ -20,7 +20,7 @@
                     </div>
                     <div class="auth-field">
                         <label for="nom">Nom de famille<sup>*</sup></label>
-                        <input id="nom" placeholder="Votre nom de famille" type="text" class="form-control" formControlName="Nom" required
+                        <input id="nom" autocomplete="family-name" placeholder="Votre nom de famille" type="text" class="form-control" formControlName="Nom" required
                             [ngClass]="{'input-error': form.get('Nom')?.touched && form.get('Nom')?.hasError('required')}">
                         @if (form.get('Nom')?.touched && form.get('Nom')?.hasError('required')) {
                             <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
@@ -29,7 +29,7 @@
 
                     <div class="auth-field">
                         <label for="mail">Adresse mail<sup>*</sup></label>
-                        <input id="mail" placeholder="Votre adresse mail" type="email" class="form-control" formControlName="Mail" required
+                        <input id="mail" autocomplete="email" inputmode="email" placeholder="Votre adresse mail" type="email" class="form-control" formControlName="Mail" required
                             [ngClass]="{'input-error': form.get('Mail')?.touched && (form.get('Mail')?.hasError('pattern') || form.get('Mail')?.hasError('required'))}">
                         @if (form.get('Mail')?.touched && form.get('Mail')?.hasError('required')) {
                             <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="auth-field">
                         <label for="confirmationMail">Confirmez votre adresse mail<sup>*</sup></label>
-                        <input id="confirmationMail" placeholder="Confirmez votre adresse mail" type="email" class="form-control" formControlName="Confirmation_Mail" required
+                        <input id="confirmationMail" autocomplete="email" inputmode="email" placeholder="Confirmez votre adresse mail" type="email" class="form-control" formControlName="Confirmation_Mail" required
                             [ngClass]="{'input-error': form.get('Confirmation_Mail')?.touched && (!emailMatch || form.get('Confirmation_Mail')?.hasError('required'))}">
                         @if (form.get('Confirmation_Mail')?.touched && form.get('Confirmation_Mail')?.hasError('required')) {
                             <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <input
-                                id="motDePasse"
+                                id="motDePasse" autocomplete="new-password"
                                 [type]="showPassword ? 'text' : 'password'"
                                 placeholder="Votre mot de passe"
                                 class="form-control"
@@ -89,7 +89,7 @@
                         <label for="confirmationMotDePasse">Confirmez votre mot de passe<sup>*</sup></label>
                         <div class="password-container">
                             <input
-                                id="confirmationMotDePasse"
+                                id="confirmationMotDePasse" autocomplete="new-password"
                                 [type]="showConfirmPassword ? 'text' : 'password'"
                                 placeholder="Confirmer votre mot de passe"
                                 class="form-control"
@@ -110,7 +110,7 @@
 
                     <div class="auth-field">
                         <label for="dateNaissance">Date de naissance<sup>*</sup></label>
-                        <input id="dateNaissance" type="date" class="form-control" formControlName="Date_De_Naissance" name="date" required
+                        <input id="dateNaissance" autocomplete="bday" type="date" class="form-control" formControlName="Date_De_Naissance" name="date" required
                             [max]="maxBirthDate"
                             [ngClass]="{'input-error': form.get('Date_De_Naissance')?.hasError('futureDate') || (form.get('Date_De_Naissance')?.touched && form.get('Date_De_Naissance')?.hasError('required'))}">
                         @if (form.get('Date_De_Naissance')?.touched && form.get('Date_De_Naissance')?.hasError('required')) {

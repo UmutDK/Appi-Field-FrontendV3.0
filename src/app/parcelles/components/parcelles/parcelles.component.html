@@ -26,6 +26,8 @@
                     <i class="bi bi-chevron-down add-menu-chevron"></i>
                 </button>
                 @if (isAddMenuOpen) {
+                    <!-- VERSION MOBILE : fond assombri derrière le panneau « Ajouter » (masqué sur ordinateur) -->
+                    <div class="add-menu-backdrop" (click)="closeAddMenu()"></div>
                     <div class="add-menu-list" role="menu">
                         <a class="add-menu-item" role="menuitem" routerLink="/parcelles/voir-parcelles" (click)="closeAddMenu()">
                             <span class="add-menu-icon"><i class="bi bi-map"></i></span>
@@ -373,7 +375,7 @@
     <div class="parcelles-popups">
                 @if (afficherCachet) {
                     <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? cachet() : null">
-                        <div class="popup-container">
+                        <div class="popup-container popup-sheet-mobile">
                             <!-- Header avec titre dynamique -->
                             <div class="popup-header">
                                 <div class="header-title">

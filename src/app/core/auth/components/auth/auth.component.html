@@ -20,12 +20,12 @@
                 <div class="auth-grid">
                     <div class="auth-field">
                         <label for="login">Adresse mail</label>
-                        <input id="login" placeholder="E-mail" type="email" class="form-control" formControlName="login" required>
+                        <input id="login" placeholder="E-mail" type="email" autocomplete="username" inputmode="email" class="form-control" formControlName="login" required>
                     </div>
                     <div class="auth-field">
                         <label for="mdp">Mot de passe</label>
                         <div class="password-container">
-                            <input id="mdp" placeholder="Mot de passe"
+                            <input id="mdp" placeholder="Mot de passe" autocomplete="current-password"
                                    [type]="showPassword ? 'text' : 'password'"
                                    class="form-control"
                                    formControlName="mdp" required>
@@ -33,11 +33,13 @@
                                 {{showPassword ? 'visibility_off' : 'visibility'}}
                             </i>
                         </div>
+                        <!-- Mobile : lien sous le champ (le grand bouton du bas est masqué sous 576px) -->
+                        <button type="button" class="auth-forgot-link" (click)="onUdpate()">Mot de passe oublié ?</button>
                     </div>
                 </div>
 
                 <div class="auth-actions">
-                    <button type="button" class="auth-btn auth-btn-secondary" (click)="onUdpate()">Mot de passe oublié</button>
+                    <button type="button" class="auth-btn auth-btn-secondary auth-forgot-btn" (click)="onUdpate()">Mot de passe oublié</button>
                     <button type="submit" class="auth-btn auth-btn-primary" (click)="onConnexion()" [disabled]="form.invalid">Connexion</button>
                 </div>
             </form>

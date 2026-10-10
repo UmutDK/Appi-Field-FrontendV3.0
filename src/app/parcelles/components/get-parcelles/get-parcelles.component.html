@@ -261,7 +261,7 @@
                                 <input 
                                     type="text" 
                                     class="form-control location-input-mobile" 
-                                    placeholder="Rechercher une adresse..."
+                                    placeholder="Rechercher…" aria-label="Rechercher une adresse ou une commune"
                                     [(ngModel)]="locationSearchTerm"
                                     (input)="onLocationSearchInput($event)"
                                     (blur)="hideLocationSuggestions()"
@@ -276,7 +276,15 @@
                                     <i class="bi bi-globe"></i>
                                     <span>Satellite</span>
                                 </button>
+                                <!-- VERSION MOBILE : centrer la carte sur la position du téléphone -->
+                                <button type="button" class="btn locate-btn-mobile" [class.loading]="locating"
+                                        (click)="locateMe()" title="Ma position" aria-label="Centrer la carte sur ma position">
+                                    <i class="bi" [class.bi-crosshair]="!locating" [class.bi-arrow-repeat]="locating"></i>
+                                </button>
                             </div>
+                            @if (locateMessage) {
+                                <div class="locate-message" role="status">{{ locateMessage }}</div>
+                            }
                             
                             <!-- Suggestions dropdown pour mobile -->
                             <div 
@@ -354,7 +362,7 @@
     <!-- POPUP AJOUT PARCELLE PAR ADRESSE -->
     @if (afficherCachet) {
         <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? (editMode ? closeEditParcel() : cahcher()) : null">
-            <div class="popup-container">
+            <div class="popup-container popup-sheet-mobile">
                 <!-- Header avec titre -->
                 <div class="popup-header">
                     <div class="header-title">
@@ -580,7 +588,7 @@
     }@else if (pointFormFromClick) {
         <!-- POPUP AJOUT PARCELLE PAR CLIC SUR CARTE -->
         <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? closePointForm() : null">
-            <div class="popup-container">
+            <div class="popup-container popup-sheet-mobile">
                 <!-- Header avec titre -->
                 <div class="popup-header">
                     <div class="header-title">
@@ -724,7 +732,7 @@
     }@else if (pointForm) {
         <!-- POPUP AJOUT PARCELLE PAC -->
         <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? onFermeturePointForm() : null">
-            <div class="popup-container">
+            <div class="popup-container popup-sheet-mobile">
                 <!-- Header avec titre -->
                 <div class="popup-header">
                     <div class="header-title">
@@ -899,7 +907,7 @@
     }@else if (polygonDrawFormOpen) {
         <!-- POPUP AJOUT PARCELLE PAR TRACÉ POLYGONE -->
         <div class="popup-overlay" (click)="$event.target === $event.currentTarget ? closePolygonDrawForm() : null">
-            <div class="popup-container">
+            <div class="popup-container popup-sheet-mobile">
                 <div class="popup-header">
                     <div class="header-title">
                         <i class="bi bi-pencil-square"></i>
@@ -1038,7 +1046,7 @@
                      (le tracé de polygone passe par polygonDrawFormOpen, déjà unifié plus haut).
                      Conservée telle quelle ; popup-container ajoutée par précaution anti-clipping
                      si jamais réactivée. -->
-                <div class="addHome popup-container">
+                <div class="addHome popup-container popup-sheet-mobile">
                     <div class="container">
                         <section class="row">
                             <article class="col-lg-12">
@@ -1194,6 +1202,11 @@
                 </span>
             </div>
         } @else {
+            <!-- VERSION MOBILE : un seul bouton « Ajouter » ; les actions s'ouvrent dans un panneau du bas
+                 (ancienne barre de 5 boutons conservée ci-dessous, masquée par _mobile.scss) -->
+            <button type="button" class="footer-add-btn" (click)="mobileAddSheetOpen = true">
+                <i class="bi bi-plus-lg"></i> Ajouter
+            </button>
             <div class="row-footer">
                 <button class="footer-btn" (click)="onParcellaire()" [disabled]="!isZoomSufficient || isLoadingParcellaire" [style.opacity]="isZoomSufficient ? 1 : 0.5" [style.cursor]="isZoomSufficient ? 'pointer' : 'not-allowed'" [style.filter]="isZoomSufficient ? 'none' : 'grayscale(1)'">
                     @if (isLoadingParcellaire) {
@@ -1221,3 +1234,28 @@
             </div>
         }
     </footer>
+
+    <!-- VERSION MOBILE : panneau « Ajouter » de Ma carte -->
+    @if (mobileAddSheetOpen) {
+        <div class="map-add-sheet-backdrop" (click)="mobileAddSheetOpen = false"></div>
+        <div class="map-add-sheet" role="dialog" aria-label="Ajouter sur la carte">
+            <div class="map-add-sheet-grab"></div>
+            <button type="button" class="map-add-option" (click)="mobileAddSheetOpen = false; startDrawPolygon()">
+                <span class="map-add-icon"><i class="bi bi-pencil-square"></i></span>
+                <span class="map-add-text"><b>Tracer un polygone</b><small>Touchez la carte pour placer les coins de la parcelle.</small></span>
+            </button>
+            <button type="button" class="map-add-option" (click)="mobileAddSheetOpen = false; addClickMarqueur()">
+                <span class="map-add-icon"><i class="bi bi-pin-angle"></i></span>
+                <span class="map-add-text"><b>Placer un point</b><small>Un point au centre de la parcelle.</small></span>
+            </button>
+            <button type="button" class="map-add-option" (click)="mobileAddSheetOpen = false; afficher()">
+                <span class="map-add-icon"><i class="bi bi-house-add"></i></span>
+                <span class="map-add-text"><b>Par adresse</b><small>Localiser la parcelle à partir de son adresse.</small></span>
+            </button>
+            <div class="map-add-sep"></div>
+            <button type="button" class="map-add-option" (click)="mobileAddSheetOpen = false; onParcellaire()" [disabled]="!isZoomSufficient || isLoadingParcellaire">
+                <span class="map-add-icon"><i class="bi bi-grid-3x3"></i></span>
+                <span class="map-add-text"><b>Parcellaire PAC</b><small>{{ isZoomSufficient ? 'Afficher ou masquer les parcelles PAC.' : 'Zoomez d\'abord sur votre commune.' }}</small></span>
+            </button>
+        </div>
+    }

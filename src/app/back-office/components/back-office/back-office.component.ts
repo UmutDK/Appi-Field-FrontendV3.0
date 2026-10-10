@@ -161,7 +161,15 @@ export class BackOfficeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!container) return;
     if ((container as any)._leaflet_id) return; // déjà initialisée
 
-    this.map = L.map(container).setView([50.5667, 4.7], 12);
+    // VERSION MOBILE : sur téléphone/tablette, la carte de l'accueil est un aperçu — un doigt posé
+    // dessus fait défiler la page au lieu de déplacer la carte (« Voir toutes mes parcelles » ouvre la carte).
+    const apercu = L.Browser.mobile;
+    this.map = L.map(container, {
+      dragging: !apercu,
+      touchZoom: !apercu,
+      doubleClickZoom: !apercu,
+      zoomControl: !apercu,
+    }).setView([50.5667, 4.7], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);

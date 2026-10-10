@@ -139,9 +139,17 @@
 
 <!-- Barre mobile/tablette (<993px) : la sidebar cède la place à une barre fine + offcanvas -->
 <header class="mobile-topbar">
-  <a [routerLink]="isConnect() ? '/back-office' : '/'" class="mobile-topbar-logo">
-    <img src="image/LogoAppiField.png" alt="Logo AppiField" class="mobile-topbar-logo-img">
-  </a>
+  <!-- VERSION MOBILE : flèche ← + titre sur les pages secondaires, logo sur les pages principales -->
+  @if (backTitle() !== null) {
+    <button type="button" class="mobile-topbar-back" (click)="goBack()" aria-label="Revenir à la page précédente">
+      <i class="bi bi-arrow-left"></i>
+      <span class="mobile-topbar-title">{{ backTitle() }}</span>
+    </button>
+  } @else {
+    <a [routerLink]="isConnect() ? '/back-office' : '/'" class="mobile-topbar-logo">
+      <img src="image/LogoAppiField.png" alt="Logo AppiField" class="mobile-topbar-logo-img">
+    </a>
+  }
   <div class="mobile-topbar-actions">
     @if(isConnect()) {
       <a class="btn-mobile-icon" routerLink="/reglage" aria-label="Mon compte" title="Mon compte">
@@ -160,12 +168,33 @@
   </div>
 </header>
 
+<!-- VERSION MOBILE : barre de navigation du bas (connecté, < 993px). « Plus » ouvre le menu en panneau du bas. -->
+@if (isConnect()) {
+  <div class="mobile-tabbar" role="navigation" aria-label="Navigation principale">
+    <a routerLink="/back-office" class="mobile-tab" [class.active]="isRouteActive('/back-office')">
+      <i class="bi bi-house-door"></i><span>Accueil</span>
+    </a>
+    <a routerLink="/parcelles" routerLinkActive="active" class="mobile-tab">
+      <i class="bi bi-geo-alt"></i><span>Parcelles</span>
+    </a>
+    <a routerLink="/registre" routerLinkActive="active" class="mobile-tab">
+      <i class="bi bi-journal-richtext"></i><span>Carnet</span>
+    </a>
+    <a routerLink="/inventaire" routerLinkActive="active" class="mobile-tab">
+      <i class="bi bi-box-seam"></i><span>Inventaire</span>
+    </a>
+    <button type="button" class="mobile-tab" data-bs-toggle="offcanvas" data-bs-target="#mobileNavOffcanvas" aria-label="Plus de pages">
+      <i class="bi bi-three-dots"></i><span>Plus</span>
+    </button>
+  </div>
+}
+
 <!-- Ancien panneau "Menu utilisateur" (offcanvas) supprimé : Mon compte, CGU, Déconnexion et
      Admin sont dans la sidebar (desktop) et dans le menu mobile ci-dessous ; les contacts
      (téléphone, horaires, mail) sont sur la page "Besoin d'aide". -->
 
 <!-- Offcanvas Navigation mobile -->
-<div class="offcanvas offcanvas-start mobile-nav-offcanvas"
+<div class="offcanvas mobile-nav-offcanvas" [class.offcanvas-start]="!isConnect()" [class.offcanvas-bottom]="isConnect()"
      tabindex="-1"
      id="mobileNavOffcanvas"
      aria-labelledby="mobileNavOffcanvasLabel">
@@ -194,7 +223,7 @@
     }
     <nav class="mobile-nav-links">
       <a [routerLink]="isConnect() ? '/back-office' : '/'"
-         class="mobile-nav-link"
+         class="mobile-nav-link mobile-nav-link--main"
          [class.active]="isRouteActive('/back-office')"
          data-bs-dismiss="offcanvas">
         <i class="bi bi-house-door mobile-nav-icon"></i>
@@ -203,26 +232,27 @@
       @if(isConnect()) {
         <a routerLink="/parcelles"
            routerLinkActive="active"
-           class="mobile-nav-link"
+           class="mobile-nav-link mobile-nav-link--main"
            data-bs-dismiss="offcanvas">
           <i class="bi bi-geo-alt mobile-nav-icon"></i>
           <span class="mobile-nav-label">Parcelles</span>
         </a>
         <a routerLink="/registre"
            routerLinkActive="active"
-           class="mobile-nav-link"
+           class="mobile-nav-link mobile-nav-link--main"
            data-bs-dismiss="offcanvas">
           <i class="bi bi-journal-richtext mobile-nav-icon"></i>
           <span class="mobile-nav-label">Carnet de champ</span>
         </a>
         <a routerLink="/inventaire"
            routerLinkActive="active"
-           class="mobile-nav-link"
+           class="mobile-nav-link mobile-nav-link--main"
            data-bs-dismiss="offcanvas">
           <i class="bi bi-box-seam mobile-nav-icon"></i>
           <span class="mobile-nav-label">Inventaire</span>
         </a>
         @if (adminService.isAdmin()) {
+          <span class="usermenu-section-label mobile-nav-section">Administration</span>
           <a routerLink="/admin/formations"
              routerLinkActive="active"
              class="mobile-nav-link"
@@ -268,5 +298,12 @@
         </button>
       }
     </nav>
+    <!-- VERSION MOBILE : visiteur → accès direct à la connexion et à l'inscription -->
+    @if(!isConnect()) {
+      <div class="mobile-nav-cta">
+        <button type="button" class="mobile-nav-cta-btn mobile-nav-cta-btn--primary" data-bs-dismiss="offcanvas" (click)="goToConnexion()">Se connecter</button>
+        <a routerLink="/creation-compte" class="mobile-nav-cta-btn" data-bs-dismiss="offcanvas">Créer un compte</a>
+      </div>
+    }
   </div>
 </div>

@@ -30,6 +30,8 @@
                         <i class="bi bi-chevron-down add-menu-chevron"></i>
                     </button>
                     @if (isFabOpen) {
+                        <!-- VERSION MOBILE : fond assombri derrière le panneau « Ajouter » (masqué sur ordinateur) -->
+                        <div class="add-menu-backdrop" (click)="closeFab()"></div>
                         <div class="add-menu-list" role="menu">
                             <button type="button" class="add-menu-item" role="menuitem" (click)="onCulture(); closeFab()">
                                 <span class="add-menu-icon"><i class="bi bi-flower1"></i></span>
@@ -67,14 +69,14 @@
                             <button type="button" class="bouton-icon"><i class="bi bi-search"></i></button>
                         </div>
                         <div class="input-etendu">
-                            <input type="text" class="form-control ligne-etendue" placeholder="Rechercher une culture ou une parcelle..." [(ngModel)]="searchTerm" name="search">
+                            <input type="text" class="form-control ligne-etendue" placeholder="Rechercher une culture…" aria-label="Rechercher une culture ou une parcelle" [(ngModel)]="searchTerm" name="search">
                         </div>
                     </div>
                     <div class="controles-filtres">
                         <!-- Bouton de vue -->
                         <div class="dropdown-container" [class.open]="isViewMenuOpen">
                             <button type="button" class="btn-filtre" [class.btn-filtre--active]="!vueParCulture" (click)="toggleViewMenu(); $event.stopPropagation()" title="Changer de vue">
-                                <i class="bi bi-eye"></i>
+                                <i class="bi bi-eye"></i><span class="btn-filtre-label">Vue</span>
                             </button>
                             @if (isViewMenuOpen) {
                                 <div class="filter-popup-backdrop" (click)="closeAllMenus()">
@@ -103,7 +105,7 @@
                         <!-- Filtres par date -->
                         <div class="dropdown-container" [class.open]="isDateFilterOpen">
                             <button type="button" class="btn-filtre" [class.btn-filtre--active]="!!dateFilters.startDate || !!dateFilters.endDate" (click)="toggleDateFilter(); $event.stopPropagation()" title="Filtrer par dates">
-                                <i class="material-icons">calendar_month</i>
+                                <i class="material-icons">calendar_month</i><span class="btn-filtre-label">Dates</span>
                             </button>
                             @if (isDateFilterOpen) {
                                 <div class="filter-popup-backdrop" (click)="closeAllMenus()">
@@ -139,7 +141,7 @@
                         <!-- Filtres par parcelles -->
                         <div class="dropdown-container" [class.open]="isParcelFilterOpen">
                             <button type="button" class="btn-filtre" [class.btn-filtre--active]="parcelFilters.length > 0" (click)="toggleParcelFilter(); $event.stopPropagation()" title="Filtrer par parcelles">
-                                <i class="material-icons">location_on</i>
+                                <i class="material-icons">location_on</i><span class="btn-filtre-label">Parcelles</span>
                             </button>
                             @if (isParcelFilterOpen) {
                                 <div class="filter-popup-backdrop" (click)="closeAllMenus()">
@@ -180,7 +182,7 @@
                         <!-- Filtres par cultures -->
                         <div class="dropdown-container" [class.open]="isCultureFilterOpen">
                             <button type="button" class="btn-filtre" [class.btn-filtre--active]="cultureFilters.length > 0" (click)="toggleCultureFilter(); $event.stopPropagation()" title="Filtrer par cultures">
-                                <i class="material-icons">grass</i>
+                                <i class="material-icons">grass</i><span class="btn-filtre-label">Cultures</span>
                             </button>
                             @if (isCultureFilterOpen) {
                                 <div class="filter-popup-backdrop" (click)="closeAllMenus()">
@@ -339,7 +341,7 @@
                     </div>
                 }
 
-                <div class="ajouterUneCulture popup-container popup-container--wide" [class.fade-out]="showCultureSuccessAnimation()">
+                <div class="ajouterUneCulture popup-container popup-container--wide popup-sheet-mobile" [class.fade-out]="showCultureSuccessAnimation()">
                     <div class="header popup-header">
                         <div class="header-top">
                             <div class="header-title">
@@ -477,7 +479,7 @@
                     </div>
                 }
 
-                <div class="ajouterTravailAuChamp popup-container popup-container--wide" [class.fade-out]="showFieldWorkSuccessAnimation()">
+                <div class="ajouterTravailAuChamp popup-container popup-container--wide popup-sheet-mobile" [class.fade-out]="showFieldWorkSuccessAnimation()">
                     <div class="header popup-header">
                         <div class="header-top">
                             <div class="header-title">
@@ -640,7 +642,7 @@
                     </div>
                 }
 
-                <div class="ajouterTraitementPhyto popup-container popup-container--wide" [class.fade-out]="showTreatmentSuccessAnimation()">
+                <div class="ajouterTraitementPhyto popup-container popup-container--wide popup-sheet-mobile" [class.fade-out]="showTreatmentSuccessAnimation()">
                     <div class="header popup-header">
                         <div class="header-top">
                             <div class="header-title">

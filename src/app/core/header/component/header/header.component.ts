@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, HostListener } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { SharedModule } from '../../../../shared/shared.module';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AdminService } from '../../../services/admin.service';
 import { MandatWorkspaceService } from '../../../services/mandat-workspace.service';
@@ -42,8 +43,59 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: Router,
     private http: HttpClient,
     public adminService: AdminService,
-    public mandatWorkspace: MandatWorkspaceService
-  ) {}
+    public mandatWorkspace: MandatWorkspaceService,
+    private location: Location
+  ) {
+    // Nombre de pages vues dans l'application : la flèche ← revient en arrière seulement s'il
+    // existe une page précédente dans l'app (sinon elle ramène à l'accueil).
+    this.route.events.pipe(takeUntil(this.destroy$)).subscribe(e => {
+      if (e instanceof NavigationEnd) this.navCount++;
+    });
+  }
+
+  // ===== VERSION MOBILE : flèche ← et titre dans la barre du haut sur les pages secondaires =====
+  private navCount = 0;
+  private static readonly MAIN_PAGES = ['/', '/back-office', '/parcelles', '/registre', '/inventaire'];
+  // Parcours d'inscription guidé (onglet 7 mobile) : logo au lieu de la flèche ←, pour terminer
+  // l'inscription avant d'accéder au reste de l'application.
+  private static readonly ONBOARDING_PAGES = ['/creation-compte/creation-compte-info-personel', '/gestion-des-operations'];
+  private static readonly PAGE_TITLES: [string, string][] = [
+    ['/creation-compte/creation-compte-info-personel', 'Finaliser mon inscription'],
+    ['/connexion/creation_compte', 'Créer un compte'],
+    ['/connexion/mis_a_jour', 'Mot de passe oublié'],
+    ['/connexion/recuperer_mot_de_passe', 'Code de récupération'],
+    ['/connexion/modifier_mot_de_passe', 'Nouveau mot de passe'],
+    ['/connexion/validation', 'Validation du compte'],
+    ['/connexion', 'Connexion'],
+    ['/creation-compte', 'Créer un compte'],
+    ['/parcelles/voir-parcelles', 'Ma carte'],
+    ['/registre/archives', 'Mes archives'],
+    ['/admin/formations', 'Formations'],
+    ['/admin/phytoweb-categories', 'Catégories Phytoweb'],
+    ['/gestion-des-operations', 'Mes opérateurs'],
+    ['/mes-preferences', 'Mes préférences'],
+    ['/reglage', 'Mon compte'],
+    ['/compte', 'Mon compte'],
+    ['/faq', "Besoin d'aide"],
+    ['/cgu', "Conditions d'utilisation"],
+    ['/erreur', 'Page introuvable'],
+  ];
+
+  /** Titre affiché à côté de la flèche ←, ou null sur une page principale (logo affiché). */
+  backTitle(): string | null {
+    const path = this.route.url.split(/[?#]/)[0] || '/';
+    if (HeaderComponent.MAIN_PAGES.includes(path) || HeaderComponent.ONBOARDING_PAGES.includes(path)) return null;
+    const hit = HeaderComponent.PAGE_TITLES.find(([p]) => path === p || path.startsWith(p + '/'));
+    return hit ? hit[1] : '';
+  }
+
+  goBack(): void {
+    if (this.navCount > 1) { this.location.back(); return; }
+    // Ouverte directement : page parente si elle existe (Ma carte → Parcelles, Archives → Carnet)
+    const path = this.route.url.split(/[?#]/)[0];
+    const parent: Record<string, string> = { '/parcelles/voir-parcelles': '/parcelles', '/registre/archives': '/registre' };
+    this.route.navigateByUrl(parent[path] ?? (this.isConnect() ? '/back-office' : '/'));
+  }
 
   ngOnInit(): void {
     this.applySidebarWidthVar();

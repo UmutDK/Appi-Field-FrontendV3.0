@@ -1,4 +1,5 @@
 ﻿import { Component, EventEmitter, inject, OnInit, OnDestroy, Output, Input, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { generateUUID } from '../../../shared/utils/uuid.util';
 import { SharedModule } from '../../../shared/shared.module';
 import { BehaviorSubject, combineLatest, concatMap, map, Observable, shareReplay, Subject, take, takeUntil } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -409,6 +410,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
   setGroupByMode(mode: 'phytoweb' | 'culture' | 'parcelle'): void {
     this.groupByMode = mode;
     this.expandedGroupsOnMobile.clear();
+    this.mobileGroupsTouched = false; // VERSION MOBILE : le 1er groupe du nouveau regroupement s'ouvre
     this.displayGroupsSubject.next(this.buildDisplayGroups(this.rawAssociations, this.groupByMode));
   }
 
@@ -487,6 +489,12 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
    * 📱 Toggle l'expansion d'un groupe de cultures sur mobile
    */
   toggleGroupOnMobile(groupId: string): void {
+    // VERSION MOBILE : au premier appui, on part de l'état affiché (1er groupe ouvert)
+    if (!this.mobileGroupsTouched) {
+      this.mobileGroupsTouched = true;
+      const first = this.parcelCultureGroupsData?.[0]?.groupKey;
+      if (first && this.expandedGroupsOnMobile.size === 0) this.expandedGroupsOnMobile.add(first);
+    }
     if (this.expandedGroupsOnMobile.has(groupId)) {
       this.expandedGroupsOnMobile.delete(groupId);
     } else {
@@ -498,8 +506,15 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
    * 📱 Vérifie si un groupe est ouvert sur mobile
    */
   isGroupExpandedOnMobile(groupId: string): boolean {
+    // VERSION MOBILE : tant que l'utilisateur n'a ouvert/fermé aucun groupe, le 1er est ouvert
+    if (!this.mobileGroupsTouched && this.expandedGroupsOnMobile.size === 0) {
+      return groupId === this.parcelCultureGroupsData?.[0]?.groupKey;
+    }
     return this.expandedGroupsOnMobile.has(groupId);
   }
+
+  /** VERSION MOBILE : vrai dès que l'utilisateur a ouvert ou fermé un groupe lui-même. */
+  private mobileGroupsTouched = false;
 
   // Méthode pour déterminer si le bouton Valider fixe devrait être visible
   shouldShowValidateButton(): boolean {
@@ -611,7 +626,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
     const baseFormData = {
       event_id: this.isModificationMode && this.workToModify ? 
         (this.workToModify.event_id || this.workToModify.travaux_aux_champs_id) : 
-        crypto.randomUUID().substring(0, 8),
+        generateUUID().substring(0, 8),
       type: "Fertilisation",
       date: this.formFertilisation.value.date,
       informations: this.formFertilisation.value.informations,
@@ -682,7 +697,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
     const formData = {
       event_id: this.isModificationMode && this.workToModify ? 
         (this.workToModify.event_id || this.workToModify.travaux_aux_champs_id) : 
-        crypto.randomUUID().substring(0, 8),
+        generateUUID().substring(0, 8),
       type: "Irrigation",
       date: this.irrigation.value.date,
       dose: this.irrigation.value.dose,
@@ -743,7 +758,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
     const formData = {
       event_id: this.isModificationMode && this.workToModify ? 
         (this.workToModify.event_id || this.workToModify.travaux_aux_champs_id) : 
-        crypto.randomUUID().substring(0, 8),
+        generateUUID().substring(0, 8),
       type: "Récolte",
       date: this.recolte.value.harvest_date,
       harvest_date: this.recolte.value.harvest_date,
@@ -803,7 +818,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
     const formData = {
       event_id: this.isModificationMode && this.workToModify ? 
         (this.workToModify.event_id || this.workToModify.travaux_aux_champs_id) : 
-        crypto.randomUUID().substring(0, 8),
+        generateUUID().substring(0, 8),
       type: "Observation",
       date: this.observation.value.dateDeLobservation,
       observation: this.observation.value.Observation,
@@ -862,7 +877,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
     const baseFormData = {
       event_id: this.isModificationMode && this.workToModify ? 
         (this.workToModify.event_id || this.workToModify.travaux_aux_champs_id) : 
-        crypto.randomUUID().substring(0, 8),
+        generateUUID().substring(0, 8),
       type: "Travail du sol",
       date: this.travailDuSol.value.date,
       field_work_type: this.travailDuSol.value.field_work_type,

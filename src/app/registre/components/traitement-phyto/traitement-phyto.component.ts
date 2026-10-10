@@ -2723,6 +2723,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   setGroupByMode(mode: 'phytoweb' | 'culture' | 'parcelle'): void {
     this.groupByMode = mode;
     this.expandedGroupsOnMobile.clear();
+    this.mobileGroupsTouched = false; // VERSION MOBILE : le 1er groupe du nouveau regroupement s'ouvre
     this.displayGroupsSubject.next(this.buildDisplayGroups(this.rawAssociations, this.groupByMode));
   }
 
@@ -2754,6 +2755,12 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   }
 
   toggleGroupOnMobile(groupId: string): void {
+    // VERSION MOBILE : au premier appui, on part de l'état affiché (1er groupe ouvert)
+    if (!this.mobileGroupsTouched) {
+      this.mobileGroupsTouched = true;
+      const first = this.parcelCultureGroupsData?.[0]?.groupKey;
+      if (first && this.expandedGroupsOnMobile.size === 0) this.expandedGroupsOnMobile.add(first);
+    }
     if (this.expandedGroupsOnMobile.has(groupId)) {
       this.expandedGroupsOnMobile.delete(groupId);
     } else {
@@ -2765,8 +2772,15 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
    * 📱 Vérifie si un groupe est ouvert sur mobile
    */
   isGroupExpandedOnMobile(groupId: string): boolean {
+    // VERSION MOBILE : tant que l'utilisateur n'a ouvert/fermé aucun groupe, le 1er est ouvert
+    if (!this.mobileGroupsTouched && this.expandedGroupsOnMobile.size === 0) {
+      return groupId === this.parcelCultureGroupsData?.[0]?.groupKey;
+    }
     return this.expandedGroupsOnMobile.has(groupId);
   }
+
+  /** VERSION MOBILE : vrai dès que l'utilisateur a ouvert ou fermé un groupe lui-même. */
+  private mobileGroupsTouched = false;
 
   /**
    * Transfert simple des données temporaires vers final et passage à l'étape suivante

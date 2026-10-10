@@ -1,4 +1,13 @@
 {
+  "/api-local": {
+    "target": "http://localhost:5000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "warn",
+    "pathRewrite": {
+      "^/api-local": ""
+    }
+  },
   "/api/*": {
     "target": "https://appifield.corderapp.be",
     "secure": true,
@@ -26,7 +35,7 @@
     "changeOrigin": true,
     "logLevel": "debug"
   },
-  "/userkey/*": {
+  "/userkey": {
     "target": "https://userkey.corderapp.be",
     "secure": true,
     "changeOrigin": true,

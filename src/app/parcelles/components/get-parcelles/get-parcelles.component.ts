@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, inject, OnInit, OnDestroy, signal, computed, ChangeDetectorRef, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { generateUUID } from '../../../shared/utils/uuid.util';
 import { parsePolygoneToLatLngs as parseLatlngs } from '../../../shared/utils/lambert72.util';
 import { buildParcelPopupHtml } from '../../../shared/utils/parcel-popup.util';
 import { SharedModule } from '../../../shared/shared.module';
 import * as L from 'leaflet';
+import { NgZone } from '@angular/core';
 import 'leaflet-draw';
 import { ParcellesService, Parcelle, fromApi } from '../../services/parcelles-server.service';
 import { RegistreService } from '../../../registre/services/registre.service';
@@ -29,6 +31,53 @@ declare var M : any;
 export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private map!: L.Map;
+
+  // ===== VERSION MOBILE : panneau « Ajouter » et « Ma position » =====
+  mobileAddSheetOpen = false;
+  locating = false;
+  locateMessage = '';
+  private locateZone = inject(NgZone);
+  private locateMessageTimer?: ReturnType<typeof setTimeout>;
+  private userLocationLayer?: L.LayerGroup;
+
+  /**
+   * « Ma position » : centre la carte sur la position du téléphone (API de localisation du
+   * navigateur). Rien n'est envoyé au serveur. Ne fonctionne que sur une adresse sécurisée
+   * (https, localhost ou application installée).
+   */
+  locateMe(): void {
+    if (!('geolocation' in navigator) || !window.isSecureContext) {
+      this.showLocateMessage("La localisation n'est pas disponible sur cette adresse (elle demande une connexion sécurisée https).");
+      return;
+    }
+    this.locating = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => this.locateZone.run(() => {
+        this.locating = false;
+        const here = L.latLng(pos.coords.latitude, pos.coords.longitude);
+        this.userLocationLayer?.remove();
+        this.userLocationLayer = L.layerGroup([
+          L.circle(here, { radius: pos.coords.accuracy, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: 0.12, interactive: false }),
+          L.circleMarker(here, { radius: 8, color: '#ffffff', weight: 3, fillColor: '#1a73e8', fillOpacity: 1 }).bindTooltip('Vous êtes ici'),
+        ]).addTo(this.map);
+        this.map.setView(here, Math.max(this.map.getZoom(), 16));
+      }),
+      (err) => this.locateZone.run(() => {
+        this.locating = false;
+        this.showLocateMessage(
+          err.code === err.PERMISSION_DENIED ? "Autorisez la localisation pour Appi'Field dans les réglages du téléphone, puis réessayez."
+          : err.code === err.TIMEOUT ? 'La localisation prend trop de temps. Réessayez dans un instant.'
+          : 'Position introuvable pour le moment. Réessayez dans un instant.');
+      }),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+    );
+  }
+
+  private showLocateMessage(msg: string): void {
+    this.locateMessage = msg;
+    clearTimeout(this.locateMessageTimer);
+    this.locateMessageTimer = setTimeout(() => this.locateZone.run(() => this.locateMessage = ''), 6000);
+  }
   private tilesLayers: L.LayerGroup = new L.LayerGroup(); // Pour les vraies tuiles map_tiles/
   private parcellesLayer: L.LayerGroup = new L.LayerGroup(); // Pour les points parcelles
   private tilesLayerGroup: L.LayerGroup | null = null;
@@ -850,7 +899,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
    * Générer un UUID v4
    */
   private generateUUID(): string {
-    return crypto.randomUUID();
+    return generateUUID();
   }
 
   /**

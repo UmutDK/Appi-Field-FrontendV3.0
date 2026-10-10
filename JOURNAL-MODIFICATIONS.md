@@ -451,6 +451,108 @@ Les deux pages redirigent quand le compte est déjà complet → test avec répo
 
 ---
 
+## 29. Version mobile — onglet 1 « pages sans connexion » (09/10/2026)
+
+Test sur 5 appareils simulés (Android 360, iPhone 390 et 430, tablette portrait et paysage), écran tactile. Aucun défilement horizontal. Toutes les corrections et propositions appliquées à la demande de l'utilisateur, **pour essai** (retour arrière prévu). Uniquement sous 993px : la version ordinateur ne change pas.
+- 🆕 [src/styles/_mobile.scss](src/styles/_mobile.scss) — tout le CSS mobile, chargé par une ligne de [styles.scss](src/styles.scss) : champs en 16px, barre du haut 56px, menu en panneau de 85% (fond assombri qui le ferme), boutons de 48px, pied de page compact, zones tactiles ≥ 44px, petits textes à 14px ; sous 576px : pages sans cadre, titre d'accueil 28px, lien « Mot de passe oublié ? » sous le champ.
+- 🔵 [header.component.html](src/app/core/header/component/header/header.component.html) — « Se connecter » / « Créer un compte » en bas du menu pour les visiteurs.
+- 🔵 Remplissage automatique (`autocomplete`, clavier e-mail) : [connexion](src/app/core/auth/components/auth/auth.component.html), [création de compte](src/app/core/auth/components/creation/creation.component.html), [mot de passe oublié](src/app/core/auth/components/mdp-oublie/mdp-oublie.component.html), [nouveau mot de passe](src/app/core/auth/components/modifier-mdp/modifier-mdp.component.html).
+- ℹ️ Le zoom iPhone sur les champs était déjà évité sur un vrai iPhone (règle iOS de styles.scss) ; signalé à tort par la simulation.
+
+**Suite après essai sur téléphone (09/10/2026)** — sauvegarde `sauvegardes-mobile\onglet1b-avant\` :
+- 🐞 **« Créer un compte » ne s'affichait pas sur téléphone** (accord de l'utilisateur, logique) : `crypto.randomUUID()` n'existe pas sur une adresse non sécurisée (http://192.168.x.x) ni avant iOS 15.4 → le service plantait. Nouveau [uuid.util.ts](src/app/shared/utils/uuid.util.ts) (`generateUUID()`, même format) utilisé dans [creation.service.ts](src/app/core/auth/services/creation.service.ts), [parcelles](src/app/parcelles/components/parcelles/parcelles.component.ts), [get-parcelles](src/app/parcelles/components/get-parcelles/get-parcelles.component.ts), [travail-au-champ](src/app/registre/components/travail-au-champ/travail-au-champ.component.ts).
+- 🔵 « Retour en haut » (rond sarcelle, flèche ↑) sur **toutes les pages**, téléphone et ordinateur : placé une fois dans [app.component.html](src/app/app.component.html), retiré de la FAQ et des CGU.
+- 🔵 Mobile : flèche **←** + titre de la page dans la barre du haut sur les pages secondaires (logo sur Accueil, Parcelles, Carnet, Inventaire) — [header.component.ts/html](src/app/core/header/component/header/) ; retour à la page précédente, ou à l'accueil si la page a été ouverte directement.
+
+**Retour arrière :** retirer `@use 'styles/mobile';` de styles.scss ; fichiers HTML d'origine dans `Desktop\Appi'Field\sauvegardes-mobile\onglet1-avant\` et `onglet1b-avant\`.
+
+---
+
+## 30. Version mobile — onglet 2 « navigation connectée + accueil connecté » (09/10/2026)
+
+D'après la [maquette validée](https://claude.ai/artifact/9wHK8CinobkNap2J8i7w9Q), pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet2-avant\`.
+- 🔵 **Barre de navigation du bas** (connecté, < 993px) : Accueil, Parcelles, Carnet, Inventaire, Plus — [header.component.html](src/app/core/header/component/header/header.component.html). Le ☰ du haut disparaît une fois connecté.
+- 🔵 **Menu « Plus »** en panneau blanc qui monte du bas : Mon compte, aide, conditions, section « Administration », déconnexion (les 4 pages principales n'y sont plus).
+- 🔵 **Popups en panneau du bas** : classe réutilisable `.popup-sheet-mobile`, appliquée d'abord à « Nouvel opérateur » ([back-office](src/app/back-office/components/back-office/back-office.component.html)).
+- 🔵 **Accueil** (< 768px) : chiffres clés sur une ligne, accès rapide en grille 2×2 avec 2 raccourcis mobiles « Encoder un traitement » et « Exporter le registre » (ouvrent directement la popup du carnet : [registre.component.ts](src/app/registre/components/registre/registre.component.ts), paramètre `?action=`) ; carte en aperçu (un doigt fait défiler la page) avec « Voir toutes mes parcelles » posé dessus ([back-office.component.ts](src/app/back-office/components/back-office/back-office.component.ts)) ; titres des sections visibles sous la barre après un raccourci ; zones tactiles 44px.
+- 🔧 **Test sur téléphone** : [environment.development.ts](src/environments/environment.development.ts) `apiRegistre: '/api-local'` + entrée `/api-local` dans [proxy.conf.json](proxy.conf.json) (→ localhost:5000). Développement uniquement ; redémarrer `ng serve`.
+- Styles : section « ONGLET 2 » de [_mobile.scss](src/styles/_mobile.scss).
+
+---
+
+## 31. Version mobile — onglet 3 « Mon compte » (09/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet3-avant\`. Styles : section « ONGLET 3 » de [_mobile.scss](src/styles/_mobile.scss). Re-test : 41/41 (3 appareils mobiles + version ordinateur), aucune écriture envoyée.
+- 🐞 **Popups « Nouvel opérateur » / « Nouveau fertilisant » décalées vers le bas** (téléphone **et ordinateur**, bug antérieur) : leur fond porte la classe `.modal-overlay`, que Materialize stylise aussi (`height: 125%`) → corrigé pour toutes les tailles d'écran.
+- 🔵 Ces deux formulaires en **panneau du bas** sur mobile ([create-user](src/app/reglage/components/create-user/create-user.component.html), [personal-products](src/app/reglage/components/personal-products/personal-products.component.html)).
+- 🔵 Mobile : grand titre masqué (déjà dans la barre du haut) ; sections en **pastilles** compactes collées sous la barre du haut au défilement ; **« Enregistrer » collé en bas** au-dessus de la barre de navigation (Infos perso, Exploitation, Mot de passe) ; sections sans cadre sous 576px ; zones tactiles 44px ; libellés de la barre du bas en 12px.
+- 🔵 Claviers / remplissage : numéro d'exploitant et TVA en clavier numérique, mots de passe (`current-password` / `new-password`), e-mail des mandats ([infos-perso](src/app/reglage/components/infos-perso/infos-perso.component.html), [infos-exploitation](src/app/reglage/components/infos-exploitation/infos-exploitation.component.html), [password](src/app/reglage/components/password/password.component.html), [mandats](src/app/reglage/components/mandats/mandats.component.html)). Phytolicence laissée en clavier texte (bug d'audit n°10 à trancher).
+
+---
+
+## 32. Version mobile — onglet 4 « Parcelles + Ma carte » (09/10/2026)
+
+D'après la [maquette validée](https://claude.ai/artifact/Q7ibQXu4wkiddUe4ybxDiY), pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet4-avant\`. Styles : section « ONGLET 4 » de [_mobile.scss](src/styles/_mobile.scss). Re-test : 57 contrôles OK, aucune écriture envoyée ; version ordinateur inchangée.
+- 🔵 **Parcelles** ([parcelles.component.html](src/app/parcelles/components/parcelles/parcelles.component.html)) : chiffres sur une ligne ; « Ajouter une parcelle » → **bouton rond +** en bas à droite, choix en panneau du bas (fond assombri qui ferme) ; « Supprimer la sélection » seulement quand une parcelle est cochée ; filtres et crayon 44px ; popup en panneau du bas, « Supprimer la parcelle » en contour rouge après « Mettre à jour ».
+- 🐞 **Ma carte recouvrait les barres du haut et du bas** (mode plein écran) → la carte se place entre les deux ; la flèche ← remplace « Quitter le mode carte » (retour à Parcelles même si la page a été ouverte directement — [header.component.ts](src/app/core/header/component/header/header.component.ts)).
+- 🔵 **Ma carte** ([get-parcelles.component.html](src/app/parcelles/components/get-parcelles/get-parcelles.component.html)) : recherche pleine largeur, Satellite en bouton rond ; les 5 gros boutons remplacés par **« + Ajouter »** et un panneau du bas (Tracer un polygone, Placer un point, Par adresse, Parcellaire PAC, chacun expliqué) ; barre « Terminer / Annuler » du tracé au-dessus de la barre du bas ; les 5 popups en panneau du bas.
+- 🆕 **« Ma position »** ([get-parcelles.component.ts](src/app/parcelles/components/get-parcelles/get-parcelles.component.ts), `locateMe()`) : centre la carte sur la position du téléphone (point bleu + cercle de précision). Aucun appel serveur. Fonctionne en https / localhost / application installée ; message clair si refusée ou sur une adresse non sécurisée (http://192.168.x.x). Pour les stores : texte d'autorisation de localisation à prévoir.
+
+---
+
+## 33. Version mobile — onglet 5 « Inventaire » (09/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet5-avant\`. Styles : section « ONGLET 5 » de [_mobile.scss](src/styles/_mobile.scss). Re-test : 32/32, aucune écriture envoyée ; version ordinateur inchangée. (Base locale : un seul produit.)
+- 🔵 La barre flottante « PPNU & PPNV / Achat PPP », qui cachait le graphique et l'historique, est remplacée par le **bouton rond +** (choix en panneau du bas) — [accueil-inventaire.component.html](src/app/inventaire/components/accueil-inventaire/accueil-inventaire.component.html).
+- 🔵 Popups PPNU et Achat en **panneau du bas** (règle étendue aux popups à fond `#overlay`, utile aussi pour le Carnet).
+- 🔵 Fiche du produit : graphique plus petit, **4 chiffres en grille 2 × 2** (valeur au-dessus du libellé) ; « Afficher en mL » et « Exporter » 44px.
+- 🔵 Sous 576px : **historique et PPNU en cartes** (plus de défilement de côté, en-têtes de 10,5px supprimés) ; choix du produit sans cadre, juste sous le titre (26px, une ligne) ; liste des produits limitée en hauteur.
+- 🔵 Pages avec bouton + : le pied de page laisse la place au bouton (logo CORDER visible).
+
+---
+
+## 34. Version mobile — onglet 6a « Carnet : page, cultures, détail, popup Culture » (09/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet6a-avant\`. Styles : section « ONGLET 6a » de [_mobile.scss](src/styles/_mobile.scss). Re-test avec 6 cultures (5 de test) : 26/26, aucune écriture envoyée ; version ordinateur inchangée.
+- 🔵 La barre flottante « Culture / Traitement phyto / Travail au champ », qui cachait les interventions, est remplacée par le **bouton rond +** (choix en panneau du bas) ; le « retour en haut » commun revient sur le Carnet.
+- 🔵 **Filtres en pastilles avec texte** (Vue, Dates, Parcelles, Cultures) sur une ligne qui défile de côté ; recherche sans cadre, texte d'exemple « Rechercher une culture… » — [registre.component.html](src/app/registre/components/registre/registre.component.html).
+- 🔵 **Cartes de culture compactes** : nom + pastilles (catégorie, parcelles) ; interventions en **liste** (date, parcelle, type en pastille, détail) au lieu d'un tableau coupé.
+- 🔵 **Détail d'une culture en panneau du bas** ([culture-detail-popup](src/app/registre/components/culture-detail-popup/culture-detail-popup.component.html)) : historique en cartes (parcelle lisible, plus de « U… »), crayon 44px, « Modifier la culture » en grand puis « Archiver » et « Supprimer » côte à côte.
+- 🔵 **Popup « Ajouter une culture » en panneau du bas.**
+- Données de test locales « TEST-CLAUDE » (5 cultures, 10 travaux) : `scratchpad/pw/seed-carnet.js clean` pour les supprimer.
+
+---
+
+## 35. Version mobile — onglet 6b « Travail au champ » (09/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet6b-avant\`. Styles : section « ONGLET 6b » de [_mobile.scss](src/styles/_mobile.scss). Re-test : 25/25, aucune écriture envoyée ; version ordinateur inchangée.
+- 🔵 Popup en **panneau du bas** (94 % de l'écran), titre 20px sur une ligne, croix 40px, toucher le fond ferme.
+- 🔵 Écran « Type » : les **5 types visibles sans défiler**.
+- 🔵 Écran « Parcelles » : **1er groupe ouvert automatiquement** ([travail-au-champ.component.ts](src/app/registre/components/travail-au-champ/travail-au-champ.component.ts), accord de l'utilisateur) ; titres de groupe 16px, « Tout sélectionner » sous le titre, cases 22px, boutons de regroupement 44px sur une ligne.
+- 🔵 Formulaires : date en pleine largeur (elle était coupée), quantité + unité côte à côte ; pied « Précédent » + « Valider » sur une ligne.
+
+---
+
+## 36. Version mobile — onglet 6c « Traitement phyto, Export, Mes archives » (10/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet6c-avant\`. Styles : section « ONGLET 6c » de [_mobile.scss](src/styles/_mobile.scss). Re-test : 33/33, aucune écriture envoyée ; version ordinateur inchangée. (La culture de test « TEST-CLAUDE Colza » a été archivée le temps du test puis restaurée.)
+- 🔵 **Traitement phyto** : panneau du bas (94 %), titre 20px, croix 40px, « Précédent » + « Valider » côte à côte, toucher le fond ferme ; groupes de parcelles lisibles avec **1er groupe ouvert automatiquement** ([traitement-phyto.component.ts](src/app/registre/components/traitement-phyto/traitement-phyto.component.ts), même logique que Travail au champ, accord de l'utilisateur) ; cartes de fertilisant compactes, poubelle 44px.
+- 🔵 **Export** ([export-popup.component.html](src/app/registre/components/export-popup/export-popup.component.html)) : panneau du bas, listes en taille normale, « Toutes / Actives / Archivées » 44px, « Annuler » + « Exporter » côte à côte.
+- 🔵 **Mes archives** : grand titre et « Retour au carnet de champ » masqués sur mobile (déjà dans la barre du haut), recherche sans cadre, **archives en cartes** (collection + Restaurer, puis nom en entier et date).
+
+---
+
+## 37. Version mobile — onglet 7 « Finaliser mon inscription + Gestion des opérateurs » (10/10/2026)
+
+Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\onglet7-avant\`. Styles : section « ONGLET 7 » de [_mobile.scss](src/styles/_mobile.scss). Re-test (compte neuf simulé, aucune écriture) : 36/36 ; version ordinateur inchangée.
+- 🔵 **Parcours d'inscription guidé** : sur ces deux pages, plus de barre du bas, de flèche ← ni d'icône « Mon compte » (logo à la place) — [header.component.ts](src/app/core/header/component/header/header.component.ts), liste `ONBOARDING_PAGES`. L'utilisateur termine son inscription avant d'accéder au reste.
+- 🔵 Haut de page allégé (titre 28px sur une ligne, icône 40px) ; **« Suivant » / « Terminer » collés en bas de l'écran**.
+- 🔵 Opérateurs : poubelle 44px, phytolicence 13px, nom long sur 2 lignes.
+
+**✅ Version mobile : les 7 onglets sont faits (sections 29 à 37).** Suite prévue : re-test mobile global + essai sur téléphone, points en attente, commit, nettoyage, PWA, configuration de production, Capacitor, stores.
+
+---
+
 ## 27. Bugs connus, non corrigés (audit du 28/09/2026)
 
 1. ✅ *Corrigé le 03/10/2026 (26d).* **Mon compte — nom/prénom :** sauvegarde « fire-and-forget » (`MonProfilService.updateMonProfil`) → succès affiché même en cas d'échec ; nom de la sidebar pas mis à jour avant reconnexion.

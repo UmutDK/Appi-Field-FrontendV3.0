@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { generateUUID } from '../../../shared/utils/uuid.util';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Creation } from '../model/creation';
@@ -17,14 +18,14 @@ export class CreationService {
     // Génération du premier nombre (4 chiffres)
     const startNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     // Génération de l'UUID SANS LES TIRETS pour éviter les problèmes de parsing
-    const uuidWithHyphens = crypto.randomUUID();
+    const uuidWithHyphens = generateUUID();
     const uuidNoHyphens = uuidWithHyphens.replace(/-/g, '');
     // Génération du dernier nombre (4 chiffres)
     const endNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     // Formatage complet: STARTNUM-UUIDNOHYPHENS-ENDNUM (exemple: 9366-4020c9dda1204c2db26e5e2a0b5f1e9a-1205)
     this.id_User = `${startNum}-${uuidNoHyphens}-${endNum}`;
     
-    this.token = crypto.randomUUID().substring(0,99);
+    this.token = generateUUID().substring(0,99);
   }
 
   postGreate(form:{ Prenom:string, Nom:string, Mail:string, Confirmation_Mail:string, Mot_De_Passe:string, Confirmation_Mot_De_Passe:string, Date_De_Naissance:string, Sex:string }):Observable<Creation[]>{

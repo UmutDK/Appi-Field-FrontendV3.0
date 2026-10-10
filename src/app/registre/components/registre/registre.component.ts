@@ -10,7 +10,7 @@ import { TraitementPhytoComponent } from "../traitement-phyto/traitement-phyto.c
 import { ExportPopupComponent, ExportFilters } from "../export-popup/export-popup.component";
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 declare function popTelechargerment():any;
 
@@ -112,6 +112,7 @@ export class RegistreComponent implements AfterViewInit, OnInit, OnDestroy{
   private cdr = inject(ChangeDetectorRef);
   private httpClient = inject(HttpClient);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
 
   private parcelUpdateEffect = effect(() => {
@@ -179,6 +180,13 @@ export class RegistreComponent implements AfterViewInit, OnInit, OnDestroy{
     // PRÉCHARGEMENT : Charger immédiatement les données critiques au démarrage
     this.preloadCriticalData();
     this.loadFilterData();
+
+    // VERSION MOBILE : raccourcis de l'accueil (/registre?action=traitement | export) → ouvre la
+    // popup correspondante, puis retire le paramètre de l'adresse.
+    const action = this.activatedRoute.snapshot.queryParamMap.get('action');
+    if (action === 'traitement') setTimeout(() => this.onTraitement());
+    else if (action === 'export') setTimeout(() => this.exportCarnetChamp());
+    if (action) this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: {}, replaceUrl: true });
   }
 
   // Préchauffer le cache pour les données non chargées par loadFilterData

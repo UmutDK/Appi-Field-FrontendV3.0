@@ -26,6 +26,8 @@
                     <i class="bi bi-chevron-down add-menu-chevron"></i>
                 </button>
                 @if (isFabOpen) {
+                    <!-- VERSION MOBILE : fond assombri derrière le panneau « Ajouter » (masqué sur ordinateur) -->
+                    <div class="add-menu-backdrop" (click)="closeFab()"></div>
                     <div class="add-menu-list" role="menu">
                         <button type="button" class="add-menu-item" role="menuitem" (click)="onAddPpnu(); closeFab()">
                             <span class="add-menu-icon"><i class="bi bi-recycle"></i></span>
@@ -576,7 +578,7 @@
             @if (popInventaire === "PPNU - PPNV") {
                 <div class="ajouter">
                     <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
-                        <div class="ajouterUneCulture popup-container">
+                        <div class="ajouterUneCulture popup-container popup-sheet-mobile">
                             <div class="popup-header">
                                 <div class="header-title">
                                     <i class="bi bi-recycle"></i>
@@ -593,7 +595,7 @@
             }@else if (popInventaire === "Achat de PPP") {
                 <div class="ajouter">
                     <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
-                        <div class="ajouterUneCulture popup-container">
+                        <div class="ajouterUneCulture popup-container popup-sheet-mobile">
                             <div class="popup-header">
                                 <div class="header-title">
                                     <i class="bi bi-cart-plus"></i>

@@ -46,13 +46,21 @@
             <div class="dashboard-col-left">
                 <h2 class="dashboard-section-label">Accès rapide</h2>
 
-                <a routerLink="/registre" class="quick-access-card">
+                <a routerLink="/registre" class="quick-access-card quick-access-card--desktop">
                     <span class="quick-access-icon"><i class="bi bi-journal-text"></i></span>
                     <span class="quick-access-body">
                         <span class="quick-access-title">Gérer mon carnet de champ</span>
                         <span class="quick-access-desc">Encodage de vos traitements phytos, sauvegarde de vos observations, export de documents conformes légalement.</span>
                     </span>
                     <i class="bi bi-chevron-right quick-access-chevron"></i>
+                </a>
+
+                <!-- VERSION MOBILE : raccourcis de la maquette (masqués sur ordinateur) -->
+                <a routerLink="/registre" [queryParams]="{ action: 'traitement' }" class="quick-access-card quick-access-card--mobile">
+                    <span class="quick-access-icon"><i class="bi bi-droplet-half"></i></span>
+                    <span class="quick-access-body">
+                        <span class="quick-access-title">Encoder un traitement</span>
+                    </span>
                 </a>
 
                 <a routerLink="/inventaire" class="quick-access-card">
@@ -74,6 +82,13 @@
                 </a>
 
                 <!-- <div> et non <nav> : Materialize stylise globalement tout <nav> (fond rouge, hauteur 64px) -->
+                <a routerLink="/registre" [queryParams]="{ action: 'export' }" class="quick-access-card quick-access-card--mobile">
+                    <span class="quick-access-icon"><i class="bi bi-file-earmark-arrow-down"></i></span>
+                    <span class="quick-access-body">
+                        <span class="quick-access-title">Exporter le registre</span>
+                    </span>
+                </a>
+
                 <div class="quick-links" role="navigation" aria-label="Raccourcis de la page">
                     <a routerLink="/faq" class="quick-link">
                         <i class="bi bi-question-circle"></i> Besoin d'aide
@@ -144,7 +159,7 @@
 
             @if (showOperateurForm) {
                 <div class="popup-overlay" (click)="closeOperateurForm()">
-                    <div class="modal-operateur popup-container" (click)="$event.stopPropagation()">
+                    <div class="modal-operateur popup-container popup-sheet-mobile" (click)="$event.stopPropagation()">
                         <div class="popup-header">
                             <div class="header-title">
                                 <i class="bi bi-person-badge"></i>

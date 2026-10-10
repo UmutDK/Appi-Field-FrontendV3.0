@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, inject, OnInit, OnDestroy, signal, computed, ChangeDetectorRef, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { generateUUID } from '../../../shared/utils/uuid.util';
 import { parsePolygoneToLatLngs as parseLatlngs } from '../../../shared/utils/lambert72.util';
 import { buildParcelPopupHtml } from '../../../shared/utils/parcel-popup.util';
 import * as L from 'leaflet';
@@ -1323,7 +1324,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
    * Générer un UUID v4
    */
   private generateUUID(): string {
-    return crypto.randomUUID();
+    return generateUUID();
   }
 
   /**

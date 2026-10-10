@@ -8,7 +8,7 @@
             <form [formGroup]="mail" (ngSubmit)="onvalider()">
                 <div class="auth-field">
                     <label for="mailOublie">Adresse mail</label>
-                    <input id="mailOublie" type="email" class="form-control" placeholder="nom@exemple.be"
+                    <input id="mailOublie" type="email" autocomplete="email" inputmode="email" class="form-control" placeholder="nom@exemple.be"
                            formControlName="mail" name="adresseMail" required>
                 </div>
 

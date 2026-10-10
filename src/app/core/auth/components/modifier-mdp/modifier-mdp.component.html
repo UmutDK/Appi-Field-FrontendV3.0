@@ -26,7 +26,7 @@
                                 </div>
                             </div>
                             <input
-                                id="nouveauMdp"
+                                id="nouveauMdp" autocomplete="new-password"
                                 [type]="showPassword ? 'text' : 'password'"
                                 class="form-control"
                                 placeholder="Nouveau mot de passe"
@@ -46,7 +46,7 @@
                         <label for="confirmationMdp">Confirmer le mot de passe<sup>*</sup></label>
                         <div class="password-container">
                             <input
-                                id="confirmationMdp"
+                                id="confirmationMdp" autocomplete="new-password"
                                 [type]="showConfirmPassword ? 'text' : 'password'"
                                 class="form-control"
                                 placeholder="Confirmer le nouveau mot de passe"

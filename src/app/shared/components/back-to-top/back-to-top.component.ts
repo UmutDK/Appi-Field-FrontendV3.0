@@ -78,7 +78,9 @@ export class BackToTopComponent implements OnInit, OnDestroy {
   // trois candidats possibles.
   private readonly onScroll = () => {
     const offset = Math.max(window.scrollY, document.documentElement.scrollTop, document.body.scrollTop);
-    const visible = offset > window.innerHeight * 0.8;
+    // Apparaît après 240px de défilement (avant : 80% de la hauteur d'écran, jamais atteint sur
+    // les pages courtes comme Mon compte sur téléphone).
+    const visible = offset > 240;
     if (visible !== this.visible) {
       this.zone.run(() => {
         this.visible = visible;
