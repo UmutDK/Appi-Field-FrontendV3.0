@@ -3,13 +3,14 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './core/header/component/header/header.component';
 import { FooterComponent } from './core/footer/component/footer/footer.component';
 import { BackToTopComponent } from './shared/components/back-to-top/back-to-top.component';
+import { PwaStatusComponent } from './shared/components/pwa-status/pwa-status.component';
 import { AuthService } from './core/auth/services/auth.service';
 import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, BackToTopComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, BackToTopComponent, PwaStatusComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [AuthService]

@@ -32,8 +32,12 @@ html body .auth-forgot-link { display: none; }
 
     // --- Barre du haut plus fine : 56px ----------------------------------------------------
     html body .mobile-topbar {
-        height: 56px;
-        padding: 0 8px 0 16px !important;
+        // PWA iPhone : + hauteur de l'encoche (0 dans un navigateur). Ancienne valeur : height 56px, padding 0 8px 0 16px
+        height: calc(56px + env(safe-area-inset-top, 0px));
+        padding-top: env(safe-area-inset-top, 0px) !important;
+        padding-right: 8px !important;
+        padding-bottom: 0 !important;
+        padding-left: 16px !important;
     }
     html body .mobile-topbar-logo-img { height: 34px !important; }
     html body .mobile-topbar-logo { display: inline-flex; align-items: center; min-height: 44px; }
@@ -47,7 +51,7 @@ html body .auth-forgot-link { display: none; }
 
         &:active { background-color: rgba(255, 255, 255, 0.12) !important; }
     }
-    html body .content-wrapper { padding-top: 56px !important; }
+    html body .content-wrapper { padding-top: calc(56px + env(safe-area-inset-top, 0px)) !important; } // ancien : 56px
 
     // --- Flèche ← + titre de la page (pages secondaires) ---------------------------------
     html body .mobile-topbar-back {
@@ -522,7 +526,7 @@ html body .modal-overlay.popup-overlay { height: auto !important; }
     // Menu des sections : pastilles compactes, collées sous la barre du haut au défilement
     html body app-reglage .reglage-mobile-nav {
         position: sticky;
-        top: 56px;
+        top: calc(56px + env(safe-area-inset-top, 0px)); // ancien : 56px
         z-index: 20;
         margin: 0 -16px 16px !important;
         padding: 8px 16px !important;
@@ -671,7 +675,7 @@ html body app-get-parcelles .locate-btn-mobile { display: none; }
     // ---------------- Ma carte ----------------
     // Carte entre la barre du haut et la barre du bas (elle les recouvrait)
     html body.full-screen-map-mode app-get-parcelles main:not(#__m) {
-        top: 56px !important;
+        top: calc(56px + env(safe-area-inset-top, 0px)) !important; // ancien : 56px
         bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
         height: auto !important;
         z-index: 400 !important;

@@ -553,6 +553,22 @@ Pour essai (retour arrière prévu). Sauvegarde : `Desktop\Appi'Field\sauvegarde
 
 ---
 
+## 38. PWA — application installable (10/10/2026)
+
+Sauvegarde : `Desktop\Appi'Field\sauvegardes-mobile\pwa-avant\` (dont les anciennes icônes Angular dans `icons\`). Le service worker n'agit **qu'en production** (`ng build`), sur https ou localhost — rien ne change sous `ng serve`. Test sur la build de prod (localhost:8090) : cache prêt, rechargement hors ligne OK (images et icônes comprises), bandeau OK, message de mise à jour OK après une nouvelle build, aucune erreur JS.
+- 🔵 [manifest.webmanifest](public/manifest.webmanifest) : nom « Appi'Field » (au lieu de « userKey »), description, langue fr, couleur #141752 (barre du haut) au lieu de #1976d2, fond blanc, icônes « any » + 2 icônes « maskable » (Android).
+- 🔵 Icônes Appi'Field (presse-papiers du favicon) dans [public/icons/](public/icons/) au lieu du logo Angular, + `apple-touch-icon.png` (180px, iPhone). Générées depuis `public/image/favicon.png`.
+- 🔵 [index.html](src/index.html) : `viewport-fit=cover`, theme-color #141752, balises iPhone (`apple-mobile-web-app-capable`, titre, barre d'état translucide, `apple-touch-icon`).
+- 🔵 [_mobile.scss](src/styles/_mobile.scss) : barre du haut, contenu, pastilles de Mon compte et Ma carte décalés de la hauteur de l'encoche (`env(safe-area-inset-top)`, vaut 0 dans un navigateur — anciennes valeurs 56px notées en commentaire).
+- 🔵 Nouveau [pwa-status.component.ts](src/app/shared/components/pwa-status/pwa-status.component.ts), ajouté dans `app.component` : pastille « Hors connexion » (sous la barre du haut) et carte « Nouvelle version disponible — Plus tard / Mettre à jour » (recharge la page).
+- 🔵 [ngsw-config.json](ngsw-config.json) : préchargés en plus — `js/`, polices (`media/`, `font/`), icônes, logos et images utilisés par l'app ; nouveau groupe « externes » (Google Fonts, Leaflet unpkg, Chart.js jsdelivr) mis en cache à la première utilisation.
+
+**Non fait (logique, à valider) :** la vérification du jeton toutes les 30 min (`app.component.ts`) déconnecte l'utilisateur si l'appel échoue — donc aussi en cas de simple coupure réseau. Les données (parcelles, carnet…) ne sont pas disponibles hors ligne et les enregistrements hors ligne échouent : c'est un choix de fonctionnement, pas de design.
+
+**Retour arrière :** recopier les fichiers de la sauvegarde (manifest, ngsw-config, index.html, app.component html/ts, _mobile.scss, icônes) et supprimer `src/app/shared/components/pwa-status/`, `public/icons/icon-maskable-*.png`, `public/icons/apple-touch-icon.png`.
+
+---
+
 ## 27. Bugs connus, non corrigés (audit du 28/09/2026)
 
 1. ✅ *Corrigé le 03/10/2026 (26d).* **Mon compte — nom/prénom :** sauvegarde « fire-and-forget » (`MonProfilService.updateMonProfil`) → succès affiché même en cas d'échec ; nom de la sidebar pas mis à jour avant reconnexion.

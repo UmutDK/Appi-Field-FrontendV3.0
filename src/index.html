@@ -5,12 +5,19 @@
   <title>Appi'Field</title>
   <meta name="description" content="Application de carnet de champ électronique gratuite développé par l'ASBL Corder. Inscrivez-vous et commencez à encoder vos traitements phyto, vos travaux au champ, ... ">
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PWA : viewport-fit=cover pour l'encoche iPhone (anciennes valeurs : sans viewport-fit, theme-color #1976d2) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" type="image/x-icon" href="image/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#1976d2">
+  <meta name="theme-color" content="#141752">
+  <!-- PWA iPhone / iPad (écran d'accueil) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Appi'Field">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <!-- Google tag (gtag.js) -->

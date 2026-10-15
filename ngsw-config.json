@@ -12,7 +12,17 @@
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js"
+          "/*.js",
+          "/js/**",
+          "/media/**",
+          "/font/**",
+          "/icons/**",
+          "/image/*.svg",
+          "/image/LogoAppiField.png",
+          "/image/favicon.png",
+          "/image/wallesmart.png",
+          "/image/map.png",
+          "/image/Logo CORDER-Blancsstexte (1).png"
         ]
       }
     },
@@ -23,6 +33,19 @@
       "resources": {
         "files": [
           "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    },
+    {
+      "name": "externes",
+      "installMode": "lazy",
+      "updateMode": "lazy",
+      "resources": {
+        "urls": [
+          "https://fonts.googleapis.com/**",
+          "https://fonts.gstatic.com/**",
+          "https://unpkg.com/**",
+          "https://cdn.jsdelivr.net/npm/chart.js"
         ]
       }
     }
