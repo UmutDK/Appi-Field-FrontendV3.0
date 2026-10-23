@@ -9,20 +9,20 @@ from pyproj import Transformer
 _LAMBERT72_TO_WGS84 = Transformer.from_crs("EPSG:31370", "EPSG:4326", always_xy=True)
 
 _COVER_TYPE_TO_CATEGORY = {
-    "PRAIRIE_PERM_90_100": "Prairie permanente",
-    "TERRE_ARABLE": "Terre arable",
-    "PRAIRIE_TEMPORAIRE": "Prairie temporaire",
-    "CULTURE_PERMANENTE": "Culture permanente",
-    "HAIE_BDE_BOIS": "Haie",
-    "BOSQUET": "Bosquet",
+    "PRAIRIE_PERM_90_100": "Plein air",
+    "TERRE_ARABLE": "Plein air",
+    "PRAIRIE_TEMPORAIRE": "Plein air",
+    "CULTURE_PERMANENTE": "Plein air",
+    "HAIE_BDE_BOIS": "Plein air",
+    "BOSQUET": "Plein air",
 }
 
 _CROP_CODE_TO_CATEGORY = {
-    "610": "Prairie permanente",
-    "311": "Terre arable",
-    "351": "Terre arable",
-    "901": "Terre arable",
-    "3912": "Terre arable",
+    "610": "Plein air",
+    "311": "Plein air",
+    "351": "Plein air",
+    "901": "Plein air",
+    "3912": "Plein air",
 }
 
 
@@ -117,6 +117,16 @@ def _convert_v1_parcel(parcel_elem):
     prc_nmr = parcel_elem.get("PRC_NMR", "")
     clean_id = prc_id[len("Parcelle_"):] if prc_id.lower().startswith("parcelle_") else prc_id
     name = f"Parcelle_{clean_id}" + (f"_{prc_nmr}" if prc_nmr else "")
+
+    # Adaptation temporaire (09/09/2026) : si un element/attribut PRC_NAME est
+    # present sur la parcelle, on l'utilise tel quel comme parcelName a la place
+    # du nom recompose ci-dessus. A retirer/reevaluer une fois le besoin clarifie.
+    # PRC_NAME est un element enfant comme PRC_ID (pas un attribut comme
+    # PRC_NMR), d'ou l'utilisation de _text avec repli sur l'attribut.
+    prc_name = _text(parcel_elem, "PRC_NAME") or parcel_elem.get("PRC_NAME", "")
+    if prc_name:
+        name = prc_name
+
     cover_type = _text(parcel_elem, "TYPE_COUVERTURE")
 
     return {

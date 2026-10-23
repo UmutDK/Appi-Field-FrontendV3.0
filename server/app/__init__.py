@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask.json.provider import DefaultJSONProvider
 from flask_cors import CORS
 
@@ -59,16 +59,6 @@ def create_app():
     origins = [o.strip() for o in allowed_origins.split(",")] if allowed_origins else "*"
     CORS(app, resources={r"/*": {"origins": origins}}, supports_credentials=True)
     app.teardown_appcontext(close_db)
-
-    # READONLY_MODE (à activer via server/.env.local, jamais dans .env) : la DB configurée
-    # est celle de production, sans instance locale séparée. Ce garde-fou bloque les écritures
-    # pendant le développement local pour éviter de modifier des données réelles par erreur.
-    readonly_mode = os.getenv("READONLY_MODE", "false").lower() == "true"
-    if readonly_mode:
-        @app.before_request
-        def block_writes_in_readonly_mode():
-            if request.method not in ("GET", "HEAD", "OPTIONS"):
-                return jsonify({"error": "READONLY_MODE actif : écriture bloquée en local"}), 403
 
     @app.errorhandler(404)
     def handle_not_found(e):
