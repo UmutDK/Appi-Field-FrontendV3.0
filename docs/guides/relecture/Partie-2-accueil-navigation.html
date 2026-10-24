@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Appi'Field – Relecture partie 2 : Accueil et navigation</title>
+<link rel="stylesheet" href="../guide.css" />
+<style>
+  @page { @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6575; } }
+</style>
+</head>
+<body>
+<section class="chapter first" id="c3">
+  <h2><span class="num">3</span>Se repérer dans l'application</h2>
+  <p class="lead">Une fois connecté, vous naviguez entre les pages grâce au menu. Il se présente différemment sur ordinateur et sur smartphone, mais il mène aux mêmes endroits.</p>
+
+  <h3>Les pages principales</h3>
+  <table>
+    <tr><th style="width: 26%">Page</th><th>À quoi elle sert</th><th style="width: 12%">Chapitre</th></tr>
+    <tr><td><span class="ui">Accueil</span></td><td>Le tableau de bord de votre exploitation : chiffres clés, raccourcis, carte, équipe, formations, actualités.</td><td>4</td></tr>
+    <tr><td><span class="ui">Parcelles</span></td><td>La liste et la carte de vos parcelles.</td><td>5 et 6</td></tr>
+    <tr><td><span class="ui">Carnet de champ</span></td><td>Vos cultures, traitements, travaux, exports et archives.</td><td>7 à 10</td></tr>
+    <tr><td><span class="ui">Inventaire</span></td><td>Le stock de votre local phyto.</td><td>11</td></tr>
+    <tr><td><span class="ui">Mon compte</span></td><td>Vos informations, votre exploitation, votre équipe, votre mot de passe, les mandats.</td><td>12</td></tr>
+    <tr><td><span class="ui">Besoin d'aide</span></td><td>Questions fréquentes, vidéos et contacts du support.</td><td>15</td></tr>
+  </table>
+
+  <!-- ---------- Ordinateur ---------- -->
+  <h3>Sur ordinateur : le menu de gauche</h3>
+  <div class="two-col">
+    <figure class="tiny"><img src="../captures/p2-menu.jpg" alt="Menu de gauche" /><figcaption>Le menu de gauche.</figcaption></figure>
+    <div>
+      <p>Le menu reste affiché à gauche sur toutes les pages. De haut en bas :</p>
+      <ol class="steps">
+        <li><strong>Le logo Appi'Field</strong> : un clic vous ramène à l'accueil.</li>
+        <li><strong>La flèche « « »</strong> : replie le menu (voir ci-dessous).</li>
+        <li><strong>Le choix de l'exploitation</strong>, seulement si quelqu'un vous a donné accès à son exploitation (voir plus bas).</li>
+        <li><strong>Les pages</strong> : Accueil, Parcelles, Carnet de champ, Inventaire.</li>
+        <li><strong>En bas</strong> : Mon compte, Besoin d'aide, Conditions générales d'utilisation.</li>
+        <li><strong>Votre nom</strong> (un clic ouvre Mon compte) et, à droite, le bouton rouge de <strong>déconnexion</strong>.</li>
+      </ol>
+      <p>La page où vous êtes est mise en évidence dans le menu (fond coloré et petit point).</p>
+    </div>
+  </div>
+
+  <h4>Replier le menu</h4>
+  <p>Sur un petit écran d'ordinateur, vous pouvez gagner de la place : cliquez sur la flèche <strong>« « »</strong> en haut du menu. Il ne garde alors que les <strong>icônes</strong>. Passez la souris sur une icône pour voir le nom de la page. Pour le déplier, cliquez sur la flèche <strong>« » »</strong>.</p>
+  <figure class="medium"><img src="../captures/p2-menu-replie.jpg" alt="Menu replié" /><figcaption>Le menu replié : seules les icônes restent visibles.</figcaption></figure>
+  <div class="note note--tip"><b>Bon à savoir</b>Appi'Field se souvient de votre choix (menu replié ou déplié) d'une page à l'autre. Après une déconnexion, le menu revient déplié.</div>
+
+  <!-- ---------- Smartphone ---------- -->
+  <h3>Sur smartphone : la barre du bas et le menu « Plus »</h3>
+  <div class="two-col">
+    <figure class="phone"><img src="../captures/p2-mobile-accueil.jpg" alt="Accueil sur smartphone" /><figcaption>L'accueil sur smartphone, avec la barre du bas.</figcaption></figure>
+    <div>
+      <h4>La barre du bas</h4>
+      <p>Elle reste toujours visible en bas de l'écran, avec les 4 pages principales : <span class="ui">Accueil</span> <span class="ui">Parcelles</span> <span class="ui">Carnet</span> <span class="ui">Inventaire</span>, et le bouton <span class="ui">Plus</span>. La page où vous êtes est surlignée.</p>
+      <h4>La barre du haut</h4>
+      <ul>
+        <li>Sur les 4 pages principales : le <strong>logo</strong> à gauche, et l'icône de <strong>profil</strong> à droite (elle ouvre Mon compte).</li>
+        <li>Sur les autres pages (Ma carte, Mes archives, Mon compte…) : une <strong>flèche ←</strong> suivie du <strong>nom de la page</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Le menu « Plus »</h4>
+  <div class="two-col">
+    <div>
+      <p>Touchez <span class="ui">Plus</span> : un panneau monte depuis le bas de l'écran. Il contient :</p>
+      <ul>
+        <li>l'<strong>exploitation active</strong>, si vous avez accès à l'exploitation de quelqu'un d'autre ;</li>
+        <li><span class="ui">Mon compte</span>, <span class="ui">Besoin d'aide</span>, <span class="ui">Conditions générales d'utilisation</span> ;</li>
+        <li><span class="ui">Déconnexion</span>.</li>
+      </ul>
+      <p>Pour fermer le panneau sans rien choisir, touchez la partie grisée de l'écran, au-dessus du panneau.</p>
+    </div>
+    <figure class="phone"><img src="../captures/p2-mobile-plus.jpg" alt="Menu Plus" /><figcaption>Le menu « Plus ».</figcaption></figure>
+  </div>
+
+  <h4>La flèche de retour ←</h4>
+  <figure class="phone"><img src="../captures/p2-mobile-retour.jpg" alt="Flèche de retour" /><figcaption>La flèche ← et le nom de la page.</figcaption></figure>
+  <p>Touchez la <strong>flèche ←</strong> pour revenir à la page précédente. Si vous êtes arrivé directement sur la page (par exemple depuis un favori), la flèche vous emmène à la page « parente » : de <em>Ma carte</em> vers <em>Parcelles</em>, de <em>Mes archives</em> vers le <em>Carnet de champ</em>, sinon vers l'accueil.</p>
+  <div class="note note--tip"><b>Le bouton ↑</b>Sur les longues pages, un bouton rond avec une flèche vers le haut apparaît en bas à droite : il vous ramène en haut de la page.</div>
+
+  <!-- ---------- Exploitation active ---------- -->
+  <h3>Changer d'exploitation</h3>
+  <p>Cette partie ne vous concerne que si un autre exploitant vous a donné accès à son carnet de champ (un <strong>mandat</strong>, voir chapitre 13). Sinon, ce choix n'apparaît pas.</p>
+  <div class="two-col">
+    <figure><img src="../captures/p2-selecteur-exploitation.jpg" alt="Choix de l'exploitation" /><figcaption>Le choix de l'exploitation, en haut du menu.</figcaption></figure>
+    <div>
+      <ol class="steps">
+        <li>Cliquez sur le nom de l'exploitation en haut du menu (sur smartphone : <span class="ui">Plus</span> › <strong>Exploitation active</strong>).</li>
+        <li>Choisissez <strong>Mon exploitation</strong> ou celle de l'exploitant concerné.</li>
+        <li>La page se recharge : les pages Parcelles, Carnet de champ et Inventaire affichent maintenant l'exploitation choisie.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="note note--warn"><b>Vérifiez avant d'encoder</b>Le nom de l'exploitation active est toujours affiché en haut du menu. Jetez-y un œil avant d'ajouter un traitement, pour l'encoder dans le bon carnet.</div>
+  <ul>
+    <li><strong>Quand vous fermez l'onglet</strong> (ou le navigateur), Appi'Field oublie votre choix : à la réouverture, vous êtes de retour sur <strong>Mon exploitation</strong>. C'est une sécurité, pour ne pas encoder par erreur dans le carnet de quelqu'un d'autre.</li>
+    <li><strong>Mon compte</strong> affiche toujours <strong>vos</strong> informations, même quand vous travaillez dans l'exploitation de quelqu'un d'autre.</li>
+  </ul>
+
+  <h3>Une page introuvable ?</h3>
+  <div class="two-col">
+    <div>
+      <p>Si vous tapez une mauvaise adresse ou suivez un lien qui n'existe plus, Appi'Field affiche « <strong>Page introuvable</strong> ». Trois boutons vous remettent sur le bon chemin :</p>
+      <ul>
+        <li><span class="ui">Page précédente</span> : là où vous étiez ;</li>
+        <li><span class="ui">Retour à l'accueil</span> ;</li>
+        <li><span class="ui">Besoin d'aide ?</span>.</li>
+      </ul>
+    </div>
+    <figure><img src="../captures/p2-404.jpg" alt="Page introuvable" /></figure>
+  </div>
+</section>
+
+<section class="chapter" id="c4">
+  <h2><span class="num">4</span>L'accueil</h2>
+  <p class="lead">L'accueil est la première page que vous voyez après la connexion. C'est le tableau de bord de votre exploitation : en un coup d'œil, vous savez où vous en êtes, et vous accédez à tout le reste.</p>
+  <figure><img src="../captures/p2-accueil.jpg" alt="Accueil" /><figcaption>Le haut de l'accueil : les chiffres clés, l'accès rapide et la carte.</figcaption></figure>
+  <p>De haut en bas, l'accueil contient : les chiffres clés, l'accès rapide, la carte de vos parcelles, votre équipe, les formations et les actualités.</p>
+
+  <h3>Les chiffres clés</h3>
+  <table>
+    <tr><th style="width: 26%">Encadré</th><th>Ce qu'il compte</th></tr>
+    <tr><td><strong>Parcelles actives</strong></td><td>Le nombre de toutes vos parcelles, et leur <strong>superficie totale en hectares</strong> (les ares et les m² sont convertis automatiquement).</td></tr>
+    <tr><td><strong>Cultures en cours</strong></td><td>Le nombre de cultures de votre carnet, <strong>sans les cultures archivées</strong>. Si vous n'en avez qu'une, son nom s'affiche.</td></tr>
+    <tr><td><strong>Interventions ce mois</strong></td><td>Le nombre de traitements phytos et de travaux au champ dont la date tombe dans le <strong>mois en cours</strong> (du 1<sup>er</sup> au dernier jour du mois), et la date de la dernière intervention.</td></tr>
+  </table>
+  <div class="note note--tip"><b>Un chiffre qui ne bouge pas ?</b>Les chiffres se mettent à jour chaque fois que vous revenez sur l'accueil. Une intervention encodée avec une date du mois précédent n'est pas comptée dans « ce mois ».</div>
+
+  <h3>L'accès rapide</h3>
+  <p>Trois grandes cartes mènent aux pages les plus utilisées :</p>
+  <ul>
+    <li><strong>Gérer mon carnet de champ</strong> : la page Carnet de champ ;</li>
+    <li><strong>Mon local phyto numérique</strong> : la page Inventaire ;</li>
+    <li><strong>Organiser mes parcelles</strong> : la page Parcelles.</li>
+  </ul>
+  <div class="note note--mobile"><b>Sur smartphone : deux raccourcis en plus</b><span class="ui">Encoder un traitement</span> ouvre <strong>directement</strong> le formulaire d'un nouveau traitement, et <span class="ui">Exporter le registre</span> ouvre directement la fenêtre d'export. Pratique au bord du champ.</div>
+  <p>Sous les cartes, quatre petits boutons font <strong>défiler la page</strong> jusqu'à la section concernée : <span class="ui">Besoin d'aide</span> (ouvre la page d'aide), <span class="ui">Mon équipe</span>, <span class="ui">Espace formation</span> et <span class="ui">Actualités</span>.</p>
+
+  <h3>Ma carte parcellaire</h3>
+  <div class="two-col">
+    <div>
+      <p>Un aperçu de toutes vos parcelles sur une carte. La carte se centre automatiquement sur elles.</p>
+      <ul>
+        <li>Les parcelles <strong>dessinées</strong> apparaissent avec leur contour ; celles placées par un <strong>point</strong> ou par une <strong>adresse</strong>, avec un rond.</li>
+        <li>Cliquez sur une parcelle pour voir son <strong>nom</strong> et sa <strong>superficie</strong>.</li>
+        <li>Sur ordinateur, les boutons <strong>+</strong> et <strong>−</strong> (ou la molette de la souris) zooment.</li>
+        <li><span class="ui">Voir toutes mes parcelles</span> ouvre la page Parcelles.</li>
+      </ul>
+      <div class="note note--mobile"><b>Sur smartphone</b>La carte de l'accueil est un simple aperçu : on ne peut ni la déplacer ni zoomer, pour ne pas gêner le défilement de la page. Pour travailler sur la carte, touchez <span class="ui">Voir toutes mes parcelles</span>.</div>
+    </div>
+    <figure class="phone"><img src="../captures/p2-mobile-carte.jpg" alt="Carte et équipe sur smartphone" /><figcaption>La carte et le début de « Mon équipe » sur smartphone.</figcaption></figure>
+  </div>
+
+  <h3>Mon équipe</h3>
+  <p>La liste des <strong>opérateurs</strong> : les personnes qui réalisent les traitements sur votre exploitation, vous compris. Chaque traitement que vous encoderez sera attribué à l'un d'eux.</p>
+  <figure><img src="../captures/p2-equipe.jpg" alt="Mon équipe" /><figcaption>Deux opérateurs, avec leur numéro de phytolicence.</figcaption></figure>
+  <div class="two-col">
+    <div>
+      <h4>Ajouter un opérateur</h4>
+      <ol class="steps">
+        <li>Cliquez sur <span class="ui">Nouvel opérateur</span>.</li>
+        <li>Tapez son <strong>nom et prénom</strong> (obligatoire).</li>
+        <li>Tapez son <strong>numéro de phytolicence</strong> s'il en a un : seulement les chiffres, les points s'ajoutent tout seuls.</li>
+        <li>Cliquez sur <span class="ui">Enregistrer</span>.</li>
+      </ol>
+      <h4>Modifier ou supprimer</h4>
+      <ul>
+        <li>Le <strong>crayon</strong> rouvre le formulaire : corrigez puis <span class="ui">Mettre à jour</span>.</li>
+        <li>La <strong>corbeille</strong> supprime l'opérateur, après confirmation.</li>
+      </ul>
+      <div class="note note--warn"><b>Ne supprimez pas un opérateur qui a déjà traité</b>Si vous supprimez un opérateur, son nom <strong>disparaît de tous ses traitements passés</strong> dans le registre exporté, et le recréer ne le remet pas. Supprimez seulement un opérateur ajouté par erreur, qui n'a encore réalisé aucun traitement.</div>
+    </div>
+    <figure><img src="../captures/p2-operateur-form.jpg" alt="Formulaire Nouvel opérateur" /><figcaption>Le formulaire « Nouvel opérateur ».</figcaption></figure>
+  </div>
+  <table>
+    <tr><th style="width: 45%">Message</th><th>Que faire ?</th></tr>
+    <tr><td>« Le nom et prénom est obligatoire. »</td><td>Tapez le nom de l'opérateur avant d'enregistrer.</td></tr>
+    <tr><td>« Erreur lors de l'enregistrement. » / « Erreur lors de la mise à jour. »</td><td>Vérifiez votre connexion internet et réessayez.</td></tr>
+  </table>
+  <div class="note note--tip"><b>Pourquoi la phytolicence ?</b>Elle n'est pas obligatoire, mais elle apparaît dans le registre exporté, à côté du nom de l'opérateur. Indiquez-la si la personne en a une, et mettez-la à jour quand sa phytolicence est renouvelée.</div>
+  <p>Vous retrouvez la même liste dans <span class="ui">Mon compte</span> › <span class="ui">Mon équipe</span> : les deux endroits sont reliés.</p>
+
+  <h3>Espace formation</h3>
+  <p>Les prochaines formations à Appi'Field et les vidéos disponibles. Sur un grand écran, les <strong>flèches</strong> à gauche et à droite font défiler les cartes ; sur smartphone, elles sont toutes affichées l'une sous l'autre.</p>
+  <div class="two-col">
+    <figure><img src="../captures/p2-formations.jpg" alt="Espace formation" /><figcaption>Sur ordinateur : deux sessions à venir et deux rediffusions.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p2-mobile-formations.jpg" alt="Espace formation sur smartphone" /><figcaption>Sur smartphone, les unes sous les autres.</figcaption></figure>
+  </div>
+  <table>
+    <tr><th style="width: 30%">Carte</th><th>Ce que vous y voyez</th><th style="width: 30%">Le bouton « Informations »</th></tr>
+    <tr><td><strong>Session à venir</strong><br />(une date : « 29 octobre »)</td><td>Le titre, le lieu (une ville, ou « en ligne ») et l'horaire.</td><td>Ouvre la page de la session, où vous pouvez vous <strong>inscrire</strong>.</td></tr>
+    <tr><td><strong>Rediffusion</strong><br />(un globe 🌐 et l'année)</td><td>Le titre et la durée de la vidéo.</td><td>Ouvre la <strong>vidéo</strong> (YouTube), à regarder quand vous voulez.</td></tr>
+  </table>
+  <p>Ces liens s'ouvrent dans un <strong>nouvel onglet</strong> : Appi'Field reste ouvert dans le premier.</p>
+
+  <h3>Actualités</h3>
+  <p>Les <strong>4 dernières actualités</strong> de <strong>Walakis</strong>, la plateforme wallonne de la connaissance et de l'innovation agricole (Réseau wallon de la PAC et Service public de Wallonie). Chaque carte affiche le titre, la date et un résumé. <span class="ui">Lire la suite</span> ouvre l'article complet sur le site de Walakis, dans un nouvel onglet.</p>
+  <figure><img src="../captures/p2-actualites.jpg" alt="Actualités" /><figcaption>Exemple d'affichage (les titres réels viennent du site de Walakis).</figcaption></figure>
+  <p>Si les actualités ne peuvent pas être chargées, le message « Impossible de charger les actualités. Veuillez réessayer plus tard. » s'affiche : le reste d'Appi'Field fonctionne normalement.</p>
+
+  <h3>Le bas de page</h3>
+  <p>Tout en bas de chaque page : la mention de l'ASBL Corder et du soutien de la Région wallonne, un lien vers les <strong>Conditions générales d'utilisation</strong>, et le <strong>numéro de version</strong> d'Appi'Field.</p>
+
+  <h3>Questions fréquentes sur l'accueil</h3>
+  <dl class="faq">
+    <dt>Mon accueil est vide, tous les chiffres sont à 0.</dt>
+    <dd>C'est normal au début : créez vos parcelles (chapitre 5), puis vos cultures (chapitre 7). Les chiffres et la carte se rempliront.</dd>
+    <dt>Une parcelle n'apparaît pas sur la carte de l'accueil.</dt>
+    <dd>Elle n'a ni contour, ni point, ni adresse localisée. Ouvrez-la dans la page Parcelles et localisez-la (chapitres 5 et 6).</dd>
+    <dt>Je ne vois pas le choix de l'exploitation dans le menu.</dt>
+    <dd>Il n'apparaît que si quelqu'un vous a donné accès à son exploitation et que vous avez <strong>accepté</strong> la demande (chapitre 13).</dd>
+    <dt>J'ai supprimé un opérateur par erreur.</dt>
+    <dd>Recréez-le avec <span class="ui">Nouvel opérateur</span> pour vos prochains traitements. Ses traitements passés n'afficheront plus son nom dans le registre exporté : ouvrez-les et choisissez à nouveau l'opérateur (chapitre 8).</dd>
+  </dl>
+</section>
+
+</body>
+</html>

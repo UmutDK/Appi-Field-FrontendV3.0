@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Appi'Field – Relecture partie 3 : Mes parcelles</title>
+<link rel="stylesheet" href="../guide.css" />
+<style>
+  @page { @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6575; } }
+</style>
+</head>
+<body>
+<section class="chapter first" id="c5">
+  <h2><span class="num">5</span>Mes parcelles</h2>
+  <p class="lead">Vos parcelles sont la base de tout le carnet de champ : chaque culture est placée sur une ou plusieurs parcelles, et chaque traitement est encodé sur une parcelle. Ce chapitre explique comment les créer, les retrouver, les modifier et les supprimer depuis la page <span class="ui">Parcelles</span>. Le travail sur la carte (dessiner un contour, placer un point, le parcellaire PAC) est expliqué au chapitre 6.</p>
+
+  <h3>Trois façons de créer vos parcelles</h3>
+  <table>
+    <tr><th style="width: 24%">Méthode</th><th>Quand la choisir</th><th style="width: 30%">Ce que vous obtenez</th></tr>
+    <tr><td><strong>Importer un fichier GML</strong></td><td>Vous avez rentré votre déclaration de superficie (PAC) sur PAC on Web : c'est le plus rapide, toutes vos parcelles arrivent d'un coup.</td><td>Le contour exact de chaque parcelle, et sa superficie.</td></tr>
+    <tr><td><strong>Dessiner sur la carte</strong></td><td>Vous n'avez pas de fichier GML, mais vous savez repérer vos parcelles sur une carte ou une vue satellite.</td><td>Le contour que vous avez tracé (chapitre 6).</td></tr>
+    <tr><td><strong>Par adresse</strong></td><td>Pour aller vite, ou pour une serre, un hangar, une installation qui a une adresse.</td><td>Un point à l'adresse choisie, sans contour.</td></tr>
+  </table>
+  <div class="note note--tip"><b>Pourquoi bien localiser vos parcelles ?</b>Le registre doit indiquer <strong>où</strong> chaque produit a été utilisé. Appi'Field reprend dans vos exports l'adresse ou les coordonnées de chaque parcelle. Plus la parcelle est bien placée, plus votre registre est précis.</div>
+
+  <!-- ---------- La page ---------- -->
+  <h3>La page « Mes parcelles »</h3>
+  <p>Cliquez sur <span class="ui">Parcelles</span> dans le menu.</p>
+  <figure><img src="../captures/p3-page.jpg" alt="Page Mes parcelles" /><figcaption>La page « Mes parcelles ».</figcaption></figure>
+  <h4>Les trois chiffres du haut</h4>
+  <ul>
+    <li><strong>Parcelles</strong> : le nombre de parcelles enregistrées.</li>
+    <li><strong>Superficie totale</strong> : la somme de toutes vos parcelles, en hectares. Les parcelles encodées en ares ou en m² sont converties automatiquement.</li>
+    <li><strong>Catégories</strong> : le nombre de catégories utilisées, et combien de parcelles dans chacune.</li>
+  </ul>
+  <h4>La liste des parcelles</h4>
+  <p>Chaque ligne montre le <strong>nom</strong> de la parcelle, sa <strong>catégorie</strong> et sa <strong>superficie</strong>, avec un <strong>crayon</strong> pour la modifier. La liste affiche <strong>20 parcelles par page</strong> ; les flèches en bas passent à la page suivante.</p>
+  <figure><img src="../captures/p3-liste.jpg" alt="Liste des parcelles" /><figcaption>La liste, avec deux parcelles importées d'un fichier GML (en bas).</figcaption></figure>
+  <table>
+    <tr><th style="width: 28%">Pour…</th><th>Faites ceci</th></tr>
+    <tr><td><strong>Retrouver une parcelle</strong></td><td>Tapez une partie de son nom dans « Rechercher une parcelle… ». La croix vide la recherche.</td></tr>
+    <tr><td><strong>N'afficher qu'une catégorie</strong></td><td>Cliquez sur la catégorie (« Plein air », « Sous-protection »…). <span class="ui">Toutes</span> réaffiche tout. Seules les catégories que vous utilisez apparaissent.</td></tr>
+    <tr><td><strong>Trier</strong></td><td>Cliquez sur le titre de la colonne <strong>Parcelle</strong> (ordre alphabétique) ou <strong>Superficie</strong>. Un premier clic trie dans un sens, un deuxième dans l'autre, un troisième annule le tri.</td></tr>
+    <tr><td><strong>Voir les parcelles sur une carte</strong></td><td>La petite carte à droite montre toutes vos parcelles. <span class="ui">Voir ma carte</span> ouvre la grande carte (chapitre 6).</td></tr>
+  </table>
+  <div class="note note--warn"><b>Le tri par superficie</b>Il compare les nombres tels qu'ils sont affichés, sans tenir compte de l'unité : une parcelle de « 25 a » (0,25 ha) est classée après une parcelle de « 7,8 ha ». Si vous mélangez les unités, gardez-le en tête.</div>
+
+  <h4>Aucune parcelle pour l'instant ?</h4>
+  <div class="two-col">
+    <div>
+      <p>Tant que vous n'avez créé aucune parcelle, la page affiche « Aucune parcelle n'a été détectée ». Le bouton <span class="ui">Créer ma première parcelle</span> ouvre directement le formulaire « par adresse ». Pour dessiner ou importer, utilisez plutôt le bouton <span class="ui">Ajouter une parcelle</span> en haut à droite.</p>
+    </div>
+    <figure><img src="../captures/p3-vide.jpg" alt="Aucune parcelle" /></figure>
+  </div>
+
+  <!-- ---------- Ajouter ---------- -->
+  <h3>Ajouter une parcelle</h3>
+  <div class="two-col">
+    <figure><img src="../captures/p3-menu-ajouter.jpg" alt="Menu Ajouter une parcelle" /><figcaption>Le menu « Ajouter une parcelle ».</figcaption></figure>
+    <div>
+      <p>Cliquez sur <span class="ui">Ajouter une parcelle</span>, en haut à droite. Trois choix apparaissent :</p>
+      <ul>
+        <li><strong>Dessiner sur ma carte</strong> : ouvre la grande carte, où vous tracez le contour (chapitre 6) ;</li>
+        <li><strong>Par adresse</strong> : ouvre le formulaire décrit ci-dessous ;</li>
+        <li><strong>Importer mes parcelles</strong> : charge un fichier .GML (voir plus loin).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---------- Par adresse ---------- -->
+  <h3>Ajouter une parcelle par adresse</h3>
+  <ol class="steps">
+    <li><span class="ui">Ajouter une parcelle</span> › <span class="ui">Par adresse</span>.</li>
+    <li>Tapez le <strong>nom</strong> de la parcelle et sa <strong>superficie</strong>, et choisissez l'<strong>unité</strong>.</li>
+    <li>Tapez le début de l'<strong>adresse</strong> (au moins 3 lettres), puis <strong>cliquez sur la bonne adresse dans la liste</strong> qui apparaît.</li>
+    <li>Choisissez une <strong>catégorie</strong>.</li>
+    <li>Cliquez sur <span class="ui">Enregistrer</span>. Le message « La parcelle … a été créée avec succès ! » confirme l'enregistrement.</li>
+  </ol>
+  <div class="two-col">
+    <figure><img src="../captures/p3-form-adresse.jpg" alt="Choix de l'adresse" /><figcaption>Après quelques lettres, les adresses trouvées s'affichent : cliquez sur la bonne.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p3-mobile-form.jpg" alt="Formulaire sur smartphone" /><figcaption>Sur smartphone, le formulaire s'ouvre en panneau.</figcaption></figure>
+  </div>
+  <h4>Les champs du formulaire</h4>
+  <table>
+    <tr><th style="width: 24%">Champ</th><th>Ce qu'il faut mettre</th></tr>
+    <tr><td><strong>Nom de la parcelle</strong>*</td><td>Le nom que vous utilisez au quotidien (« Champ du Moulin », « Serre nord »…). C'est lui qui apparaîtra dans le carnet et dans le registre : choisissez un nom clair.</td></tr>
+    <tr><td><strong>Superficie</strong>*</td><td>Un nombre, par exemple <em>2.5</em>.</td></tr>
+    <tr><td><strong>Unité</strong>*</td><td><strong>Ha</strong> (hectare), <strong>A</strong> (are) ou <strong>M²</strong> (mètre carré). Pour rappel : 1 ha = 100 a = 10 000 m².</td></tr>
+    <tr><td><strong>Adresse de la parcelle</strong>*</td><td>Une adresse en <strong>Belgique</strong>, à choisir dans la liste proposée (5 propositions au maximum). Si la rue exacte n'existe pas, choisissez la rue ou le village le plus proche.</td></tr>
+    <tr><td><strong>Catégorie de parcelle</strong>*</td><td><strong>Plein air</strong>, <strong>Sous-protection</strong> (serre, tunnel) ou <strong>Traitement de semences</strong>. La catégorie sert uniquement à trier et filtrer vos parcelles : elle n'apparaît pas dans le registre.</td></tr>
+  </table>
+  <div class="note note--warn"><b>L'adresse doit être choisie dans la liste</b>Taper l'adresse ne suffit pas : il faut <strong>cliquer</strong> sur une des propositions. C'est elle qui place la parcelle sur la carte. Si vous retouchez l'adresse après l'avoir choisie, il faut la choisir à nouveau.</div>
+  <p>Une parcelle créée par adresse est représentée par un <strong>point</strong> sur la carte, à l'adresse choisie. Pour avoir son contour exact, dessinez-la plutôt sur la carte (chapitre 6).</p>
+
+  <h4>Si quelque chose ne va pas</h4>
+  <p>Tant qu'il manque une information, le bouton <span class="ui">Enregistrer</span> reste pâle. Sous le formulaire, la ligne <strong>« À compléter : … »</strong> liste ce qui manque.</p>
+  <figure class="medium"><img src="../captures/p3-form-erreurs.jpg" alt="Formulaire incomplet" /><figcaption>L'adresse a été tapée mais pas choisie dans la liste, et la catégorie manque.</figcaption></figure>
+  <table>
+    <tr><th style="width: 46%">Message</th><th>Que faire ?</th></tr>
+    <tr><td>« Champ obligatoire. »</td><td>Remplissez ce champ.</td></tr>
+    <tr><td>« Veuillez sélectionner une adresse dans la liste proposée. »<br />« À compléter : adresse à choisir dans la liste »</td><td>Cliquez dans le champ adresse, attendez les propositions et cliquez sur l'une d'elles. Aucune proposition ? Tapez moins de mots (la rue et la commune suffisent).</td></tr>
+    <tr><td>« Erreur lors de l'ajout de la parcelle. Veuillez réessayer. »</td><td>Vérifiez votre connexion internet et réessayez.</td></tr>
+  </table>
+
+  <!-- ---------- Import GML ---------- -->
+  <h3>Importer vos parcelles depuis votre déclaration PAC (fichier GML)</h3>
+  <p>Un fichier <strong>GML</strong> est un fichier qui contient le dessin de vos parcelles. Depuis 2026, PAC on Web permet de l'exporter pour l'utiliser dans un logiciel de carnet de champ comme Appi'Field.</p>
+  <h4>1. Récupérer le fichier sur PAC on Web</h4>
+  <ol class="steps">
+    <li>Connectez-vous à <strong>PAC on Web</strong> (application eDS de déclaration de superficie) avec votre carte d'identité, <strong>itsme</strong> ou un code reçu par SMS.</li>
+    <li>Ouvrez votre déclaration. L'export GML est disponible <strong>après la soumission</strong> de la déclaration.</li>
+    <li>Cliquez sur <strong>Sauver</strong> : PAC on Web conseille de sauvegarder avant d'exporter, pour obtenir un fichier complet.</li>
+    <li>Cliquez sur l'icône <strong>Exporter</strong> et choisissez le format <strong>GML</strong>. Enregistrez le fichier sur votre ordinateur (souvent dans le dossier <em>Téléchargements</em>).</li>
+  </ol>
+  <div class="note note--tip"><b>Le navigateur bloque l'export ?</b>Le manuel de PAC on Web précise que, pour certains exports, il faut autoriser votre navigateur à ouvrir les fenêtres « pop-up ». Pour toute question sur PAC on Web, consultez son manuel d'aide sur le portail de l'agriculture wallonne.</div>
+  <p>Appi'Field reconnaît aussi le fichier GML de la <strong>MAEC « sol »</strong> (MR14), celui que vous importez dans Requacarto.</p>
+
+  <h4>2. L'importer dans Appi'Field</h4>
+  <ol class="steps">
+    <li>Sur la page <span class="ui">Parcelles</span> : <span class="ui">Ajouter une parcelle</span> › <span class="ui">Importer mes parcelles</span>.</li>
+    <li>Une fenêtre de votre ordinateur s'ouvre : choisissez le fichier <strong>.gml</strong> (10 Mo maximum) et cliquez sur <strong>Ouvrir</strong>.</li>
+    <li>Patientez quelques secondes. Le message « <strong>Import réussi ! … parcelles importées.</strong> » indique combien de parcelles ont été créées.</li>
+  </ol>
+  <h4>3. Ce que vous obtenez</h4>
+  <table>
+    <tr><th style="width: 24%">Information</th><th>D'où elle vient</th></tr>
+    <tr><td><strong>Le contour</strong></td><td>Le dessin exact de la parcelle, repris du fichier.</td></tr>
+    <tr><td><strong>La superficie</strong></td><td>Calculée par Appi'Field à partir du contour, en hectares. Elle peut différer légèrement de la superficie déclarée.</td></tr>
+    <tr><td><strong>Le nom</strong></td><td>Le nom contenu dans le fichier, ou un nom automatique comme « Parcelle_48213_1 ».</td></tr>
+    <tr><td><strong>La catégorie</strong></td><td>Déduite du fichier : « Terre arable », « Prairie permanente », « Prairie temporaire », « Culture permanente », « Haie »… ou « Plein air » par défaut.</td></tr>
+  </table>
+  <div class="note note--tip"><b>Après l'import : renommez vos parcelles</b>Un nom comme « Parcelle_48213_1 » n'est pas parlant. Ouvrez chaque parcelle avec le crayon et donnez-lui le nom que vous utilisez, <strong>avant</strong> d'encoder vos cultures et traitements (voir « Renommer une parcelle » plus bas). La catégorie, elle, peut rester telle quelle : elle ne sert qu'au tri.</div>
+  <div class="note note--warn"><b>N'importez qu'une fois</b>Importer deux fois le même fichier crée vos parcelles <strong>en double</strong>. Si c'est arrivé, supprimez les doublons (voir « Supprimer des parcelles »), avant de les utiliser dans votre carnet.</div>
+  <table>
+    <tr><th style="width: 46%">Message</th><th>Que faire ?</th></tr>
+    <tr><td>« Veuillez sélectionner un fichier GML (.gml) »</td><td>Le fichier choisi n'est pas un .gml : vérifiez que vous avez bien exporté au format GML (et pas Excel, XML ou SHP).</td></tr>
+    <tr><td>« Le fichier est trop volumineux (maximum 10 MB) »</td><td>Contactez le support (chapitre 15).</td></tr>
+    <tr><td>« Erreur dans le fichier GML : Format GML non reconnu… » ou « …Aucune parcelle exploitable trouvée… »</td><td>Le fichier ne vient pas de PAC on Web ou est incomplet : exportez-le à nouveau, après avoir sauvé votre déclaration.</td></tr>
+    <tr><td>« Erreur d'authentification : Token invalide ou expiré. Veuillez vous reconnecter. »</td><td>Votre session a expiré : reconnectez-vous et recommencez l'import.</td></tr>
+  </table>
+
+  <!-- ---------- Modifier ---------- -->
+  <h3>Modifier une parcelle</h3>
+  <div class="two-col">
+    <div>
+      <ol class="steps">
+        <li>Cliquez sur le <strong>crayon</strong> de la parcelle.</li>
+        <li>Le formulaire « Modifier la parcelle » s'ouvre, déjà rempli. Corrigez ce que vous voulez.</li>
+        <li>Cliquez sur <span class="ui">Mettre à jour</span>.</li>
+      </ol>
+      <ul>
+        <li><strong>Changer d'unité</strong> convertit automatiquement la superficie : 2 ha deviennent 200 a.</li>
+        <li>Pour une parcelle <strong>importée</strong> (GML, PAC) ou placée par un <strong>point</strong>, l'adresse n'est pas demandée : elle est localisée par son contour ou ses coordonnées.</li>
+        <li>Pour modifier le <strong>contour</strong> d'une parcelle, passez par la carte (chapitre 6).</li>
+      </ul>
+    </div>
+    <figure><img src="../captures/p3-form-modifier.jpg" alt="Modifier une parcelle" /><figcaption>Une parcelle dessinée : ici, l'application demande une adresse.</figcaption></figure>
+  </div>
+  <div class="note note--warn"><b>Une parcelle dessinée vous demande une adresse ?</b>Pour une parcelle dont vous avez <strong>dessiné le contour</strong>, le formulaire indique « À compléter : adresse » et le bouton <span class="ui">Mettre à jour</span> reste pâle. Tapez l'adresse la plus proche de la parcelle (la rue ou le village), <strong>choisissez-la dans la liste</strong>, puis cliquez sur <span class="ui">Mettre à jour</span>. Le contour de la parcelle est conservé.</div>
+  <h4>Renommer une parcelle</h4>
+  <p>Vous pouvez changer le nom d'une parcelle à tout moment. Mais les traitements et travaux <strong>déjà encodés</strong> gardent l'<strong>ancien nom</strong>, y compris dans le registre exporté. Le plus simple est donc de donner leur nom définitif à vos parcelles avant de commencer à encoder.</p>
+
+  <!-- ---------- Supprimer ---------- -->
+  <h3>Supprimer des parcelles</h3>
+  <ul>
+    <li><strong>Une parcelle</strong> : ouvrez-la avec le crayon, puis <span class="ui">Supprimer la parcelle</span>. Appi'Field demande confirmation : « Êtes-vous sûr de vouloir supprimer … ? Cette action est irréversible. »</li>
+    <li><strong>Plusieurs parcelles</strong> : cochez-les dans la liste, puis cliquez sur <span class="ui">Supprimer la sélection</span> (le nombre de parcelles cochées s'affiche dans le bouton). Confirmez.</li>
+  </ul>
+  <figure><img src="../captures/p3-filtre-selection.jpg" alt="Sélection de parcelles" /><figcaption>Filtre « Plein air », tri par superficie, et deux parcelles cochées.</figcaption></figure>
+  <ul>
+    <li>La case tout en haut de la liste coche (ou décoche) toutes les parcelles <strong>de la page affichée</strong>, pas celles des autres pages.</li>
+    <li>Si certaines parcelles n'ont pas pu être supprimées, un message l'indique (« 3 parcelles supprimées sur 4 »).</li>
+  </ul>
+  <div class="note note--warn"><b>Ne supprimez pas une parcelle déjà utilisée</b>La suppression est <strong>définitive</strong>. Si la parcelle a déjà des cultures ou des traitements, ceux-ci restent dans votre carnet, mais l'<strong>adresse et les coordonnées</strong> de la parcelle disparaissent de leurs lignes dans le registre exporté, alors que la localisation est une information obligatoire. Supprimez seulement une parcelle créée par erreur ou en double, jamais utilisée.</div>
+
+  <!-- ---------- Smartphone ---------- -->
+  <h3>Sur smartphone</h3>
+  <div class="two-col">
+    <figure class="phone"><img src="../captures/p3-mobile-liste.jpg" alt="Liste sur smartphone" /><figcaption>Une carte par parcelle ; la deuxième est sélectionnée.</figcaption></figure>
+    <div>
+      <ul>
+        <li>Chaque parcelle est une <strong>carte</strong> : nom, catégorie, superficie et localisation (adresse ou coordonnées).</li>
+        <li><strong>Toucher une carte la sélectionne</strong> (pour la supprimer) : elle se colore et sa case se coche. Touchez-la à nouveau pour la désélectionner.</li>
+        <li>Pour <strong>ouvrir</strong> une parcelle, touchez son <strong>crayon</strong>.</li>
+        <li>Le bouton rond <strong>+</strong> en bas à droite ouvre le menu « Ajouter une parcelle », en panneau depuis le bas de l'écran.</li>
+      </ul>
+    </div>
+    <figure class="phone"><img src="../captures/p3-mobile-ajouter.jpg" alt="Menu Ajouter sur smartphone" /><figcaption>Le menu « Ajouter une parcelle ».</figcaption></figure>
+  </div>
+  <div class="note note--mobile"><b>Importer depuis un téléphone</b>Le menu « Importer mes parcelles » est aussi proposé sur smartphone, mais il faut alors avoir le fichier .gml sur le téléphone. Le plus simple est de faire l'import depuis l'ordinateur où vous avez téléchargé le fichier.</div>
+
+  <!-- ---------- FAQ ---------- -->
+  <h3>Questions fréquentes sur les parcelles</h3>
+  <dl class="faq">
+    <dt>Je ne trouve pas l'adresse de ma parcelle.</dt>
+    <dd>Les champs n'ont souvent pas d'adresse. Tapez seulement la rue la plus proche et la commune, ou le nom du village, et choisissez une proposition. Vous pouvez aussi dessiner la parcelle sur la carte ou placer un point (chapitre 6).</dd>
+    <dt>Ma déclaration PAC ne s'importe pas.</dt>
+    <dd>Vérifiez que le fichier se termine par <strong>.gml</strong> et qu'il a été exporté après avoir sauvé et soumis votre déclaration. Voir aussi le tableau des messages ci-dessus.</dd>
+    <dt>J'ai mes parcelles en double après un import.</dt>
+    <dd>Cochez les doublons et utilisez <span class="ui">Supprimer la sélection</span>, avant de les utiliser dans votre carnet.</dd>
+    <dt>La superficie importée ne correspond pas exactement à ma déclaration.</dt>
+    <dd>Appi'Field calcule la superficie à partir du contour. Vous pouvez la corriger avec le crayon.</dd>
+    <dt>Quelle catégorie choisir ?</dt>
+    <dd>Celle qui vous aide à vous y retrouver : « Plein air » pour un champ, « Sous-protection » pour une serre ou un tunnel. La catégorie sert au tri et n'apparaît pas dans le registre.</dd>
+  </dl>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Appi'Field – Relecture partie 5 : Le carnet de champ et les cultures</title>
+<link rel="stylesheet" href="../guide.css" />
+<style>
+  @page { @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6575; } }
+</style>
+</head>
+<body>
+<section class="chapter first" id="c7">
+  <h2><span class="num">7</span>Le carnet de champ et les cultures</h2>
+  <p class="lead">Le carnet de champ est le cœur d'Appi'Field : c'est votre registre. Il est organisé par <strong>culture</strong>. Une culture, c'est ce que vous avez semé ou planté sur une ou plusieurs parcelles pour une saison (« Froment d'hiver Chevignon sur le Champ du Moulin et la Grande Pièce »). Chaque traitement et chaque travail au champ est ensuite rattaché à une culture et à une parcelle.</p>
+
+  <h3>Pourquoi passer par les cultures ?</h3>
+  <ul>
+    <li>Le registre doit indiquer, pour chaque traitement, la <strong>culture traitée</strong> avec son nom officiel <strong>Phytoweb</strong> (ex. « Froment d'hiver »). C'est ce nom qui permet à Appi'Field de vous proposer les doses autorisées et de vous prévenir si un produit n'est pas autorisé sur la culture.</li>
+    <li>Pour les producteurs wallons, la <strong>variété</strong> et le <strong>précédent cultural</strong> doivent aussi figurer dans le registre : vous les indiquez une fois, dans la culture.</li>
+    <li>Une parcelle <strong>sans culture</strong> ne peut pas recevoir de traitement : créez d'abord la culture.</li>
+  </ul>
+  <div class="note note--tip"><b>Une culture par saison</b>Créez une nouvelle culture à chaque nouveau semis, même si c'est la même espèce que l'an passé. Quand la saison est finie, <strong>archivez</strong> l'ancienne culture : votre carnet reste clair, et l'historique est conservé.</div>
+
+  <!-- ---------- La page ---------- -->
+  <h3>La page « Mon carnet de champ »</h3>
+  <p>Cliquez sur <span class="ui">Carnet de champ</span> dans le menu (sur smartphone : <span class="ui">Carnet</span> dans la barre du bas).</p>
+  <figure><img src="../captures/p5-carnet.jpg" alt="Mon carnet de champ" /><figcaption>Le carnet de champ : une carte par culture, avec ses dernières interventions.</figcaption></figure>
+  <h4>En haut de la page</h4>
+  <ul>
+    <li><span class="ui">Exporter</span> : produire votre registre en Excel ou PDF (chapitre 10).</li>
+    <li><span class="ui">Mes archives</span> : vos cultures archivées (chapitre 10).</li>
+    <li><span class="ui">Ajouter</span> : une <strong>culture</strong>, un <strong>travail au champ</strong> (chapitre 9) ou un <strong>traitement phyto</strong> (chapitre 8).</li>
+  </ul>
+  <figure class="medium"><img src="../captures/p5-menu-ajouter.jpg" alt="Menu Ajouter" /><figcaption>Le menu « Ajouter ».</figcaption></figure>
+
+  <h4>Chaque culture</h4>
+  <p>Chaque culture est présentée dans une carte :</p>
+  <ul>
+    <li>son <strong>nom</strong> (espèce et variété) et, en vert, sa <strong>catégorie Phytoweb</strong> ;</li>
+    <li>le <strong>nombre de parcelles</strong> : cliquez dessus pour voir leurs noms ;</li>
+    <li>un tableau de ses <strong>interventions</strong> (traitements et travaux), de la plus récente à la plus ancienne : date, parcelle, type et détails (produit, numéro d'autorisation et dose pour un traitement). Le tableau en affiche <strong>5 à la fois</strong> ; les flèches en bas montrent les suivantes ;</li>
+    <li>le <strong>crayon</strong> en haut à droite modifie la culture.</li>
+  </ul>
+  <p><strong>Cliquez sur la carte</strong> d'une culture pour ouvrir sa <strong>fiche complète</strong> (voir plus loin).</p>
+
+  <h4>Rechercher et filtrer</h4>
+  <p>La barre sous les boutons permet de ne garder que ce qui vous intéresse. Les quatre petits boutons à droite (sur smartphone, ils portent leur nom) ouvrent chacun un filtre :</p>
+  <table>
+    <tr><th style="width: 26%">Outil</th><th>Ce qu'il fait</th></tr>
+    <tr><td><strong>Rechercher une culture…</strong></td><td>Tapez une partie du nom d'une culture <strong>ou</strong> d'une parcelle.</td></tr>
+    <tr><td><strong>👁 Vue</strong></td><td>Passe de la <strong>vue par cultures</strong> (les cartes) à la <strong>vue globale</strong> (un seul tableau de tous les événements), et inversement.</td></tr>
+    <tr><td><strong>📅 Dates</strong></td><td>N'affiche que les interventions entre deux dates (« Du » / « Au »). <span class="ui">Effacer</span> retire le filtre, <span class="ui">Appliquer</span> ferme la fenêtre.</td></tr>
+    <tr><td><strong>📍 Parcelles</strong></td><td>N'affiche que les cultures des parcelles cochées. <strong>Tout</strong> / <strong>Aucun</strong> cochent ou décochent toutes les parcelles.</td></tr>
+    <tr><td><strong>🌱 Cultures</strong></td><td>N'affiche que certaines catégories Phytoweb (ex. seulement le froment d'hiver).</td></tr>
+  </table>
+  <div class="two-col">
+    <figure><img src="../captures/p5-filtre-dates.jpg" alt="Filtre par dates" /><figcaption>Le filtre par dates.</figcaption></figure>
+    <figure><img src="../captures/p5-filtre-parcelles.jpg" alt="Filtre par parcelles" /><figcaption>Le filtre par parcelles.</figcaption></figure>
+  </div>
+  <p>Quand un filtre est actif, son bouton est mis en couleur. Pensez à l'enlever si une culture semble avoir disparu.</p>
+  <div class="note note--warn"><b>Le filtre par dates cache les cultures sans intervention</b>Avec un filtre de dates, une culture qui n'a <strong>aucune intervention</strong> dans la période n'apparaît plus du tout (par exemple une culture que vous venez de créer). Effacez le filtre pour la retrouver.</div>
+
+  <h4>La vue globale</h4>
+  <p>La vue globale rassemble dans <strong>un seul tableau</strong> tous les traitements et travaux, toutes cultures confondues : date, culture, catégorie Phytoweb, stade BBCH, parcelle, type, cible, opérateur et détails. C'est la vue la plus proche de votre registre. Le <strong>crayon</strong> au bout d'une ligne ouvre l'intervention pour la modifier, et <span class="ui">Actualiser</span> recharge le tableau.</p>
+  <figure><img src="../captures/p5-vue-globale.jpg" alt="Vue globale" /><figcaption>La vue globale des événements.</figcaption></figure>
+
+  <h4>Un carnet vide ?</h4>
+  <div class="two-col">
+    <div>
+      <p>Tant qu'aucune culture n'existe, la page affiche « Aucune culture n'a été détectée » et deux boutons :</p>
+      <ul>
+        <li><span class="ui">Encoder mes parcelles</span> si vous n'avez pas encore de parcelles (chapitre 5) ;</li>
+        <li><span class="ui">Créer ma première culture</span> sinon.</li>
+      </ul>
+    </div>
+    <figure><img src="../captures/p5-vide.jpg" alt="Carnet vide" /></figure>
+  </div>
+
+  <!-- ---------- Créer ---------- -->
+  <h3>Créer une culture</h3>
+  <p><span class="ui">Ajouter</span> › <span class="ui">Culture</span>. Le formulaire comporte <strong>3 étapes</strong> ; la barre en haut montre où vous en êtes. <span class="ui">Valider</span> passe à l'étape suivante, <span class="ui">Précédent</span> revient en arrière sans rien perdre.</p>
+
+  <h4>Étape 1 : Informations</h4>
+  <figure class="medium"><img src="../captures/p5-creation-1.jpg" alt="Étape Informations" /></figure>
+  <table>
+    <tr><th style="width: 34%">Champ</th><th>Ce qu'il faut mettre</th></tr>
+    <tr><td><strong>Nom de l'espèce et de la variété emblavée</strong>*</td><td>Le nom que vous donnez à la culture, avec la <strong>variété</strong> si vous la connaissez (ex. « Froment d'hiver – Chevignon », « Pomme de terre Fontane »). Il apparaît dans le carnet et le registre.</td></tr>
+    <tr><td><strong>Date de semis</strong></td><td>Facultative mais conseillée. Elle sert aussi à nommer automatiquement la <strong>collection</strong> de la culture (l'année du semis), utile pour l'archivage.</td></tr>
+    <tr><td><strong>Précédent cultural</strong></td><td>La culture qui occupait la parcelle avant (ex. « Betterave sucrière »). À indiquer si la parcelle est en rotation.</td></tr>
+    <tr><td><strong>Remarque</strong></td><td>Toute information utile, facultative.</td></tr>
+  </table>
+  <p>Seul le nom est obligatoire : tant qu'il est vide, <span class="ui">Valider</span> reste inactif.</p>
+
+  <h4>Étape 2 : Culture (catégorie Phytoweb)</h4>
+  <ol class="steps">
+    <li>Tapez <strong>au moins 3 lettres</strong> du nom de la culture dans « Chercher une catégorie Phytoweb » (ex. « fro » pour froment).</li>
+    <li>Cliquez sur la bonne catégorie : elle se coche.</li>
+    <li>Cliquez sur <span class="ui">Valider</span>.</li>
+  </ol>
+  <figure class="medium"><img src="../captures/p5-creation-2.jpg" alt="Étape Culture" /><figcaption>Les catégories Phytoweb contenant « fro ».</figcaption></figure>
+  <ul>
+    <li>Avant de taper, Appi'Field propose les catégories que vous avez <strong>récemment utilisées</strong> : un clic suffit.</li>
+    <li>Choisissez la catégorie <strong>la plus précise</strong> : « Froment d'hiver » plutôt que « Céréales ». C'est elle qui détermine les produits et doses autorisés.</li>
+  </ul>
+  <div class="note note--tip"><b>Je ne trouve pas ma culture</b>Cherchez avec un seul mot (« pomme », « chou », « fraise »). Certaines cultures sont classées dans une catégorie plus générale sur Phytoweb. En cas de doute, consultez le site <strong>fytoweb.be</strong>, ou l'étiquette du produit, qui indique les cultures autorisées.</div>
+
+  <h4>Étape 3 : Parcelles</h4>
+  <ol class="steps">
+    <li>Cochez la ou les parcelles où la culture est semée. Le nombre de parcelles sélectionnées s'affiche en haut à droite. La recherche permet de retrouver une parcelle par son nom.</li>
+    <li>Cliquez sur <span class="ui">Valider</span>.</li>
+  </ol>
+  <figure class="medium"><img src="../captures/p5-creation-3.jpg" alt="Étape Parcelles" /><figcaption>Deux parcelles sélectionnées.</figcaption></figure>
+  <p>Le message « <strong>Nouvelle culture créée !</strong> » confirme l'enregistrement ; <span class="ui">Retourner au registre</span> vous ramène au carnet, où la nouvelle culture apparaît.</p>
+  <div class="note note--tip"><b>Une même parcelle, plusieurs cultures ?</b>C'est possible, par exemple en maraîchage. Au moment d'encoder un traitement, vous choisirez alors le couple « parcelle + culture » traité.</div>
+
+  <!-- ---------- Fiche ---------- -->
+  <h3>La fiche d'une culture</h3>
+  <p>Cliquez sur la carte d'une culture : sa fiche s'ouvre.</p>
+  <figure><img src="../captures/p5-fiche.jpg" alt="Fiche d'une culture" /><figcaption>La fiche de la culture « Froment Chevignon ».</figcaption></figure>
+  <h4>En haut</h4>
+  <ul>
+    <li>Le nom de la culture et sa <strong>catégorie Phytoweb</strong>.</li>
+    <li><strong>Semis</strong> et <strong>Récolte</strong> : cliquez sur le petit <strong>crayon</strong> à côté de la date pour la changer directement, puis sur la coche pour enregistrer (ou la croix pour annuler). Pensez à indiquer la <strong>date de récolte</strong> en fin de saison.</li>
+    <li>Les <strong>parcelles</strong> de la culture.</li>
+  </ul>
+  <h4>L'historique de la culture</h4>
+  <p>Toutes les interventions de la culture, avec la date, la parcelle, le type (traitement, récolte, fertilisation…), le stade BBCH, la cible et les détails. Le <strong>crayon</strong> au bout d'une ligne ouvre l'intervention pour la modifier (chapitres 8 et 9).</p>
+  <h4>Les boutons du bas</h4>
+  <table>
+    <tr><th style="width: 30%">Bouton</th><th>Ce qu'il fait</th></tr>
+    <tr><td><span class="ui">Modifier la culture</span></td><td>Rouvre le formulaire en 3 étapes, déjà rempli : changez le nom, les dates, la catégorie Phytoweb ou les parcelles, puis validez chaque étape.</td></tr>
+    <tr><td><span class="ui">Archiver la culture</span></td><td>Range la culture dans vos archives, avec tout son historique (voir ci-dessous).</td></tr>
+    <tr><td><span class="ui">Supprimer la culture</span></td><td>Supprime la culture définitivement, après confirmation.</td></tr>
+  </table>
+
+  <h4>Archiver une culture</h4>
+  <div class="two-col">
+    <div>
+      <p>Quand une culture est terminée (récoltée, saison passée), archivez-la :</p>
+      <ol class="steps">
+        <li>Dans sa fiche : <span class="ui">Archiver la culture</span>.</li>
+        <li>Choisissez une <strong>collection</strong> dans la liste (les collections existantes, souvent l'année du semis), ou <strong>+ Créer une nouvelle collection</strong> et tapez son nom (ex. « Récolte 2026 »).</li>
+        <li>Cliquez sur <span class="ui">Archiver</span>.</li>
+      </ol>
+      <p>La culture quitte le carnet et rejoint <span class="ui">Mes archives</span> (chapitre 10). Elle reste dans vos exports si vous choisissez d'y inclure les cultures archivées.</p>
+    </div>
+    <figure><img src="../captures/p5-archiver.jpg" alt="Archiver une culture" /></figure>
+  </div>
+  <div class="note note--warn"><b>Une culture archivée est figée</b>Elle ne peut plus être modifiée ni recevoir de traitement. Pour cela, restaurez-la depuis <span class="ui">Mes archives</span>.</div>
+
+  <h4>Supprimer une culture</h4>
+  <div class="note note--warn"><b>Préférez l'archivage</b>La suppression est <strong>définitive</strong>. Le message de confirmation annonce que les traitements et travaux associés seront aussi supprimés, mais en réalité ils <strong>restent</strong> dans votre registre, sans plus être visibles dans aucune culture. Supprimez seulement une culture créée par erreur, sans aucune intervention ; pour une culture terminée, utilisez <span class="ui">Archiver la culture</span>.</div>
+
+  <!-- ---------- Smartphone ---------- -->
+  <h3>Sur smartphone</h3>
+  <div class="two-col">
+    <figure class="phone"><img src="../captures/p5-mobile-carnet.jpg" alt="Carnet sur smartphone" /><figcaption>Le carnet sur smartphone.</figcaption></figure>
+    <div>
+      <ul>
+        <li>Les filtres affichent leur nom (Vue, Dates, Parcelles, Cultures) et s'ouvrent en panneau depuis le bas de l'écran.</li>
+        <li>Le bouton rond <strong>+</strong> en bas à droite ouvre le menu « Ajouter ».</li>
+        <li>Dans les cartes et dans la fiche, les interventions s'affichent en <strong>liste</strong> plutôt qu'en tableau : une ligne par intervention, avec son type en pastille.</li>
+        <li>La fiche d'une culture s'ouvre en panneau plein écran ; les boutons Modifier, Archiver et Supprimer sont en bas.</li>
+      </ul>
+    </div>
+    <figure class="phone"><img src="../captures/p5-mobile-fiche.jpg" alt="Fiche sur smartphone" /><figcaption>La fiche d'une culture.</figcaption></figure>
+  </div>
+
+  <!-- ---------- FAQ ---------- -->
+  <h3>Questions fréquentes sur les cultures</h3>
+  <dl class="faq">
+    <dt>Une culture a disparu du carnet.</dt>
+    <dd>Vérifiez d'abord les <strong>filtres</strong> (un bouton coloré = filtre actif) et la recherche. Elle a peut-être été <strong>archivée</strong> (<span class="ui">Mes archives</span>). Vérifiez aussi l'exploitation active, en haut du menu.</dd>
+    <dt>Je ne vois pas ma parcelle à l'étape « Parcelles ».</dt>
+    <dd>Elle n'existe pas encore : créez-la dans la page Parcelles (chapitre 5), puis recommencez.</dd>
+    <dt>Je me suis trompé de catégorie Phytoweb.</dt>
+    <dd>Ouvrez la fiche, <span class="ui">Modifier la culture</span>, et choisissez la bonne catégorie à l'étape 2.</dd>
+    <dt>Ma culture couvre une nouvelle parcelle.</dt>
+    <dd><span class="ui">Modifier la culture</span>, puis cochez la parcelle à l'étape 3.</dd>
+    <dt>Faut-il recréer la culture chaque année ?</dt>
+    <dd>Oui : une culture correspond à un semis. Archivez l'ancienne et créez la nouvelle, avec son précédent cultural.</dd>
+  </dl>
+</section>
+
+</body>
+</html>

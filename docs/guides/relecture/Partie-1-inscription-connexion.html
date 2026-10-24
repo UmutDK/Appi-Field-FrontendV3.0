@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Appi'Field – Relecture partie 1 : Inscription et connexion</title>
+<link rel="stylesheet" href="../guide.css" />
+<style>
+  @page { @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6575; } }
+</style>
+</head>
+<body>
+<section class="chapter first" id="c2">
+  <h2><span class="num">2</span>Créer son compte et se connecter</h2>
+  <p class="lead">Ce chapitre vous accompagne pas à pas, de la création de votre compte jusqu'à votre première connexion. Comptez une dizaine de minutes.</p>
+
+  <h3>Avant de commencer</h3>
+  <p>Préparez ces informations. Seules celles marquées « obligatoire » sont indispensables : les autres peuvent être ajoutées plus tard.</p>
+  <table>
+    <tr><th style="width: 38%">Information</th><th style="width: 18%">Obligatoire ?</th><th>Où la trouver</th></tr>
+    <tr><td>Une <strong>adresse mail</strong> que vous consultez</td><td>Oui</td><td>Vous allez y recevoir un code. Gardez votre boîte mail ouverte (sur l'ordinateur ou sur votre téléphone).</td></tr>
+    <tr><td>L'<strong>adresse</strong> et le <strong>code postal</strong> de l'exploitation</td><td>Oui</td><td>—</td></tr>
+    <tr><td>Le <strong>nom de l'exploitation</strong></td><td>Oui</td><td>—</td></tr>
+    <tr><td>Votre <strong>numéro de phytolicence</strong></td><td>Non, mais conseillé</td><td>Sur votre phytolicence. Vous pouvez la consulter sur <strong>phytolicence.be</strong> avec votre carte d'identité (lecteur de carte) ou <strong>itsme</strong>, ou y demander une copie en PDF par mail.</td></tr>
+    <tr><td>Votre <strong>numéro d'exploitant</strong></td><td>Non</td><td>Si vous en avez un. <span class="a-confirmer">À confirmer : de quel numéro s'agit-il (SIGeC, BCE) ?</span></td></tr>
+    <tr><td>Votre <strong>numéro de TVA</strong></td><td>Non</td><td>Si vous n'en avez pas, laissez le champ vide.</td></tr>
+  </table>
+
+  <h3>Où commencer ?</h3>
+  <p>Ouvrez Appi'Field dans votre navigateur (Chrome, Edge, Firefox ou Safari). La page d'accueil propose trois boutons :</p>
+  <ul>
+    <li><span class="ui">Me créer un compte</span> : vous n'avez pas encore de compte. C'est ce que nous faisons dans ce chapitre.</li>
+    <li><span class="ui">Me connecter</span> : vous avez déjà un compte (voir « Se connecter » plus loin).</li>
+    <li><span class="ui">Me connecter avec WalleSmart</span> : vous utilisez le portail WalleSmart (voir la fin du chapitre).</li>
+  </ul>
+  <div class="two-col">
+    <figure><img src="../captures/p1-accueil-public.jpg" alt="Page d'accueil publique" /><figcaption>La page d'accueil, avant connexion.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p1-accueil-public-mobile.jpg" alt="Page d'accueil publique sur smartphone" /><figcaption>La même page sur smartphone.</figcaption></figure>
+  </div>
+  <p>L'inscription se fait en <strong>3 étapes</strong> : créer le compte, valider votre adresse mail, puis compléter les informations de votre exploitation.</p>
+
+  <!-- ---------- Étape 1 ---------- -->
+  <h3>Étape 1 : créer votre compte</h3>
+  <ol class="steps">
+    <li>Cliquez sur <span class="ui">Me créer un compte</span> (ou, depuis la page de connexion, sur <span class="ui">Créer un compte gratuitement</span>).</li>
+    <li>Remplissez tous les champs marqués d'une <strong>étoile rouge*</strong> (voir le tableau ci-dessous).</li>
+    <li>Cochez la case <strong>« En me créant un compte, je consens aux conditions générales d'utilisation »</strong>. Le lien bleu permet de les lire.</li>
+    <li>Cliquez sur <span class="ui">S'inscrire</span>. Le bouton affiche « Inscription en cours… » : patientez quelques secondes.</li>
+  </ol>
+  <figure><img src="../captures/p1-creation-vide.jpg" alt="Formulaire de création de compte" /><figcaption>Le formulaire de création de compte. Les champs marqués d'une étoile rouge sont obligatoires.</figcaption></figure>
+
+  <h4>Les champs du formulaire</h4>
+  <table>
+    <tr><th style="width: 24%">Champ</th><th>Ce qu'il faut mettre</th></tr>
+    <tr><td><strong>Prénom</strong>*<br /><strong>Nom de famille</strong>*</td><td>Votre prénom et votre nom. Ils s'affichent dans l'application (« Bienvenue, Marie ! »).</td></tr>
+    <tr><td><strong>Adresse mail</strong>*</td><td>L'adresse qui vous servira à vous connecter. Elle doit avoir la forme <em>nom@exemple.be</em>. Les majuscules n'ont pas d'importance.</td></tr>
+    <tr><td><strong>Confirmez votre adresse mail</strong>*</td><td>Retapez exactement la même adresse. C'est une vérification contre les fautes de frappe.</td></tr>
+    <tr><td><strong>Mot de passe</strong>*</td><td>Au moins <strong>8 caractères</strong>, dont <strong>1 chiffre</strong> et <strong>2 caractères spéciaux</strong>. Voir l'encadré ci-dessous.</td></tr>
+    <tr><td><strong>Confirmez votre mot de passe</strong>*</td><td>Retapez exactement le même mot de passe.</td></tr>
+    <tr><td><strong>Date de naissance</strong>*</td><td>Tapez-la sous la forme jour-mois-année, ou cliquez sur le petit calendrier à droite du champ.</td></tr>
+    <tr><td><strong>Sexe</strong>*</td><td>Homme, Femme ou « Non spécifié » (choix par défaut, accepté).</td></tr>
+  </table>
+
+  <h4>Choisir un mot de passe accepté</h4>
+  <div class="two-col">
+    <div>
+      <p>Dès que vous cliquez dans le champ <strong>Mot de passe</strong>, une petite liste apparaît. Chaque règle passe au <strong>vert ✓</strong> quand elle est respectée, et reste en <strong>rouge ✗</strong> sinon.</p>
+      <p>Les <strong>caractères spéciaux</strong> acceptés sont :<br /><code>! @ # $ % ^ &amp; * ( ) _ + - = [ ] { } ; ' : " \ | , . &lt; &gt; / ?</code></p>
+      <p>Les lettres accentuées (é, è, à…) et le signe € ne comptent <strong>pas</strong> comme caractères spéciaux.</p>
+    </div>
+    <figure><img src="../captures/p1-mdp-criteres.jpg" alt="Critères du mot de passe" /><figcaption>Ici, il manque encore deux caractères spéciaux.</figcaption></figure>
+  </div>
+  <div class="note note--tip"><b>Une méthode simple</b>Prenez un mot facile à retenir, ajoutez une année et deux signes, par exemple sur le modèle « Motfacile + 4 chiffres + deux signes ». N'utilisez pas l'exemple d'un guide tel quel, et ne donnez votre mot de passe à personne.</div>
+  <div class="note note--tip"><b>Voir ce que vous tapez</b>L'icône en forme d'<strong>œil</strong>, à droite du champ, affiche le mot de passe en clair. Cliquez à nouveau pour le masquer.</div>
+
+  <h4>Si quelque chose ne va pas</h4>
+  <p>Tant qu'une information manque ou est incorrecte, le bouton <span class="ui">S'inscrire</span> reste <strong>pâle</strong> et ne réagit pas. Un message rouge sous le champ concerné vous dit quoi corriger :</p>
+  <figure><img src="../captures/p1-creation-erreurs.jpg" alt="Erreurs dans le formulaire" /><figcaption>Les deux adresses mail ne sont pas identiques : le champ est entouré de rouge.</figcaption></figure>
+  <table>
+    <tr><th style="width: 45%">Message affiché</th><th>Que faire ?</th></tr>
+    <tr><td>« Champ obligatoire. »</td><td>Remplissez ce champ.</td></tr>
+    <tr><td>« Adresse mail invalide (ex. : nom@exemple.be). »</td><td>Vérifiez qu'il y a bien un <strong>@</strong> et un point, sans espace.</td></tr>
+    <tr><td>« Les deux adresses mail ne correspondent pas. »</td><td>Retapez l'adresse de confirmation, lettre par lettre.</td></tr>
+    <tr><td>« Les deux mots de passe ne correspondent pas. »</td><td>Retapez le mot de passe de confirmation. Utilisez l'œil pour comparer.</td></tr>
+    <tr><td>« La date de naissance ne peut pas être dans le futur. »</td><td>Vérifiez l'année.</td></tr>
+    <tr><td>« Complétez les champs obligatoires (*) et acceptez les conditions générales pour vous inscrire. »</td><td>Un champ est vide, ou la case des conditions générales n'est pas cochée.</td></tr>
+    <tr><td>« Complétez correctement les champs obligatoires (*) pour vous inscrire. »</td><td>Tout est rempli, mais une règle n'est pas respectée : le plus souvent, le mot de passe.</td></tr>
+  </table>
+  <div class="note note--warn"><b>« Un compte existe déjà pour cette adresse »</b>Ce message s'affiche sur la page de connexion quand votre adresse mail est déjà inscrite. Vous avez donc déjà un compte : votre adresse est déjà remplie, tapez simplement votre mot de passe. Si vous ne connaissez plus votre mot de passe, utilisez <span class="ui">Mot de passe oublié</span> (voir plus loin).</div>
+  <div class="two-col">
+    <figure><img src="../captures/p1-compte-existe.jpg" alt="Un compte existe déjà" /><figcaption>Le message quand l'adresse est déjà inscrite.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p1-creation-ok-mobile.jpg" alt="Formulaire rempli sur smartphone" /><figcaption>Sur smartphone : tout est rempli, le bouton « S'inscrire » est actif.</figcaption></figure>
+  </div>
+
+  <!-- ---------- Étape 2 ---------- -->
+  <h3>Étape 2 : valider votre adresse mail</h3>
+  <p>Après <span class="ui">S'inscrire</span>, Appi'Field vous envoie un <strong>code de validation</strong> par mail, et affiche la page « Confirmez votre inscription ».</p>
+  <ol class="steps">
+    <li><strong>Sans fermer Appi'Field</strong>, ouvrez votre boîte mail (dans un autre onglet, ou sur votre téléphone).</li>
+    <li>Ouvrez le mail d'Appi'Field et repérez le code.</li>
+    <li>Revenez dans Appi'Field, tapez le code dans le champ <strong>Code de validation</strong>, puis cliquez sur <span class="ui">Valider mon compte</span>.</li>
+  </ol>
+  <div class="two-col">
+    <figure><img src="../captures/p1-validation.jpg" alt="Page de validation du compte" /><figcaption>La page où taper le code reçu par mail.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p1-validation-mobile.jpg" alt="Validation sur smartphone" /></figure>
+  </div>
+  <div class="note note--warn"><b>Le code est valable 1 heure</b>Passé ce délai, il ne fonctionne plus. Cette page n'a pas de bouton pour renvoyer un code : <strong>recommencez simplement l'inscription</strong> (étape 1) avec la même adresse mail pour en recevoir un nouveau.</div>
+  <div class="note note--tip"><b>Pas de mail ?</b>Regardez dans le dossier <strong>Courrier indésirable</strong> (ou « Spam »). Vérifiez aussi que l'adresse tapée à l'étape 1 était la bonne. Si le code est refusé, un message vous prévient : vérifiez qu'il n'y a pas d'espace en trop et que vous utilisez le code du <strong>dernier</strong> mail reçu.</div>
+  <p>Dans la plupart des cas, vous passez directement à l'étape 3. Parfois, Appi'Field affiche : <em>« Votre email a été validé ! Veuillez maintenant vous re-connecter pour finaliser la création de votre compte. »</em> Cliquez sur OK, puis connectez-vous avec votre adresse mail et votre mot de passe : vous arrivez à l'étape 3.</p>
+
+  <!-- ---------- Étape 3 ---------- -->
+  <h3>Étape 3 : finaliser votre inscription</h3>
+  <p>Cette dernière page demande les informations de votre exploitation.</p>
+  <figure><img src="../captures/p1-finaliser-vide.jpg" alt="Page Finaliser mon inscription" /><figcaption>La page « Finaliser mon inscription ».</figcaption></figure>
+  <table>
+    <tr><th style="width: 26%">Champ</th><th style="width: 14%">Obligatoire ?</th><th>Ce qu'il faut mettre</th></tr>
+    <tr><td><strong>Numéro de phytolicence</strong></td><td>Non</td><td>Tapez seulement les chiffres : les <strong>points s'ajoutent tout seuls</strong> (ex. 23.2.00445). Vous pouvez le laisser vide si vous utilisez uniquement des produits qui ne demandent pas de phytolicence.</td></tr>
+    <tr><td><strong>Numéro d'exploitant</strong></td><td>Non</td><td>« Dans le cas où vous en avez un. » <span class="a-confirmer">À confirmer</span></td></tr>
+    <tr><td><strong>Adresse (rue et localité)</strong></td><td>Oui</td><td>L'adresse du siège de l'exploitation, ex. « Rue des Tilleuls 8, Gembloux ».</td></tr>
+    <tr><td><strong>Code postal</strong></td><td>Oui</td><td>Un code postal belge : <strong>4 chiffres</strong>, ex. 5030.</td></tr>
+    <tr><td><strong>Numéro de TVA</strong></td><td>Non</td><td>Tapez seulement les chiffres : « BE » et les points s'ajoutent tout seuls. Pas de TVA ? Laissez vide.</td></tr>
+    <tr><td><strong>Nom de mon exploitation</strong></td><td>Oui</td><td>Le nom de votre ferme ou de votre entreprise.</td></tr>
+  </table>
+  <div class="note note--tip"><b>Pourquoi indiquer votre phytolicence ?</b>Votre numéro de phytolicence et votre numéro d'exploitant sont repris sur <strong>chaque ligne du registre</strong> que vous exporterez. Mieux vaut les indiquer dès maintenant. Vous pourrez les ajouter ou les corriger plus tard dans <span class="ui">Mon compte</span>.</div>
+  <p>Cliquez sur <span class="ui">Suivant</span>. Le bouton affiche « Enregistrement… », puis vous arrivez sur l'<strong>accueil</strong> de votre exploitation : votre compte est prêt.</p>
+  <div class="two-col">
+    <figure class="phone"><img src="../captures/p1-finaliser-erreur-mobile.jpg" alt="Erreur de code postal sur smartphone" /><figcaption>Un code postal incomplet : le champ est entouré de rouge.</figcaption></figure>
+    <div>
+      <h4>Si quelque chose ne va pas</h4>
+      <table>
+        <tr><th style="width: 50%">Message</th><th>Que faire ?</th></tr>
+        <tr><td>« Champ obligatoire. »</td><td>Remplissez ce champ.</td></tr>
+        <tr><td>« Code postal belge : 4 chiffres. »</td><td>Tapez 4 chiffres, sans lettre ni espace.</td></tr>
+        <tr><td>« L'enregistrement n'a pas abouti. Vérifiez votre connexion puis réessayez. »</td><td>Vérifiez votre connexion internet, puis cliquez à nouveau sur <span class="ui">Suivant</span>.</td></tr>
+      </table>
+      <div class="note note--mobile"><b>Sur smartphone</b>Pendant cette étape, la barre du bas est masquée et le bouton <span class="ui">Suivant</span> reste collé en bas de l'écran.</div>
+    </div>
+  </div>
+  <div class="note note--warn"><b>Vous avez fermé la page avant de finir ?</b>Pas de souci : à votre prochaine connexion, vous arriverez directement sur l'accueil, et l'application ne vous redemandera pas ces informations. Complétez-les vous-même dans <span class="ui">Mon compte</span> › <span class="ui">Informations de mon exploitation</span> et <span class="ui">Informations personnelles</span> (chapitre 12).</div>
+
+  <h3>Juste après l'inscription : ajoutez votre équipe</h3>
+  <p>Au moment d'encoder un traitement, Appi'Field vous demandera <strong>qui l'a réalisé</strong> (l'« opérateur »). La liste des opérateurs est <strong>vide au départ</strong>, même pour vous : ajoutez-vous, ainsi que toute personne qui traite sur votre exploitation.</p>
+  <ol class="steps">
+    <li>Sur l'accueil, descendez jusqu'à l'encadré <strong>Mon équipe</strong> (ou cliquez sur le raccourci <span class="ui">Mon équipe</span>).</li>
+    <li>Cliquez sur <span class="ui">Nouvel opérateur</span>.</li>
+    <li>Tapez le <strong>nom et prénom</strong>* et, si la personne en a une, son <strong>numéro de phytolicence</strong>.</li>
+    <li>Cliquez sur <span class="ui">Enregistrer</span>.</li>
+  </ol>
+  <div class="note note--tip"><b>La phytolicence de l'opérateur</b>Elle n'est pas obligatoire pour encoder, mais elle apparaît dans le registre exporté, à côté du nom de l'opérateur (« Marie Dupont (23.2.01234) »). Indiquez-la si la personne en a une.</div>
+
+  <!-- ---------- Connexion ---------- -->
+  <h3>Se connecter</h3>
+  <ol class="steps">
+    <li>Sur la page d'accueil, cliquez sur <span class="ui">Me connecter</span> (sur ordinateur, vous pouvez aussi cliquer sur <span class="ui">Connexion</span> en bas du menu de gauche ; sur smartphone, sur l'icône de profil en haut à droite).</li>
+    <li>Tapez votre <strong>adresse mail</strong> et votre <strong>mot de passe</strong>.</li>
+    <li>Cliquez sur <span class="ui">Connexion</span>. Vous arrivez sur l'accueil de votre exploitation.</li>
+  </ol>
+  <div class="two-col">
+    <figure><img src="../captures/p1-connexion-erreur.jpg" alt="Erreur de connexion" /><figcaption>Le message quand l'adresse ou le mot de passe est incorrect.</figcaption></figure>
+    <figure class="phone"><img src="../captures/p1-connexion-mobile.jpg" alt="Connexion sur smartphone" /><figcaption>La page de connexion sur smartphone.</figcaption></figure>
+  </div>
+  <h4>« L'adresse mail ou le mot de passe mentionné n'est pas correct »</h4>
+  <ul>
+    <li>Vérifiez l'adresse mail : une lettre en trop ou en moins suffit à bloquer.</li>
+    <li>Le mot de passe, lui, fait la différence entre <strong>majuscules et minuscules</strong>. Vérifiez que la touche <strong>Verr. Maj</strong> (⇪) de votre clavier n'est pas allumée.</li>
+    <li>Cliquez sur l'<strong>œil</strong> pour voir ce que vous avez tapé.</li>
+    <li>Toujours bloqué ? Utilisez <span class="ui">Mot de passe oublié</span>.</li>
+  </ul>
+
+  <h4>Rester connecté, être déconnecté</h4>
+  <ul>
+    <li>Par sécurité, votre session ne dure pas indéfiniment. Quand elle se termine, Appi'Field vous ramène à la page d'accueil avec le bandeau jaune <strong>« Session expirée »</strong> : reconnectez-vous simplement.</li>
+    <li>Appi'Field vérifie aussi votre connexion toutes les 30 minutes. Si internet est coupé à ce moment-là, vous êtes déconnecté.</li>
+    <li>Ce qui était <strong>déjà enregistré</strong> est conservé. Un formulaire en cours, pas encore validé, est perdu : pensez à enregistrer au fur et à mesure.</li>
+  </ul>
+  <figure class="medium"><img src="../captures/p1-session-expiree.jpg" alt="Session expirée" /><figcaption>Le bandeau « Session expirée ». La croix à droite le ferme.</figcaption></figure>
+
+  <h4>Se déconnecter</h4>
+  <p>Sur ordinateur : l'icône rouge de sortie, à côté de votre nom, en bas du menu de gauche. Sur smartphone : <span class="ui">Plus</span> › <span class="ui">Déconnexion</span>.</p>
+  <div class="note note--warn"><b>Ordinateur partagé</b>Sur un ordinateur que d'autres personnes utilisent, déconnectez-vous toujours en partant : sinon, la personne suivante aura accès à votre carnet de champ.</div>
+
+  <!-- ---------- Mot de passe oublié ---------- -->
+  <h3>Mot de passe oublié</h3>
+  <ol class="steps">
+    <li>Sur la page de connexion, cliquez sur <span class="ui">Mot de passe oublié</span>.</li>
+    <li>Tapez l'adresse mail de votre compte, puis cliquez sur <span class="ui">Envoyer le lien</span>.</li>
+    <li>Vous recevez un <strong>code de récupération</strong> par mail. Tapez-le, puis cliquez sur <span class="ui">Valider</span>. Pas reçu ? Regardez dans les courriers indésirables, ou cliquez sur <span class="ui">Renvoyer un mail</span>.</li>
+    <li>Choisissez votre <strong>nouveau mot de passe</strong> (mêmes règles qu'à l'inscription), tapez-le deux fois, puis cliquez sur <span class="ui">Enregistrer</span>.</li>
+    <li>Connectez-vous avec ce nouveau mot de passe.</li>
+  </ol>
+  <div class="two-col">
+    <figure><img src="../captures/p1-mdp-oublie.jpg" alt="Mot de passe oublié" /><figcaption>1. Votre adresse mail.</figcaption></figure>
+    <figure><img src="../captures/p1-mdp-code.jpg" alt="Code de récupération" /><figcaption>2. Le code reçu par mail.</figcaption></figure>
+  </div>
+  <figure class="medium"><img src="../captures/p1-mdp-nouveau.jpg" alt="Nouveau mot de passe" /><figcaption>3. Le nouveau mot de passe.</figcaption></figure>
+  <table>
+    <tr><th style="width: 45%">Message</th><th>Que faire ?</th></tr>
+    <tr><td>« Le code de récupération que vous avez introduit n'est pas correct »</td><td>Vérifiez le code, et utilisez celui du <strong>dernier</strong> mail reçu.</td></tr>
+    <tr><td>« Le serveur ne répond pas. Veuillez réessayer dans quelques instants. »</td><td>Vérifiez votre connexion internet, attendez une minute et réessayez.</td></tr>
+  </table>
+  <p>Vous êtes connecté et voulez simplement <strong>changer</strong> de mot de passe ? Passez par <span class="ui">Mon compte</span> › <span class="ui">Modifier mon mot de passe</span> (chapitre 12).</p>
+
+  <!-- ---------- WalleSmart ---------- -->
+  <h3>Se connecter avec WalleSmart</h3>
+  <p>Si vous utilisez déjà le portail <strong>WalleSmart</strong> (WES), vous pouvez y ouvrir Appi'Field directement, sans retaper votre mot de passe. Il faut d'abord <strong>lier</strong> vos deux comptes, une seule fois.</p>
+  <h4>Lier vos comptes (une seule fois)</h4>
+  <ol class="steps">
+    <li>Connectez-vous à Appi'Field comme d'habitude.</li>
+    <li>Allez dans <span class="ui">Mon compte</span> › <span class="ui">WalleSmart</span>.</li>
+    <li>Cliquez sur <span class="ui">Lier mon compte WalleSmart</span> : le portail WalleSmart s'ouvre dans un nouvel onglet. Suivez ses indications.</li>
+    <li>Revenez dans <span class="ui">Mon compte</span> › <span class="ui">WalleSmart</span> : le message « Votre compte est déjà lié à un compte WalleSmart » confirme la liaison.</li>
+  </ol>
+  <figure><img src="../captures/p1-wallesmart.jpg" alt="Onglet WalleSmart de Mon compte" /><figcaption>Mon compte › WalleSmart, avant la liaison.</figcaption></figure>
+  <div class="note note--tip"><b>La même adresse mail</b>La liaison se fait par votre adresse mail : utilisez la même dans Appi'Field et dans WalleSmart.</div>
+  <h4>Ensuite, à chaque fois</h4>
+  <p>Ouvrez votre tableau de bord WalleSmart et cliquez sur Appi'Field : l'application s'ouvre, déjà connectée. Depuis la page d'accueil d'Appi'Field, le bouton <span class="ui">Me connecter avec WalleSmart</span> ouvre lui aussi le portail WalleSmart. Si un message « Token invalide ou expiré » s'affiche, repassez par WalleSmart ou connectez-vous avec votre mot de passe.</p>
+
+  <!-- ---------- FAQ du chapitre ---------- -->
+  <h3>Questions fréquentes sur l'inscription et la connexion</h3>
+  <dl class="faq">
+    <dt>Le bouton « S'inscrire » reste pâle alors que tout est rempli.</dt>
+    <dd>Le plus souvent, c'est le mot de passe : il lui manque un chiffre ou un deuxième caractère spécial. Cliquez dans le champ Mot de passe pour voir la liste des règles. Vérifiez aussi la case des conditions générales.</dd>
+    <dt>Je n'ai pas reçu le code de validation.</dt>
+    <dd>Regardez dans les courriers indésirables. Après 1 heure, le code expire : recommencez l'inscription avec la même adresse.</dd>
+    <dt>Je n'ai pas de numéro de TVA.</dt>
+    <dd>Laissez le champ vide, il est facultatif.</dd>
+    <dt>Je me suis trompé dans mon nom ou mon numéro de phytolicence.</dt>
+    <dd>Corrigez-les dans <span class="ui">Mon compte</span> › <span class="ui">Informations personnelles</span>.</dd>
+    <dt>Ma phytolicence a été renouvelée.</dt>
+    <dd>Un renouvellement peut donner un nouveau numéro. Mettez-le à jour dans <span class="ui">Mon compte</span> (votre numéro) et dans <span class="ui">Mon équipe</span> (celui de l'opérateur).</dd>
+    <dt>Je voudrais changer l'adresse mail de mon compte.</dt>
+    <dd>L'adresse mail n'est pas modifiable dans l'application. Contactez le support (chapitre 15).</dd>
+  </dl>
+</section>
+
+</body>
+</html>

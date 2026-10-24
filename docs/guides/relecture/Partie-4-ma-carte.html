@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Appi'Field – Relecture partie 4 : Ma carte</title>
+<link rel="stylesheet" href="../guide.css" />
+<style>
+  @page { @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6575; } }
+</style>
+</head>
+<body>
+<section class="chapter first" id="c6">
+  <h2><span class="num">6</span>Ma carte</h2>
+  <p class="lead">La page « Ma carte » affiche toutes vos parcelles sur une grande carte. C'est là que vous dessinez le contour exact d'une parcelle, que vous placez un point, que vous reprenez une parcelle du parcellaire officiel PAC, ou que vous corrigez un tracé.</p>
+
+  <h3>Ouvrir la carte</h3>
+  <ul>
+    <li>Depuis la page <span class="ui">Parcelles</span> : bouton <span class="ui">Voir ma carte</span>, sous la petite carte.</li>
+    <li>Ou : <span class="ui">Ajouter une parcelle</span> › <span class="ui">Dessiner sur ma carte</span>.</li>
+    <li>Depuis l'accueil : <span class="ui">Voir toutes mes parcelles</span> mène à la page Parcelles, puis <span class="ui">Voir ma carte</span>.</li>
+  </ul>
+  <p>Pour revenir à la liste : <span class="ui">Retour à mes parcelles</span> en haut à gauche (sur smartphone, la flèche ← en haut de l'écran).</p>
+
+  <h3>La page « Ma carte »</h3>
+  <figure><img src="../captures/p4-carte-plan.jpg" alt="Ma carte" /><figcaption>À gauche, vos parcelles ; à droite, la carte.</figcaption></figure>
+  <h4>À gauche : la liste de vos parcelles</h4>
+  <ul>
+    <li>Une carte par parcelle : son nom, sa catégorie et sa superficie.</li>
+    <li><strong>Cliquez sur une parcelle</strong> : la carte se déplace jusqu'à elle et la colore en <strong>jaune</strong>.</li>
+    <li>Le <strong>crayon</strong> ouvre son formulaire (voir « Modifier une parcelle » plus bas).</li>
+    <li>« Rechercher une parcelle » et « Toutes les catégories » filtrent la liste, comme sur la page Parcelles.</li>
+  </ul>
+  <h4>À droite : la carte</h4>
+  <ul>
+    <li><strong>Se déplacer</strong> : cliquez-glissez sur la carte (sur smartphone : glissez le doigt).</li>
+    <li><strong>Zoomer</strong> : boutons <strong>+</strong> et <strong>−</strong> en haut à droite, ou la molette de la souris (sur smartphone : écartez ou rapprochez deux doigts).</li>
+    <li>Les parcelles <strong>dessinées</strong> ou <strong>importées</strong> apparaissent avec leur contour vert ; un <strong>rond vert</strong> marque leur centre, ou l'emplacement des parcelles créées par point ou par adresse.</li>
+    <li><strong>Cliquez sur une parcelle</strong> sur la carte pour voir son nom, sa catégorie, sa superficie et ses coordonnées.</li>
+  </ul>
+  <figure><img src="../captures/p4-popup.jpg" alt="Parcelle sélectionnée" /><figcaption>« La Grande Pièce » choisie dans la liste : elle est colorée en jaune et ses informations s'affichent.</figcaption></figure>
+
+  <h3>Trouver un lieu sur la carte</h3>
+  <div class="two-col">
+    <div>
+      <ol class="steps">
+        <li>Tapez une adresse, une rue ou un village dans « Rechercher une adresse… », en haut de la carte (au moins 3 lettres, en Belgique).</li>
+        <li>Cliquez sur la bonne proposition.</li>
+        <li>La carte se centre sur ce lieu, qui est marqué quelques secondes par une épingle.</li>
+      </ol>
+      <p>Pratique pour aller directement à l'endroit où vous voulez dessiner une parcelle.</p>
+    </div>
+    <figure><img src="../captures/p4-recherche-lieu.jpg" alt="Recherche d'un lieu" /></figure>
+  </div>
+
+  <h3>Plan ou vue satellite</h3>
+  <p>Le bouton <span class="ui">Satellite</span> (sur smartphone : l'icône en forme de globe 🌐) affiche la <strong>photo aérienne</strong> à la place du plan. Les limites des champs, les chemins et les haies y sont bien plus faciles à repérer pour dessiner une parcelle. Cliquez à nouveau pour revenir au plan.</p>
+  <figure><img src="../captures/p4-satellite.jpg" alt="Vue satellite" /><figcaption>La vue satellite.</figcaption></figure>
+
+  <!-- ---------- Ajouter ---------- -->
+  <h3>Ajouter une parcelle depuis la carte</h3>
+  <div class="two-col">
+    <figure><img src="../captures/p4-menu-ajouter.jpg" alt="Menu Ajouter une parcelle" /></figure>
+    <div>
+      <p>Cliquez sur <span class="ui">Ajouter une parcelle</span>, en haut à gauche. Quatre choix :</p>
+      <table>
+        <tr><th style="width: 42%">Choix</th><th>Résultat</th></tr>
+        <tr><td><strong>Tracer un polygone</strong></td><td>Le contour exact, dessiné par vous. La superficie est calculée automatiquement.</td></tr>
+        <tr><td><strong>Placer un point sur la carte</strong></td><td>Un simple point à l'emplacement de la parcelle.</td></tr>
+        <tr><td><strong>Par adresse</strong></td><td>Comme sur la page Parcelles (chapitre 5).</td></tr>
+        <tr><td><strong>Le parcellaire (PAC on Web)</strong></td><td>Reprendre une parcelle officielle, avec son contour.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Tracer le contour d'une parcelle (polygone)</h3>
+  <ol class="steps">
+    <li>Placez la carte sur votre parcelle (recherche d'un lieu, zoom) et passez en <strong>vue satellite</strong> pour bien voir ses limites.</li>
+    <li><span class="ui">Ajouter une parcelle</span> › <span class="ui">Tracer un polygone</span>. Le pointeur devient une croix.</li>
+    <li><strong>Cliquez sur chaque coin</strong> de la parcelle, l'un après l'autre, en faisant le tour. Le premier point est <strong>rouge</strong>, les suivants verts ; un bandeau en haut compte les points placés.</li>
+    <li>Quand vous avez placé au moins 3 points, <strong>cliquez sur le premier point (rouge)</strong> ou sur <span class="ui">Fermer</span> pour terminer le contour.</li>
+    <li>Le formulaire « <strong>Parcelle tracée en polygone</strong> » s'ouvre : tapez le <strong>nom</strong>, vérifiez la <strong>superficie</strong>, choisissez la <strong>catégorie</strong>, puis <span class="ui">Enregistrer</span>.</li>
+  </ol>
+  <figure><img src="../captures/p4-trace-en-cours.jpg" alt="Tracé en cours" /><figcaption>Trois points placés. Le premier, en rouge, sert à fermer le contour.</figcaption></figure>
+  <div class="two-col">
+    <figure><img src="../captures/p4-trace-form.jpg" alt="Formulaire du polygone" /><figcaption>La superficie est calculée à partir du tracé.</figcaption></figure>
+    <div>
+      <ul>
+        <li><strong>La superficie</strong> est remplie automatiquement, en hectares, à partir du contour. Vous pouvez la corriger. Si vous changez l'unité (a ou m²), le nombre est converti.</li>
+        <li><strong>Pas d'adresse à donner</strong> : la parcelle est localisée par son contour.</li>
+        <li><span class="ui">Annuler</span> (dans le bandeau) efface le tracé en cours ; la croix du formulaire le ferme sans enregistrer.</li>
+      </ul>
+      <div class="note note--tip"><b>Plus de points, plus de précision</b>Pour un champ aux bords courbes, placez davantage de points le long de la courbe. Vous pourrez toujours corriger le tracé ensuite.</div>
+    </div>
+  </div>
+
+  <h3>Placer un point</h3>
+  <ol class="steps">
+    <li><span class="ui">Ajouter une parcelle</span> › <span class="ui">Placer un point sur la carte</span>.</li>
+    <li><strong>Cliquez une fois</strong> sur la carte, au centre de la parcelle. Une épingle verte « Point sélectionné » apparaît.</li>
+    <li>Le formulaire « <strong>Ajouter par point GPS</strong> » s'ouvre : tapez le nom, la <strong>superficie</strong> (elle n'est pas calculée, puisqu'il n'y a pas de contour), choisissez l'unité et la catégorie, puis <span class="ui">Enregistrer</span>.</li>
+  </ol>
+  <figure class="medium"><img src="../captures/p4-point-form.jpg" alt="Formulaire par point" /><figcaption>Le formulaire « Ajouter par point GPS ».</figcaption></figure>
+
+  <h3>Reprendre une parcelle du parcellaire PAC</h3>
+  <p>Le parcellaire PAC montre sur la carte les <strong>parcelles agricoles officielles</strong> (le dessin des parcelles de la PAC en Wallonie). Vous pouvez en choisir une pour la créer dans Appi'Field avec son contour, sans rien dessiner.</p>
+  <ol class="steps">
+    <li><strong>Zoomez</strong> sur la zone de vos parcelles. Le parcellaire ne se charge qu'à partir d'un zoom suffisant ; sinon, le menu indique « Zoomez davantage pour afficher le parcellaire ».</li>
+    <li><span class="ui">Ajouter une parcelle</span> › <span class="ui">Le parcellaire (PAC on Web)</span>. Patientez quelques secondes (« Chargement… ») : les parcelles officielles de la zone affichée apparaissent <strong>en rouge</strong>.</li>
+    <li><strong>Cliquez sur la parcelle</strong> qui vous intéresse.</li>
+    <li>Le formulaire « <strong>Encoder une parcelle PAC</strong> » s'ouvre, déjà rempli : nom « Parcelle PAC » suivi d'un numéro, superficie officielle, catégorie « Plein air ». <strong>Renommez-la</strong>, vérifiez le reste, puis <span class="ui">Enregistrer</span>.</li>
+  </ol>
+  <div class="two-col">
+    <figure><img src="../captures/p4-parcellaire.jpg" alt="Parcellaire PAC" /><figcaption>Le parcellaire PAC (en rouge) par-dessus vos parcelles (en vert).</figcaption></figure>
+    <figure><img src="../captures/p4-pac-form.jpg" alt="Encoder une parcelle PAC" /><figcaption>Le formulaire, prérempli à partir de la parcelle choisie.</figcaption></figure>
+  </div>
+  <ul>
+    <li>Si vous déplacez la carte vers une autre zone, relancez <span class="ui">Le parcellaire (PAC on Web)</span> pour charger cette zone.</li>
+    <li><span class="ui">Retirer les tuiles du parcellaire</span> (dans le même menu) efface les parcelles rouges de la carte.</li>
+  </ul>
+  <div class="note note--tip"><b>Parcellaire ou import GML ?</b>Si vous avez votre fichier GML, l'import (chapitre 5) crée <strong>toutes</strong> vos parcelles d'un coup. Le parcellaire est pratique pour ajouter <strong>une</strong> parcelle à la fois, ou si vous n'avez pas le fichier.</div>
+
+  <!-- ---------- Modifier ---------- -->
+  <h3>Modifier une parcelle et corriger son tracé</h3>
+  <ol class="steps">
+    <li>Cliquez sur le <strong>crayon</strong> de la parcelle, dans la liste de gauche.</li>
+    <li>Le formulaire « Modifier la parcelle » s'ouvre. Vous pouvez y changer le nom, la superficie, la catégorie, ou <span class="ui">Supprimer la parcelle</span> (mêmes précautions qu'au chapitre 5).</li>
+    <li>Pour une parcelle qui a un contour, le bouton <span class="ui">Modifier le tracé</span> permet de le corriger.</li>
+  </ol>
+  <figure class="medium"><img src="../captures/p4-modifier-form.jpg" alt="Modifier la parcelle" /><figcaption>Le formulaire de modification, avec le bouton « Modifier le tracé ».</figcaption></figure>
+  <h4>Corriger le tracé</h4>
+  <p>Après <span class="ui">Modifier le tracé</span>, le contour apparaît avec des <strong>poignées</strong> (petits ronds blancs) :</p>
+  <table>
+    <tr><th style="width: 36%">Pour…</th><th>Faites ceci</th></tr>
+    <tr><td><strong>Déplacer un coin</strong></td><td>Attrapez sa poignée et faites-la glisser.</td></tr>
+    <tr><td><strong>Ajouter un coin</strong></td><td>Cliquez sur la petite poignée au milieu d'un côté : elle devient un nouveau coin.</td></tr>
+    <tr><td><strong>Supprimer un coin</strong></td><td>Double-cliquez sur sa poignée (sur smartphone : touchez-la deux fois rapidement). Il faut garder au moins 3 coins.</td></tr>
+    <tr><td><strong>Valider</strong></td><td><span class="ui">Terminer</span> : le formulaire s'ouvre avec la nouvelle superficie ; cliquez sur <span class="ui">Enregistrer</span>.</td></tr>
+    <tr><td><strong>Abandonner</strong></td><td><span class="ui">Annuler</span> : l'ancien tracé est conservé.</td></tr>
+  </table>
+  <figure><img src="../captures/p4-modifier-trace.jpg" alt="Correction du tracé" /><figcaption>Les poignées : aux coins pour déplacer, au milieu des côtés pour ajouter un coin.</figcaption></figure>
+  <div class="note note--tip"><b>La superficie est recalculée</b>Après une correction du tracé, la superficie est recalculée à partir du nouveau contour. Le message « Le tracé de la parcelle … a été mis à jour avec succès ! » confirme l'enregistrement.</div>
+  <p>Pour une parcelle créée <strong>par adresse</strong> ou <strong>par point</strong>, il n'y a pas de contour : le bouton <span class="ui">Modifier le tracé</span> n'apparaît pas. Pour lui donner un contour, tracez-la comme une nouvelle parcelle, puis supprimez l'ancienne si elle n'a encore jamais été utilisée.</p>
+
+  <!-- ---------- Smartphone ---------- -->
+  <h3>Sur smartphone</h3>
+  <div class="two-col">
+    <figure class="phone"><img src="../captures/p4-mobile-carte.jpg" alt="Ma carte sur smartphone" /><figcaption>La carte occupe tout l'écran.</figcaption></figure>
+    <div>
+      <ul>
+        <li>La carte occupe <strong>tout l'écran</strong>. En haut : la recherche d'un lieu, le <strong>globe</strong> (vue satellite) et le bouton <strong>Ma position</strong> (une cible).</li>
+        <li>Le bouton <span class="ui">+ Ajouter</span>, en bas à droite, ouvre un panneau avec les quatre méthodes : tracer un polygone, placer un point, par adresse, parcellaire PAC.</li>
+        <li>Pour tracer, <strong>touchez</strong> la carte à chaque coin de la parcelle. Les boutons <span class="ui">Fermer polygone</span> et <span class="ui">Annuler tracé</span> apparaissent en bas de l'écran.</li>
+      </ul>
+    </div>
+    <figure class="phone"><img src="../captures/p4-mobile-ajouter.jpg" alt="Menu Ajouter sur smartphone" /><figcaption>Le panneau « Ajouter ».</figcaption></figure>
+  </div>
+  <h4>Ma position : dessiner au bord du champ</h4>
+  <div class="two-col">
+    <div>
+      <p>Sur smartphone, le bouton <strong>Ma position</strong> (la cible, en haut à droite) centre la carte sur l'endroit où vous vous trouvez, marqué par un <strong>rond bleu</strong> « Vous êtes ici ». Le cercle bleu clair autour indique la précision de la position.</p>
+      <ol class="steps">
+        <li>Allez au bord de votre parcelle, téléphone en main.</li>
+        <li>Touchez <strong>Ma position</strong>. La première fois, le téléphone demande l'autorisation d'utiliser votre position : acceptez.</li>
+        <li>Votre parcelle est sous vos yeux : tracez-la ou placez un point.</li>
+      </ol>
+    </div>
+    <figure class="phone"><img src="../captures/p4-mobile-position.jpg" alt="Ma position" /><figcaption>Le rond bleu : votre position.</figcaption></figure>
+  </div>
+  <table>
+    <tr><th style="width: 50%">Message</th><th>Que faire ?</th></tr>
+    <tr><td>« Autorisez la localisation pour Appi'Field dans les réglages du téléphone, puis réessayez. »</td><td>Vous avez refusé l'accès à votre position. Autorisez-le dans les réglages du téléphone (rubrique localisation ou confidentialité, pour votre navigateur ou pour Appi'Field).</td></tr>
+    <tr><td>« La localisation prend trop de temps. » / « Position introuvable pour le moment. »</td><td>Activez la localisation du téléphone, mettez-vous à découvert et réessayez.</td></tr>
+    <tr><td>« La localisation n'est pas disponible sur cette adresse… »</td><td>Vous n'utilisez pas l'adresse officielle d'Appi'Field (sécurisée, en https) : ouvrez l'application depuis son adresse habituelle.</td></tr>
+  </table>
+
+  <!-- ---------- FAQ ---------- -->
+  <h3>Questions fréquentes sur la carte</h3>
+  <dl class="faq">
+    <dt>Le parcellaire PAC ne s'affiche pas.</dt>
+    <dd>Zoomez davantage, puis relancez <span class="ui">Le parcellaire (PAC on Web)</span>. Le chargement peut prendre quelques secondes.</dd>
+    <dt>J'ai mal placé un point pendant le tracé.</dt>
+    <dd>Terminez le contour, enregistrez, puis corrigez avec <span class="ui">Modifier le tracé</span>. Ou cliquez sur <span class="ui">Annuler</span> et recommencez.</dd>
+    <dt>La superficie calculée est différente de ma déclaration.</dt>
+    <dd>Elle dépend de la précision du tracé. Corrigez le tracé, ou tapez directement la bonne superficie dans le formulaire.</dd>
+    <dt>Je ne vois pas mes parcelles sur la carte.</dt>
+    <dd>Cliquez sur une parcelle dans la liste de gauche : la carte se déplace jusqu'à elle. Une parcelle sans contour, sans point et sans adresse ne peut pas être affichée.</dd>
+    <dt>Le bouton « Ma position » n'apparaît pas sur mon ordinateur.</dt>
+    <dd>Il n'est proposé que sur smartphone et petite tablette. Sur ordinateur, utilisez la recherche d'un lieu.</dd>
+  </dl>
+</section>
+
+</body>
+</html>
