@@ -31,7 +31,7 @@ Ce document décrit le backend Flask de `server/app/` **en suivant l'organisatio
 6. [Réglages](#réglages)
    - [Exploitations — `/exploitations`](#exploitations--exploitations)
    - [Profil utilisateur — `/user_profile`](#profil-utilisateur--user_profile)
-   - [Préférences — `/preferences`](#préférences--preferences)
+   - [Préférences d'encodage — `/user_preferences`](#préférences-dencodage--user_preferences)
    - [Mandats (délégation d'accès) — `/mandates`](#mandats-délégation-daccès--mandates)
    - [Liaison WalleSmart — `/wallesmart`](#liaison-wallesmart--wallesmart)
 7. [Administration](#administration)
@@ -291,7 +291,7 @@ Suivi du stock de produits phytosanitaires (et produits personnalisés type engr
 
 ### Mouvements de stock — `/inventories`
 
-Modèle et endpoints entièrement documentés dans [API_DOCUMENTATION.md § Inventaire](app/API_DOCUMENTATION.md#inventaire--inventories). Rappel du principe : `inventoriesOperations` ne contient **que** les mouvements saisis manuellement par l'utilisateur (achats `"purchase"`, déclarations réglementaires `"ppnu"`/`"ppnv"`) — jamais la consommation par traitement phytosanitaire, lue en direct depuis `phytoTreatmentsComposition`.
+Modèle et endpoints entièrement documentés dans [API_DOCUMENTATION.md § Inventaire](app/API_DOCUMENTATION.md#inventaire--inventories). Rappel du principe : `inventoriesOperations` ne contient **que** les mouvements saisis manuellement par l'utilisateur (achats `"purchase"`, déclarations réglementaires `"ppnu"`/`"ppnv"`, corrections de stock `"correction"`) — jamais la consommation par traitement phytosanitaire, lue en direct depuis `phytoTreatmentsComposition`.
 
 Point non couvert par `API_DOCUMENTATION.md` : `PUT /inventories/<operationId>` 🔒 existe (mise à jour partielle d'un mouvement manuel — tous les champs optionnels, ceux omis conservent leur valeur actuelle ; `404` si le mouvement n'existe pas ou n'appartient pas à l'utilisateur), en plus du `POST`/`DELETE` déjà documentés.
 
@@ -306,9 +306,10 @@ Logique centralisée dans `app/utils/inventory_stock.py::compute_stock_by_produc
 1. **`inventoriesOperations`** (mouvements saisis) :
    - `"purchase"` → ajoute `standardQuantity` (ou `quantity` si la standardisation a échoué) au **stock utilisable** (`stock`).
    - `"ppnu"` / `"ppnv"` → suivis **séparément**, dans `ppnuStock`/`ppnvStock` — n'affectent **jamais** `stock` (déclarations réglementaires de produits non utilisables/non vendables, pas une consommation).
-2. **`phytoTreatmentsComposition`** (jointe à `phytoTreatments` pour la date), lue en direct — chaque ligne **soustrait** sa `standardProductQuantity` du `stock` utilisable, et apparaît dans l'historique fusionné comme une opération synthétique `operationType: "treatment"` (id = `eventCompositionId`, `sourceEventId` = l'`eventId` du traitement source).
+   - `"correction"` → ajoute (`correctionMode: "plus"`) ou retire (`"minus"`) la quantité de `stock`, et cumule ce net signé dans `correctionStock`.
+2. **`phytoTreatmentsComposition`** (jointe à `phytoTreatments` pour la date), lue en direct, **hors traitements effectués par un tiers** (`phytoTreatments.thirdPartFlag = 1`, totalement ignorés par l'inventaire) — chaque ligne **soustrait** sa `standardProductQuantity` du `stock` utilisable, et apparaît dans l'historique fusionné comme une opération synthétique `operationType: "treatment"` (id = `eventCompositionId`, `sourceEventId` = l'`eventId` du traitement source).
 
-Le résultat par produit est `{ productId, productName, productNumAut, stock, ppnuStock, ppnvStock, operations: [...] }`, avec `operations` triées chronologiquement (mélange mouvements manuels + consommations traitement). `productName`/`productNumAut` sont renseignés dès qu'une des deux sources les fournit (les mouvements manuels n'ont pas de nom de produit stocké, seulement `productId` — ils héritent donc du nom vu dans une consommation de traitement du même produit, si elle existe).
+Le résultat par produit est `{ productId, productName, productNumAut, stock, ppnuStock, ppnvStock, correctionStock, operations: [...] }`, avec `operations` triées chronologiquement (mélange mouvements manuels + consommations traitement). `productName`/`productNumAut` sont renseignés dès qu'une des deux sources les fournit (les mouvements manuels n'ont pas de nom de produit stocké, seulement `productId` — ils héritent donc du nom vu dans une consommation de traitement du même produit, si elle existe).
 
 Il n'y a **aucun** appel explicite de "synchronisation" lors d'un `POST`/`PUT`/`DELETE` sur `/phyto_treatments` : la mention de synchronisation automatique dans `API_DOCUMENTATION.md` renvoie simplement au fait que l'inventaire lit `phytoTreatmentsComposition` **en direct** à chaque requête — toute modification de traitement se répercute donc immédiatement sur le stock calculé, sans étape de copie/nettoyage intermédiaire.
 
@@ -316,7 +317,7 @@ Il n'y a **aucun** appel explicite de "synchronisation" lors d'un `POST`/`PUT`/`
 
 `POST /exports/inventaire` 🔒 (`app/routes/exports.py`) — non documenté dans `API_DOCUMENTATION.md`. Génère un classeur Excel (`inventaire.xlsx`) à partir de `compute_stock_by_product`, remplaçant `previousServer/export_inventaire.php`. Deux feuilles :
 
-- **"Inventaire"** : résumé par produit (`productId`, `stock`, `ppnuStock`, `ppnvStock`, nombre de mouvements).
+- **"Inventaire"** : résumé par produit (`productId`, `stock`, `ppnuStock`, `ppnvStock`, `correctionStock`, nombre de mouvements).
 - **"Mouvements"** : détail ligne à ligne de tous les mouvements (type, date, quantité, unité, traitement source le cas échéant).
 
 ---
@@ -347,29 +348,11 @@ Modèle `userProfile` :
 | `exploitingNumber` | TEXT | Numéro d'exploitant |
 | `createdAt` / `modifiedAt` | TIMESTAMP | |
 
-### Préférences — `/preferences`
+### Préférences d'encodage — `/user_preferences`
 
-`app/routes/preferences.py`, non documenté dans `API_DOCUMENTATION.md`. Une ligne par utilisateur (upsert), remplace `previousServer/users_pref.json`. Préférences d'affichage/encodage : type de pulvérisateur, mode de saisie des traitements par défaut, et une série de booléens de suivi par type de production (activent/désactivent des sections entières du frontend selon le profil de l'exploitation).
+`app/routes/user_preferences.py`, documenté dans [API_DOCUMENTATION.md § Préférences d'encodage](app/API_DOCUMENTATION.md#préférences-dencodage--user_preferences). Table `userPreferences` (migration 014), une ligne par utilisateur : avertissement Eco-régime réduction d'intrants, avertissements horaires et BBCH, mode d'encodage présélectionné. Ces préférences sont appliquées par `GET /phyto_treatments/warnings`.
 
-| Méthode | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/preferences` | 🔒 | Préférences de l'utilisateur courant (`null` si jamais enregistrées) |
-| `POST` | `/preferences` | 🔒 | Crée ou met à jour (upsert) |
-
-Modèle `preferences` :
-
-| Colonne | Type | Description |
-|---|---|---|
-| `userId` | VARCHAR(255) PK | |
-| `sprayerType` | TEXT | Type de pulvérisateur utilisé |
-| `treatmentEncodingMode` | TEXT | Mode de saisie des traitements par défaut (vraisemblablement l'un des 3 `eventType` du [moteur de calcul](#traitements-phytosanitaires--phyto_treatments)) |
-| `trackFieldWorks` | BOOLEAN | Suivi des travaux aux champs activé |
-| `trackLargeCrops` | BOOLEAN | Suivi grandes cultures |
-| `trackMarketGardening` | BOOLEAN | Suivi maraîchage |
-| `trackForageCrops` | BOOLEAN | Suivi cultures fourragères |
-| `trackOrnamentalPlants` | BOOLEAN | Suivi plantes ornementales |
-| `trackArboriculture` | BOOLEAN | Suivi arboriculture |
-| `trackNurseriesViticultureChristmasTrees` | BOOLEAN | Suivi pépinières/viticulture/sapins de Noël |
+L'ancienne route `/preferences` (table `preferences`, migration 003 : type de pulvérisateur, mode d'encodage, cultures suivies — jamais alimentée en production) a été supprimée, ainsi que sa table (migration 015).
 
 ### Mandats (délégation d'accès) — `/mandates`
 

@@ -144,10 +144,24 @@ Suppression définitive.
 | `parcelCategory` | `string` \| `null` | Ex. `"Plein air"` |
 | `parcelAddress` | `string` \| `null` | Adresse |
 | `recordType` | `string` \| `null` | Origine de l'enregistrement (ex. `"gml_import"`) |
+| `sigecCode` | `string` \| `null` | Code SIGEC |
+| `isArchived` | `0` \| `1` | Parcelle archivée (lecture seule : modifiable uniquement via `/archive`, `/unarchive`, `/renew`) |
+| `prevParcelId` | `string` \| `null` | Parcelle archivée dont celle-ci est le renouvellement (lecture seule) |
 | `createdAt` / `modifiedAt` | `string` (datetime) | Horodatage |
 
 ### `GET /parcels` 🔒 · `GET /parcels/<parcelId>` 🔒
-Liste / détail des parcelles de l'utilisateur.
+Liste / détail des parcelles de l'utilisateur. La liste inclut **les parcelles archivées** (champ `isArchived`) ; filtre optionnel `?archived=0` (actives) ou `?archived=1` (archivées).
+
+### `GET /parcels/archive` 🔒
+Parcelles archivées uniquement (équivalent de `/crops/archive`).
+
+### `POST /parcels/<parcelId>/archive` 🔒 · `POST /parcels/<parcelId>/unarchive` 🔒
+Archive / restaure une parcelle. `404` si elle n'existe pas. Les cultures, traitements et travaux déjà liés restent liés.
+
+### `POST /parcels/<parcelId>/renew` 🔒
+« Archiver et renouveler » (même parcelle, nouveau numéro PAC). Body : `{ "sigecCode": "..." }` (obligatoire, `400` sinon). Archive la parcelle et crée une copie active (surface, géométrie, catégorie, adresse, type identiques) nommée `"<nom> (1)"`, avec le nouveau `sigecCode` et `prevParcelId` = id de la parcelle archivée. `404` si introuvable, `409` si déjà archivée.
+
+**Réponse 201** : `{ "success": true, "parcelId": "<nouvelle>", "archivedParcelId": "<ancienne>" }`
 
 ### `POST /parcels` 🔒
 
@@ -170,7 +184,7 @@ Liste / détail des parcelles de l'utilisateur.
 **Réponse 201** : `{ "success": true, "parcelId": "..." }`
 
 ### `PUT /parcels/<parcelId>` 🔒
-Mêmes champs que le `POST`.
+Mêmes champs que le `POST` (remplacement complet), sauf `sigecCode` qui n'est modifié que s'il est présent dans le body. `isArchived` et `prevParcelId` sont ignorés.
 
 ### `DELETE /parcels/<parcelId>` 🔒
 
@@ -278,6 +292,8 @@ Après chaque `POST`/`PUT`/`DELETE`, les mouvements d'inventaire correspondant �
 | `localizedTreatment` | `boolean` | Traitement localisé |
 | `decisionBase` | `string` \| `null` | Base de décision |
 | `effectiveness` | `string` \| `null` | Efficacité perçue |
+| `thirdPartFlag` | `0` \| `1` (booléen en écriture) | Traitement effectué par un tiers. À `1`, les quantités de produits de ce traitement ne sont **pas déduites** de l'inventaire et n'apparaissent pas dans son historique. Défaut `0` à la création ; **conservé** s'il est omis d'un `PUT` |
+| `treatmentType` | `string` | Méthode d'application (≠ `eventType`, le mode d'encodage). Valeurs autorisées : `"pulvérisation"`, `"traitement de semences"`, `"microgranulé"`, `"arrosage"`, `"irrigation"`, `"badigeonnage"`, `"injection"`, `"trempage"` — sinon `400`. Défaut `"pulvérisation"` à la création ; **conservé** s'il est omis d'un `PUT` |
 | `parcelsConcerned` | `array<PhytoTreatmentParcel>` | Parcelles/cultures concernées (ajouté à la réponse) |
 | `treatmentComposition` | `array<PhytoTreatmentComposition>` | Produits appliqués (ajouté à la réponse) |
 | `createdAt` / `modifiedAt` | `string` (datetime) | Horodatage |
@@ -310,6 +326,28 @@ Liste les traitements de l'utilisateur (tri par `eventDate` décroissant), chacu
 
 ### `GET /phyto_treatments/<eventId>` 🔒
 
+### `GET /phyto_treatments/warnings?idActs=<idAct,...>&cropIds=<cropId,...>` 🔒
+Avertissements d'encodage pour les produits (`idActs`, produits personnels `perso-` ignorés) et les cultures du traitement (`cropIds`, ids `/crops` de l'utilisateur), **déjà filtrés selon ses préférences** (`/user_preferences`). Les cultures sont rattachées au référentiel Phytoweb côté serveur (phytowebId courant, catégorie admin, ou nom legacy — voir `app/utils/phytoweb_crops.py`) ; celles qui ne peuvent pas l'être sont listées dans `unresolvedCropIds`.
+
+```json
+{
+  "preferences": { "erRiWarningFlag": true, "spe8HourWarningFlag": true, "bbchWarningFlag": true,
+                   "defaultTreatmentType": "surface", "defaultEventType": "phyto_surface_treatment" },
+  "products": [{
+    "idAct": "act_...", "productName": "...", "numAut": "...",
+    "erRiFlag": true, "spe8FlagHoraire": true,
+    "bbchCrops": [{ "idCrop": "pwc_...", "cropName": "betteraves sucrières",
+                    "cropApplicationStade": "... (BBCH 12-19)", "cropIds": ["<cropId utilisateur>"],
+                    "message": "betteraves sucrières : ... (BBCH 12-19)" }],
+    "erRiWarning": "Attention, ce produit ne semble pas autorisé dans le cadre de la campagne Eco-régime réduction d'intrants",
+    "hourWarning": true,
+    "bbchWarnings": [ "...mêmes éléments que bbchCrops..." ]
+  }],
+  "unresolvedCropIds": []
+}
+```
+`erRiFlag`/`spe8FlagHoraire`/`bbchCrops` = données brutes Phytoweb ; `erRiWarning`/`hourWarning`/`bbchWarnings` = à afficher (vides si la préférence correspondante est désactivée).
+
 ### `POST /phyto_treatments` 🔒
 
 **Body**
@@ -324,6 +362,8 @@ Liste les traitements de l'utilisateur (tri par `eventDate` décroissant), chacu
   "treatmentTotalQuantityUsed": 4.141,
   "cleanFlag": false,
   "localizedTreatment": false,
+  "thirdPartFlag": false,
+  "treatmentType": "pulvérisation",
   "decisionBase": "Non définit",
   "effectiveness": "Pas d'avis",
   "remarks": "",
@@ -425,7 +465,7 @@ Mêmes champs. Si `parcelsConcerned` est fourni, les liaisons sont entièrement 
 ## Inventaire — `/inventories`
 
 L'inventaire combine deux sources en lecture :
-- `inventoriesOperations`, un journal de mouvements **à plat**, saisi par l'utilisateur — uniquement des achats/ajouts (+) et des déclarations réglementaires PPNU/PPNV (-, suivies à part du stock utilisable) ;
+- `inventoriesOperations`, un journal de mouvements **à plat**, saisi par l'utilisateur — uniquement des achats/ajouts (+), des déclarations réglementaires PPNU/PPNV (-, suivies à part du stock utilisable) et des corrections de stock (+ ou - selon `correctionMode`) ;
 - `phytoTreatmentsComposition`, lue **directement** (jointe à `phytoTreatments` pour la date) pour la consommation par traitement phytosanitaire (-) — jamais copiée dans `inventoriesOperations`.
 
 Le stock courant n'est pas stocké : il est **recalculé à la volée** à chaque lecture, et l'historique affiché par produit fusionne les deux sources, triées chronologiquement (voir `app/utils/inventory_stock.py`).
@@ -436,11 +476,12 @@ Le stock courant n'est pas stocké : il est **recalculé à la volée** à chaqu
 |-------|------|--------------|
 | `inventoryOperationId` | `string` | Identifiant unique (UUID pour un achat/PPNU/PPNV, `eventCompositionId` pour une consommation de traitement) |
 | `productId` | `string` | Produit concerné (catalogue Phytoweb `ppp-...` ou produit personnel `perso-...`) |
-| `operationType` | `string` | `"purchase"` (achat/ajout, +) ; `"ppnu"`/`"ppnv"` (déclaration, suivie à part) ; `"treatment"` (consommation, lue depuis phytoTreatmentsComposition, jamais créée via POST) |
+| `operationType` | `string` | `"purchase"` (achat/ajout, +) ; `"ppnu"`/`"ppnv"` (déclaration, suivie à part) ; `"correction"` (correction de stock, sens donné par `correctionMode`) ; `"treatment"` (consommation, lue depuis phytoTreatmentsComposition, jamais créée via POST) |
 | `operationDate` | `string` (YYYY-MM-DD) | Date du mouvement (date du traitement source pour `"treatment"`) |
-| `quantity` | `number` \| `null` | Quantité, dans l'unité fournie |
+| `quantity` | `number` \| `null` | Quantité, dans l'unité fournie — toujours > 0 (le sens d'une correction est porté par `correctionMode`) |
 | `quantityUnitId` | `string` \| `null` | Unité résolue |
 | `standardQuantity` | `number` \| `null` | Quantité standardisée (calculée, utilisée pour le calcul du stock) |
+| `correctionMode` | `"plus"` \| `"minus"` \| `null` | Uniquement pour `"correction"` : `"plus"` ajoute la quantité au stock, `"minus"` la retire. `null` pour les autres types |
 | `sourceEventId` | `string` \| `null` | `eventId` du traitement source, uniquement pour `"treatment"` |
 
 ### `GET /inventories` 🔒
@@ -452,16 +493,22 @@ Retourne, groupé par produit :
     "stock": 12.3,
     "ppnuStock": 0,
     "ppnvStock": 0,
+    "correctionStock": -0.5,
     "operations": [
-      { "inventoryOperationId": "...", "operationType": "purchase", "operationDate": "2025-04-01", "quantity": 20, "quantityUnitId": "2", "standardQuantity": 20 },
-      { "inventoryOperationId": "...", "operationType": "treatment", "operationDate": "2025-04-02", "quantity": 1.3, "quantityUnitId": "2", "standardQuantity": 1.3, "sourceEventId": "phyto_..." }
+      { "inventoryOperationId": "...", "operationType": "purchase", "operationDate": "2025-04-01", "quantity": 20, "quantityUnitId": "2", "standardQuantity": 20, "correctionMode": null },
+      { "inventoryOperationId": "...", "operationType": "treatment", "operationDate": "2025-04-02", "quantity": 1.3, "quantityUnitId": "2", "standardQuantity": 1.3, "sourceEventId": "phyto_..." },
+      { "inventoryOperationId": "...", "operationType": "correction", "operationDate": "2025-04-10", "quantity": 0.5, "quantityUnitId": "2", "standardQuantity": 0.5, "correctionMode": "minus" }
     ]
   }
 ]
 ```
 
+`correctionStock` est le **net signé** des corrections (`plus` comptées en +, `minus` en -), déjà répercuté dans `stock`.
+
 ### `POST /inventories` 🔒
-Ajoute un mouvement manuel : achat/ajout (`operationType: "purchase"`) ou déclaration PPNU/PPNV (`"ppnu"`/`"ppnv"`). La consommation par traitement ne se crée jamais ici — elle vient de `POST /phyto_treatments`.
+Ajoute un mouvement manuel : achat/ajout (`operationType: "purchase"`), déclaration PPNU/PPNV (`"ppnu"`/`"ppnv"`) ou correction de stock (`"correction"`, avec `correctionMode: "plus"|"minus"` obligatoire). La consommation par traitement ne se crée jamais ici — elle vient de `POST /phyto_treatments`.
+
+Validation (`400`) : `operationType` hors de la liste ci-dessus, `quantity` absente ou ≤ 0, `correctionMode` absent ou invalide pour une correction. `correctionMode` est ignoré (stocké `null`) pour les autres types.
 
 **Body**
 ```json
@@ -475,10 +522,41 @@ Ajoute un mouvement manuel : achat/ajout (`operationType: "purchase"`) ou décla
 ```
 **Réponse 201** : `{ "success": true, "inventoryOperationId": "..." }`
 
+### Import Excel d'achats 🔒
+Trois routes, aucune écriture avant `confirm` (logique dans `app/utils/inventory_import.py`) :
+
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `GET` | `/inventories/import/template` | Modèle `.xlsx` vierge (feuille « Achats » : Numéro d'autorisation, Nom du produit, Quantité, Unité, Date d'achat + feuille « Instructions ») |
+| `POST` | `/inventories/import/preview` | Multipart, champ `file` (`.xlsx`, 2 Mo, 500 lignes max). Lit et valide chaque ligne **sans rien enregistrer** : produit résolu par **numéro d'autorisation** (actes les plus récents, comparaison sans espaces ni casse — la colonne Nom est ignorée), quantité (> 0, virgule acceptée), unité (`L`/`Kg`, alias litre/kilo…), date `JJ/MM/AAAA` ou cellule date Excel (pas dans le futur). Retourne `{ rows: [{ rowNumber, input, product, quantity, quantityUnit, operationDate, errors[], warnings[], suggestions[], status }], summary }`. `400` si le fichier est illisible ou sans les colonnes attendues |
+| `POST` | `/inventories/import/confirm` | Body `{ rows: [{ rowNumber?, productId, quantity, quantityUnit: "L"\|"Kg", operationDate: "YYYY-MM-DD" }] }`. **Tout ou rien** : revalide chaque ligne, `400` + `rowErrors` si une seule est invalide, sinon crée un mouvement `purchase` par ligne. **201** : `{ success, created, inventoryOperationIds }` |
+
+Avertissements (non bloquants) renvoyés par `preview` : produit retiré (`statut = Retrait`), achat identique (produit, date, quantité) déjà présent dans l'inventaire, doublon dans le fichier. `suggestions` (numéro non reconnu) : produits au même numéro de base (ex. `10992` → `10992P/B`) puis dont le nom contient le nom saisi dans le fichier.
+
 ### `DELETE /inventories?inventoryOperationId=<id>` 🔒
 Supprime un mouvement précis.
 
 > ⚠️ Pour supprimer les mouvements liés à un traitement, ne pas utiliser cette route : supprimer ou modifier le traitement via `/phyto_treatments`, qui déclenche automatiquement le nettoyage/la régénération des mouvements `treatment` correspondants.
+
+---
+
+## Préférences d'encodage — `/user_preferences`
+
+Table `userPreferences` (une ligne par utilisateur). Menu Réglages > Préférences.
+
+| Champ | Type | Défaut | Description |
+|---|---|---|---|
+| `erRiWarningFlag` | `boolean` | `false` | Respecte la campagne Eco-régime réduction d'intrants |
+| `spe8HourWarningFlag` | `boolean` | `true` | Afficher les avertissements horaires |
+| `bbchWarningFlag` | `boolean` | `true` | Afficher les avertissements BBCH |
+| `defaultTreatmentType` | `"surface"` \| `"porridge"` \| `"quantity"` | `"surface"` | Mode d'encodage présélectionné |
+| `defaultEventType` | `string` (lecture seule) | | `eventType` correspondant (`phyto_surface_treatment`…) |
+
+### `GET /user_preferences` 🔒
+Retourne les préférences (valeurs par défaut si l'utilisateur n'en a jamais enregistré — une lecture n'écrit jamais).
+
+### `PUT /user_preferences` 🔒
+Upsert partiel : champs optionnels, ceux omis conservent leur valeur. `400` si un booléen n'en est pas un ou si `defaultTreatmentType` est hors liste. Retourne les préférences complètes à jour.
 
 ---
 

@@ -33,7 +33,7 @@ REGISTRE_HEADERS = [
     "Nom de la culture ou de l'espèce emblavée", "Culture Phytoweb", "Stade phénologique",
     "Date de semis", "Remarque (culture)", "Culture archivée", "Nom de l'archive",
     "Parcelle", "Adresse", "Coordonnées", "Traitement localisé", "Type de traitement",
-    "Produit utilisé (nom commercial)", "Produit utilisé (numéro d'autorisation)", "Cible",
+    "Méthode d'application", "Produit utilisé (nom commercial)", "Produit utilisé (numéro d'autorisation)", "Cible",
     "Surface traitée", "Surface traitée (unité)", "Quantité totale de traitement", "Unité",
     "Quantité de produit", "Unité", "Dose de PPP", "PPP (unité)", "Remarques",
     "Nettoyage externe de la cuve", "Nom de l'opérateur(trice)", "Heure de traitement",
@@ -65,7 +65,7 @@ def _fetch_treatment_rows(user_id: str) -> list[dict]:
     cur.execute(
         """SELECT
             t.eventDate, t.eventTime, t.eventType, t.surfaceTreated, t.treatmentTotalQuantity,
-            t.remarks AS treatmentRemarks, t.cleanFlag, t.localizedTreatment,
+            t.remarks AS treatmentRemarks, t.cleanFlag, t.localizedTreatment, t.treatmentType,
             pc.parcelName, pc.cropId, pc.cropName, pc.phytowebCropName,
             comp.productName, comp.productNumAut, comp.productDose, comp.productDoseUnitId,
             comp.productQuantity, comp.productQuantityUnitId, comp.productTarget,
@@ -151,6 +151,7 @@ def _registre_row_values(row: dict, profile: dict) -> list:
         f"{row['latitude']}, {row['longitude']}" if row.get("latitude") is not None else "",
         "Oui" if row.get("localizedTreatment") else "Non",
         row.get("eventType") or "",
+        (row.get("treatmentType") or "").capitalize(),  # stocké en minuscules (ex. "pulvérisation")
         row.get("productName") or "",
         row.get("productNumAut") or "",
         row.get("productTarget") or "",
@@ -260,9 +261,11 @@ def build_inventaire_excel(user_id: str) -> BytesIO:
     stock = compute_stock_by_product(user_id)
 
     wb = Workbook()
-    summary_headers = ["Produit (id)", "Stock disponible", "Stock PPNU", "Stock PPNV", "Nombre de mouvements"]
+    summary_headers = ["Produit (id)", "Stock disponible", "Stock PPNU", "Stock PPNV",
+                       "Corrections (net)", "Nombre de mouvements"]
     summary_rows = [
-        [entry["productId"], entry["stock"], entry["ppnuStock"], entry["ppnvStock"], len(entry["operations"])]
+        [entry["productId"], entry["stock"], entry["ppnuStock"], entry["ppnvStock"],
+         entry["correctionStock"], len(entry["operations"])]
         for entry in stock
     ]
     _write_sheet(wb.active, summary_headers, summary_rows)
@@ -272,7 +275,8 @@ def build_inventaire_excel(user_id: str) -> BytesIO:
     detail_rows = [
         [
             entry["productId"],
-            op["operationType"],
+            # Le sens d'une correction n'est pas porté par la quantité (toujours > 0).
+            f"correction ({op['correctionMode']})" if op["operationType"] == "correction" else op["operationType"],
             op["operationDate"],
             op.get("quantity"),
             find_unit_name_by_id(op.get("quantityUnitId")),

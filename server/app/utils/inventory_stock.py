@@ -4,11 +4,15 @@ et l'export inventaire (app/utils/exports.py).
 
 Deux sources combinées, fusionnées et triées chronologiquement :
 - inventoriesOperations : uniquement les mouvements saisis par l'utilisateur,
-  achat/ajout ('purchase', +) ou déclaration réglementaire ('ppnu'/'ppnv', suivies
-  à part dans ppnuStock/ppnvStock, jamais comptées dans le stock utilisable).
+  achat/ajout ('purchase', +), déclaration réglementaire ('ppnu'/'ppnv', suivies
+  à part dans ppnuStock/ppnvStock, jamais comptées dans le stock utilisable) ou
+  correction de stock ('correction', + ou - selon correctionMode 'plus'/'minus',
+  cumulée en net signé dans correctionStock et répercutée sur le stock utilisable).
 - phytoTreatmentsComposition : la consommation par traitement phytosanitaire (-),
   lue directement depuis cette table (jointe à phytoTreatments pour la date) —
-  jamais dupliquée dans inventoriesOperations.
+  jamais dupliquée dans inventoriesOperations. Les traitements effectués par un tiers
+  (phytoTreatments.thirdPartFlag = 1) sont exclus : ni déduits du stock, ni listés
+  dans l'historique.
 """
 from app.db import cursor_appifield
 from app.utils.units import find_unit_name_by_id
@@ -17,7 +21,7 @@ from app.utils.units import find_unit_name_by_id
 def _new_entry(product_id: str) -> dict:
     return {
         "productId": product_id, "productName": None, "productNumAut": None,
-        "stock": 0.0, "ppnuStock": 0.0, "ppnvStock": 0.0, "operations": [],
+        "stock": 0.0, "ppnuStock": 0.0, "ppnvStock": 0.0, "correctionStock": 0.0, "operations": [],
     }
 
 
@@ -35,7 +39,7 @@ def compute_stock_by_product(user_id: str) -> list[dict]:
                   c.productQuantity, c.productQuantityUnitId, c.standardProductQuantity, t.eventDate
            FROM phytoTreatmentsComposition c
            JOIN phytoTreatments t ON t.eventId = c.eventId AND t.userId = c.userId
-           WHERE c.userId = %s""",
+           WHERE c.userId = %s AND t.thirdPartFlag = 0""",
         (user_id,),
     )
     treatment_usages = cur.fetchall()
@@ -56,6 +60,10 @@ def compute_stock_by_product(user_id: str) -> list[dict]:
             entry["ppnuStock"] += qty
         elif op_type == "ppnv":
             entry["ppnvStock"] += qty
+        elif op_type == "correction":
+            signed_qty = qty if op.get("correctionMode") == "plus" else -qty
+            entry["correctionStock"] += signed_qty
+            entry["stock"] += signed_qty
         else:
             entry["stock"] += qty  # 'purchase' : ajout
 

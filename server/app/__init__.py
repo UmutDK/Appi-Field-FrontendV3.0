@@ -40,7 +40,7 @@ from app.routes.personal_products import bp as personal_products_bp
 from app.routes.admin import bp as admin_bp
 from app.routes.mandates import bp as mandates_bp
 from app.routes.user_profile import bp as user_profile_bp
-from app.routes.preferences import bp as preferences_bp
+from app.routes.user_preferences import bp as user_preferences_bp
 from app.routes.exports import bp as exports_bp
 from app.routes.formations import bp as formations_bp
 from app.routes.phytoweb_categories import bp as phytoweb_categories_bp
@@ -84,7 +84,7 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(mandates_bp)
     app.register_blueprint(user_profile_bp)
-    app.register_blueprint(preferences_bp)
+    app.register_blueprint(user_preferences_bp)
     app.register_blueprint(exports_bp)
     app.register_blueprint(formations_bp)
     app.register_blueprint(phytoweb_categories_bp)

@@ -183,6 +183,9 @@ CREATE TABLE IF NOT EXISTS parcels (
     recordType VARCHAR(255),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    isArchived TINYINT(1) NOT NULL DEFAULT 0,
+    prevParcelId VARCHAR(255) NULL DEFAULT NULL,
+    sigecCode VARCHAR(50) NULL DEFAULT NULL,
     KEY idx_parcels_user (userId),
     KEY idx_parcels_area_unit (parcelAreaUnitId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -281,6 +284,8 @@ CREATE TABLE IF NOT EXISTS phytoTreatments (
     localizedTreatment BOOLEAN DEFAULT 0,
     decisionBase VARCHAR(255),
     effectiveness VARCHAR(255),
+    thirdPartFlag BOOLEAN NOT NULL DEFAULT 0,
+    treatmentType VARCHAR(50) NOT NULL DEFAULT 'pulvérisation',
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_phytotreatments_user (userId),
@@ -412,6 +417,7 @@ CREATE TABLE IF NOT EXISTS inventoriesOperations (
     quantity DOUBLE,
     quantityUnitId VARCHAR(255),
     standardQuantity DOUBLE,
+    correctionMode VARCHAR(10) NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_invops_user (userId),
@@ -473,17 +479,15 @@ CREATE TABLE IF NOT EXISTS userProfile (
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS preferences (
-    userId VARCHAR(255) NOT NULL PRIMARY KEY,
-    sprayerType TEXT,
-    treatmentEncodingMode TEXT,
-    trackFieldWorks BOOLEAN DEFAULT 0,
-    trackLargeCrops BOOLEAN DEFAULT 0,
-    trackMarketGardening BOOLEAN DEFAULT 0,
-    trackForageCrops BOOLEAN DEFAULT 0,
-    trackOrnamentalPlants BOOLEAN DEFAULT 0,
-    trackArboriculture BOOLEAN DEFAULT 0,
-    trackNurseriesViticultureChristmasTrees BOOLEAN DEFAULT 0,
+-- (table `preferences` de la migration 003 supprimée par la migration 015, remplacée par userPreferences)
+
+-- userPreferences  [MIGRATION 014] — préférences d'encodage des traitements phyto
+CREATE TABLE IF NOT EXISTS userPreferences (
+    idUser VARCHAR(255) NOT NULL PRIMARY KEY,
+    erRiWarningFlag BOOLEAN NOT NULL DEFAULT 0,
+    spe8HourWarningFlag BOOLEAN NOT NULL DEFAULT 1,
+    bbchWarningFlag BOOLEAN NOT NULL DEFAULT 1,
+    defaultTreatmentType VARCHAR(20) NOT NULL DEFAULT 'surface',
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
