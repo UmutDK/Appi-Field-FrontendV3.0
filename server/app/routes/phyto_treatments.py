@@ -9,15 +9,33 @@ parcelle, totaux) sont calculés par app/utils/treatment_calc/, un module par mo
 saisie (Surface/Bouillie/Quantité), dispatché selon `eventType`. Le calcul est intégral
 à chaque écriture (création ou modification) à partir des valeurs de base propres à
 chaque mode — voir treatment_calc/__init__.py pour le détail du principe.
+thirdPartFlag (0/1) : traitement effectué par un tiers — ses quantités ne sont pas
+déduites de l'inventaire (filtrées dans app/utils/inventory_stock.py).
+treatmentType : méthode d'application (pulvérisation, traitement de semences...), à ne
+pas confondre avec eventType (mode d'encodage Surface/Bouillie/Quantité).
 """
 import uuid
 from flask import Blueprint, jsonify, request
-from app.db import cursor_appifield, commit_appifield
+from app.db import cursor_appifield, cursor_phytoweb, commit_appifield
 from app.auth import require_auth
 from app.utils.units import find_unit_name_by_id
 from app.utils import treatment_calc
+from app.utils.phytoweb_crops import resolve_index_crop_ids
+from app.utils.user_preferences import get_user_preferences
 
 bp = Blueprint("phyto_treatments", __name__, url_prefix="/phyto_treatments")
+
+TREATMENT_TYPES = (
+    "pulvérisation", "traitement de semences", "microgranulé", "arrosage",
+    "irrigation", "badigeonnage", "injection", "trempage",
+)
+DEFAULT_TREATMENT_TYPE = "pulvérisation"
+
+
+def _treatment_type_error(value):
+    if value not in TREATMENT_TYPES:
+        return jsonify({"error": f"treatmentType invalide (attendu : {', '.join(TREATMENT_TYPES)})"}), 400
+    return None
 
 
 def _attach_children(cur, events: list) -> list:
@@ -169,6 +187,118 @@ def get_application_count(user_id):
     return jsonify([{"cropId": crop_id, "count": counts.get(crop_id, 0)} for crop_id in crop_ids])
 
 
+ER_RI_WARNING_MESSAGE = (
+    "Attention, ce produit ne semble pas autorisé dans le cadre de la campagne "
+    "Eco-régime réduction d'intrants"
+)
+_MAX_WARNING_IDS = 100
+
+
+def _split_ids(param: str | None) -> list[str]:
+    """Liste d'ids séparés par des virgules, dédupliquée en conservant l'ordre."""
+    ids = [i.strip() for i in (param or "").split(",") if i.strip()]
+    return list(dict.fromkeys(ids))[:_MAX_WARNING_IDS]
+
+
+@bp.get("/warnings")
+@require_auth
+def get_treatment_warnings(user_id):
+    """
+    Avertissements à afficher pendant l'encodage d'un traitement, déjà filtrés selon les
+    préférences de l'utilisateur (userPreferences).
+    Query : ?idActs=<idAct,...> (produits de la composition) &cropIds=<cropId,...> (cultures
+    du traitement, ids c2544857c_appifield — rattachées au référentiel Phytoweb côté serveur,
+    voir app/utils/phytoweb_crops.py). Les produits personnels (perso-...) sont ignorés.
+      - erRiWarning  : general.erRiFlag = 1 ET préférence erRiWarningFlag = 1
+      - hourWarning  : general.spe8FlagHoraire = 1 ET préférence spe8HourWarningFlag = 1
+      - bbchWarnings : lignes corderPhytoweb.crops de l'acte avec bbchFlag = 1 dont l'idCrop
+                       correspond à une culture du traitement, ET préférence bbchWarningFlag = 1
+    Les valeurs brutes (erRiFlag, spe8FlagHoraire, bbchCrops) sont renvoyées indépendamment
+    des préférences.
+    """
+    prefs = get_user_preferences(user_id)
+    id_acts = [i for i in _split_ids(request.args.get("idActs")) if not i.startswith("perso-")]
+    crop_ids = _split_ids(request.args.get("cropIds"))
+
+    # Cultures du traitement -> idCrop du référentiel Phytoweb
+    crop_ids_by_index_id: dict[str, list[str]] = {}
+    unresolved_crop_ids = []
+    if crop_ids:
+        cur = cursor_appifield()
+        placeholders = ", ".join(["%s"] * len(crop_ids))
+        cur.execute(
+            f"SELECT cropId, phytowebId FROM crops WHERE userId = %s AND cropId IN ({placeholders})",
+            (user_id, *crop_ids),
+        )
+        phytoweb_id_by_crop = {row["cropId"]: row["phytowebId"] for row in cur.fetchall()}
+        index_ids = resolve_index_crop_ids(phytoweb_id_by_crop.values())
+        for crop_id in crop_ids:
+            index_id = index_ids.get(phytoweb_id_by_crop.get(crop_id))
+            if index_id:
+                crop_ids_by_index_id.setdefault(index_id, []).append(crop_id)
+            else:
+                unresolved_crop_ids.append(crop_id)
+
+    products = []
+    if id_acts:
+        cur_ph = cursor_phytoweb()
+        placeholders = ", ".join(["%s"] * len(id_acts))
+        cur_ph.execute(
+            f"""SELECT idAct, productName, numAut, erRiFlag, spe8FlagHoraire
+                FROM general WHERE idAct IN ({placeholders})""",
+            tuple(id_acts),
+        )
+        general_by_act = {row["idAct"]: row for row in cur_ph.fetchall()}
+
+        bbch_by_act: dict[str, list[dict]] = {}
+        if crop_ids_by_index_id:
+            index_placeholders = ", ".join(["%s"] * len(crop_ids_by_index_id))
+            cur_ph.execute(
+                f"""SELECT idAct, idCrop, cropName, cropApplicationStade
+                    FROM crops
+                    WHERE bbchFlag = '1' AND idAct IN ({placeholders}) AND idCrop IN ({index_placeholders})""",
+                (*id_acts, *crop_ids_by_index_id.keys()),
+            )
+            seen = set()
+            for row in cur_ph.fetchall():
+                key = (row["idAct"], row["idCrop"], row["cropApplicationStade"])
+                if key in seen:  # une même culture peut apparaître sur plusieurs lignes de l'acte
+                    continue
+                seen.add(key)
+                bbch_by_act.setdefault(row["idAct"], []).append({
+                    "idCrop": row["idCrop"],
+                    "cropName": row["cropName"],
+                    "cropApplicationStade": row["cropApplicationStade"],
+                    "cropIds": crop_ids_by_index_id[row["idCrop"]],
+                    "message": f"{row['cropName']} : {row['cropApplicationStade']}",
+                })
+
+        for id_act in id_acts:
+            general = general_by_act.get(id_act)
+            if not general:
+                continue
+            er_ri = str(general.get("erRiFlag")) == "1"
+            spe8_hour = str(general.get("spe8FlagHoraire")) == "1"
+            bbch_crops = bbch_by_act.get(id_act, [])
+            products.append({
+                "idAct": id_act,
+                "productName": general["productName"],
+                "numAut": general["numAut"],
+                "erRiFlag": er_ri,
+                "spe8FlagHoraire": spe8_hour,
+                "bbchCrops": bbch_crops,
+                "erRiWarning": ER_RI_WARNING_MESSAGE if er_ri and prefs["erRiWarningFlag"] else None,
+                "hourWarning": spe8_hour and prefs["spe8HourWarningFlag"],
+                "bbchWarnings": bbch_crops if prefs["bbchWarningFlag"] else [],
+            })
+
+    return jsonify({
+        "preferences": prefs,
+        "products": products,
+        "unresolvedCropIds": unresolved_crop_ids,
+    })
+
+
 @bp.get("/<event_id>")
 @require_auth
 def get_treatment(user_id, event_id):
@@ -188,6 +318,10 @@ def create_treatment(user_id):
         return jsonify({"error": "eventType requis"}), 400
     if not data.get("eventDate"):
         return jsonify({"error": "eventDate requis"}), 400
+    treatment_type = data.get("treatmentType") or DEFAULT_TREATMENT_TYPE
+    error = _treatment_type_error(treatment_type)
+    if error:
+        return error
     event_id = data.get("eventId") or str(uuid.uuid4())
 
     cur = cursor_appifield()
@@ -202,8 +336,9 @@ def create_treatment(user_id):
              treatmentTotalQuantity, treatmentTotalQuantityUnitId, standardTreatmentTotalQuantity,
              treatmentTotalQuantityUsed, treatmentTotalQuantityUsedUnitId, standardTreatmentTotalQuantityUsed,
              surfaceTreated, standardSurfaceTreated,
-             remarks, cleanFlag, localizedTreatment, decisionBase, effectiveness)
-           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+             remarks, cleanFlag, localizedTreatment, decisionBase, effectiveness, thirdPartFlag,
+             treatmentType)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
             event_id, user_id, data.get("eventType"),
             data.get("eventDate"), data.get("eventTime"), data.get("operatorId"),
@@ -213,7 +348,8 @@ def create_treatment(user_id):
             treatment_fields["standardTreatmentTotalQuantityUsed"],
             treatment_fields["surfaceTreated"], treatment_fields["standardSurfaceTreated"],
             data.get("remarks"), bool(data.get("cleanFlag")), bool(data.get("localizedTreatment")),
-            data.get("decisionBase"), data.get("effectiveness"),
+            data.get("decisionBase"), data.get("effectiveness"), bool(data.get("thirdPartFlag")),
+            treatment_type,
         ),
     )
     _insert_parcels(cur, event_id, user_id, parcels_out)
@@ -236,11 +372,19 @@ def update_treatment(user_id, event_id):
     parcels_in = data["parcelsConcerned"] if "parcelsConcerned" in data else _load_existing_parcels(cur, event_id, user_id)
     composition_in = data["treatmentComposition"] if "treatmentComposition" in data else _load_existing_composition(cur, event_id, user_id)
 
-    event_type = data.get("eventType")
-    if not event_type:
-        cur.execute("SELECT eventType FROM phytoTreatments WHERE eventId = %s AND userId = %s", (event_id, user_id))
-        existing = cur.fetchone()
-        event_type = existing["eventType"] if existing else None
+    cur.execute(
+        "SELECT eventType, thirdPartFlag, treatmentType FROM phytoTreatments WHERE eventId = %s AND userId = %s",
+        (event_id, user_id),
+    )
+    existing = cur.fetchone() or {}
+    event_type = data.get("eventType") or existing.get("eventType")
+    # Omis du payload -> on conserve la valeur actuelle (un oubli côté client ne doit pas
+    # réintégrer silencieusement un traitement de tiers dans l'inventaire).
+    third_part_flag = bool(data["thirdPartFlag"]) if "thirdPartFlag" in data else bool(existing.get("thirdPartFlag"))
+    treatment_type = data.get("treatmentType") or existing.get("treatmentType") or DEFAULT_TREATMENT_TYPE
+    error = _treatment_type_error(treatment_type)
+    if error:
+        return error
 
     treatment_fields, parcels_out, composition_out = treatment_calc.compute(
         event_type, cur, user_id, data, parcels_in, composition_in,
@@ -252,7 +396,8 @@ def update_treatment(user_id, event_id):
            treatmentTotalQuantity = %s, treatmentTotalQuantityUnitId = %s, standardTreatmentTotalQuantity = %s,
            treatmentTotalQuantityUsed = %s, treatmentTotalQuantityUsedUnitId = %s, standardTreatmentTotalQuantityUsed = %s,
            surfaceTreated = %s, standardSurfaceTreated = %s,
-           remarks = %s, cleanFlag = %s, localizedTreatment = %s, decisionBase = %s, effectiveness = %s
+           remarks = %s, cleanFlag = %s, localizedTreatment = %s, decisionBase = %s, effectiveness = %s,
+           thirdPartFlag = %s, treatmentType = %s
            WHERE eventId = %s AND userId = %s""",
         (
             event_type, data.get("eventDate"), data.get("eventTime"), data.get("operatorId"),
@@ -262,7 +407,7 @@ def update_treatment(user_id, event_id):
             treatment_fields["standardTreatmentTotalQuantityUsed"],
             treatment_fields["surfaceTreated"], treatment_fields["standardSurfaceTreated"],
             data.get("remarks"), bool(data.get("cleanFlag")), bool(data.get("localizedTreatment")),
-            data.get("decisionBase"), data.get("effectiveness"),
+            data.get("decisionBase"), data.get("effectiveness"), third_part_flag, treatment_type,
             event_id, user_id,
         ),
     )

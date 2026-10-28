@@ -58,6 +58,9 @@ Convention générale : toutes les tables applicatives ont une PK `<entité>Id` 
 | `parcelAddress` | TEXT | |
 | `recordType` | TEXT | Origine de l'enregistrement |
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
+| `isArchived` | TINYINT(1) NOT NULL DEFAULT 0 | Parcelle archivée (migration 016) |
+| `prevParcelId` | VARCHAR(255) NULL | Parcelle archivée dont celle-ci est le renouvellement (« Archiver et renouveler », migration 016) |
+| `sigecCode` | VARCHAR(50) NULL | Code SIGEC (migration 016) |
 
 ### `operators`
 | Colonne | Type | Description |
@@ -107,6 +110,8 @@ Convention générale : toutes les tables applicatives ont une PK `<entité>Id` 
 | `remarks` | TEXT | |
 | `cleanFlag`, `localizedTreatment` | BOOLEAN | |
 | `decisionBase`, `effectiveness` | TEXT | |
+| `thirdPartFlag` | TINYINT(1) NOT NULL DEFAULT 0 | Traitement effectué par un tiers : à 1, sa composition est exclue du calcul d'inventaire (migration 012) |
+| `treatmentType` | VARCHAR(50) NOT NULL DEFAULT 'pulvérisation' | Méthode d'application (pulvérisation, traitement de semences, microgranulé, arrosage, irrigation, badigeonnage, injection, trempage), validée par l'API (migration 013) |
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
 
 ### `phytoTreatmentsParcelsCrops` (parcelles/cultures concernées par un traitement)
@@ -162,9 +167,10 @@ Convention générale : toutes les tables applicatives ont une PK `<entité>Id` 
 | `inventoryOperationId` | VARCHAR(255) PK | |
 | `userId` | VARCHAR(255) | |
 | `productId` | TEXT | Produit Phytoweb (`ppp-...`) ou personnel (`perso-...`) |
-| `operationType` | TEXT | `"purchase"` (achat/ajout, +) ou `"ppnu"`/`"ppnv"` (déclaration réglementaire, suivie à part) |
+| `operationType` | TEXT | `"purchase"` (achat/ajout, +), `"ppnu"`/`"ppnv"` (déclaration réglementaire, suivie à part) ou `"correction"` (correction de stock, sens dans `correctionMode`) |
 | `operationDate` | DATE | |
-| `quantity`, `quantityUnitId`, `standardQuantity` | REAL, TEXT, REAL | |
+| `quantity`, `quantityUnitId`, `standardQuantity` | REAL, TEXT, REAL | `quantity` toujours > 0 |
+| `correctionMode` | VARCHAR(10) NULL | `"plus"`/`"minus"` pour une correction, `NULL` sinon (migration 011) |
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
 
 > Il n'existe **pas** de table de stock matérialisée. La consommation par traitement phytosanitaire n'est **pas** stockée ici : elle est lue directement depuis `phytoTreatmentsComposition` (jointe à `phytoTreatments` pour la date), jamais dupliquée. Le stock courant est recalculé à la volée en combinant les deux sources dans `app/utils/inventory_stock.py`.
@@ -186,6 +192,18 @@ Convention générale : toutes les tables applicatives ont une PK `<entité>Id` 
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
 
 > Table sans équivalent dans l'ancien système ni dans `json_db/` — fonctionnalité pas encore exposée par une route API.
+
+### `userPreferences` (préférences d'encodage des traitements, migration 014)
+| Colonne | Type | Description |
+|---|---|---|
+| `idUser` | VARCHAR(255) PK | Id UserKey de l'utilisateur (même valeur que `userId` des autres tables) |
+| `erRiWarningFlag` | BOOLEAN NOT NULL DEFAULT 0 | Respecte la campagne Eco-régime réduction d'intrants → avertir sur les produits `general.erRiFlag = 1` |
+| `spe8HourWarningFlag` | BOOLEAN NOT NULL DEFAULT 1 | Afficher les avertissements horaires (`general.spe8FlagHoraire`) |
+| `bbchWarningFlag` | BOOLEAN NOT NULL DEFAULT 1 | Afficher les avertissements BBCH (`crops.bbchFlag`, corderPhytoweb) |
+| `defaultTreatmentType` | VARCHAR(20) NOT NULL DEFAULT 'surface' | Mode d'encodage présélectionné : `surface` / `porridge` / `quantity` |
+| `createdAt`, `modifiedAt` | TIMESTAMP | |
+
+> Initialisée par la migration pour tous les `userId` présents dans les tables de données. Un utilisateur sans ligne reçoit les valeurs par défaut via l'API ; sa ligne est créée à son premier `PUT /user_preferences`. Remplace l'ancienne table `preferences` (migration 003, jamais alimentée), supprimée par la migration 015.
 
 ---
 
@@ -248,6 +266,6 @@ Ce schéma normalisé a connu plusieurs phases dans le développement de ce repo
 ## Points d'attention restants
 
 - **`cropsArchive.json` n'est importé par aucun script** (`generate_first_db.py` ne lit que `crops.json`) — à vérifier si des cultures archivées manquent en base suite à une éventuelle migration passée.
-- Champs de l'ancien système **sans équivalent** dans le nouveau schéma, donc définitivement perdus si non re-capturés côté client : `sigec_code` et `imported_from_gml` (parcelles), `component_type`/catégorie de produit, `harvest_date`/`bbch`/métadonnées techniques (traitements), `observation` (travaux aux champs).
+- Champs de l'ancien système **sans équivalent** dans le nouveau schéma, donc définitivement perdus si non re-capturés côté client : `imported_from_gml` (parcelles ; `sigec_code` a retrouvé une colonne `sigecCode` avec la migration 016), `component_type`/catégorie de produit, `harvest_date`/`bbch`/métadonnées techniques (traitements), `observation` (travaux aux champs).
 - `responsibleName`/`responsibleMail`/`responsiblePhytolicence`/`exploitationPhytolicence` étaient toujours `NULL` après l'import batch historique (clés JSON sources inexistantes) — non pertinent pour les nouveaux enregistrements créés via l'API, qui les acceptent désormais correctement en entrée.
 - Aucune contrainte `FOREIGN KEY` ni `UNIQUE` en base : l'intégrité référentielle (`userId`, `parcelId`...) est garantie uniquement par le code applicatif, pas par MySQL.

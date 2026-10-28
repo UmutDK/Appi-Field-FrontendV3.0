@@ -4,34 +4,14 @@ Schéma DB : tables `crops` et `cropsParcels` (liaison N-N avec parcels).
 Colonnes : cropId, userId, cropName, remarks, sowingDate, previousCrop, harvestDate,
            efficiency, collection, phytowebId, eppo, isArchived.
 """
-import json
-import os
 import uuid
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from app.db import cursor_appifield, cursor_phytoweb, commit_appifield
 from app.auth import require_auth
+from app.utils.phytoweb_crops import load_legacy_phytoweb_names
 
 bp = Blueprint("crops", __name__, url_prefix="/crops")
-
-_LEGACY_NAMES_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "legacy_phytoweb_crop_names.json")
-_legacy_phytoweb_names: dict[str, str] | None = None
-
-
-def _load_legacy_phytoweb_names() -> dict[str, str]:
-    """
-    Charge (une seule fois, en mémoire) le mapping crop_id -> name_fr de l'ancien
-    référentiel PHP (previousServer/index/phytoweb_crops.json, récupéré depuis l'ancien
-    serveur avant sa mise hors service). Dernier recours pour les cultures créées avant
-    la migration vers indexCrop : leur phytowebId (format `pwc-<uuid>`, tiret) ne
-    correspond à rien dans le référentiel actuel (`pwc_<uuid>`, underscore) ni dans les
-    surcharges admin (phytowebCategoryOverrides).
-    """
-    global _legacy_phytoweb_names
-    if _legacy_phytoweb_names is None:
-        with open(_LEGACY_NAMES_PATH, encoding="utf-8") as f:
-            _legacy_phytoweb_names = json.load(f)
-    return _legacy_phytoweb_names
 
 
 def _collection_from_sowing_date(sowing_date: str | None) -> str:
@@ -61,7 +41,7 @@ def _attach_phytoweb_names(crops: list) -> list:
     - sinon contre `phytowebCategoryOverrides` (c2544857c_appifield, catégories admin
       personnalisées, qui n'existent pas dans indexCrop) ;
     - sinon contre le mapping legacy (cultures créées avant la migration, voir
-      _load_legacy_phytoweb_names).
+      app/utils/phytoweb_crops.py::load_legacy_phytoweb_names).
     """
     ids = list({crop["phytowebId"] for crop in crops if crop.get("phytowebId")})
     if not ids:
@@ -92,7 +72,7 @@ def _attach_phytoweb_names(crops: list) -> list:
 
     remaining_ids = [i for i in ids if i not in names_by_id]
     if remaining_ids:
-        legacy_names = _load_legacy_phytoweb_names()
+        legacy_names = load_legacy_phytoweb_names()
         for crop_id in remaining_ids:
             if crop_id in legacy_names:
                 names_by_id[crop_id] = legacy_names[crop_id]
