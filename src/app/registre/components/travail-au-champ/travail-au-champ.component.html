@@ -41,10 +41,13 @@
                 <div class="parcel-cards-grid">
                   @for (association of group.associations; track association.uniqueId) {
                     <label class="parcel-card" 
-                           [class.selected]="isParcelCultureSelected(association)">
+                           [class.selected]="isParcelCultureSelected(association)"
+                           [class.is-archived-locked]="association.locked"
+                           [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
                       <input type="checkbox" 
                              [value]="association.uniqueId" 
                              [checked]="isParcelCultureSelected(association)"
+                             [disabled]="association.locked"
                              (change)="onCheckedParcelCulture($event, association)"
                              name="parcels_culture_id">
                       <div class="card-icon"><i class="bi bi-bucket-fill"></i></div>
@@ -55,6 +58,12 @@
                         } @else {
                           <div class="parcel-name">{{ association.parcel_name }}</div>
                           <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                        @if (association.locked && association.parcel_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                        }
+                        @if (association.locked && association.is_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                         }
                       </div>
                       <i class="bi bi-check-circle-fill card-check"></i>
@@ -178,10 +187,13 @@
                 <div class="parcel-cards-grid">
                   @for (association of group.associations; track association.uniqueId) {
                     <label class="parcel-card" 
-                           [class.selected]="isParcelCultureSelected(association)">
+                           [class.selected]="isParcelCultureSelected(association)"
+                           [class.is-archived-locked]="association.locked"
+                           [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
                       <input type="checkbox" 
                              [value]="association.uniqueId" 
                              [checked]="isParcelCultureSelected(association)"
+                             [disabled]="association.locked"
                              (change)="onCheckedParcelCulture($event, association)"
                              name="parcels_culture_id">
                       <div class="card-icon"><i class="bi bi-droplet"></i></div>
@@ -192,6 +204,12 @@
                         } @else {
                           <div class="parcel-name">{{ association.parcel_name }}</div>
                           <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                        @if (association.locked && association.parcel_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                        }
+                        @if (association.locked && association.is_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                         }
                       </div>
                       <i class="bi bi-check-circle-fill card-check"></i>
@@ -330,10 +348,13 @@
                 <div class="parcel-cards-grid">
                   @for (association of group.associations; track association.uniqueId) {
                     <label class="parcel-card" 
-                           [class.selected]="isParcelCultureSelected(association)">
+                           [class.selected]="isParcelCultureSelected(association)"
+                           [class.is-archived-locked]="association.locked"
+                           [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
                       <input type="checkbox" 
                              [value]="association.uniqueId" 
                              [checked]="isParcelCultureSelected(association)"
+                             [disabled]="association.locked"
                              (change)="onCheckedParcelCulture($event, association)"
                              name="parcels_culture_id">
                       <div class="card-icon"><i class="bi bi-truck"></i></div>
@@ -344,6 +365,12 @@
                         } @else {
                           <div class="parcel-name">{{ association.parcel_name }}</div>
                           <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                        @if (association.locked && association.parcel_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                        }
+                        @if (association.locked && association.is_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                         }
                       </div>
                       <i class="bi bi-check-circle-fill card-check"></i>
@@ -447,10 +474,13 @@
                 <div class="parcel-cards-grid">
                   @for (association of group.associations; track association.uniqueId) {
                     <label class="parcel-card" 
-                           [class.selected]="isParcelCultureSelected(association)">
+                           [class.selected]="isParcelCultureSelected(association)"
+                           [class.is-archived-locked]="association.locked"
+                           [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
                       <input type="checkbox" 
                              [value]="association.uniqueId" 
                              [checked]="isParcelCultureSelected(association)"
+                             [disabled]="association.locked"
                              (change)="onCheckedParcelCulture($event, association)"
                              name="parcels_culture_id">
                       <div class="card-icon"><i class="bi bi-eye"></i></div>
@@ -461,6 +491,12 @@
                         } @else {
                           <div class="parcel-name">{{ association.parcel_name }}</div>
                           <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                        @if (association.locked && association.parcel_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                        }
+                        @if (association.locked && association.is_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                         }
                       </div>
                       <i class="bi bi-check-circle-fill card-check"></i>
@@ -563,10 +599,13 @@
                 <div class="parcel-cards-grid">
                   @for (association of group.associations; track association.uniqueId) {
                     <label class="parcel-card" 
-                           [class.selected]="isParcelCultureSelected(association)">
+                           [class.selected]="isParcelCultureSelected(association)"
+                           [class.is-archived-locked]="association.locked"
+                           [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
                       <input type="checkbox" 
                              [value]="association.uniqueId" 
                              [checked]="isParcelCultureSelected(association)"
+                             [disabled]="association.locked"
                              (change)="onCheckedParcelCulture($event, association)"
                              name="parcels_culture_id">
                       <div class="card-icon"><i class="bi bi-gear"></i></div>
@@ -577,6 +616,12 @@
                         } @else {
                           <div class="parcel-name">{{ association.parcel_name }}</div>
                           <div class="crop-name">{{ association.crop_name }}</div>
+                        }
+                        @if (association.locked && association.parcel_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                        }
+                        @if (association.locked && association.is_archived) {
+                          <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                         }
                       </div>
                       <i class="bi bi-check-circle-fill card-check"></i>

@@ -18,6 +18,10 @@
                 <p class="dashboard-subtitle">Gérez, localisez et importez vos parcelles agricoles.</p>
             </div>
 
+            <div class="parcelles-header-actions">
+            <button type="button" class="btn-outline-neutral" (click)="goToArchives()">
+                <i class="bi bi-archive"></i> Mes archives
+            </button>
             <div class="add-menu" [class.open]="isAddMenuOpen" (click)="$event.stopPropagation()">
                 <button type="button" class="add-menu-btn" (click)="toggleAddMenu($event)"
                         aria-haspopup="menu" [attr.aria-expanded]="isAddMenuOpen">
@@ -50,6 +54,7 @@
                         </button>
                     </div>
                 }
+            </div>
             </div>
         </header>
 
@@ -563,6 +568,10 @@
                                     }
                                 </button>
                                 @if (editMode) {
+                                    <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
+                                        <i class="bi bi-archive"></i>
+                                        Archiver la parcelle
+                                    </button>
                                     <button type="button" class="btn-primary danger" (click)="deleteEditedParcel()" [disabled]="isDeleting">
                                         @if (isDeleting) {
                                             <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -578,4 +587,9 @@
                     </div>
                 }
     </div>
+
+    @if (showArchiveChoice && selectedParcelForEdit) {
+        <app-parcel-archive-choice [parcel]="selectedParcelForEdit"
+            (done)="onArchiveDone($event)" (closed)="showArchiveChoice = false"></app-parcel-archive-choice>
+    }
 </main>

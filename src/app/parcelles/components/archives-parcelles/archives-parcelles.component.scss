@@ -1,0 +1,540 @@
+@use '../../../../styles/dashboard-cards' as *;
+
+// Page "Mes archives" (/registre/archives) — refonte v2 : même conteneur, en-tête, encadré de
+// recherche, boutons et tableau que la page principale du Carnet de champ (registre.component)
+// et les pages Parcelles / Inventaire. Structure et comportement inchangés (tri, recherche,
+// filtre par collection, restauration, popup de détail).
+
+main.archives-page {
+  padding: 32px 40px 56px;
+
+  @media (max-width: 992px) {
+    padding: 20px 20px 40px;
+  }
+
+  @media (max-width: 575.98px) {
+    padding: 16px 16px 32px;
+  }
+}
+
+// ─── En-tête ─────────────────────────────────────────────────────────────────
+.archives-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .dashboard-header {
+    margin-bottom: 0;
+    min-width: 0;
+
+    h1 {
+      line-height: 1.2;
+    }
+  }
+}
+
+.archives-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// ─── Boutons ─────────────────────────────────────────────────────────────────
+.btn-outline-neutral,
+.btn-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: "Panton", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.btn-outline-neutral {
+  background: #ffffff;
+  color: #12103c;
+  border: 1.5px solid #d1d5db;
+
+  &:hover { border-color: #05b1af; color: #03918a; }
+}
+
+.btn-solid {
+  background: #05b1af;
+  color: #ffffff;
+  border: 1.5px solid #05b1af;
+
+  &:hover { background: #049694; border-color: #049694; }
+}
+
+// ─── Encadré recherche + filtre ─────────────────────────────────────────────
+.recherche-etendue {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #edf0f3;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+
+  @media (max-width: 575.98px) {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .barre-recherche-principale {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .icon {
+      position: absolute;
+      left: 12px;
+      z-index: 2;
+      pointer-events: none;
+
+      .bouton-icon {
+        border: none;
+        background: none;
+        padding: 0;
+        pointer-events: none;
+
+        .bi {
+          font-size: 1rem;
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .input-etendu {
+      flex: 1;
+
+      .ligne-etendue {
+        box-sizing: border-box !important;
+        width: 100%;
+        height: 44px !important;
+        min-height: 44px !important;
+        margin: 0 !important;
+        padding: 0 14px 0 38px !important;
+        background: #ffffff !important;
+        border: 1.5px solid #d1d5db !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        font-size: 0.95rem !important;
+        color: #12103c;
+        transition: border-color 0.15s, box-shadow 0.15s;
+
+        &:focus {
+          outline: none;
+          border-color: #05b1af !important;
+          box-shadow: 0 0 0 3px rgba(5, 177, 175, 0.1) !important;
+        }
+
+        &::placeholder {
+          color: #9ca3af;
+          font-style: normal;
+        }
+      }
+    }
+  }
+
+  .controles-filtres {
+    display: flex;
+    gap: 8px;
+
+    .bouton-controle {
+      position: relative;
+      display: inline-block;
+
+      .btn-filtre {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: #ffffff;
+        border: 1.5px solid #d1d5db;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+
+        .bi {
+          font-size: 1.15rem;
+          color: #6b7280;
+        }
+
+        &:hover {
+          background: #f0faf9;
+          border-color: #05b1af;
+
+          .bi { color: #03918a; }
+        }
+
+        // Une collection est sélectionnée
+        &.btn-filtre--active {
+          background: #03918a;
+          border-color: #03918a;
+
+          .bi { color: #ffffff; }
+
+          &:hover { background: #049694; border-color: #049694; }
+        }
+      }
+    }
+  }
+
+  // Tablette : recherche et filtre plus grands (même palier que le carnet)
+  @media (min-width: 576px) and (max-width: 991.98px) {
+    .barre-recherche-principale .input-etendu .ligne-etendue {
+      height: 56px !important;
+      min-height: 56px !important;
+      font-size: 1.1rem !important;
+    }
+
+    .controles-filtres .bouton-controle .btn-filtre {
+      width: 56px;
+      height: 56px;
+
+      .bi { font-size: 1.5rem; }
+    }
+  }
+}
+
+// Liste des collections
+.dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  left: auto !important;
+  right: 0 !important;
+  display: block !important;
+  min-width: 260px !important;
+  margin-top: 6px !important;
+  padding: 6px 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #edf0f3 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(18, 16, 60, 0.14) !important;
+  z-index: 1000 !important;
+
+  &.dropdown-moderne {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .dropdown-header {
+    padding: 8px 16px 6px;
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    color: #12103c;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    i {
+      font-size: 1rem;
+      color: #6b7280;
+    }
+
+    &:hover { background: #f8fbfb; }
+
+    &.selected {
+      background: #e3f6f3;
+      color: #03918a;
+      font-weight: 600;
+
+      i { color: #03918a; }
+    }
+  }
+}
+
+// ─── États (chargement, vide) ────────────────────────────────────────────────
+.state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 16px;
+  color: #6b7280;
+
+  p { margin: 0; }
+
+  .spinner-border { color: #05b1af; }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 24px;
+
+  .empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: #e3f6f3;
+    color: #03918a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-family: "Panton", sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #12103c;
+    margin: 0 0 6px;
+  }
+
+  p {
+    max-width: 520px;
+    margin: 0 0 20px;
+    color: #6b7280;
+  }
+}
+
+// ─── Tableau ─────────────────────────────────────────────────────────────────
+.table-container {
+  background: #ffffff;
+  border: 1px solid #edf0f3;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(18, 16, 60, 0.06);
+  overflow: hidden;
+}
+
+.table-archives {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+    border-radius: 0;
+  }
+
+  // Materialize ajoute une bordure basse sur tout <tr>
+  tr { border: none; }
+
+  thead th {
+    background: #f8f9fa;
+    border-bottom: 1px solid #edf0f3;
+    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &.sortable {
+      cursor: pointer;
+      user-select: none;
+
+      &:hover { color: #03918a; }
+    }
+
+    .th-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sort-icon {
+      font-size: 1rem;
+      color: #9ca3af;
+    }
+  }
+
+  tbody tr {
+    background: #ffffff;
+    transition: background 0.15s ease;
+
+    &.clickable-row { cursor: pointer; }
+
+    &:hover { background: #f8fbfb; }
+
+    &:not(:last-child) td { border-bottom: 1px solid #f1f3f5; }
+
+    td { color: #374151; }
+  }
+
+  .actions-col,
+  .actions-cell {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+.crop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .crop-name {
+    font-weight: 600;
+    color: #12103c;
+  }
+
+  .crop-details {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.8rem;
+    color: #6b7280;
+
+    .detail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+
+      i { color: #9ca3af; }
+    }
+  }
+}
+
+.badge-collection {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #e3f6f3;
+  color: #03918a;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  .badge-icon { font-size: 0.85rem; }
+}
+
+.species-tag { color: #374151; }
+
+.date-tag {
+  color: #374151;
+  white-space: nowrap;
+}
+
+// "Restaurer" : bouton discret qui passe en sarcelle au survol
+.btn-restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  color: #12103c;
+  font-family: "Panton", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  i { font-size: 0.95rem; color: #6b7280; }
+
+  &:hover {
+    background: #e3f6f3;
+    border-color: #05b1af;
+    color: #03918a;
+
+    i { color: #03918a; }
+  }
+}
+
+// ─── Responsive (paliers existants conservés) ───────────────────────────────
+.mobile-only {
+  display: none;
+}
+
+// Tablette : la colonne Date de semis passe sous le nom de la culture
+@media (max-width: 992px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  .table-archives {
+    font-size: 1rem;
+
+    th, td { padding: 14px 16px; }
+  }
+}
+
+// La colonne Espèce passe aussi sous le nom de la culture
+@media (max-width: 768px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+// Téléphone : "Restaurer" devient une icône seule, bouton "Retour" pleine largeur
+@media (max-width: 576px) {
+  .archives-header-actions,
+  .btn-retour {
+    width: 100%;
+  }
+
+  .table-archives {
+    font-size: 0.9rem;
+
+    th, td { padding: 12px 12px; }
+  }
+
+  .btn-restore {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+
+    .btn-text { display: none; }
+  }
+}
+
+// Parcelles : confirmation de restauration (remplace l'alerte du navigateur)
+.archives-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #e9f8f7;
+  color: #03817d;
+  font-weight: 600;
+}

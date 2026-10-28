@@ -1,0 +1,66 @@
+<div class="popup-overlay archive-choice-overlay" (click)="$event.target === $event.currentTarget && close()">
+  <div class="popup-container popup-sm" role="dialog" aria-modal="true" aria-labelledby="archiveChoiceTitle">
+    <div class="popup-header">
+      <div class="header-title">
+        <i class="bi bi-archive"></i>
+        <h3 id="archiveChoiceTitle">Archiver « {{ parcel.parcel_name }} »</h3>
+      </div>
+      <button type="button" class="btn-close-popup" (click)="close()" aria-label="Fermer"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    @if (!showRenewStep) {
+      <div class="popup-body archive-choice">
+        <button type="button" class="archive-choice__option" (click)="archiveOnly()" [disabled]="isArchiving">
+          <i class="bi bi-archive archive-choice__icon"></i>
+          <span class="archive-choice__text">
+            <span class="archive-choice__title">Archiver</span>
+            <span class="archive-choice__desc">La parcelle est retirée de vos listes et retrouvée dans Mes archives.</span>
+          </span>
+        </button>
+        <button type="button" class="archive-choice__option" (click)="showRenewStep = true; errorMessage = ''" [disabled]="isArchiving">
+          <i class="bi bi-arrow-repeat archive-choice__icon"></i>
+          <span class="archive-choice__text">
+            <span class="archive-choice__title">
+              Archiver et renouveler
+              <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                 matTooltip="La même parcelle avec un nouveau numéro PAC" matTooltipPosition="above"
+                 (click)="$event.stopPropagation()"></i>
+            </span>
+            <span class="archive-choice__desc">Une copie active est créée avec un nouveau code SIGEC.</span>
+          </span>
+        </button>
+        @if (isArchiving) {
+          <p class="archive-choice__status"><span class="spinner-border spinner-border-sm"></span> Archivage en cours...</p>
+        }
+        @if (errorMessage) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>{{ errorMessage }}</p>
+        }
+      </div>
+    } @else {
+      <div class="popup-body archive-choice">
+        <label class="simple-label" for="renewSigec">Nouveau code SIGEC<sup>*</sup></label>
+        <input id="renewSigec" type="text" class="form-control popup-text-input"
+               [(ngModel)]="renewSigecCode" placeholder="Ex : 1234567"
+               (keydown.enter)="archiveAndRenew()" autocomplete="off">
+        <p class="archive-choice__hint">
+          Une nouvelle parcelle « {{ parcel.parcel_name }} (1) » sera créée, l'actuelle sera archivée.
+          Les cultures, traitements et travaux déjà encodés restent liés à l'ancienne parcelle.
+        </p>
+        @if (errorMessage) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>{{ errorMessage }}</p>
+        }
+      </div>
+      <div class="popup-footer">
+        <button type="button" class="btn-secondary" (click)="showRenewStep = false; errorMessage = ''" [disabled]="isArchiving">Retour</button>
+        <button type="button" class="btn-primary" (click)="archiveAndRenew()"
+                [disabled]="!renewSigecCode.trim() || isArchiving">
+          @if (isArchiving) {
+            <span class="spinner-border spinner-border-sm me-1"></span> Renouvellement...
+          } @else {
+            <i class="bi bi-arrow-repeat"></i> Archiver et renouveler
+          }
+        </button>
+      </div>
+    }
+  </div>
+</div>

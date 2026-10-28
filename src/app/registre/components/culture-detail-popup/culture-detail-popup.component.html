@@ -109,6 +109,9 @@
             <span class="ht-col ht-parcelle">{{ intervention.parcelle }}</span>
             <span class="ht-col ht-type">
               <span class="ht-type-badge">{{ intervention.type }}</span>
+              @if (intervention.originalData?.third_part_flag) {
+                <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>
+              }
             </span>
             <span class="ht-col ht-bbch">{{ getBBCH(intervention) || '–' }}</span>
             <span class="ht-col ht-cible">{{ getCibles(intervention) || '–' }}</span>

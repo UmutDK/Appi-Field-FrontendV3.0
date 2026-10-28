@@ -1,0 +1,248 @@
+<div class="import-container">
+  <!-- Étapes -->
+  <ol class="import-steps" aria-label="Étapes de l'import">
+    <li [class.active]="step === 'file'" [class.done]="step === 'review'"><span class="num">1</span> Fichier</li>
+    <li [class.active]="step === 'review'"><span class="num">2</span> Vérification</li>
+    <li><span class="num">3</span> Import</li>
+  </ol>
+
+  <div class="import-body popup-content-scrollable">
+    @if (step === 'file') {
+      <!-- ===== Étape 1 : préparer le fichier ===== -->
+      <p class="import-intro">Téléchargez le modèle, complétez une ligne par achat puis déposez-le ici.</p>
+
+      <div class="template-box">
+        <div class="template-text">
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+          <div>
+            <b>Modèle Excel</b>
+            <span>Colonnes : numéro d'autorisation, nom du produit, quantité, unité (L ou kg), date d'achat.</span>
+          </div>
+        </div>
+        <button type="button" class="btn-secondary" (click)="downloadTemplate()" [disabled]="isDownloading">
+          @if (isDownloading) {
+            <span class="spinner-border spinner-border-sm"></span> Téléchargement...
+          } @else {
+            <i class="bi bi-download"></i> Télécharger le modèle Excel
+          }
+        </button>
+      </div>
+
+      <label class="drop-zone" [class.drag-over]="isDragOver" [class.has-file]="selectedFile"
+             (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+        <input type="file" accept=".xlsx" class="drop-input" (change)="onFileInput($event)">
+        @if (selectedFile) {
+          <i class="bi bi-file-earmark-check drop-icon"></i>
+          <span class="drop-title">{{ selectedFile.name }}</span>
+          <span class="drop-hint">{{ (selectedFile.size / 1024) | number:'1.0-0' }} Ko · cliquez pour choisir un autre fichier</span>
+        } @else {
+          <i class="bi bi-cloud-arrow-up drop-icon"></i>
+          <span class="drop-title">Déposez votre fichier ici</span>
+          <span class="drop-hint">ou cliquez pour le choisir · .xlsx, 2 Mo maximum</span>
+        }
+      </label>
+
+      @if (fileError) {
+        <p class="import-error" role="alert"><i class="bi bi-exclamation-circle"></i>{{ fileError }}</p>
+      }
+      <p class="import-note">
+        <i class="bi bi-info-circle"></i>
+        Seuls les produits Phytoweb (avec un numéro d'autorisation) peuvent être importés. Les produits personnels restent à encoder via « Achat de PPP ».
+      </p>
+    } @else {
+      <!-- ===== Étape 2 : résolution des conflits ===== -->
+      <div class="review-summary">
+        <span class="summary-total">{{ rows.length }} ligne{{ rows.length > 1 ? 's' : '' }} :</span>
+        <span class="pill pill--ok">{{ countOk }} prête{{ countOk > 1 ? 's' : '' }}</span>
+        <span class="pill pill--warning">{{ countWarning }} avec avertissement</span>
+        <span class="pill pill--error">{{ countError }} à corriger</span>
+      </div>
+      @if (countError > 0) {
+        <label class="only-errors">
+          <input type="checkbox" [(ngModel)]="onlyToFix">
+          <div>Afficher seulement les lignes à corriger</div>
+        </label>
+      }
+
+      <div class="review-list">
+        @for (r of visibleRows; track r.rowNumber) {
+          <article class="review-row" [class]="'review-row review-row--' + rowStatus(r)">
+            <header class="row-head">
+              <span class="row-num">Ligne {{ r.rowNumber }}</span>
+              <span class="status-pill" [class]="'status-pill status-pill--' + rowStatus(r)">{{ rowStatusLabel(r) }}</span>
+              <label class="include-check" [class.disabled]="!isRowValid(r)"
+                     [attr.title]="isRowValid(r) ? null : 'Corrigez la ligne pour pouvoir l\'inclure'">
+                <input type="checkbox" [checked]="r.included" [disabled]="!isRowValid(r)"
+                       (change)="toggleIncluded(r, $any($event.target).checked)">
+                <div>Inclure</div>
+              </label>
+            </header>
+
+            @for (e of otherServerErrors(r); track $index) {
+              <p class="issue issue--error"><i class="bi bi-x-circle"></i>{{ e.message }}</p>
+            }
+
+            <!-- Produit -->
+            <div class="row-field">
+              <span class="field-label">Produit</span>
+              @if (r.product) {
+                <span class="product-name">{{ r.product.productName }} <span class="product-numaut">{{ r.product.numAut }}</span></span>
+              } @else {
+                <span class="field-missing">Non reconnu</span>
+              }
+              @if (r.input.productName || r.input.numAut) {
+                <span class="file-value">Fichier : {{ r.input.numAut || '—' }}{{ r.input.productName ? ' · ' + r.input.productName : '' }}</span>
+              }
+              @for (e of fieldErrors(r, 'numAut'); track $index) {
+                <p class="issue issue--error"><i class="bi bi-x-circle"></i>{{ e.message }}</p>
+              }
+              @if (r.errorFields.has('numAut')) {
+                <div class="fix-product">
+                  @if (r.suggestions.length) {
+                    <div class="suggestions">
+                      <span class="fix-label">Suggestions :</span>
+                      @for (s of r.suggestions; track s.productId) {
+                        <button type="button" class="suggestion-btn" [class.selected]="r.product?.productId === s.productId"
+                                (click)="selectProduct(r, s)">
+                          {{ s.productName }} — {{ s.numAut }}
+                        </button>
+                      }
+                    </div>
+                  }
+                  <div class="product-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control popup-text-input" [(ngModel)]="r.searchTerm"
+                           (ngModelChange)="onSearchInput(r)" placeholder="Rechercher par numéro ou par nom..."
+                           [attr.aria-label]="'Rechercher un produit pour la ligne ' + r.rowNumber" autocomplete="off">
+                    @if (r.isSearching) {
+                      <span class="spinner-border spinner-border-sm search-spinner"></span>
+                    }
+                  </div>
+                  @if (r.searchResults.length) {
+                    <div class="search-results">
+                      @for (p of r.searchResults; track p.product_id) {
+                        <button type="button" class="search-result" (click)="selectSearchResult(r, p)">
+                          <b>{{ p.product_name }}</b> <span>{{ p.product_numaut }}</span>
+                        </button>
+                      }
+                    </div>
+                  } @else if (!r.isSearching && r.searchTerm.trim().length >= 2) {
+                    <p class="search-empty">Aucun produit trouvé pour « {{ r.searchTerm }} ».</p>
+                  }
+                  @if (sameNumAutRows(r).length) {
+                    <button type="button" class="apply-all" (click)="applyProductToSameNumAut(r)">
+                      <i class="bi bi-files"></i>
+                      @if (sameNumAutRows(r).length === 1) {
+                        Appliquer ce produit à l'autre ligne avec le numéro « {{ r.input.numAut }} »
+                      } @else {
+                        Appliquer ce produit aux {{ sameNumAutRows(r).length }} autres lignes avec le numéro « {{ r.input.numAut }} »
+                      }
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Quantité / unité / date -->
+            <div class="row-values">
+              <div class="row-field">
+                <span class="field-label">Quantité</span>
+                @if (r.errorFields.has('quantity')) {
+                  <input type="number" class="form-control popup-text-input fix-input" min="0.01" step="0.01"
+                         [ngModel]="r.quantity" (ngModelChange)="onQuantityChange(r, $event)"
+                         [class.input-error]="isFieldInvalid(r, 'quantity')"
+                         [attr.aria-label]="'Quantité, ligne ' + r.rowNumber">
+                  <span class="file-value">Fichier : {{ r.input.quantity || '—' }}</span>
+                } @else {
+                  <span class="field-value">{{ r.quantity | number:'1.0-3' }}</span>
+                }
+                @for (e of fieldErrors(r, 'quantity'); track $index) {
+                  <p class="issue issue--error"><i class="bi bi-x-circle"></i>{{ e.message }}</p>
+                }
+              </div>
+
+              <div class="row-field">
+                <span class="field-label">Unité</span>
+                @if (r.errorFields.has('unit')) {
+                  <div class="unit-toggle" role="radiogroup" [attr.aria-label]="'Unité, ligne ' + r.rowNumber">
+                    @for (u of unitOptions; track u) {
+                      <button type="button" role="radio" [attr.aria-checked]="r.quantityUnit === u"
+                              [class.active]="r.quantityUnit === u" (click)="onUnitChange(r, u)">{{ u }}</button>
+                    }
+                  </div>
+                  <span class="file-value">Fichier : {{ r.input.unit || '—' }}</span>
+                } @else {
+                  <span class="field-value">{{ r.quantityUnit }}</span>
+                }
+                @for (e of fieldErrors(r, 'unit'); track $index) {
+                  <p class="issue issue--error"><i class="bi bi-x-circle"></i>{{ e.message }}</p>
+                }
+              </div>
+
+              <div class="row-field">
+                <span class="field-label">Date d'achat</span>
+                @if (r.errorFields.has('date')) {
+                  <input type="date" class="form-control popup-text-input fix-input" [max]="today"
+                         [ngModel]="r.operationDate" (ngModelChange)="onDateChange(r, $event)"
+                         [class.input-error]="isFieldInvalid(r, 'date')"
+                         [attr.aria-label]="'Date d\'achat, ligne ' + r.rowNumber">
+                  <span class="file-value">Fichier : {{ r.input.date || '—' }}</span>
+                } @else {
+                  <span class="field-value">{{ r.operationDate | date:'dd/MM/yyyy' }}</span>
+                }
+                @for (e of fieldErrors(r, 'date'); track $index) {
+                  <p class="issue issue--error"><i class="bi bi-x-circle"></i>{{ e.message }}</p>
+                }
+              </div>
+            </div>
+
+            @for (w of r.warnings; track $index) {
+              <p class="issue issue--warning"><i class="bi bi-exclamation-triangle"></i>{{ w.message }}</p>
+            }
+          </article>
+        }
+        @if (visibleRows.length === 0) {
+          <p class="review-empty"><i class="bi bi-check-circle"></i> Toutes les lignes sont prêtes.</p>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Pied : hors de la zone qui défile, comme les autres popups de l'inventaire -->
+  <div class="action-buttons popup-footer import-footer">
+    @if (step === 'file') {
+      <button type="button" class="btn-secondary" (click)="close()">Annuler</button>
+      <button type="button" class="btn-primary" (click)="checkFile()" [disabled]="!selectedFile || isChecking">
+        @if (isChecking) {
+          <span class="spinner-border spinner-border-sm me-1"></span> Vérification...
+        } @else {
+          <i class="bi bi-search"></i> Vérifier le fichier
+        }
+      </button>
+    } @else {
+      <div class="footer-info">
+        @if (importError) {
+          <p class="import-error" role="alert"><i class="bi bi-exclamation-circle"></i>{{ importError }}</p>
+        }
+        @if (ignoredErrorCount > 0) {
+          <p class="footer-hint"><i class="bi bi-info-circle"></i>
+            {{ ignoredErrorCount }} ligne{{ ignoredErrorCount > 1 ? 's' : '' }} en erreur {{ ignoredErrorCount > 1 ? 'seront ignorées' : 'sera ignorée' }}.</p>
+        }
+        @if (excludedValidCount > 0) {
+          <p class="footer-hint"><i class="bi bi-info-circle"></i>
+            {{ excludedValidCount }} ligne{{ excludedValidCount > 1 ? 's' : '' }} non incluse{{ excludedValidCount > 1 ? 's' : '' }}.</p>
+        }
+      </div>
+      <button type="button" class="btn-secondary" (click)="backToFile()" [disabled]="isImporting">
+        <i class="bi bi-arrow-left"></i> Retour
+      </button>
+      <button type="button" class="btn-primary" (click)="confirmImport()" [disabled]="rowsToImport.length === 0 || isImporting">
+        @if (isImporting) {
+          <span class="spinner-border spinner-border-sm me-1"></span> Import en cours...
+        } @else {
+          <i class="bi bi-box-arrow-in-down"></i> Importer {{ rowsToImport.length }} achat{{ rowsToImport.length > 1 ? 's' : '' }}
+        }
+      </button>
+    }
+  </div>
+</div>

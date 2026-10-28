@@ -324,7 +324,7 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
           if (culture.parcels_id && Array.isArray(culture.parcels_id)) {
             culture.parcels_id.forEach((parcelId: string) => {
               const parcelInfo = parcelMap.get(parcelId);
-              if (parcelInfo) {
+              if (parcelInfo && !parcelInfo.is_archived) { // parcelle archivée : jamais proposée
                 associations.push({
                   uniqueId: `${parcelInfo.id_parcel}_${culture.crop_id}`,
                   parcel_id: parcelInfo.id_parcel,
@@ -354,12 +354,13 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
           groupsMap.get(groupKey)!.associations.push(association);
         });
 
-        return Array.from(groupsMap.values());
+        // Modification : associations liées archivées, affichées verrouillées (hors cache)
+        return { groups: Array.from(groupsMap.values()), locked: this.buildLockedArchivedAssociations(parcelles, cultures) };
       })
     ).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (groups) => {
+      next: ({ groups, locked }) => {
         this.parcelCultureGroupsCache$.next(groups);
-        this.rawAssociations = groups.flatMap((g: any) => g.associations);
+        this.rawAssociations = [...groups.flatMap((g: any) => g.associations), ...locked];
         this.displayGroupsSubject.next(this.buildDisplayGroups(this.rawAssociations, this.groupByMode));
         this.isLoadingParcelCultures = false;
         this.hasTriedToLoadParcelCultures = true;
@@ -370,6 +371,41 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
         this.hasTriedToLoadParcelCultures = true;
       }
     });
+  }
+
+  /**
+   * Associations du travail modifié dont la parcelle ou la culture est archivée : visibles,
+   * cochées mais verrouillées (updateToDo/07 § 2.5). Jamais ajoutées au cache des groupes,
+   * sinon elles seraient proposées à la création suivante.
+   */
+  private buildLockedArchivedAssociations(parcelles: any[], activeCrops: any[]): any[] {
+    if (!this.isModificationMode) return [];
+    const parcelById = new Map<string, any>((parcelles || []).map((p: any) => [p.id_parcel, p]));
+    const activeCropIds = new Set((activeCrops || []).map((c: any) => String(c.crop_id)));
+
+    return (this.workToModify?.parcels_concerned || [])
+      .map((stored: any) => {
+        const parcelId = stored.parcel_id ?? stored.parcels_id;
+        const parcel = parcelById.get(parcelId);
+        const parcelArchived = !!parcel?.is_archived;
+        const cropArchived = !activeCropIds.has(String(stored.crop_id)); // /crops ne renvoie que les actives
+        if (!parcelArchived && !cropArchived) return null;      // association normale, déjà proposée
+        return {
+          uniqueId: `${parcelId}_${stored.crop_id}`,
+          parcel_id: parcelId,
+          parcel_name: stored.parcel_name || stored.parcels_name || parcel?.parcel_name,
+          parcel_area: parcel?.parcel_area ?? stored.parcel_surface,
+          parcel_area_unit_fr: parcel?.parcel_area_unit_fr || stored.surface_unit || 'ha',
+          crop_id: stored.crop_id,
+          crop_name: stored.crop_name,
+          phytoweb_name: stored.phytoweb_name || '',
+          eppo: '',
+          parcel_archived: parcelArchived,
+          is_archived: cropArchived,
+          locked: true,
+        };
+      })
+      .filter(Boolean);
   }
 
   private getParcellesCached(): Observable<any[]> {
@@ -391,6 +427,8 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
 
   // Nouvelle méthode pour gérer la sélection d'association parcelle+culture (même logique que traitement phyto)
   onCheckedParcelCulture(event: any, association: any) {
+    // Parcelle ou culture archivée : le lien est conservé tel quel
+    if (association.locked) { event.target.checked = this.isParcelCultureSelected(association); return; }
     if (event.target.checked) {
       // Ajouter l'association
       this.selectedParcelCultureAssociations.push(association);
@@ -440,13 +478,15 @@ export class TravailAuChampComponent implements OnInit, OnDestroy{
   }
 
   isGroupFullySelected(group: any): boolean {
-    if (!group.associations || group.associations.length === 0) return false;
-    return group.associations.every((a: any) => this.isParcelCultureSelected(a));
+    const selectable = (group.associations || []).filter((a: any) => !a.locked);
+    if (selectable.length === 0) return false;
+    return selectable.every((a: any) => this.isParcelCultureSelected(a));
   }
 
   toggleGroupSelection(group: any, event: any): void {
     const select = event.target.checked;
     for (const association of group.associations) {
+      if (association.locked) continue; // jamais modifiée par « Tout sélectionner »
       if (select && !this.isParcelCultureSelected(association)) {
         this.selectedParcelCultureAssociations.push(association);
       } else if (!select && this.isParcelCultureSelected(association)) {

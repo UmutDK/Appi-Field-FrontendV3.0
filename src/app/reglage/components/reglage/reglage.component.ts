@@ -8,6 +8,7 @@ import { InfosExploitationComponent } from "../infos-exploitation/infos-exploita
 import { PersonalProductsComponent } from "../personal-products/personal-products.component";
 import { MandatsComponent } from "../mandats/mandats.component";
 import { WallesmartComponent } from "../wallesmart/wallesmart.component";
+import { PreferencesComponent } from "../preferences/preferences.component";
 
 @Component({
   selector: 'app-reglage',
@@ -20,18 +21,20 @@ import { WallesmartComponent } from "../wallesmart/wallesmart.component";
     InfosExploitationComponent,
     PersonalProductsComponent,
     MandatsComponent,
-    WallesmartComponent
+    WallesmartComponent,
+    PreferencesComponent
   ],
   templateUrl: './reglage.component.html',
   styleUrl: './reglage.component.scss'
 })
 export class ReglageComponent implements OnInit{
 
-  activeSection = signal<'equipe' | 'password' | 'infos-perso' | 'infos-exploitation' | 'fertilisants' | 'mandats' | 'wallesmart'>('infos-perso');
+  activeSection = signal<'equipe' | 'password' | 'infos-perso' | 'infos-exploitation' | 'preferences' | 'fertilisants' | 'mandats' | 'wallesmart'>('infos-perso');
 
   readonly sectionLabels: Record<string, string> = {
     'infos-perso': 'Informations personnelles',
     'infos-exploitation': 'Informations de mon exploitation',
+    'preferences': 'Préférences',
     'wallesmart': 'WalleSmart',
     'equipe': 'Mon équipe',
     'fertilisants': 'Fertilisants personnels',

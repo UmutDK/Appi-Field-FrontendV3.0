@@ -10,7 +10,8 @@ export const routes: Routes = [
     { path:'reglage', loadChildren:()=>import('./reglage/reglage.module').then(m => m.ReglageModule), canActivate: [AuthGuard] },
     { path:'compte', loadChildren:()=>import('./compte/compte.module').then(m => m.CompteModule), canActivate: [AuthGuard] },
     { path:'creation-compte', loadChildren:()=>import('./creation-compte/creation-compte.module').then(m=> m.CreationCompteModule)},
-    { path:'mes-preferences', loadChildren:()=>import('./mes-preferences/mes-preferences.module').then(m=>m.MesPreferencesModule), canActivate: [AuthGuard]},
+    // Ancienne page « mes-preferences » supprimée (remplacée par Mon compte > Préférences) : on redirige les anciens liens.
+    { path:'mes-preferences', redirectTo:'gestion-des-operations', pathMatch:'full' },
     { path:'gestion-des-operations', loadChildren:()=>import('./gestion-des-operations/gestion-des-operations.module').then(m=>m.GestionDesOperationsModule), canActivate: [AuthGuard]},
     { path:'back-office', data: { animIndex: 0 }, loadChildren:()=>import('./back-office/back-office.module').then(m=>m.BackOfficeModule), canActivate: [AuthGuard]},
     { path:'back-office-itsme', loadChildren:()=>import('./creation-compte-admin/creation-compte-admin.module').then(m=>m.CreationCompteAdminModule), canActivate: [AuthGuard]},

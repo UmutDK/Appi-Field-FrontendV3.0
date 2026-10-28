@@ -9,6 +9,8 @@ import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
+import { ParcelArchiveChoiceComponent } from '../parcel-archive-choice/parcel-archive-choice.component';
 
 declare var M: any;
 
@@ -16,7 +18,8 @@ declare var M: any;
   selector: 'app-parcelles',
   standalone: true,
   imports: [
-    SharedModule
+    SharedModule,
+    ParcelArchiveChoiceComponent
   ],
   providers: [
     ParcellesService
@@ -27,6 +30,7 @@ declare var M: any;
 export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
 
   private parcellesService: ParcellesService = inject(ParcellesService);
+  private router = inject(Router);
   // Inject central RegistreService to refresh global cache when parcels change
   private registreService: RegistreService = inject(RegistreService);
   private cdr = inject(ChangeDetectorRef);
@@ -171,7 +175,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
     
     try {
       await this.parcellesService.loadParcelles(forceReload);
-      const parcelles = this.parcellesService.getAllParcelles();
+      const parcelles = this.parcellesService.getActiveParcelles(); // les archivées sont dans Mes archives
       this.parcellesSignal.set(parcelles);
       this._filteredCache = null;
 
@@ -668,7 +672,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
       }
     });
 
-    const parcelles = this.parcellesService.getAllParcelles();
+    const parcelles = this.parcellesService.getActiveParcelles();
     const allLatLngs: L.LatLng[] = [];
 
     parcelles.forEach((parcelle: any) => {
@@ -1012,6 +1016,30 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
   /**
    * Supprime la parcelle actuellement en cours de modification
    */
+  goToArchives(): void {
+    this.router.navigate(['/parcelles/archives']);
+  }
+
+  // ===== Archivage (updateToDo/07) =====
+  showArchiveChoice = false;
+
+  openArchiveChoice(): void {
+    if (this.selectedParcelForEdit) this.showArchiveChoice = true;
+  }
+
+  /** Parcelle archivée (ou archivée et renouvelée) : fermer le formulaire et recharger la liste. */
+  async onArchiveDone(kind: 'archived' | 'renewed'): Promise<void> {
+    const name = this.selectedParcelForEdit?.parcel_name || 'La parcelle';
+    this.showArchiveChoice = false;
+    this.closeEditParcel();
+    await this.loadParcelles(true);
+    this.successMessageText = kind === 'renewed'
+      ? `« ${name} » a été archivée et renouvelée en « ${name} (1) ».`
+      : `« ${name} » a été archivée. Vous la retrouverez dans Mes archives.`;
+    this.showSuccessMessage.set(true);
+    setTimeout(() => this.showSuccessMessage.set(false), 3000);
+  }
+
   async deleteEditedParcel(): Promise<void> {
     if (!this.selectedParcelForEdit || this.isDeleting) {
       return;

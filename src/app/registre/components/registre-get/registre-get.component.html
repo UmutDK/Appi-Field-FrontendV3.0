@@ -106,7 +106,7 @@
                                         <tr [class.row-alternate]="$index % 2 === 1">
                                         <td>{{ formatDateShort(ligne.date) }}</td>
                                         <td>{{ ligne.parcelle }}</td>
-                                        <td>{{ ligne.type }}</td>
+                                        <td>{{ ligne.type }}@if (ligne.originalData?.third_part_flag) { <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>}</td>
                                         <td>{{ ligne.details }}</td>
                                         </tr>
                                     }

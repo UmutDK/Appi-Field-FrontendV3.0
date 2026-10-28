@@ -1,0 +1,190 @@
+<div class="ajouterUneCulture ppnu-form-container scrollable-content" #popupContent>
+  <div class="popup-content-scrollable scrollable-content">
+  <form id="correctionForm" (ngSubmit)="onSubmit()" #correctionForm="ngForm">
+
+    <div class="row g-3">
+      <!-- Sélection du produit -->
+      <div class="col-lg-6">
+        <label class="simple-label">Produit<sup>*</sup></label>
+        <div class="dropdown-container" [class.open]="isProductDropdownOpen">
+          <button type="button" class="dropdown-btn" aria-label="Produit" (click)="toggleProductDropdown(); $event.stopPropagation()">
+            <span class="dropdown-value">{{ selectedProductLabel }}</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+          @if (isProductDropdownOpen) {
+            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                @for (product of inventoryProducts; track product.product_id) {
+                  <div class="dropdown-list-item" (click)="selectProductOption(product.product_id)">
+                    {{ product.product_name }} - {{ product.product_numaut }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        @if (currentRemaining !== null) {
+          <p class="correction-current">
+            Stock restant actuel : <b [class.correction-negative]="currentRemaining < 0">{{ currentRemaining | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}</b>
+          </p>
+        }
+      </div>
+
+      <!-- Date -->
+      <div class="col-lg-6">
+        <label class="simple-label" for="correctionDate">Date de correction<sup>*</sup></label>
+        <input
+          type="date"
+          class="form-control popup-text-input"
+          id="correctionDate"
+          [(ngModel)]="selectedDate"
+          name="date"
+          required
+          #dateCtrl="ngModel"
+          [class.input-error]="dateCtrl.touched && !selectedDate"
+          [max]="maxDate">
+        @if (dateCtrl.touched && !selectedDate) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>Champ obligatoire.</p>
+        }
+      </div>
+
+      <!-- Mode : bouton à deux états -->
+      <div class="col-lg-12">
+        <label class="simple-label" id="correctionModeLabel">Mode<sup>*</sup></label>
+        <div class="correction-mode" role="radiogroup" aria-labelledby="correctionModeLabel">
+          @for (opt of modeOptions; track opt.value) {
+            <button type="button"
+                    class="correction-mode__btn"
+                    role="radio"
+                    [attr.aria-checked]="selectedMode === opt.value"
+                    [class.active]="selectedMode === opt.value"
+                    (click)="selectMode(opt.value)">
+              <i class="bi {{ opt.icon }}"></i>{{ opt.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Quantité -->
+      <div class="col-lg-6">
+        <label class="simple-label" for="correctionQuantity">Quantité<sup>*</sup></label>
+        <input
+          type="number"
+          class="form-control popup-text-input"
+          id="correctionQuantity"
+          [(ngModel)]="quantity"
+          name="quantity"
+          placeholder="Ex : 2.5"
+          min="0.01"
+          step="0.01"
+          required
+          #qtyCtrl="ngModel"
+          [class.input-error]="qtyCtrl.touched && !(quantity! > 0)">
+        @if (qtyCtrl.touched && !(quantity! > 0)) {
+          <p class="field-error"><i class="bi bi-exclamation-circle"></i>La quantité doit être supérieure à 0.</p>
+        }
+      </div>
+
+      <!-- Unité -->
+      <div class="col-lg-6">
+        <label class="simple-label">Unité<sup>*</sup></label>
+        <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+          <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
+            <span class="dropdown-value">{{ selectedUnit }}</span>
+            <i class="bi bi-chevron-down dropdown-icon"></i>
+          </button>
+          @if (isUnitDropdownOpen) {
+            <div class="dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                @for (unit of unitOptions; track unit.value) {
+                  <div class="dropdown-list-item" (click)="selectUnitOption(unit.value)">
+                    {{ unit.label }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (isAlreadyZero) {
+        <div class="col-lg-12">
+          <div class="form-text correction-info">
+            <i class="bi bi-info-circle"></i>
+            Le stock de ce produit est déjà à 0.
+          </div>
+        </div>
+      }
+
+      @if (selectedProduct && selectedUnit !== selectedProduct.quantity_unit) {
+        <div class="col-lg-12">
+          <div class="form-text text-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            Attention : L'unité sélectionnée ({{ selectedUnit }}) diffère de l'unité du produit ({{ selectedProduct.quantity_unit }})
+          </div>
+        </div>
+      }
+
+      @if (isLargeNegativeCorrection) {
+        <div class="col-lg-12">
+          <div class="form-text text-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            Attention : vous semblez effectuer une correction importante ({{ quantity }} L retirés du stock).
+          </div>
+        </div>
+      }
+
+      @if (remainingAfter !== null) {
+        <div class="col-lg-12">
+          <div class="correction-preview" [class.correction-preview--zero]="Math.abs(remainingAfter) < 0.005">
+            <i class="bi bi-calculator"></i>
+            Stock restant après correction :
+            <b [class.correction-negative]="remainingAfter < -0.005">{{ remainingAfter | number:'1.2-2' }} {{ selectedUnit }}</b>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (submitError) {
+      <p class="field-error mt-3"><i class="bi bi-exclamation-circle"></i>{{ submitError }}</p>
+    }
+
+  </form>
+  </div>
+
+  <!-- Boutons d'action (même structure que ppnu-ppnv) -->
+  <div class="action-buttons popup-footer">
+    @if (!isFormValid) {
+      <p class="popup-required-hint">
+        <i class="bi bi-info-circle"></i>
+        <span>À compléter :
+          @if (!selectedProductId) { <b>produit</b> }
+          @if (!selectedDate) { <b>date</b> }
+          @if (!(quantity! > 0)) { <b>quantité (supérieure à 0)</b> }
+          @if (!selectedUnit) { <b>unité</b> }
+        </span>
+      </p>
+    }
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="onCancel()">
+      Annuler
+    </button>
+    <button
+      type="submit"
+      form="correctionForm"
+      class="btn-primary"
+      [disabled]="!isFormValid || isSubmitting">
+      @if (isSubmitting) {
+        <div class="spinner-border spinner-border-sm me-2" role="status">
+          <span class="visually-hidden">{{ isEditMode ? 'Mise à jour' : 'Ajout' }} en cours...</span>
+        </div>
+        {{ isEditMode ? 'Mise à jour' : 'Ajout' }} en cours...
+      } @else {
+        <i class="bi bi-{{ isEditMode ? 'pencil-square' : 'plus-circle' }}"></i>
+        {{ isEditMode ? 'Modifier' : 'Ajouter' }} la correction
+      }
+    </button>
+  </div>
+</div>

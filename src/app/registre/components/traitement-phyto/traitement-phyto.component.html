@@ -93,6 +93,23 @@
                             </article>
                         }
 
+                        <!-- Traitement effectué par un tiers : visible en création ET en modification (modifiable après coup) -->
+                        <article class="col-lg-12">
+                            <div class="form-check third-part-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="thirdPartFlag"
+                                       formControlName="third_part_flag">
+                                <label class="form-check-label simple-label" for="thirdPartFlag">
+                                    Traitement effectué par un tiers
+                                </label>
+                                <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                   matTooltip="Cochez cette case si le traitement a été réalisé par un tiers (entrepreneur, voisin…) avec ses propres produits. Les quantités de produits de ce traitement ne seront pas déduites de votre inventaire. Le traitement reste enregistré normalement dans votre registre."
+                                   matTooltipPosition="above">
+                                </i>
+                            </div>
+                        </article>
+
                         <article class="col-lg-6">
                             <p></p>
                             <label class="simple-label" for="traitementDate">Date de traitement<sup>*</sup></label>
@@ -144,6 +161,42 @@
                                         }
                                         @if (operators.length === 0) {
                                             <li class="operator-empty">Aucun opérateur disponible</li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </article>
+
+                        <!-- Méthode d'application (treatmentType côté API) -->
+                        <article class="col-lg-6">
+                            <p></p>
+                            <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                                <label class="simple-label" id="traitementMethodeLabel" style="margin:0;">Méthode d'application</label>
+                            </div>
+                            <div class="operator-dropdown-container">
+                                <button type="button"
+                                        class="operator-select-btn has-value"
+                                        aria-labelledby="traitementMethodeLabel"
+                                        (click)="toggleApplicationMethodDropdown()"
+                                        (blur)="closeApplicationMethodDropdown()">
+                                    <span class="operator-btn-text">
+                                        <span class="simple-option-name">{{ selectedApplicationMethodLabel }}</span>
+                                    </span>
+                                    <span class="operator-btn-icons">
+                                        <i class="bi" [class.bi-chevron-down]="!showApplicationMethodDropdown" [class.bi-chevron-up]="showApplicationMethodDropdown"></i>
+                                    </span>
+                                </button>
+                                @if (showApplicationMethodDropdown) {
+                                    <ul class="operator-dropdown-list operator-dropdown-list--scroll">
+                                        @for (opt of APPLICATION_METHOD_OPTIONS; track opt.value) {
+                                            <li>
+                                                <button type="button"
+                                                        class="operator-option"
+                                                        [class.selected]="selectedApplicationMethod === opt.value"
+                                                        (mousedown)="$event.preventDefault(); selectApplicationMethod(opt.value)">
+                                                    {{ opt.label }}
+                                                </button>
+                                            </li>
                                         }
                                     </ul>
                                 }
@@ -521,6 +574,12 @@
                                     @if (getUnauthorizedCrops(currentEditingProductId).length > 0) {
                                         <div class="info-box warning-box">
                                             <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Attention ce produit ne semble autorisé sur : {{ getUnauthorizedCrops(currentEditingProductId).join(', ') }}</div>
+                                        </div>
+                                    }
+                                    <!-- Eco-régime réduction d'intrants (texte et préférence gérés par le serveur) -->
+                                    @if (getErRiWarning(currentEditingProductId); as erRiMessage) {
+                                        <div class="info-box warning-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> {{ erRiMessage }}</div>
                                         </div>
                                     }
                                     @if (getDosesPhytoweb(currentEditingProductId) | async; as doses) {
@@ -1011,6 +1070,12 @@
                                     @if (getUnauthorizedCrops(currentEditingProductIdBouillie).length > 0) {
                                         <div class="info-box warning-box">
                                             <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> Attention ce produit ne semble pas autorisé sur : {{ getUnauthorizedCrops(currentEditingProductIdBouillie).join(', ') }}</div>
+                                        </div>
+                                    }
+                                    <!-- Eco-régime réduction d'intrants (texte et préférence gérés par le serveur) -->
+                                    @if (getErRiWarning(currentEditingProductIdBouillie); as erRiMessage) {
+                                        <div class="info-box warning-box">
+                                            <div class="info-header"><i class="bi bi-exclamation-triangle-fill"></i> {{ erRiMessage }}</div>
                                         </div>
                                     }
                                     @if (getDosesPhytoweb(currentEditingProductIdBouillie) | async; as doses) {
@@ -1815,10 +1880,13 @@
                                     <div class="parcel-cards-grid">
                                       @for (association of group.associations; track association.uniqueId) {
                                         <label class="parcel-card" 
-                                               [class.selected]="isParcelCultureSelected(association.uniqueId)">
-                                          <input type="checkbox" 
-                                                 [value]="association.uniqueId" 
+                                               [class.selected]="isParcelCultureSelected(association.uniqueId)"
+                                               [class.is-archived-locked]="association.locked"
+                                               [attr.title]="association.locked ? 'Élément archivé : le lien est conservé mais ne peut pas être modifié' : null">
+                                          <input type="checkbox"
+                                                 [value]="association.uniqueId"
                                                  [checked]="isParcelCultureSelected(association.uniqueId)"
+                                                 [disabled]="association.locked"
                                                  (change)="onCheckedParcelCulture($event, association)"
                                                  name="parcels_culture_id">
                                           <div class="card-icon">
@@ -1831,6 +1899,12 @@
                                             } @else {
                                               <div class="parcel-name">{{ association.parcel_name }}</div>
                                               <div class="crop-name">{{ association.crop_name }}</div>
+                                            }
+                                            @if (association.locked && association.parcel_archived) {
+                                              <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                                            }
+                                            @if (association.locked && association.is_archived) {
+                                              <span class="badge-archived"><i class="bi bi-archive"></i> Culture archivée</span>
                                             }
                                           </div>
                                           <i class="bi bi-check-circle-fill card-check"></i>

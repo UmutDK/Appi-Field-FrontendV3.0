@@ -18,6 +18,10 @@
                 }
             </button>
 
+            <button type="button" class="btn-export" (click)="onImportAchats()">
+                <i class="bi bi-file-earmark-arrow-up"></i> Importer des achats
+            </button>
+
             <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
                 <button type="button" class="add-menu-btn" (click)="toggleFab()"
                         aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
@@ -34,11 +38,25 @@
                                 <span class="add-menu-desc">Produit non utilisable ou non valorisable sorti du stock.</span>
                             </span>
                         </button>
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="onAddCorrection(); closeFab()">
+                            <span class="add-menu-icon"><i class="bi bi-sliders2-vertical"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Correction de stock</span>
+                                <span class="add-menu-desc">Remettez à zéro un stock qui ne correspond plus à la réalité.</span>
+                            </span>
+                        </button>
                         <button type="button" class="add-menu-item" role="menuitem" (click)="onAddAchatPpp(); closeFab()">
                             <span class="add-menu-icon"><i class="bi bi-cart-plus"></i></span>
                             <span class="add-menu-text">
                                 <span class="add-menu-title">Achat de PPP</span>
                                 <span class="add-menu-desc">Enregistrez l'achat d'un produit phytopharmaceutique.</span>
+                            </span>
+                        </button>
+                        <button type="button" class="add-menu-item" role="menuitem" (click)="onImportAchats(); closeFab()">
+                            <span class="add-menu-icon"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                            <span class="add-menu-text">
+                                <span class="add-menu-title">Importer des achats</span>
+                                <span class="add-menu-desc">Depuis un fichier Excel, plusieurs achats en une fois.</span>
                             </span>
                         </button>
                     </div>
@@ -193,8 +211,13 @@
                                 <h2>{{ selectedProduct.product_name }}</h2>
                                 <span class="inventory-numaut">{{ selectedProduct.product_numaut }}</span>
                             </div>
-                            <div *ngIf="selectedProduct.quantity_unit === 'L' || selectedProduct.quantity_unit === 'Kg'">
-                                <button type="button" class="unit-switcher" (click)="switchUnit()" title="Changer l'unité d'affichage">
+                            <div class="inventory-header-actions">
+                                <button type="button" class="unit-switcher" (click)="onAddCorrectionForSelectedProduct()" title="Ramener le stock restant de ce produit à 0">
+                                    <i class="bi bi-sliders2-vertical"></i>
+                                    Corriger le stock
+                                </button>
+                                <button *ngIf="selectedProduct.quantity_unit === 'L' || selectedProduct.quantity_unit === 'Kg'"
+                                        type="button" class="unit-switcher" (click)="switchUnit()" title="Changer l'unité d'affichage">
                                     <i class="bi bi-arrow-repeat"></i>
                                     Afficher en {{ displayUnitLabel === 'L' ? 'mL' : displayUnitLabel === 'ml' ? 'L' : displayUnitLabel === 'Kg' ? 'g' : 'Kg' }}
                                 </button>
@@ -230,6 +253,14 @@
                                         {{ convertedQuantityPpnuPpnv | number:'1.2-2' }} {{ displayUnitLabel }}
                                     </span>
                                 </div>
+                                @if (quantityCorrection !== 0) {
+                                    <div class="stat-item">
+                                        <span class="stat-label"><span class="stat-dot" style="background: #a3301a;"></span>Corrections (net)</span>
+                                        <span class="stat-value" style="color: #a3301a;">
+                                            {{ convertedQuantityCorrection > 0 ? '+' : '' }}{{ convertedQuantityCorrection | number:'1.2-2' }} {{ displayUnitLabel }}
+                                        </span>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </section>
@@ -429,12 +460,13 @@
                                             <th>Date</th>
                                             <th>Cible</th>
                                             <th>Quantité</th>
+                                            <th class="col-actions"><span class="visually-hidden">Actions</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if (productUsages.length === 0) {
                                             <tr>
-                                                <td colspan="4" class="table-state">
+                                                <td colspan="5" class="table-state">
                                                     @if (selectedProduct) {
                                                         Aucun événement enregistré pour ce produit
                                                     } @else {
@@ -445,6 +477,26 @@
                                         } @else {
                                             @for (usage of productUsages; track usage.event_id + '_' + $index) {
                                                 <tr>
+                                                    @if (usage.event_type === 'correction') {
+                                                        <td><span class="tag tag--correction">Correction {{ usage.correction_mode === 'plus' ? '+' : '−' }}</span></td>
+                                                        <td>{{ usage.event_date | date:'dd/MM/yyyy' }}</td>
+                                                        <td>—</td>
+                                                        <td>
+                                                            <span [class]="usage.correction_mode === 'plus' ? 'qty qty--in' : 'qty qty--out'">
+                                                                {{ usage.correction_mode === 'plus' ? '+' : '−' }}{{ usage.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="col-actions">
+                                                            <button type="button" class="icon-btn" (click)="onEditCorrectionEvent(usage)"
+                                                                    title="Modifier cette correction" aria-label="Modifier cette correction">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="icon-btn icon-btn--danger" (click)="onDeleteCorrectionEvent(usage)"
+                                                                    title="Supprimer cette correction" aria-label="Supprimer cette correction">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    } @else {
                                                     <td>
                                                         <span [class]="usage.event_type === 'purchase' ? 'tag tag--purchase' : 'tag tag--treatment'">
                                                             {{ usage.event_type === 'purchase' ? 'Achat' : 'Traitement' }}
@@ -457,6 +509,8 @@
                                                             {{ usage.event_type === 'purchase' ? '+' : '' }}{{ usage.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}
                                                         </span>
                                                     </td>
+                                                    <td class="col-actions"></td>
+                                                    }
                                                 </tr>
                                             }
                                         }
@@ -590,6 +644,40 @@
                         </div>
                     </div>
                 </div>
+            }@else if (popInventaire === "Correction") {
+                <div class="ajouter">
+                    <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                        <div class="ajouterUneCulture popup-container">
+                            <div class="popup-header">
+                                <div class="header-title">
+                                    <i class="bi bi-sliders2-vertical"></i>
+                                    <h3>Correction de stock</h3>
+                                </div>
+                                <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                            <div class="body">
+                                <app-correction-stock [preselectedProductId]="popupPreselectedProductId" (closeForm)="onCloseCorrectionForm()"></app-correction-stock>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }@else if (popInventaire === "Import achats") {
+                <div class="ajouter">
+                    <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
+                        <div class="ajouterUneCulture popup-container popup-container--wide">
+                            <div class="popup-header">
+                                <div class="header-title">
+                                    <i class="bi bi-file-earmark-arrow-up"></i>
+                                    <h3>Importer des achats</h3>
+                                </div>
+                                <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                            <div class="body">
+                                <app-import-achats (closeForm)="onClose()" (imported)="onAchatsImported($event)"></app-import-achats>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }@else if (popInventaire === "Achat de PPP") {
                 <div class="ajouter">
                     <div id="overlay" (click)="$event.target === $event.currentTarget ? onClose() : null">
@@ -631,7 +719,7 @@
 
 <!-- Ancien bouton flottant "Ajouter" (desktop) remplacé par "Ajouter ▾" dans l'en-tête. Mobile : footer inchangé. -->
 <!-- Version mobile/tablette : footer flottant -->
-<footer *ngIf="popInventaire !== 'PPNU - PPNV' && popInventaire !== 'Achat de PPP'" class="footer-fab fab-mobile">
+<footer *ngIf="popInventaire !== 'PPNU - PPNV' && popInventaire !== 'Achat de PPP' && popInventaire !== 'Correction' && popInventaire !== 'Import achats'" class="footer-fab fab-mobile">
     <div style="display: flex; gap: 18px; width: 100%; justify-content: center;">
         <button class="footer-btn" (click)="onAddPpnu()">
             <svg class="footer-icon" viewBox="0 0 256 256" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -644,6 +732,14 @@
                 <path xmlns="http://www.w3.org/2000/svg" fill="currentColor" d="M200 24h-76.69A15.86 15.86 0 0 0 112 28.69L101.66 39L91.31 28.69a16 16 0 0 0-22.62 0l-24 24a16 16 0 0 0 0 22.62L55 85.66L44.69 96A15.86 15.86 0 0 0 40 107.31V216a16 16 0 0 0 16 16h144a16 16 0 0 0 16-16V40a16 16 0 0 0-16-16M56 64l24-24l10.34 10.34l-24 24Zm144 152H56V107.31l16-16L123.31 40H200ZM128 64a8 8 0 0 1 8-8h40a8 8 0 0 1 0 16h-40a8 8 0 0 1-8-8m52.8 62.4L141.33 156l39.47 29.6a8 8 0 1 1-9.6 12.8L128 166l-43.2 32.4a8 8 0 0 1-9.6-12.8l39.47-29.6l-39.47-29.6a8 8 0 0 1 9.6-12.8L128 146l43.2-32.4a8 8 0 0 1 9.6 12.8"/>
             </svg>
             Achat PPP
+        </button>
+        <button class="footer-btn" (click)="onAddCorrection()">
+            <i class="bi bi-sliders2-vertical footer-icon"></i>
+            Correction
+        </button>
+        <button class="footer-btn" (click)="onImportAchats()">
+            <i class="bi bi-file-earmark-arrow-up footer-icon"></i>
+            Importer
         </button>
     </div>
 </footer>

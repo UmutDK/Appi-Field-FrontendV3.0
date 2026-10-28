@@ -1,0 +1,445 @@
+// ============================================
+// POPUP IMPORT D'ACHATS (updateToDo/08)
+// Chrome (header, boutons, champs) fourni par le système de popup partagé
+// (src/styles/_popup-system.scss), comme ppnu-ppnv et achat-de-ppp.
+// ============================================
+
+$teal: #03918a;
+$teal-light: #e9f8f7;
+$text: #12103c;
+$muted: #5b6b78;
+$border: #e5e7eb;
+$ok: #10743f;
+$ok-bg: #e6f6ec;
+$warn: #8a5300;
+$warn-bg: #fff4e0;
+$err: #b42318;
+$err-bg: #fdeceb;
+
+// Même relais flex que les autres popups de l'inventaire (balise hôte inline par défaut)
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.import-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100vh - 140px);
+
+  @media (max-width: 992px) {
+    max-height: none;
+  }
+}
+
+// Cases à cocher : Materialize (chargé globalement) masque les cases natives ; texte en <div>
+// et non en <span> (Materialize dessine une fausse case sur « [type=checkbox] + span »).
+input[type="checkbox"] {
+  position: static !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #05b1af;
+  cursor: pointer;
+
+  &:disabled { cursor: not-allowed; }
+}
+
+// ===== Étapes =====
+.import-steps {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 20px 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #9ca3af;
+
+    &:not(:last-child)::after {
+      content: '';
+      width: 22px;
+      height: 1px;
+      margin-left: 2px;
+      background: #d1d5db;
+    }
+
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      font-size: 0.78rem;
+    }
+
+    &.active { color: $text; .num { background: $teal; color: #fff; } }
+    &.done { color: $teal; .num { background: $teal-light; color: $teal; } }
+  }
+}
+
+.import-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 20px 20px;
+}
+
+// ===== Étape 1 =====
+.import-intro {
+  margin: 0 0 14px;
+  color: $text;
+}
+
+.template-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid $border;
+  border-radius: 12px;
+  background: #fafbfc;
+
+  .template-text {
+    display: flex;
+    gap: 12px;
+    flex: 1 1 260px;
+    min-width: 0;
+
+    > i { font-size: 1.6rem; color: #1d7a46; line-height: 1; }
+
+    div { display: flex; flex-direction: column; gap: 2px; }
+    b { color: $text; }
+    span { font-size: 0.85rem; color: $muted; }
+  }
+}
+
+.drop-zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 30px 16px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover, &.drag-over { border-color: #05b1af; background: $teal-light; }
+  &.has-file { border-style: solid; border-color: #05b1af; }
+  &:focus-within { outline: 2px solid #05b1af; outline-offset: 2px; }
+
+  .drop-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .drop-icon { font-size: 2rem; color: $teal; }
+  .drop-title { font-weight: 600; color: $text; word-break: break-all; }
+  .drop-hint { font-size: 0.85rem; color: $muted; }
+}
+
+.import-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: $err;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.import-note {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: $muted;
+}
+
+// ===== Étape 2 =====
+.review-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .summary-total { font-weight: 600; color: $text; }
+}
+
+.pill, .status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--ok { background: $ok-bg; color: $ok; }
+  &--warning { background: $warn-bg; color: $warn; }
+  &--error { background: $err-bg; color: $err; }
+}
+
+.only-errors, .include-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: $text;
+  cursor: pointer;
+}
+
+.only-errors { margin-bottom: 12px; }
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-row {
+  padding: 12px 14px;
+  border: 1px solid $border;
+  border-left: 4px solid $ok;
+  border-radius: 12px;
+  background: #fff;
+
+  &--warning { border-left-color: #e8a33d; }
+  &--error { border-left-color: $err; background: #fffafa; }
+}
+
+.row-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  .row-num { font-weight: 700; color: $text; }
+  .include-check { margin-left: auto; font-weight: 600; }
+  .include-check.disabled { color: #9ca3af; cursor: not-allowed; }
+}
+
+.row-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+
+  .field-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  .field-value, .product-name { color: $text; font-weight: 600; }
+  .product-numaut { margin-left: 4px; font-weight: 500; color: $muted; }
+  .field-missing { color: $err; font-weight: 600; }
+  .file-value { font-size: 0.78rem; color: #8a94a0; word-break: break-word; }
+}
+
+.row-values {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr 1fr;
+
+    .row-field:last-child { grid-column: 1 / -1; }
+  }
+}
+
+.fix-input {
+  max-width: 200px;
+  height: 40px;
+}
+
+.issue {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 0.83rem;
+  line-height: 1.35;
+
+  i { margin-top: 1px; }
+  &--error { color: $err; }
+  &--warning { color: $warn; }
+}
+
+// Correction du produit
+.fix-product {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  .fix-label { font-size: 0.82rem; color: $muted; }
+}
+
+.suggestion-btn, .search-result, .apply-all {
+  border: 1px solid #cfe9e7;
+  border-radius: 8px;
+  background: $teal-light;
+  color: #03706b;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { border-color: #05b1af; }
+  &:focus-visible { outline: 2px solid #05b1af; outline-offset: 2px; }
+}
+
+.suggestion-btn {
+  padding: 5px 10px;
+
+  &.selected { background: $teal; border-color: $teal; color: #fff; }
+}
+
+.product-search {
+  position: relative;
+  max-width: 420px;
+
+  > i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+  }
+
+  // !important : le style global .popup-text-input impose son propre padding
+  input { padding-left: 36px !important; height: 40px; }
+
+  .search-spinner {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    margin-top: -8px;
+    color: $teal;
+  }
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 420px;
+}
+
+.search-result {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  background: #fff;
+  border-color: $border;
+  color: $text;
+  text-align: left;
+
+  span { color: $muted; font-weight: 500; white-space: nowrap; }
+}
+
+.search-empty {
+  margin: 0;
+  font-size: 0.83rem;
+  color: $muted;
+}
+
+.apply-all {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.unit-toggle {
+  display: inline-flex;
+  gap: 6px;
+
+  button {
+    min-width: 52px;
+    height: 40px;
+    border: 1px solid #dfe5ea;
+    border-radius: 8px;
+    background: #fff;
+    color: $text;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.active { border-color: #05b1af; background: $teal-light; color: #03817d; }
+    &:focus-visible { outline: 2px solid #05b1af; outline-offset: 2px; }
+  }
+}
+
+.review-empty {
+  margin: 8px 0 0;
+  color: $ok;
+  font-weight: 600;
+}
+
+// ===== Pied =====
+.import-footer {
+  flex-wrap: wrap;
+  align-items: center;
+
+  .footer-info {
+    flex: 1 1 220px;
+    min-width: 0;
+
+    p { margin: 0; }
+  }
+
+  .footer-hint {
+    display: flex;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: $muted;
+  }
+
+  .import-error { margin: 0 0 4px; }
+
+  // Le système de popups passe le pied en colonne inversée sous 480px : sans nowrap, le
+  // message d'information partait dans une seconde colonne, hors de l'écran.
+  @media (max-width: 480px) {
+    flex-wrap: nowrap;
+
+    .footer-info { flex: 0 0 auto; width: 100%; order: 3; }
+  }
+}

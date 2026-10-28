@@ -22,6 +22,13 @@
             </button>
             <button type="button"
                 class="reglage-mobile-btn"
+                [class.active]="activeSection() === 'preferences'"
+                (click)="activeSection.set('preferences')">
+                <i class="bi bi-sliders"></i>
+                <span>Préférences</span>
+            </button>
+            <button type="button"
+                class="reglage-mobile-btn"
                 [class.active]="activeSection() === 'wallesmart'"
                 (click)="activeSection.set('wallesmart')">
                 <i class="bi bi-link-45deg"></i>
@@ -83,6 +90,15 @@
                     <button
                         type="button"
                         class="reglage-nav__item"
+                        [class.active]="activeSection() === 'preferences'"
+                        (click)="activeSection.set('preferences')"
+                    >
+                        <i class="bi bi-sliders"></i>
+                        <span>Préférences</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="reglage-nav__item"
                         [class.active]="activeSection() === 'wallesmart'"
                         (click)="activeSection.set('wallesmart')"
                     >
@@ -135,6 +151,9 @@
                 }
                 @if (activeSection() === 'infos-exploitation') {
                     <app-infos-exploitation></app-infos-exploitation>
+                }
+                @if (activeSection() === 'preferences') {
+                    <app-preferences></app-preferences>
                 }
                 @if (activeSection() === 'wallesmart') {
                     <app-wallesmart></app-wallesmart>

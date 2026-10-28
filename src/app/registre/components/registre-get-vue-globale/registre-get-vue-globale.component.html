@@ -67,6 +67,9 @@
                                                                    [class]="event.eventType === 'traitement' ? 'bi-droplet-fill' : 'bi-tools'"></i>
                                                                 {{event.type}}
                                                             </span>
+                                                            @if (event.eventType === 'traitement' && event.originalData?.third_part_flag) {
+                                                                <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>
+                                                            }
                                                         </td>
                                                         <td>{{event.cible}}</td>
                                                         <td>{{event.operateur}}</td>

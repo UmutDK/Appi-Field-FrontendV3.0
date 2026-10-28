@@ -30,6 +30,9 @@ export interface Parcelle {
   ref_id?: number;
   record_type?: string;
   exploitation_id?: string;
+  is_archived?: boolean;          // lecture seule (archive / unarchive / renew)
+  prev_parcel_id?: string | null; // parcelle archivée remplacée par celle-ci (renouvellement)
+  sigec_code?: string;
 }
 
 export interface ParcellesData {
@@ -63,6 +66,9 @@ export function fromApi(p: any): Parcelle {
     imported_from_gml: p.recordType === 'gml_import',
     record_type: p.recordType,
     exploitation_id: p.exploitationId,
+    is_archived: !!p.isArchived,
+    prev_parcel_id: p.prevParcelId ?? null,
+    sigec_code: p.sigecCode || '',
   };
 }
 
@@ -79,6 +85,8 @@ function toApi(data: Partial<Parcelle>): any {
   if (data.polygone !== undefined) payload.polygon = data.polygone;
   if (data.record_type !== undefined) payload.recordType = data.record_type;
   if (data.exploitation_id !== undefined) payload.exploitationId = data.exploitation_id;
+  // Jusqu'ici jamais envoyé : le code SIGEC saisi était perdu
+  if (data.sigec_code !== undefined) payload.sigecCode = data.sigec_code;
   return payload;
 }
 
@@ -123,6 +131,38 @@ export class ParcellesService {
 
   getAllParcels(): Parcelle[] {
     return this.getAllParcelles();
+  }
+
+  /** Les parcelles actives uniquement : à utiliser pour les listes, la carte et les statistiques. */
+  getActiveParcelles(): Parcelle[] {
+    return this.parcelles.filter(p => !p.is_archived);
+  }
+
+  getArchivedParcelles(): Promise<Parcelle[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/archive`).toPromise().then(rows => (rows || []).map(fromApi));
+  }
+
+  async archiveParcelle(id: string): Promise<void> {
+    await this.http.post(`${this.apiUrl}/${id}/archive`, {}).toPromise();
+    await this.afterArchiveChange();
+  }
+
+  async unarchiveParcelle(id: string): Promise<void> {
+    await this.http.post(`${this.apiUrl}/${id}/unarchive`, {}).toPromise();
+    await this.afterArchiveChange();
+  }
+
+  /** Archive la parcelle et crée sa copie active « <nom> (1) » avec le nouveau code SIGEC (obligatoire). */
+  async renewParcelle(id: string, sigecCode: string): Promise<{ parcelId: string; archivedParcelId: string }> {
+    const res = await this.http.post<any>(`${this.apiUrl}/${id}/renew`, { sigecCode }).toPromise();
+    await this.afterArchiveChange();
+    return res;
+  }
+
+  private async afterArchiveChange(): Promise<void> {
+    this.isLoaded = false;
+    await this.loadParcelles();
+    await this.registreService.notifyParcelUpdated(); // vide les caches parcelles/cultures du registre
   }
 
   forceReload() {
@@ -195,7 +235,7 @@ export class ParcellesService {
   }
 
   getParcellesAsGeoJSON(): any[] {
-    return this.parcelles.map(parcelle => {
+    return this.getActiveParcelles().map(parcelle => {
       return {
         type: 'Feature',
         geometry: {
@@ -234,24 +274,25 @@ export class ParcellesService {
   }
 
   getStats() {
-    const totalSuperficie = this.parcelles.reduce((sum, p) => sum + parseFloat(p.parcel_area || '0'), 0);
-    const categories = [...new Set(this.parcelles.map(p => p.parcel_category))];
+    const active = this.getActiveParcelles();
+    const totalSuperficie = active.reduce((sum, p) => sum + parseFloat(p.parcel_area || '0'), 0);
+    const categories = [...new Set(active.map(p => p.parcel_category))];
 
     return {
-      totalParcelles: this.parcelles.length,
+      totalParcelles: active.length,
       totalSuperficie: totalSuperficie,
       categories: categories,
-      uniteSuperficie: this.parcelles[0]?.parcel_area_unit_fr || 'ha'
+      uniteSuperficie: active[0]?.parcel_area_unit_fr || 'ha'
     };
   }
 
   searchParcelles(terme: string): Parcelle[] {
     if (!terme) {
-      return this.parcelles;
+      return this.getActiveParcelles();
     }
 
     const termeLower = terme.toLowerCase();
-    return this.parcelles.filter(p =>
+    return this.getActiveParcelles().filter(p =>
       p.parcel_name.toLowerCase().includes(termeLower) ||
       p.parcel_category.toLowerCase().includes(termeLower) ||
       p.parcel_address.toLowerCase().includes(termeLower) ||

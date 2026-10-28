@@ -1,0 +1,82 @@
+// Au-dessus de la popup de modification de la parcelle (même .popup-overlay, z-index 9999)
+.archive-choice-overlay {
+  z-index: 10000;
+}
+
+.archive-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #dfe5ea;
+    border-radius: 12px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover:not(:disabled) {
+      border-color: #05b1af;
+      background: #f3fbfa;
+    }
+
+    &:disabled { cursor: progress; opacity: .7; }
+    &:focus-visible { outline: 2px solid #05b1af; outline-offset: 2px; }
+  }
+
+  &__icon {
+    font-size: 1.25rem;
+    color: #03918a;
+    line-height: 1.3;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: #12103c;
+  }
+
+  &__desc {
+    font-size: 0.85rem;
+    color: #5b6b78;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 0.88rem;
+    color: #5b6b78;
+  }
+
+  &__hint {
+    margin: 10px 0 0;
+    font-size: 0.85rem;
+    color: #5b6b78;
+  }
+
+  .popup-tooltip-icon {
+    color: #6c8db8;
+    font-size: 0.85rem;
+  }
+}
+
+.field-error {
+  margin: 8px 0 0;
+}

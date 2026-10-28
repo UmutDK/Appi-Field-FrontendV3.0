@@ -11,6 +11,7 @@ import { map, Observable, tap, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { ParcelArchiveChoiceComponent } from '../parcel-archive-choice/parcel-archive-choice.component';
 
 declare var M : any;
 
@@ -18,7 +19,8 @@ declare var M : any;
   selector: 'app-get-parcelles',
   standalone: true,
   imports: [
-    SharedModule
+    SharedModule,
+    ParcelArchiveChoiceComponent
   ],
   providers: [
     ParcellesService
@@ -666,6 +668,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
         parcelAreaUnit: this.form.value.parcel_area_unit_fr,
         parcelAddress: this.form.value.parcel_address,
         parcelCategory: this.form.value.parcel_category,
+        sigecCode: this.form.value.sigec_code || null,
         recordType: "Adress_parcel",
       };
 
@@ -1132,6 +1135,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
         parcelArea: parseFloat((this.form.value.parcel_area ?? '').toString().replace(',', '.')) || null,
         parcelAreaUnit: this.form.value.parcel_area_unit_fr,
         parcelCategory: this.form.value.parcel_category,
+        sigecCode: this.form.value.sigec_code || null,
         recordType: "Point_parcel",
       };
 
@@ -1187,7 +1191,8 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     try {
       const raw = await firstValueFrom(this.httpClient.get<any[]>(environment.apiRegistre + '/parcels'));
-      const response = Array.isArray(raw) ? raw.map(fromApi) : raw;
+      // Parcelles actives uniquement (GET /parcels renvoie aussi les archivées)
+      const response = Array.isArray(raw) ? raw.map(fromApi).filter(p => !p.is_archived) : raw;
 
       if (response && Array.isArray(response)) {
         this.signalParcelle.set(response);
@@ -1675,6 +1680,27 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
       alert('Erreur lors de la mise à jour de la parcelle. Vérifiez la console pour plus de détails.');
     }
+  }
+
+
+  // ===== Archivage (updateToDo/07) =====
+  showArchiveChoice = false;
+
+  openArchiveChoice(): void {
+    if (this.selectedParcelForEdit) this.showArchiveChoice = true;
+  }
+
+  /** Parcelle archivée (ou archivée et renouvelée) : fermer le formulaire et recharger la liste. */
+  async onArchiveDone(kind: 'archived' | 'renewed'): Promise<void> {
+    const name = this.selectedParcelForEdit?.parcel_name || 'La parcelle';
+    this.showArchiveChoice = false;
+    this.closeEditParcel();
+    await this.loadParcelles();
+    this.successMessageText = kind === 'renewed'
+      ? `« ${name} » a été archivée et renouvelée en « ${name} (1) ».`
+      : `« ${name} » a été archivée. Vous la retrouverez dans Mes archives.`;
+    this.showSuccessMessage.set(true);
+    setTimeout(() => this.showSuccessMessage.set(false), 3000);
   }
 
   /**
@@ -2207,6 +2233,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
       parcelAreaUnit: this.form.value.parcel_area_unit_fr,
       parcelCategory: this.form.value.parcel_category,
       parcelAddress: 'Parcelle tracée en polygone',
+      sigecCode: this.form.value.sigec_code || null,
       latitude: this.lat,
       longitude: this.lon,
       polygon: JSON.stringify(polygonCoords),

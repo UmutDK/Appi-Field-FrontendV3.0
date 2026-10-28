@@ -386,6 +386,17 @@
       white-space: nowrap;
     }
 
+    // Badge « Tiers » sous le type : la colonne (110px) coupe sinon tout ce qui dépasse
+    .ht-type:has(.badge-tiers) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      white-space: normal;
+
+      .badge-tiers { margin-left: 0; }
+    }
+
     &.ht-row-traitement .ht-type-badge {
       background: #ece7fb;
       color: #4c3d99;

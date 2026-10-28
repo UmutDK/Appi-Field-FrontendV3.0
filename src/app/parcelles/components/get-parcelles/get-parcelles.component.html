@@ -559,6 +559,10 @@
                         </button>
                     }
                     @if (editMode) {
+                        <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
+                            <i class="bi bi-archive"></i>
+                            Archiver la parcelle
+                        </button>
                         <button
                             type="button"
                             class="btn-primary danger"
@@ -1221,3 +1225,8 @@
             </div>
         }
     </footer>
+
+    @if (showArchiveChoice && selectedParcelForEdit) {
+        <app-parcel-archive-choice [parcel]="selectedParcelForEdit"
+            (done)="onArchiveDone($event)" (closed)="showArchiveChoice = false"></app-parcel-archive-choice>
+    }

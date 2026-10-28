@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { PpnuPpnvComponent } from "../ppnu-ppnv/ppnu-ppnv.component";
 import { AchatDePppComponent } from "../achat-de-ppp/achat-de-ppp.component";
+import { CorrectionStockComponent } from "../correction-stock/correction-stock.component";
+import { ImportAchatsComponent } from "../import-achats/import-achats.component";
 import { InventaireService, RealInventoryData, InventoryStock, EventHistory } from '../../services/inventaire.service';
 import { RegistreService } from '../../../registre/services/registre.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -34,6 +36,8 @@ Chart.register(...registerables);
   imports: [
     PpnuPpnvComponent, 
     AchatDePppComponent,
+    CorrectionStockComponent,
+    ImportAchatsComponent,
     SharedModule
   ],
   templateUrl: './accueil-inventaire.component.html',
@@ -59,6 +63,9 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
   }
   get convertedQuantityPpnuPpnv(): number {
     return this.selectedProduct ? this.convertQuantity(this.quantityPpnuPpnv) : 0;
+  }
+  get convertedQuantityCorrection(): number {
+    return this.selectedProduct ? this.convertQuantity(this.quantityCorrection) : 0;
   }
 
   // Affichage du label d'unité
@@ -109,6 +116,7 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
   quantityBuyed: number = 0;
   quantityUsed: number = 0;
   quantityPpnuPpnv: number = 0;
+  quantityCorrection: number = 0;
   quantityRemaining: number = 0;
 
   // Anciennes propriétés (garder pour compatibilité avec PPNU & PPNV)
@@ -149,7 +157,7 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
   onEscapeCloseAddMenu(): void {
     this.isFabOpen = false;
     // Échap ferme aussi la popup PPNU / Achat ouverte (même action que la croix)
-    if (this.popInventaire === 'PPNU - PPNV' || this.popInventaire === 'Achat de PPP') this.onClose();
+    if (this.popInventaire === 'PPNU - PPNV' || this.popInventaire === 'Achat de PPP' || this.popInventaire === 'Correction' || this.popInventaire === 'Import achats') this.onClose();
   }
 
   /** Message de confirmation affiché quelques secondes en bas de l'écran. */
@@ -335,15 +343,15 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
     switch (this.activeFilter) {
       case 'positive':
         return this.sortedProducts.filter(p =>
-          (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) > 0
+          this.inventaireService.getRemainingQuantity(p) > 0
         );
       case 'negative':
         return this.sortedProducts.filter(p =>
-          (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) < 0
+          this.inventaireService.getRemainingQuantity(p) < 0
         );
       case 'empty':
         return this.sortedProducts.filter(p =>
-          (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) === 0
+          this.inventaireService.getRemainingQuantity(p) === 0
         );
       default:
         return this.sortedProducts;
@@ -357,19 +365,19 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
 
   get countPositive(): number {
     return this.sortedProducts.filter(p =>
-      (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) > 0
+      this.inventaireService.getRemainingQuantity(p) > 0
     ).length;
   }
 
   get countNegative(): number {
     return this.sortedProducts.filter(p =>
-      (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) < 0
+      this.inventaireService.getRemainingQuantity(p) < 0
     ).length;
   }
 
   get countEmpty(): number {
     return this.sortedProducts.filter(p =>
-      (p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv) === 0
+      this.inventaireService.getRemainingQuantity(p) === 0
     ).length;
   }
 
@@ -423,8 +431,8 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
     if (!this.selectedProduct) return;
 
     // 05b1af Appliquer les nouveaux calculs selon les spécifications
-    // Quantité restante = quantity_buyed - quantity_used - quantity_ppnu - quantity_ppnv
-    this.quantityRemaining = this.selectedProduct.quantity_buyed - this.selectedProduct.quantity_used - this.selectedProduct.quantity_ppnu - this.selectedProduct.quantity_ppnv;
+    // Quantité restante = acheté - utilisé - PPNU - PPNV + corrections (formule unique du service)
+    this.quantityRemaining = this.inventaireService.getRemainingQuantity(this.selectedProduct);
 
     // Quantité achetée = quantity_used (selon spécification utilisateur)
     this.quantityBuyed = this.selectedProduct.quantity_buyed;
@@ -434,6 +442,9 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
 
     // PPNU + PPNV = quantity_ppnu + quantity_ppnv
     this.quantityPpnuPpnv = this.selectedProduct.quantity_ppnu + this.selectedProduct.quantity_ppnv;
+
+    // Corrections : net signé (+ ajout, − retrait)
+    this.quantityCorrection = this.selectedProduct.quantity_correction || 0;
   }
 
   // 05b1af Nouvelle méthode pour détecter les produits "vides"
@@ -443,6 +454,7 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
     return product.quantity_buyed === 0 &&
            product.quantity_ppnu === 0 &&
            product.quantity_ppnv === 0 &&
+           (product.quantity_correction || 0) === 0 &&
            product.quantity_used === 0 &&
            (product.total_used === 0 || product.total_used === undefined);
   }
@@ -488,17 +500,18 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
     if (this.quantityRemaining === 0) {
       return { data: [1], labels: ['Stock épuisé'], colors: ['#cccccc'] };
     }
+    const correctionOut = Math.max(0, -this.quantityCorrection);
     if (this.quantityRemaining < 0) {
       return {
-        data:   [this.quantityUsed, this.quantityPpnuPpnv, 0, Math.abs(this.quantityRemaining)],
-        labels: ['Utilisé', 'PPNU + PPNV', 'Restant', 'Négatif'],
-        colors: ['#cccccc', '#cccccc', '#cccccc', '#cf3514']
+        data:   [this.quantityUsed, this.quantityPpnuPpnv, correctionOut, 0, Math.abs(this.quantityRemaining)],
+        labels: ['Utilisé', 'PPNU + PPNV', 'Corrections (−)', 'Restant', 'Négatif'],
+        colors: ['#cccccc', '#cccccc', '#cccccc', '#cccccc', '#cf3514']
       };
     }
     return {
-      data:   [this.quantityUsed, this.quantityPpnuPpnv, this.quantityRemaining],
-      labels: ['Utilisé', 'PPNU + PPNV', 'Restant'],
-      colors: ['#05b1af', '#b2b221', '#0f113b']
+      data:   [this.quantityUsed, this.quantityPpnuPpnv, correctionOut, this.quantityRemaining],
+      labels: ['Utilisé', 'PPNU + PPNV', 'Corrections (−)', 'Restant'],
+      colors: ['#05b1af', '#b2b221', '#a3301a', '#0f113b']
     };
   }
 
@@ -587,6 +600,32 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
     this.popInventaire = "Achat de PPP";
   }
 
+  onAddCorrection(): void {
+    this.popupPreselectedProductId = null;
+    this.popInventaire = "Correction";
+  }
+
+  // Bouton « Corriger le stock » de la fiche produit
+  onAddCorrectionForSelectedProduct(): void {
+    if (!this.selectedProduct) return;
+    this.popupPreselectedProductId = this.selectedProduct.product_id;
+    this.popInventaire = "Correction";
+  }
+
+  onCloseCorrectionForm(): void {
+    this.onClose();
+  }
+
+  // Import Excel d'achats (updateToDo/08)
+  onImportAchats(): void {
+    this.popupPreselectedProductId = null;
+    this.popInventaire = "Import achats";
+  }
+
+  onAchatsImported(count: number): void {
+    this.showToast(`${count} achat${count > 1 ? 's' : ''} importé${count > 1 ? 's' : ''} dans votre inventaire.`);
+  }
+
   onClose(): void {
     this.popInventaire = "";
     this.popupPreselectedProductId = null;
@@ -646,6 +685,29 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
         error: (error: any) => {
           alert('Erreur lors de la suppression de l\'événement. Veuillez réessayer.');
         }
+      });
+    }
+  }
+
+  // Méthodes pour les corrections de stock
+  onEditCorrectionEvent(event: EventHistory): void {
+    if (!this.selectedProduct) return;
+    this.inventaireService.setEditingCorrectionEvent({
+      date: event.event_date,
+      mode: event.correction_mode === 'plus' ? 'plus' : 'minus',
+      quantity: event.quantity_used,
+      unit: event.quantity_used_unit || this.selectedProduct.quantity_unit,
+    }, event.event_id, this.selectedProduct.product_id);
+    this.popupPreselectedProductId = null;
+    this.popInventaire = "Correction";
+  }
+
+  onDeleteCorrectionEvent(event: EventHistory): void {
+    if (!this.selectedProduct) return;
+    if (confirm(`Supprimer la correction du ${new Date(event.event_date).toLocaleDateString('fr-BE')} ?`)) {
+      this.inventaireService.deleteCorrectionById(event.event_id).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => this.loadRealInventoryData(),
+        error: () => alert('Erreur lors de la suppression de la correction. Veuillez réessayer.')
       });
     }
   }

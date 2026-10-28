@@ -23,6 +23,9 @@ function parcelFromApi(p: any): any {
     imported_from_gml: p.recordType === 'gml_import',
     record_type: p.recordType,
     exploitation_id: p.exploitationId,
+    is_archived: !!p.isArchived,
+    prev_parcel_id: p.prevParcelId ?? null,
+    sigec_code: p.sigecCode || '',
   };
 }
 
@@ -173,9 +176,13 @@ export function treatmentToApi(t: any): any {
     treatmentTotalQuantityUsedUnit: 'L',
     remarks: t.remark,
     cleanFlag: t.clean_flag === 'Oui',
+    // Traitement effectué par un tiers : vrai booléen (« Non » serait lu comme vrai par le serveur)
+    thirdPartFlag: !!t.third_part_flag,
     localizedTreatment: t.localized_treatment === 'Oui',
     decisionBase: t.decision_base,
     effectiveness: t.effectiveness,
+    // Méthode d'application : toujours la VALEUR de la liste (minuscules, accents), jamais le libellé
+    treatmentType: t.application_method || 'pulvérisation',
     parcelsConcerned: (t.parcels_concerned || []).map(treatmentParcelToApi),
     treatmentComposition: (t.treatment_composition || []).map((c: any) => treatmentComponentToApi(c, t.target)),
   };
@@ -191,6 +198,7 @@ export function treatmentFromApi(t: any): any {
     operator_id: t.operatorId,
     remark: t.remarks,
     clean_flag: t.cleanFlag ? 'Oui' : 'Non',
+    third_part_flag: !!t.thirdPartFlag,   // le serveur renvoie 0/1
     localized_treatment: t.localizedTreatment ? 'Oui' : 'Non',
     treatment_total_quantity: t.treatmentTotalQuantity,
     treatment_total_quantity_unit: t.treatmentTotalQuantityUnit,
@@ -200,6 +208,7 @@ export function treatmentFromApi(t: any): any {
     standard_treatment_total_quantity_used: t.standardTreatmentTotalQuantityUsed,
     decision_base: t.decisionBase,
     effectiveness: t.effectiveness,
+    application_method: t.treatmentType || 'pulvérisation',
     total_surface: t.surfaceTreated,
     standard_total_surface_treated: t.standardSurfaceTreated ?? t.surfaceTreated,
     target: (t.treatmentComposition && t.treatmentComposition[0]?.productTarget) || '',

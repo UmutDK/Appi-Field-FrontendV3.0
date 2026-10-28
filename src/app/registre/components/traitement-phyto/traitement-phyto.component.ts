@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, OnDestroy, Output, EventEmitter, Input, effect, ChangeDetectorRef, Injector, runInInjectionContext, signal, ViewChild, ElementRef } from '@angular/core';
 import { SharedModule } from '../../../shared/shared.module';
-import { combineLatest, map, Observable, startWith, of, catchError, BehaviorSubject, debounceTime, distinctUntilChanged, throwError, take, Subject, takeUntil } from 'rxjs';
+import { combineLatest, map, Observable, startWith, of, catchError, BehaviorSubject, debounceTime, distinctUntilChanged, throwError, take, Subject, takeUntil, switchMap } from 'rxjs';
 import { RegistreService, treatmentToApi, treatmentFromApi } from '../../services/registre.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProductInfoDirective } from '../product-info-popover/product-info.directive';
 import { PhytoProductInfoService } from '../../services/phyto-product-info.service';
+import { UserPreferencesService } from '../../../reglage/services/user-preferences.service';
 
 @Component({
   selector: 'app-traitement-phyto',
@@ -272,6 +273,12 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   calculationService = inject(CalculationConsolidationService);
   httpClient = inject(HttpClient);
   private phytoProductInfo = inject(PhytoProductInfoService);
+  private userPreferencesService = inject(UserPreferencesService);
+  /** Mode d'encodage présélectionné (préférence defaultTreatmentType de l'utilisateur, Surface par défaut). */
+  private defaultEventType = 'phyto_surface_treatment';
+  /** Avertissements renvoyés par GET /phyto_treatments/warnings, indexés par idAct. */
+  private warningsByAct = signal<Map<string, any>>(new Map());
+  private warningsRequest$ = new Subject<string>(); // clé = query string
   formBuilder = inject(FormBuilder);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
@@ -319,6 +326,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
         // Utiliser setTimeout pour éviter ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(() => {
           this.emitValidation();
+          this.refreshWarnings(); // produit ajouté ou retiré de la composition
         }, 0);
       });
       
@@ -372,6 +380,18 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     
     // 📊 NOUVEAU: Initialiser les données d'avertissements (BBCH et heures)
     this.initializeWarningsData();
+    this.initWarnings();
+
+    // Mode d'encodage préféré : uniquement en création
+    if (!this.isEditMode && !this.interventionToModify) {
+      this.userPreferencesService.get().subscribe({
+        next: prefs => {
+          this.defaultEventType = prefs.defaultEventType || 'phyto_surface_treatment';
+          this.applyDefaultEventType();
+        },
+        error: () => {} // on garde Surface
+      });
+    }
     
     // Émettre la progression initiale
     this.emitProgress();
@@ -510,6 +530,8 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
   private emitProgress(): void {
     this.progressChanged.emit(this.getProgressPercentage());
+    // Changement d'étape (Répartition, ouverture en modification…) : avertissements à jour
+    this.refreshWarnings();
   }
 
   private emitValidation(): void {
@@ -765,6 +787,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
     // Mettre à jour le draft avec les parcelles sélectionnées
     this.currentTreatmentDraft.parcels_concerned = parcellesFormatted;
+    this.refreshWarnings();
     
     // � REDISTRIBUTION INTELLIGENTE : Si de nouvelles parcelles ajoutées en mode bouillie
     if (isBouillieMode && isEditMode && hasNewParcels && originalTotalVolumeUsed > 0) {
@@ -862,7 +885,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
    */
   private initializeForms(): void {
     this.formTraitement = this.formBuilder.group({
-      type: ['phyto_surface_treatment', [Validators.required]], // Surface par défaut
+      type: [this.defaultEventType, [Validators.required]], // préférence de l'utilisateur (Surface par défaut)
       date: [this.formatDateForInput(new Date()), [Validators.required]],
       target: [''],
       harvest_date: [''],
@@ -876,11 +899,14 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       remark: [''],
       localized_treatment: ['Non'], // Valeur par défaut : Non (false)
       clean_flag: ['Non'], // Valeur par défaut : Non (false)
+      third_part_flag: [false], // Traitement effectué par un tiers (case à cocher, booléen)
       operator_id: [''], // Nouvel champ opérateur
       treatment_total_quantity: [''], // Volume de bouillie préparé
       treatment_total_quantity_used: [''], // Volume de bouillie utilisé (mode bouillie)
       decision_base: ['Non défini'],
-      effectiveness: ['Pas d\'avis']
+      effectiveness: ['Pas d\'avis'],
+      // Méthode d'application (treatmentType côté API) — ne pas confondre avec `type` (Surface/Bouillie/Quantité)
+      application_method: ['pulvérisation']
     });
 
     this.formAddDose = this.formBuilder.group({
@@ -908,7 +934,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   private initializeTreatmentDraft(): void {
     this.currentTreatmentDraft = {
       event_id: this.isEditMode && this.editingTreatment ? this.editingTreatment.event_id : `phyto_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      type: 'phyto_surface_treatment',
+      type: this.defaultEventType,
       date: this.formatDateForInput(new Date()),
       event_hour: '',
       operator_id: '',
@@ -919,11 +945,13 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       remark: '',
       harvest_date: '',
       clean_flag: 'Non',
+      third_part_flag: false,
       localized_treatment: 'Non',
       treatment_total_quantity: '',
       treatment_total_quantity_used: '',
       decision_base: 'Non défini',
       effectiveness: 'Pas d\'avis',
+      application_method: 'pulvérisation',
       parcels_concerned: [],
       treatment_composition: [],
       total_surface: 0
@@ -1335,9 +1363,11 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       remark: formValues.remark,
       harvest_date: formValues.harvest_date,
       clean_flag: formValues.clean_flag,
+      third_part_flag: !!formValues.third_part_flag,
       localized_treatment: formValues.localized_treatment,
       decision_base: formValues.decision_base || 'Non défini',
       effectiveness: formValues.effectiveness || 'Pas d\'avis',
+      application_method: formValues.application_method || 'pulvérisation',
       treatment_total_quantity: formValues.treatment_total_quantity,
       // treatment_total_quantity_used géré par recalculateComponentQuantities en mode quantité
       ...(this.currentTreatmentDraft.type !== 'phyto_quantity_treatment' && {
@@ -1442,7 +1472,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
             culture.parcels_id.forEach((parcelId: string) => {
               const parcelInfo = parcelMap.get(parcelId);
               
-              if (parcelInfo) {
+              if (parcelInfo && !parcelInfo.is_archived) { // parcelle archivée : jamais proposée
                 const uniqueId = `${parcelInfo.id_parcel}_${culture.crop_id}`;
                 
                 associations.push({
@@ -1741,7 +1771,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
           if (culture.parcels_id && Array.isArray(culture.parcels_id)) {
             culture.parcels_id.forEach((parcelId: string) => {
               const parcelInfo = parcelMap.get(parcelId);
-              if (parcelInfo) {
+              if (parcelInfo && !parcelInfo.is_archived) {
                 allAssociations.push({
                   uniqueId: `${parcelInfo.id_parcel}_${culture.crop_id}`,
                   parcel_id: parcelInfo.id_parcel,
@@ -1760,6 +1790,10 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
           }
         });
 
+        // 1b. Associations liées dont la parcelle ou la culture est archivée : affichées verrouillées
+        const lockedAssociations = this.buildLockedArchivedAssociations(parcelles, cultures);
+        const gridAssociations = [...allAssociations, ...lockedAssociations];
+
         // 2. Depuis les parcelles du traitement stocké, retrouver les associations correspondantes
         const storedParcels: any[] = this.editingTreatment?.parcels_concerned || [];
         const selectedIds = new Set<string>();
@@ -1767,10 +1801,10 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
         storedParcels.forEach((stored: any) => {
           // Double matching : par ID d'abord, par nom ensuite (sécurité)
-          const match = allAssociations.find((a: any) =>
+          const match = gridAssociations.find((a: any) =>
             String(a.parcel_id) === String(stored.parcel_id) &&
             String(a.crop_id) === String(stored.crop_id)
-          ) || allAssociations.find((a: any) =>
+          ) || gridAssociations.find((a: any) =>
             a.parcel_name === stored.parcel_name &&
             String(a.crop_id) === String(stored.crop_id)
           );
@@ -1790,7 +1824,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
         });
 
         // 3. Mise à jour atomique : grille + sélection en une seule opération
-        this.rawAssociations = allAssociations;
+        this.rawAssociations = gridAssociations;
         this.selectedParcelCultureIds = selectedIds;
         this.selectedParcelCultureAssociations = selectedAssociations;
         this.editModeSelectionLocked = true; // Verrouiller définitivement
@@ -1806,8 +1840,8 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
         });
         this.parcelCultureGroupsCache$.next(Array.from(groupsMap2.values()));
 
-        // 5. Afficher la grille
-        this.displayGroupsSubject.next(this.buildDisplayGroups(allAssociations, this.groupByMode));
+        // 5. Afficher la grille (cache ci-dessus : associations actives uniquement)
+        this.displayGroupsSubject.next(this.buildDisplayGroups(gridAssociations, this.groupByMode));
         this.isLoadingParcelCultures = false;
         this.hasTriedToLoadParcelCultures = true;
         this.triggerValidation();
@@ -1901,17 +1935,20 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       remark: (this.editingTreatment.remark || this.editingTreatment.remarque) || '',
       localized_treatment: (this.editingTreatment.localized_treatment || this.editingTreatment.traitementLocal) || 'Non',
       clean_flag: (this.editingTreatment.clean_flag || this.editingTreatment.effectuerNottoyage) || 'Non',
+      third_part_flag: !!this.editingTreatment.third_part_flag,
       operator_id: this.editingTreatment.operator_id || '',
       // 🔧 AJOUT: Charger les quantités de bouillie en mode modification
       treatment_total_quantity: this.editingTreatment.treatment_total_quantity || '',
       treatment_total_quantity_used: this.editingTreatment.treatment_total_quantity_used || '',
       decision_base: (this.editingTreatment.decision_base || this.editingTreatment.BaseDecision) || 'Non défini',
-      effectiveness: (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis'
+      effectiveness: (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis',
+      application_method: this.editingTreatment.application_method || 'pulvérisation'
     });
     
     // Synchroniser les dropdowns simples
     this.selectedBaseDecision = (this.editingTreatment.decision_base || this.editingTreatment.BaseDecision) || 'Non défini';
     this.selectedEfficacite = (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis';
+    this.selectedApplicationMethod = this.editingTreatment.application_method || 'pulvérisation';
 
     // 🔧 CRITIQUE: Charger aussi dans les FormControls séparés pour le mode bouillie
     if (this.editingTreatment.treatment_total_quantity) {
@@ -2146,6 +2183,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     
     // 5. Réinitialiser les formulaires
     this.initializeForms();
+    this.applyDefaultEventType();
     
     // 6. Réinitialiser l'opérateur
     this.selectedOperator = null;
@@ -2157,6 +2195,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     // 6c. Réinitialiser les dropdowns simples
     this.selectedBaseDecision = 'Non défini';
     this.selectedEfficacite = 'Pas d\'avis';
+    this.selectedApplicationMethod = 'pulvérisation';
     
     // 7. Réinitialiser les états d'édition inline
     this.currentEditingProductId = null;
@@ -2169,8 +2208,9 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     this.showSearchHint = true;
     this.hasSearchResults = false;
     
-    // 9. Réinitialiser le cache des parcelles
+    // 9. Réinitialiser le cache des parcelles (et la grille : associations archivées verrouillées comprises)
     this.parcelCultureGroupsCache$.next([]);
+    this.rawAssociations = [];
     this.hasTriedToLoadParcelCultures = false;
     
     // 10. Réinitialiser l'étape
@@ -2340,14 +2380,17 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       remark: (this.editingTreatment.remark || this.editingTreatment.remarque) || '',
       localized_treatment: (this.editingTreatment.localized_treatment || this.editingTreatment.traitementLocal) || 'Non',
       clean_flag: (this.editingTreatment.clean_flag || this.editingTreatment.effectuerNottoyage) || 'Non',
+      third_part_flag: !!this.editingTreatment.third_part_flag,
       operator_id: this.editingTreatment.operator_id || '',
       decision_base: (this.editingTreatment.decision_base || this.editingTreatment.BaseDecision) || 'Non défini',
-      effectiveness: (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis'
+      effectiveness: (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis',
+      application_method: this.editingTreatment.application_method || 'pulvérisation'
     });
 
     // Synchroniser les dropdowns simples
     this.selectedBaseDecision = (this.editingTreatment.decision_base || this.editingTreatment.BaseDecision) || 'Non défini';
     this.selectedEfficacite = (this.editingTreatment.effectiveness || this.editingTreatment.Efficacite) || 'Pas d\'avis';
+    this.selectedApplicationMethod = this.editingTreatment.application_method || 'pulvérisation';
 
     // Restaurer les tags cible depuis la chaîne sauvegardée
     this.initCiblesFromString((this.editingTreatment.target || this.editingTreatment.ciblee) || '');
@@ -2554,6 +2597,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
     // Mettre à jour le draft avec les parcelles sélectionnées
     this.currentTreatmentDraft.parcels_concerned = parcellesFormatted;
+    this.refreshWarnings();
     
     // Recalculer la surface totale immédiatement
     this.recalculateTotalSurface();
@@ -2576,6 +2620,8 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   }
 
   onCheckedParcelCulture(event: any, association: any): void {
+    // Parcelle ou culture archivée : le lien est conservé tel quel
+    if (association.locked) { event.target.checked = this.isParcelCultureSelected(association.uniqueId); return; }
     if (event.target.checked) {
       this.selectedParcelCultureAssociations.push(association);
       this.selectedParcelCultureIds.add(association.uniqueId);
@@ -2645,12 +2691,51 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
   isGroupFullySelected(group: any): boolean {
     if (!group.associations || group.associations.length === 0) return false;
-    return group.associations.every((a: any) => this.selectedParcelCultureIds.has(a.uniqueId));
+    const selectable = group.associations.filter((a: any) => !a.locked);
+    if (selectable.length === 0) return false;
+    return selectable.every((a: any) => this.selectedParcelCultureIds.has(a.uniqueId));
+  }
+
+  /**
+   * Associations du traitement modifié dont la parcelle ou la culture est archivée : visibles,
+   * cochées mais verrouillées (updateToDo/07 § 2.5). Jamais ajoutées au cache des groupes,
+   * sinon elles seraient proposées à la création suivante.
+   */
+  private buildLockedArchivedAssociations(parcelles: any[], activeCrops: any[]): any[] {
+    if (!this.isEditMode) return [];
+    const parcelById = new Map<string, any>((parcelles || []).map((p: any) => [p.id_parcel, p]));
+    const activeCropIds = new Set((activeCrops || []).map((c: any) => String(c.crop_id)));
+
+    return (this.editingTreatment?.parcels_concerned || [])
+      .map((stored: any) => {
+        const parcelId = stored.parcel_id ?? stored.parcels_id;
+        const parcel = parcelById.get(parcelId);
+        const parcelArchived = !!parcel?.is_archived;
+        const cropArchived = !activeCropIds.has(String(stored.crop_id)); // /crops ne renvoie que les actives
+        if (!parcelArchived && !cropArchived) return null;      // association normale, déjà proposée
+        return {
+          uniqueId: `${parcelId}_${stored.crop_id}`,
+          parcel_id: parcelId,
+          parcel_name: stored.parcel_name || stored.parcels_name || parcel?.parcel_name,
+          parcel_area: parcel?.parcel_area ?? stored.parcel_surface_treated,
+          parcel_area_unit_fr: parcel?.parcel_area_unit_fr || stored.surface_unit || 'ha',
+          crop_id: stored.crop_id,
+          crop_name: stored.crop_name,
+          phytoweb_name: stored.phytoweb_name || '',
+          eppo: '',
+          collection: '',
+          parcel_archived: parcelArchived,
+          is_archived: cropArchived,
+          locked: true,
+        };
+      })
+      .filter(Boolean);
   }
 
   toggleGroupSelection(group: any, event: any): void {
     const select = event.target.checked;
     for (const association of group.associations) {
+      if (association.locked) continue; // jamais modifiée par « Tout sélectionner »
       if (select && !this.selectedParcelCultureIds.has(association.uniqueId)) {
         this.selectedParcelCultureAssociations.push(association);
         this.selectedParcelCultureIds.add(association.uniqueId);
@@ -3438,6 +3523,41 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Méthode d'application (treatmentType côté API). Valeurs envoyées EXACTEMENT (minuscules, accents).
+  public readonly APPLICATION_METHOD_OPTIONS: { value: string; label: string }[] = [
+    { value: 'pulvérisation',          label: 'Pulvérisation' },
+    { value: 'traitement de semences', label: 'Traitement de semences' },
+    { value: 'microgranulé',           label: 'Microgranulé' },
+    { value: 'arrosage',               label: 'Arrosage' },
+    { value: 'irrigation',             label: 'Irrigation' },
+    { value: 'badigeonnage',           label: 'Badigeonnage' },
+    { value: 'injection',              label: 'Injection' },
+    { value: 'trempage',               label: 'Trempage' },
+  ];
+
+  public selectedApplicationMethod: string = 'pulvérisation';
+  public showApplicationMethodDropdown: boolean = false;
+
+  public get selectedApplicationMethodLabel(): string {
+    return this.APPLICATION_METHOD_OPTIONS.find(o => o.value === this.selectedApplicationMethod)?.label || 'Pulvérisation';
+  }
+
+  public toggleApplicationMethodDropdown(): void {
+    this.showApplicationMethodDropdown = !this.showApplicationMethodDropdown;
+  }
+
+  public closeApplicationMethodDropdown(): void {
+    setTimeout(() => { this.showApplicationMethodDropdown = false; }, 150);
+  }
+
+  public selectApplicationMethod(value: string): void {
+    this.selectedApplicationMethod = value;
+    this.showApplicationMethodDropdown = false;
+    if (this.formTraitement) {
+      this.formTraitement.patchValue({ application_method: value }, { emitEvent: false });
+    }
+  }
+
   public selectedEfficacite: string = 'Pas d\'avis';
   public showEfficaciteDropdown: boolean = false;
 
@@ -3652,6 +3772,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
         event_hour: treatment.event_hour || '',
         date: (treatment.date || treatment.event_date) || '',
         clean_flag: (treatment.clean_flag || treatment.effectuerNottoyage) || '',
+        third_part_flag: !!treatment.third_part_flag,
         localized_treatment: (treatment.localized_treatment || treatment.traitementLocal) || '',
         // 🔧 AJOUT: Charger les quantités de bouillie pour la répartition
         treatment_total_quantity: treatment.treatment_total_quantity || '',
@@ -3786,6 +3907,8 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     this.currentTreatmentDraft.remark = formValues.remark || this.currentTreatmentDraft.remark || '';
     this.currentTreatmentDraft.harvest_date = formValues.harvest_date || this.currentTreatmentDraft.harvest_date || '';
     this.currentTreatmentDraft.clean_flag = formValues.clean_flag || this.currentTreatmentDraft.clean_flag || 'Non';
+    // Booléen : pas de repli « || valeur précédente », sinon décocher la case ne serait jamais pris en compte
+    this.currentTreatmentDraft.third_part_flag = !!formValues.third_part_flag;
     this.currentTreatmentDraft.localized_treatment = formValues.localized_treatment || this.currentTreatmentDraft.localized_treatment || 'Non';
     this.currentTreatmentDraft.treatment_total_quantity = formValues.treatment_total_quantity || this.currentTreatmentDraft.treatment_total_quantity || '';
     // En mode quantité : NE PAS écraser treatment_total_quantity_used depuis le formulaire —
@@ -4043,6 +4166,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     
     // Définir ce produit comme le produit actuellement en cours d'édition
     this.currentEditingProductId = productId;
+    this.refreshWarnings(); // avertissement Eco-régime dès la sélection
     this.isTargetDropdownOpen = false;
     // Créer un formulaire spécifique pour ce produit s'il n'existe pas
     if (!this.productForms.has(productId)) {
@@ -4110,6 +4234,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     
     // Définir ce produit comme le produit actuellement en cours d'édition
     this.currentEditingProductIdBouillie = productId;
+    this.refreshWarnings(); // avertissement Eco-régime dès la sélection
     this.isTargetDropdownOpen = false;
     // Créer un formulaire spécifique pour ce produit s'il n'existe pas
     if (!this.productForms.has(productId)) {
@@ -4513,92 +4638,84 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🌾 Analyse le draft et retourne les avertissements BBCH pertinents.
-   * Basé sur `crops.cropApplicationStade` (via /index/crop_authorizations, cf.
-   * getCropAuthorizations) : une ligne par (produit, culture du draft) dont le stade
-   * d'application contient "BBCH".
+   * 🌾 Avertissements BBCH du traitement en cours, calculés par le backend
+   * (GET /phyto_treatments/warnings : crops.bbchFlag = 1, cultures rattachées au référentiel
+   * Phytoweb par idCrop côté serveur) et déjà filtrés selon la préférence bbchWarningFlag.
+   * Lecture seule de warningsByAct() : aucun appel HTTP ici (méthode appelée par le template).
    */
   getBbchWarningsForDraft(): { cropName: string, stage: string, productName: string }[] {
-    if (!this.currentTreatmentDraft?.parcels_concerned?.length || !this.currentTreatmentDraft?.treatment_composition?.length) {
-      return [];
-    }
-
-    // Cultures du draft (nom normalisé + idCrop résolu quand possible)
-    const draftCropNames = new Set<string>();
-    const draftCropIds = new Set<string>();
-    this.currentTreatmentDraft.parcels_concerned.forEach((parcel: any) => {
-      const cropName = parcel.phytoweb_name || parcel.nomPhytoweb_crops_id;
-      if (!cropName) return;
-      draftCropNames.add(cropName.toLowerCase().replace(/\s+/g, ''));
-      const idCrop = this.resolveIdCropByName(cropName);
-      if (idCrop) draftCropIds.add(idCrop);
-    });
-
     const warnings: { cropName: string, stage: string, productName: string }[] = [];
-    const seen = new Set<string>();
-
-    this.currentTreatmentDraft.treatment_composition.forEach((component: any) => {
-      const productId = component.component_id;
-      if (!productId || this.isPersonalProduct(productId)) return;
-
-      // Déclenche le chargement si pas encore en cache (voir getCropAuthorizations).
-      this.getCropAuthorizations(productId).subscribe();
-      const cropRows = this.cropAuthCache.get(productId);
-      if (!cropRows) return;
-
-      const product = this.getProductById(productId);
-
-      cropRows.forEach((row: any) => {
-        const stade: string = row.cropApplicationStade || '';
-        if (!stade.includes('BBCH')) return;
-
-        const normalizedRowCrop = (row.cropName || '').toLowerCase().replace(/\s+/g, '');
-        const matchesDraft = draftCropNames.has(normalizedRowCrop) || (row.idCrop && draftCropIds.has(row.idCrop));
-        if (!matchesDraft) return;
-
-        const key = `${productId}_${row.idCropData || row.idCrop}_${stade}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-
-        warnings.push({
-          cropName: row.cropName || '',
-          stage: stade,
-          productName: product?.product_name || component.component_name || 'Produit inconnu'
-        });
-      });
+    this.warningsByAct().forEach((p: any) => {
+      (p.bbchWarnings || []).forEach((w: any) => warnings.push({
+        cropName: w.cropName,
+        stage: w.cropApplicationStade,
+        productName: p.productName,
+      }));
     });
-
     return warnings;
   }
 
   /**
-   * ⏰ Analyse le draft et retourne les produits nécessitant une mention d'heure de
-   * traitement (general.spe8Flag == 1, déjà présent sur chaque produit du catalogue —
-   * voir productFromApi).
+   * ⏰ Produits nécessitant une mention d'heure de traitement : general.spe8FlagHoraire = 1
+   * (et non plus spe8Flag, trop large), calculé par le backend et déjà filtré selon la
+   * préférence spe8HourWarningFlag. Lecture seule de warningsByAct().
    */
   getApplicationHoursForDraft(): { productName: string, productNumAut: string }[] {
-    if (!this.currentTreatmentDraft?.treatment_composition?.length) {
-      return [];
-    }
+    return [...this.warningsByAct().values()]
+      .filter((p: any) => p.hourWarning)
+      .map((p: any) => ({ productName: p.productName, productNumAut: p.numAut || 'N/A' }));
+  }
 
-    const recommendations: { productName: string, productNumAut: string }[] = [];
-    const seen = new Set<string>();
+  /** ⚠️ Avertissement Eco-régime réduction d'intrants du produit (texte fourni par le serveur), ou null. */
+  getErRiWarning(productId: string | null): string | null {
+    return productId ? this.warningsByAct().get(productId)?.erRiWarning ?? null : null;
+  }
 
-    this.currentTreatmentDraft.treatment_composition.forEach((component: any) => {
-      const productId = component.component_id;
-      if (!productId || this.isPersonalProduct(productId) || seen.has(productId)) return;
-
-      const product = this.getProductById(productId);
-      if (product?.spe8_flag) {
-        seen.add(productId);
-        recommendations.push({
-          productName: product.product_name || component.component_name || 'Produit inconnu',
-          productNumAut: product.product_numaut || component.component_numaut || 'N/A'
-        });
-      }
+  /** Abonnement unique aux avertissements : une requête par changement réel (debounce + distinct). */
+  private initWarnings(): void {
+    this.warningsRequest$.pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      switchMap(query => query
+        ? this.httpClient.get<any>(`${environment.apiRegistre}/phyto_treatments/warnings?${query}`)
+            .pipe(catchError(() => of({ products: [] })))   // un avertissement manquant ne bloque pas l'encodage
+        : of({ products: [] })),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      this.warningsByAct.set(new Map((res?.products || []).map((p: any) => [p.idAct, p])));
     });
+  }
 
-    return recommendations;
+  /**
+   * À appeler à chaque changement de produits ou de cultures : produits de la composition +
+   * produit en cours de sélection (Surface et Bouillie), cultures (crop_id) des parcelles.
+   */
+  refreshWarnings(): void {
+    const idActs = new Set<string>(
+      (this.currentTreatmentDraft?.treatment_composition || [])
+        .map((c: any) => c.component_id).filter(Boolean)
+    );
+    if (this.currentEditingProductId) idActs.add(this.currentEditingProductId);
+    if (this.currentEditingProductIdBouillie) idActs.add(this.currentEditingProductIdBouillie);
+
+    const cropIds = new Set<string>(
+      (this.currentTreatmentDraft?.parcels_concerned || [])
+        .map((p: any) => p.crop_id).filter(Boolean)
+    );
+
+    const query = idActs.size
+      ? `idActs=${encodeURIComponent([...idActs].join(','))}&cropIds=${encodeURIComponent([...cropIds].join(','))}`
+      : '';
+    this.warningsRequest$.next(query);
+  }
+
+  /** Présélectionne le mode d'encodage préféré, sauf si l'utilisateur a déjà choisi ou ajouté des produits. */
+  private applyDefaultEventType(): void {
+    if (this.isEditMode || this.hasProductsInComposition()) return;
+    const typeCtrl = this.formTraitement?.get('type');
+    if (!typeCtrl || typeCtrl.dirty) return; // la réponse arrive après un choix manuel : ne pas l'écraser
+    typeCtrl.setValue(this.defaultEventType);
+    if (this.currentTreatmentDraft) this.currentTreatmentDraft.type = this.defaultEventType;
   }
 
   /**
@@ -4934,6 +5051,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     }
     this.showSearchHint = false;
     this.currentEditingProductId = productId;
+    this.refreshWarnings(); // avertissement Eco-régime dès la sélection
     if (!this.productForms.has(productId)) {
       const productForm = this.formBuilder.group({
         component_id: [productId],
@@ -4953,6 +5071,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     }
     this.showSearchHint = false;
     this.currentEditingProductIdBouillie = productId;
+    this.refreshWarnings(); // avertissement Eco-régime dès la sélection
     if (!this.productForms.has(productId)) {
       const productForm = this.formBuilder.group({
         component_id: [productId],

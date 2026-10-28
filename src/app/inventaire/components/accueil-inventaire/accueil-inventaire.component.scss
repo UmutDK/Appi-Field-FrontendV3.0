@@ -441,6 +441,14 @@ a { text-decoration: none; }
     }
 }
 
+// « Corriger le stock » + « Afficher en mL » côte à côte, passent à la ligne si l'en-tête est étroit
+.inventory-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 .unit-switcher {
     display: inline-flex;
     align-items: center;
@@ -720,6 +728,7 @@ a { text-decoration: none; }
     &--ppnv { background: #e0f2fe; color: #075985; }
     &--purchase { background: #e3f6f3; color: #03918a; }
     &--treatment { background: #ece7fb; color: #4c3d99; }
+    &--correction { background: #fde8e4; color: #a3301a; }
 }
 
 // Quantités entrée (+) / sortie

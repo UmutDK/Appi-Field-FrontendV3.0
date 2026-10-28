@@ -64,7 +64,7 @@ export class CreationCompteService {
         const list = profile ? [profile] : [];
         this.signalVerifCompte.set(list);
         if(list.length > 0){
-          this.router.navigateByUrl('mes-preferences');
+          this.router.navigateByUrl('gestion-des-operations');
         }
       })
     ).subscribe();

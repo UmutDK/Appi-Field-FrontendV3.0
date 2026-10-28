@@ -89,7 +89,7 @@ export class CultureComponent implements OnInit, OnChanges, OnDestroy {
     this.getCulture = this.http.getCulture();
     this.getparcelles = this.http.getParcelles();
     this.getparcelles.pipe(takeUntil(this.destroy$)).subscribe(parcelles => {
-      this.parcellesList.set(parcelles || []);
+      this.setParcelles(parcelles);
     });
 
     this.loadRecentlyUsedCultures();
@@ -132,7 +132,7 @@ export class CultureComponent implements OnInit, OnChanges, OnDestroy {
 
     this.getparcelles = this.http.getParcelles();
     this.getparcelles.pipe(takeUntil(this.destroy$)).subscribe(parcelles => {
-      this.parcellesList.set(parcelles || []);
+      this.setParcelles(parcelles);
     });
 
   }
@@ -160,6 +160,20 @@ export class CultureComponent implements OnInit, OnChanges, OnDestroy {
         this.forceUpdate();
       }
     });
+  }
+
+  /**
+   * Création : jamais de parcelle archivée.
+   * Modification : on garde uniquement les parcelles archivées déjà liées à la culture, verrouillées
+   * (visibles, cochées, grisées ; le lien reste dans le FormArray et part dans le PUT).
+   */
+  private setParcelles(parcelles: any[]): void {
+    const linkedIds = new Set((this.cultureToModify?.parcels || []).map((l: any) => l.parcelId));
+    this.parcellesList.set(
+      (parcelles || [])
+        .filter(p => !p.is_archived || (this.cultureToModify && linkedIds.has(p.id_parcel)))
+        .map(p => ({ ...p, locked: !!p.is_archived }))
+    );
   }
 
   // Méthode pour pré-remplir les parcelles sélectionnées
@@ -415,7 +429,9 @@ export class CultureComponent implements OnInit, OnChanges, OnDestroy {
   }
 
 
-  oncheckboxchange(e: any){
+  oncheckboxchange(e: any, item?: any){
+    // Parcelle archivée liée : ni décochable ni cochable
+    if (item?.locked) { e.target.checked = this.isParcelSelected(item.id_parcel); return; }
     const parcelles: FormArray = this.form.get('parcels') as FormArray;
 
     if(e.target.checked){

@@ -1540,3 +1540,62 @@ app-traitement-phyto, app-travail-au-champ {
         text-overflow: ellipsis;
     }
 }
+
+
+// Badge « Tiers » : traitement effectué par un tiers (thirdPartFlag), non déduit de l'inventaire.
+// Affiché dans le carnet (cartes des cultures, détail d'une culture, vue globale).
+.badge-tiers {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: #fff4e0;
+    color: #8a5300;
+    border: 1px solid #f3d9a8;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
+    cursor: help;
+}
+
+
+// ===== Archivage des parcelles et cultures (updateToDo/07) =====
+// Élément archivé déjà lié à la saisie modifiée : visible, coché, grisé, non cliquable.
+// Le lien est conservé à l'enregistrement : on verrouille l'élément HTML, jamais le FormControl.
+.is-archived-locked {
+    opacity: .5;
+    filter: grayscale(1);
+    cursor: not-allowed;
+
+    input[type="checkbox"] { pointer-events: none; }
+}
+
+.badge-archived {
+    display: inline-flex;
+    align-items: center;
+    font-size: .75rem;
+    font-weight: 600;
+    color: #6c757d;
+    white-space: nowrap;
+
+    i { margin-right: .2rem; }
+}
+
+// Petite popup (choix d'archivage) : reste compacte et centrée, même sur mobile
+// (le système de popups passe sinon en plein écran sous 992px).
+.popup-overlay .popup-container.popup-sm {
+    max-width: 460px;
+
+    @media (max-width: 992px) {
+        width: calc(100vw - 32px) !important;
+        max-width: 460px !important;
+        height: auto !important;
+        max-height: calc(100vh - 32px) !important;
+        border-radius: 14px !important;
+
+        .popup-header { border-radius: 14px 14px 0 0; }
+        .popup-footer { border-radius: 0 0 14px 14px; }
+    }
+}

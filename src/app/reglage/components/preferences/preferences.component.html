@@ -1,0 +1,76 @@
+<div class="preferences-section">
+  <div class="preferences-card">
+    <div class="preferences-card__head">
+      <h2 class="preferences-card__title">
+        <i class="bi bi-sliders me-2"></i>Préférences
+      </h2>
+      @if (feedback(); as fb) {
+        <span class="preferences-feedback" [class.preferences-feedback--error]="fb.kind === 'error'" role="status">
+          <i class="bi" [class.bi-check-circle-fill]="fb.kind === 'success'" [class.bi-exclamation-triangle-fill]="fb.kind === 'error'"></i>
+          {{ fb.text }}
+        </span>
+      }
+    </div>
+    <p class="preferences-intro">Ces réglages s'appliquent à l'encodage de vos traitements. Ils sont enregistrés automatiquement.</p>
+
+    @if (isLoading()) {
+      <div class="text-center py-3">
+        <span class="spinner-border spinner-border-sm text-primary"></span>
+      </div>
+    } @else if (loadError()) {
+      <div class="preferences-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Impossible de charger vos préférences pour le moment. Réessayez plus tard.</span>
+      </div>
+    } @else {
+      <div class="preferences-group">
+        <h3 class="preferences-group__title">Avertissements</h3>
+
+        <label class="preferences-check" for="prefErRi">
+          <input type="checkbox" id="prefErRi"
+                 [checked]="prefs().erRiWarningFlag"
+                 [disabled]="saving()"
+                 (change)="save('erRiWarningFlag', $any($event.target).checked)">
+          <div class="preferences-check__text">Je respecte la campagne Eco-régime réduction d'intrants</div>
+          <i class="bi bi-info-circle-fill popup-tooltip-icon"
+             matTooltip="Un avertissement s'affichera si vous sélectionnez un produit qui ne semble pas autorisé dans le cadre de cette campagne."
+             matTooltipPosition="above"></i>
+        </label>
+
+        <label class="preferences-check" for="prefSpe8">
+          <input type="checkbox" id="prefSpe8"
+                 [checked]="prefs().spe8HourWarningFlag"
+                 [disabled]="saving()"
+                 (change)="save('spe8HourWarningFlag', $any($event.target).checked)">
+          <div class="preferences-check__text">Afficher les avertissements horaires lors de l'encodage des traitements</div>
+        </label>
+
+        <label class="preferences-check" for="prefBbch">
+          <input type="checkbox" id="prefBbch"
+                 [checked]="prefs().bbchWarningFlag"
+                 [disabled]="saving()"
+                 (change)="save('bbchWarningFlag', $any($event.target).checked)">
+          <div class="preferences-check__text">Afficher les avertissements bbch lors de l'encodage des traitements</div>
+        </label>
+      </div>
+
+      <div class="preferences-group">
+        <h3 class="preferences-group__title" id="prefTreatmentTypeLabel">Type d'encodage de traitements</h3>
+        <p class="preferences-hint">Mode présélectionné quand vous encodez un nouveau traitement.</p>
+        <div class="preferences-choice" role="radiogroup" aria-labelledby="prefTreatmentTypeLabel">
+          @for (opt of treatmentTypeOptions; track opt.value) {
+            <button type="button"
+                    class="preferences-choice__btn"
+                    role="radio"
+                    [attr.aria-checked]="prefs().defaultTreatmentType === opt.value"
+                    [class.active]="prefs().defaultTreatmentType === opt.value"
+                    [disabled]="saving()"
+                    (click)="save('defaultTreatmentType', opt.value)">
+              <i class="bi {{ opt.icon }}"></i>{{ opt.label }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

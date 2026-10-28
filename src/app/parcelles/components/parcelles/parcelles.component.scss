@@ -1154,6 +1154,38 @@ a { text-decoration: none; }
     margin-left: auto;
 }
 
+// « Mes archives » à gauche de « Ajouter une parcelle », le groupe calé à droite
+// (même bouton que dans le carnet de champ, registre.component.scss).
+.parcelles-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: auto;
+
+    .add-menu { margin-left: 0; }
+
+    .btn-outline-neutral {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 16px;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #12103c;
+        border: 1.5px solid #d1d5db;
+        font-family: "Panton", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: border-color 0.2s ease, color 0.2s ease;
+
+        &:hover { border-color: #05b1af; color: #03918a; }
+    }
+}
+
 // Écrans 993–1400px : le tableau, à côté de la carte, était trop large (défilement horizontal,
 // crayon « Modifier » caché) → colonne Localisation masquée (l'adresse reste visible dans la
 // popup de modification) ; getVisibleColumnCount() suit le même seuil. Entre 993 et 1150px,

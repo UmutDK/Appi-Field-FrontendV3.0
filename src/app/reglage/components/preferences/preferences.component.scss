@@ -1,0 +1,142 @@
+// Même carte que WalleSmart (wallesmart.component.scss), pour rester homogène dans Mon compte.
+.preferences-section {
+  padding: 0.25rem 0;
+}
+
+.preferences-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  padding: 1.25rem 1.5rem;
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2a3a;
+    margin: 0;
+  }
+}
+
+.preferences-intro {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.88rem;
+  color: #5b6b78;
+}
+
+.preferences-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #10743f;
+
+  &--error { color: #a3312a; }
+}
+
+.preferences-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  background: #fdeeee;
+  color: #a3312a;
+  font-size: 0.88rem;
+}
+
+.preferences-group {
+  padding: 1rem 0;
+  border-top: 1px solid #edf0f3;
+
+  &__title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin: 0 0 0.75rem;
+  }
+}
+
+.preferences-hint {
+  margin: -0.4rem 0 0.75rem;
+  font-size: 0.85rem;
+  color: #5b6b78;
+}
+
+// Cases à cocher : Materialize (chargé globalement) masque les cases natives, on réaffiche celles-ci.
+.preferences-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  font-size: 0.92rem;
+  color: #12103c;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    position: static !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #05b1af;
+    cursor: pointer;
+  }
+
+  // <div> et non <span> : Materialize dessine une fausse case sur « [type=checkbox] + span »
+  &__text {
+    line-height: 1.4;
+  }
+
+  .popup-tooltip-icon {
+    flex-shrink: 0;
+    color: #6c8db8;
+    font-size: 0.85rem;
+  }
+}
+
+// Choix du type d'encodage : trois boutons, comme dans le formulaire de traitement.
+.preferences-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 42px;
+    padding: 0 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #dfe5ea;
+    background: #fff;
+    color: #12103c;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover:not(:disabled) { border-color: #05b1af; }
+
+    &.active {
+      border-color: #05b1af;
+      background: #e9f8f7;
+      color: #03817d;
+    }
+
+    &:disabled { cursor: progress; }
+    &:focus-visible { outline: 2px solid #05b1af; outline-offset: 2px; }
+  }
+}

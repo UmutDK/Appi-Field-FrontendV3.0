@@ -1,0 +1,195 @@
+<main class="archives-page">
+    <div class="dashboard-container">
+
+        <!-- En-tête : titre + intro à gauche, retour aux parcelles en haut à droite -->
+        <header class="archives-header">
+            <div class="dashboard-header">
+                <h1>Mes parcelles archivées</h1>
+                <p class="dashboard-subtitle">Retrouvez vos parcelles archivées et restaurez-les dans Mes parcelles.</p>
+            </div>
+            <div class="archives-header-actions">
+                <button type="button" class="btn-outline-neutral btn-retour" (click)="goBack()">
+                    <i class="bi bi-arrow-left"></i>
+                    <span class="text">Retour à mes parcelles</span>
+                </button>
+            </div>
+        </header>
+
+        @if (successMessage()) {
+            <div class="archives-success" role="status">
+                <i class="bi bi-check-circle-fill"></i> {{ successMessage() }}
+            </div>
+        }
+
+        <!-- Recherche + filtre par catégorie -->
+        <div class="recherche-etendue">
+            <div class="barre-recherche-principale">
+                <div class="icon">
+                    <button type="button" class="bouton-icon"><i class="bi bi-search"></i></button>
+                </div>
+                <div class="input-etendu">
+                    <input
+                        type="text"
+                        class="form-control ligne-etendue"
+                        placeholder="Rechercher une parcelle ou un code SIGEC..."
+                        [value]="searchTerm()"
+                        (input)="onSearchChange($event)"
+                    >
+                </div>
+            </div>
+
+            <div class="controles-filtres">
+                <div class="bouton-controle">
+                    <button type="button" class="btn-filtre" [class.btn-filtre--active]="selectedCategory()" (click)="toggleCategoryFilter()" title="Filtrer par catégorie">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                    @if (isCategoryFilterOpen) {
+                        <div class="dropdown-menu dropdown-moderne">
+                            <div class="dropdown-header">Filtrer par catégorie</div>
+                            <div class="dropdown-item" (click)="selectCategory(''); closeCategoryFilter()">
+                                <i class="bi bi-grid"></i>
+                                Toutes les catégories
+                            </div>
+                            @for (category of availableCategories(); track category) {
+                                <div class="dropdown-item"
+                                     [class.selected]="selectedCategory() === category"
+                                     (click)="selectCategory(category); closeCategoryFilter()">
+                                    <i class="bi bi-tag"></i>
+                                    {{ category }}
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (isLoading()) {
+            <div class="dashboard-card state-card">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p>Chargement des archives...</p>
+            </div>
+        } @else if (loadError()) {
+            <div class="dashboard-card empty-state">
+                <div class="empty-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                <h2>Impossible de charger les archives</h2>
+                <p>Vérifiez votre connexion et réessayez.</p>
+                <button type="button" class="btn-solid btn-retour-vide" (click)="loadArchivedParcels()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Réessayer
+                </button>
+            </div>
+        } @else {
+            @if (filteredParcels().length > 0) {
+                <div class="table-container">
+                    <table class="table table-archives">
+                        <thead>
+                            <tr>
+                                <th class="sortable col-crop-name" (click)="onSort('parcel_name')">
+                                    <div class="th-content">
+                                        <span>Parcelle</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('parcel_name') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-collection hide-mobile" (click)="onSort('parcel_category')">
+                                    <div class="th-content">
+                                        <span>Catégorie</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('parcel_category') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-date hide-mobile" (click)="onSort('parcel_area')">
+                                    <div class="th-content">
+                                        <span>Surface</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('parcel_area') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-species hide-mobile" (click)="onSort('sigec_code')">
+                                    <div class="th-content">
+                                        <span>Code SIGEC</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('sigec_code') }}</i>
+                                    </div>
+                                </th>
+                                <th class="sortable col-species hide-mobile" (click)="onSort('renewed_by')">
+                                    <div class="th-content">
+                                        <span>Renouvelée par</span>
+                                        <i class="material-icons sort-icon">{{ getSortIcon('renewed_by') }}</i>
+                                    </div>
+                                </th>
+                                <th class="actions-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (parcel of filteredParcels(); track parcel.id_parcel) {
+                                <tr>
+                                    <td class="col-crop-name">
+                                        <div class="crop-info">
+                                            <span class="crop-name">{{ parcel.parcel_name }}</span>
+                                            <!-- Mobile/tablette : colonnes masquées résumées sous le nom -->
+                                            <span class="crop-details mobile-only">
+                                                @if (parcel.parcel_category) {
+                                                    <span class="detail-item"><i class="bi bi-tag"></i> {{ parcel.parcel_category }}</span>
+                                                }
+                                                <span class="detail-item"><i class="bi bi-bounding-box"></i> {{ formatArea(parcel) }}</span>
+                                                @if (parcel.sigec_code) {
+                                                    <span class="detail-item"><i class="bi bi-hash"></i> SIGEC {{ parcel.sigec_code }}</span>
+                                                }
+                                                @if (parcel.renewed_by) {
+                                                    <span class="detail-item"><i class="bi bi-arrow-repeat"></i> {{ parcel.renewed_by }}</span>
+                                                }
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="col-collection hide-mobile">
+                                        @if (parcel.parcel_category) {
+                                            <span class="badge badge-collection">{{ parcel.parcel_category }}</span>
+                                        } @else {
+                                            <span class="species-tag">-</span>
+                                        }
+                                    </td>
+                                    <td class="col-date hide-mobile">
+                                        <span class="date-tag">{{ formatArea(parcel) }}</span>
+                                    </td>
+                                    <td class="col-species hide-mobile">
+                                        <span class="species-tag">{{ parcel.sigec_code || '-' }}</span>
+                                    </td>
+                                    <td class="col-species hide-mobile">
+                                        <span class="species-tag">{{ parcel.renewed_by || '-' }}</span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button
+                                            type="button"
+                                            class="btn-restore"
+                                            [disabled]="restoringId() === parcel.id_parcel"
+                                            (click)="restoreParcel(parcel)"
+                                            title="Restaurer cette parcelle"
+                                        >
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                            <span class="btn-text">Restaurer</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            } @else {
+                <div class="dashboard-card empty-state">
+                    <div class="empty-icon"><i class="bi bi-archive"></i></div>
+                    @if (searchTerm() || selectedCategory()) {
+                        <h2>Aucune parcelle archivée correspondante</h2>
+                        <p>Modifiez vos critères de recherche pour trouver des parcelles archivées.</p>
+                    } @else {
+                        <h2>Aucune parcelle archivée</h2>
+                        <p>Archivez une parcelle depuis son formulaire de modification pour la retrouver ici.</p>
+                    }
+                    <button type="button" class="btn-solid btn-retour-vide" (click)="goBack()">
+                        <i class="bi bi-arrow-left"></i>
+                        Retour à mes parcelles
+                    </button>
+                </div>
+            }
+        }
+    </div>
+</main>

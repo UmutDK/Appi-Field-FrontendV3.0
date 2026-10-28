@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Inventaire } from '../model/inventaire';
 import { PpnuPpnvEntry } from '../model/ppnu-ppnv';
+import { CorrectionEntry } from '../model/correction';
 import { environment } from '../../../environments/environment';
 import { Observable, tap, catchError, of, map, combineLatest } from 'rxjs';
 import { MandatWorkspaceService } from '../../core/services/mandat-workspace.service';
@@ -17,7 +18,8 @@ export interface RealInventoryData {
 
 export interface EventHistory {
   event_id: string;
-  event_type: 'treatment' | 'purchase' | 'ppnu_entry' | 'ppnv_entry'; // Type d'événement : treatment, purchase, ppnu_entry ou ppnv_entry
+  event_type: 'treatment' | 'purchase' | 'ppnu_entry' | 'ppnv_entry' | 'correction'; // Type d'événement : treatment, purchase, ppnu_entry, ppnv_entry ou correction
+  correction_mode?: 'plus' | 'minus'; // Sens de la correction (quantité toujours positive)
   event_date: string;
   event_crop: string;
   product_id: string;
@@ -36,6 +38,7 @@ export interface InventoryStock {
   quantity_buyed: number;
   quantity_ppnu: number;
   quantity_ppnv: number;
+  quantity_correction: number; // net signé des corrections (+ ajout, − retrait), calculé sur les quantités brutes
   quantity_unit: string;
   ppnu_ppnv: any[];
   entries?: PurchaseEntry[];
@@ -51,11 +54,39 @@ export interface PurchaseEntry {
   expiration_date: string;
 }
 
+// ===== Import Excel d'achats (updateToDo/08) =====
+export interface ImportRowIssue { field: string; message: string; }
+export interface ImportProduct { productId: string; numAut: string; productName: string; }
+export interface ImportPreviewRow {
+  rowNumber: number;
+  input: { numAut: string; productName: string; quantity: string; unit: string; date: string };
+  product: ImportProduct | null;
+  quantity: number | null;
+  quantityUnit: 'L' | 'Kg' | null;
+  operationDate: string | null;
+  errors: ImportRowIssue[];
+  warnings: ImportRowIssue[];
+  suggestions: ImportProduct[];
+  status: 'ok' | 'warning' | 'error';
+}
+export interface ImportPreview {
+  rows: ImportPreviewRow[];
+  summary: { total: number; ok: number; warning: number; error: number };
+}
+export interface ImportConfirmRow {
+  rowNumber: number;
+  productId: string;
+  quantity: number;
+  quantityUnit: 'L' | 'Kg';
+  operationDate: string;
+}
+
 /** Traduit une opération d'inventaire API (operationType/operationDate/quantity...) vers EventHistory (legacy). */
 function eventTypeFromApi(operationType: string): EventHistory['event_type'] {
   if (operationType === 'purchase') return 'purchase';
   if (operationType === 'ppnu') return 'ppnu_entry';
   if (operationType === 'ppnv') return 'ppnv_entry';
+  if (operationType === 'correction') return 'correction';
   return 'treatment'; // treatment / loss / adjustment_out
 }
 
@@ -63,6 +94,7 @@ function eventTypeToApi(eventType: string): string {
   if (eventType === 'purchase') return 'purchase';
   if (eventType === 'ppnu_entry') return 'ppnu';
   if (eventType === 'ppnv_entry') return 'ppnv';
+  if (eventType === 'correction') return 'correction';
   return 'treatment';
 }
 
@@ -145,6 +177,7 @@ export class InventaireService {
 
       let quantityBuyed = 0;
       let quantityUsed = 0;
+      let quantityCorrection = 0;
       let quantityUnit = 'L';
 
       (p.operations || []).forEach((op: any) => {
@@ -159,10 +192,15 @@ export class InventaireService {
           product_numaut: productNumaut,
           quantity_used: op.quantity,
           quantity_used_unit: normalizeQuantityUnit(op.quantityUnit),
+          correction_mode: op.correctionMode || undefined,
         });
 
         if (op.operationType === 'purchase') {
           quantityBuyed += op.quantity || 0;
+        } else if (op.operationType === 'correction') {
+          // Pas p.correctionStock : le serveur le calcule en quantités standardisées, l'écran en quantités brutes
+          const qty = op.quantity || 0;
+          quantityCorrection += op.correctionMode === 'plus' ? qty : -qty;
         } else if (op.operationType !== 'ppnu' && op.operationType !== 'ppnv') {
           quantityUsed += op.quantity || 0;
         }
@@ -176,6 +214,7 @@ export class InventaireService {
         quantity_buyed: quantityBuyed,
         quantity_ppnu: p.ppnuStock || 0,
         quantity_ppnv: p.ppnvStock || 0,
+        quantity_correction: quantityCorrection,
         quantity_unit: quantityUnit,
         ppnu_ppnv: [],
         current_stock: p.stock, // calculé côté serveur, exclut déjà PPNU/PPNV
@@ -216,7 +255,7 @@ export class InventaireService {
   }
 
   // Obtenir les utilisations pour un produit spécifique (tous les événements par défaut)
-  getProductUsages(productId: string, eventHistory: EventHistory[], eventType?: 'treatment' | 'purchase' | 'ppnu_entry' | 'ppnv_entry'): EventHistory[] {
+  getProductUsages(productId: string, eventHistory: EventHistory[], eventType?: EventHistory['event_type']): EventHistory[] {
     return eventHistory.filter(event =>
       event.product_id === productId &&
       event.event_date &&
@@ -247,6 +286,15 @@ export class InventaireService {
       return product.current_stock;
     }
     return product.quantity_buyed - product.quantity_used;
+  }
+
+  /**
+   * Quantité restante affichée par l'écran inventaire (quantités brutes, PPNU/PPNV déduits,
+   * corrections incluses). À utiliser partout plutôt que calculateRemainingQuantity, qui
+   * renvoie le stock serveur sans déduction des PPNU/PPNV.
+   */
+  getRemainingQuantity(p: InventoryStock): number {
+    return p.quantity_buyed - p.quantity_used - p.quantity_ppnu - p.quantity_ppnv + (p.quantity_correction || 0);
   }
 
   // Sauvegarder un achat de PPP sur le serveur
@@ -285,6 +333,39 @@ export class InventaireService {
     );
   }
 
+  // Ajouter une correction de stock (quantité toujours > 0, le sens est porté par correctionMode)
+  addCorrection(productId: string, entry: CorrectionEntry): Observable<any> {
+    return this.http.post(`${environment.apiRegistre}/inventories`, {
+      productId,
+      operationType: 'correction',
+      correctionMode: entry.mode,
+      operationDate: entry.date,
+      quantity: entry.quantity,
+      quantityUnit: entry.unit,
+    }).pipe(
+      tap(() => this.getRealInventoryData().subscribe()),
+      catchError((error: any) => { throw error; })
+    );
+  }
+
+  updateCorrectionById(productId: string, eventId: string, entry: CorrectionEntry): Observable<any> {
+    return this.http.put(`${environment.apiRegistre}/inventories/${eventId}`, {
+      productId,
+      operationType: 'correction',
+      correctionMode: entry.mode,
+      operationDate: entry.date,
+      quantity: entry.quantity,
+      quantityUnit: entry.unit,
+    }).pipe(
+      tap(() => this.getRealInventoryData().subscribe()),
+      catchError((error: any) => { throw error; })
+    );
+  }
+
+  deleteCorrectionById(eventId: string): Observable<any> {
+    return this.deleteInventoryOperation(eventId);
+  }
+
   // ============================================================================
   // GESTION DE L'ÉDITION (état local, pas d'appel serveur)
   // ============================================================================
@@ -292,6 +373,19 @@ export class InventaireService {
   private editingPpnuPpnvData: { entry: any; index: number; productId: string } | null = null;
   private editingPpnuPpnvEvent: { entry: any; eventId: string; productId: string } | null = null;
   private editingPurchaseEvent: EventHistory | null = null;
+  private editingCorrectionEvent: { entry: CorrectionEntry; eventId: string; productId: string } | null = null;
+
+  setEditingCorrectionEvent(entry: CorrectionEntry, eventId: string, productId: string): void {
+    this.editingCorrectionEvent = { entry, eventId, productId };
+  }
+
+  getEditingCorrectionEvent(): { entry: CorrectionEntry; eventId: string; productId: string } | null {
+    return this.editingCorrectionEvent;
+  }
+
+  clearEditingCorrectionEvent(): void {
+    this.editingCorrectionEvent = null;
+  }
 
   /** @deprecated Chemin de compatibilité sans event_id réel — utiliser *Event(). */
   setEditingPpnuPpnv(entry: any, index: number, productId: string | undefined): void {
@@ -380,6 +474,41 @@ export class InventaireService {
     }).pipe(
       tap(() => this.getRealInventoryData().subscribe()),
       catchError((error: any) => { throw error; })
+    );
+  }
+
+  // ============================================================================
+  // IMPORT EXCEL D'ACHATS
+  // ============================================================================
+
+  /** Modèle Excel vierge : via HttpClient (le token est requis, un simple lien recevrait un 401). */
+  downloadImportTemplate(): Observable<Blob> {
+    return this.http.get(`${environment.apiRegistre}/inventories/import/template`, { responseType: 'blob' }).pipe(
+      tap(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'modele_import_achats.xlsx';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      })
+    );
+  }
+
+  /** Vérifie le fichier sans rien enregistrer. Pas de Content-Type : le navigateur ajoute le boundary. */
+  previewImport(file: File): Observable<ImportPreview> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ImportPreview>(`${environment.apiRegistre}/inventories/import/preview`, formData);
+  }
+
+  /** Enregistre les achats validés, tout ou rien (400 + rowErrors si une ligne est refusée). */
+  confirmImport(rows: ImportConfirmRow[]): Observable<{ success: boolean; created: number; inventoryOperationIds: string[] }> {
+    return this.http.post<any>(`${environment.apiRegistre}/inventories/import/confirm`, { rows }).pipe(
+      tap(() => this.getRealInventoryData().subscribe())   // rafraîchit l'inventaire affiché
     );
   }
 

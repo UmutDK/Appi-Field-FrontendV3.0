@@ -146,11 +146,14 @@
                 <article class="col-lg-12">
                 <div class="parcels-grid">
                     @for (item of filteredParcelles(); track item.id_parcel) {
-                        <label class="parcel-card" [class.selected]="isParcelSelected(item.id_parcel)">
+                        <label class="parcel-card" [class.selected]="isParcelSelected(item.id_parcel)"
+                               [class.is-archived-locked]="item.locked"
+                               [attr.title]="item.locked ? 'Parcelle archivée : le lien est conservé mais ne peut pas être modifié' : null">
                             <input type="checkbox"
                                 [value]="item.id_parcel"
                                 [checked]="isParcelSelected(item.id_parcel)"
-                                (change)="oncheckboxchange($event)"
+                                [disabled]="item.locked"
+                                (change)="oncheckboxchange($event, item)"
                                 name="parcels"
                             >
                             <div class="parcel-card-icon">
@@ -161,6 +164,9 @@
                                 <div class="parcel-card-details">
                                     {{ item.parcel_area }} {{ item.parcel_area_unit_fr }}
                                 </div>
+                                @if (item.locked) {
+                                    <span class="badge-archived"><i class="bi bi-archive"></i> Parcelle archivée</span>
+                                }
                             </div>
                             <i class="bi bi-check-circle-fill parcel-card-check"></i>
                         </label>
