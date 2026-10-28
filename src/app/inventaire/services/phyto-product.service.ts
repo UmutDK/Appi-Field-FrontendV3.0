@@ -29,7 +29,7 @@ export class PhytoProductService {
       return of([]);
     }
 
-    return this.http.get<any[]>(`${environment.apiRegistre}/index/phytoweb_products/search`, {
+    return this.http.get<any[]>(`${environment.apiPhytoweb}/index/phytoweb_products/search`, {
       params: { q: searchTerm, limit: '15' }
     }).pipe(
       map(products => (products || []).map(p => this.mapToPhytoProduct(p))),

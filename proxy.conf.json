@@ -20,6 +20,14 @@
       "^/export": ""
     }
   },
+  "/phytoweb-api": {
+    "target": "https://corderapp.be",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/phytoweb-api": "/appifieldapi"
+    }
+  },
   "/get_doses_phytoweb.php": {
     "target": "https://server.appifield.be/",
     "secure": true,

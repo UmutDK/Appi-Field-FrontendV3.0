@@ -417,7 +417,9 @@
                                         <div class="volumeDeBouille"
                                              [class.product-akk-status]="item.authorization_status === 'authorized'"
                                              [class.product-toint-status]="item.authorization_status === 'withdrawing'"
-                                             [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                             [class.product-int-status]="item.authorization_status === 'forbidden'"
+                                             [appProductInfo]="item" [productInfoCrops]="getDraftPhytowebCropNames()" [productInfoCropRefs]="getDraftCropRefs()" [productInfoEventId]="isEditMode ? editingTreatment?.event_id : null" #productInfo="appProductInfo">
+                                            <button type="button" class="product-info-btn" (click)="productInfo.toggle($event)" aria-label="Infos produit"><i class="bi bi-info-circle"></i></button>
                                             <div (click)="onAddDose(item.product_id)" class="product-card-clickable">
                                                 @if (item.bio == true) {
                                                     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
@@ -534,6 +536,7 @@
                                                                 <th class="text-center">Dose min</th>
                                                                 <th class="text-center">Dose max</th>
                                                                 <th class="text-center">Unité</th>
+                                                                <th class="text-center" title="Nombre maximal d'applications">Max appl.</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -544,6 +547,7 @@
                                                                     <td class="text-center cell-dose">{{ dose.target_rate_min || dose.min_dose || '—' }}</td>
                                                                     <td class="text-center cell-dose">{{ dose.target_rate_max || dose.max_dose || '—' }}</td>
                                                                     <td class="text-center cell-unit">{{ dose.target_rate_unit || dose.unit || '—' }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.max_app || '—' }}</td>
                                                                 </tr>
                                                             }
                                                         </tbody>
@@ -672,8 +676,10 @@
                             <div class="volumeDeBouille" 
                                  [class.product-akk-status]="item.authorization_status === 'authorized'"
                                  [class.product-toint-status]="item.authorization_status === 'withdrawing'"
-                                 [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                 [class.product-int-status]="item.authorization_status === 'forbidden'"
+                                 [appProductInfo]="item" [productInfoCrops]="getDraftPhytowebCropNames()" [productInfoCropRefs]="getDraftCropRefs()" [productInfoEventId]="isEditMode ? editingTreatment?.event_id : null" #productInfo="appProductInfo">
                                 
+                                <button type="button" class="product-info-btn" (click)="productInfo.toggle($event)" aria-label="Infos produit"><i class="bi bi-info-circle"></i></button>
                                 <div (click)="onAddDose(item.product_id)" class="product-card-clickable">
                                     @if (item.bio == true) {
                                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="" width="15px">
@@ -905,7 +911,9 @@
                                         <div class="volumeDeBouille"
                                              [class.product-akk-status]="item.authorization_status === 'authorized'"
                                              [class.product-toint-status]="item.authorization_status === 'withdrawing'"
-                                             [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                             [class.product-int-status]="item.authorization_status === 'forbidden'"
+                                             [appProductInfo]="item" [productInfoCrops]="getDraftPhytowebCropNames()" [productInfoCropRefs]="getDraftCropRefs()" [productInfoEventId]="isEditMode ? editingTreatment?.event_id : null" #productInfo="appProductInfo">
+                                            <button type="button" class="product-info-btn" (click)="productInfo.toggle($event)" aria-label="Infos produit"><i class="bi bi-info-circle"></i></button>
                                             <div (click)="onAddDoseBouillie(item.product_id)" class="product-card-clickable">
                                                 @if (item.bio == true) {
                                                     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="Bio" width="15px">
@@ -1018,6 +1026,7 @@
                                                                 <th class="text-center">Dose min</th>
                                                                 <th class="text-center">Dose max</th>
                                                                 <th class="text-center">Unité</th>
+                                                                <th class="text-center" title="Nombre maximal d'applications">Max appl.</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -1028,6 +1037,7 @@
                                                                     <td class="text-center cell-dose">{{ dose.target_rate_min || dose.min_dose || '—' }}</td>
                                                                     <td class="text-center cell-dose">{{ dose.target_rate_max || dose.max_dose || '—' }}</td>
                                                                     <td class="text-center cell-unit">{{ dose.target_rate_unit || dose.unit || '—' }}</td>
+                                                                    <td class="text-center cell-dose">{{ dose.max_app || '—' }}</td>
                                                                 </tr>
                                                             }
                                                         </tbody>
@@ -1142,8 +1152,10 @@
                             <div class="volumeDeBouille" 
                                  [class.product-akk-status]="item.authorization_status === 'authorized'"
                                  [class.product-toint-status]="item.authorization_status === 'withdrawing'"
-                                 [class.product-int-status]="item.authorization_status === 'forbidden'">
+                                 [class.product-int-status]="item.authorization_status === 'forbidden'"
+                                 [appProductInfo]="item" [productInfoCrops]="getDraftPhytowebCropNames()" [productInfoCropRefs]="getDraftCropRefs()" [productInfoEventId]="isEditMode ? editingTreatment?.event_id : null" #productInfo="appProductInfo">
                                 
+                                <button type="button" class="product-info-btn" (click)="productInfo.toggle($event)" aria-label="Infos produit"><i class="bi bi-info-circle"></i></button>
                                 <div (click)="onAddDoseBouillie(item.product_id)" class="product-card-clickable">
                                     @if (item.bio == true) {
                                         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMjJiZjc2IiBkPSJNMyAxM2E5IDkgMCAwIDAgOSA5YzAtNS00LjAzLTktOS05bTktNy41QTIuNSAyLjUgMCAwIDEgMTQuNSA4YTIuNSAyLjUgMCAwIDEtMi41IDIuNUEyLjUgMi41IDAgMCAxIDkuNSA4QTIuNSAyLjUgMCAwIDEgMTIgNS41bS02LjQgNC43NWEyLjUgMi41IDAgMCAwIDIuNSAyLjVjLjUzIDAgMS4wMi0uMTcgMS40LS40NHYuMTlBMi41IDIuNSAwIDAgMCAxMiAxNWEyLjUgMi41IDAgMCAwIDIuNS0yLjV2LS4xOWMuMzguMjcuODcuNDQgMS40LjQ0YTIuNSAyLjUgMCAwIDAgMi41LTIuNWMwLTEtLjU5LTEuODUtMS40My0yLjI1Yy44NC0uNCAxLjQzLTEuMjYgMS40My0yLjI1YTIuNSAyLjUgMCAwIDAtMi41LTIuNWMtLjUzIDAtMS4wMi4xNi0xLjQuNDRWMy41QTIuNSAyLjUgMCAwIDAgMTIgMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2LjE5Yy0uMzgtLjI4LS44Ny0uNDQtMS40LS40NGEyLjUgMi41IDAgMCAwLTIuNSAyLjVjMCAuOTkuNTkgMS44NSAxLjQzIDIuMjVjLS44NC40LTEuNDMgMS4yNS0xLjQzIDIuMjVNMTIgMjJhOSA5IDAgMCAwIDktOWMtNSAwLTkgNC05IDkiLz48L3N2Zz4=" alt="" width="15px">

@@ -1,0 +1,166 @@
+:host {
+    display: block;
+}
+
+.pi-card {
+    width: 320px;
+    max-width: calc(100vw - 16px);
+    max-height: min(420px, 70vh);
+    overflow-y: auto;
+    background: #fff;
+    color: #1f2d2b;
+    border-radius: 10px;
+    border-left: 4px solid #2a928a;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.pi-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid #e6eceb;
+}
+
+.pi-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    strong {
+        overflow-wrap: anywhere;
+    }
+}
+
+.pi-numaut {
+    color: #6b7a78;
+    font-size: 0.78rem;
+}
+
+.pi-status {
+    flex-shrink: 0;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &--authorized { background: #28a74623; color: #1e7a34; }
+    &--withdrawing { background: #fd7e1426; color: #b35400; }
+    &--forbidden { background: #dc354523; color: #b02a37; }
+}
+
+.pi-body {
+    padding: 8px 12px;
+}
+
+.pi-summary {
+    margin: 0;
+}
+
+.pi-hint {
+    margin: 6px 0 0;
+    color: #6b7a78;
+    font-size: 0.78rem;
+}
+
+.pi-crops {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pi-crop {
+    padding: 6px 0;
+
+    & + & {
+        border-top: 1px dashed #e6eceb;
+    }
+}
+
+.pi-crop-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.pi-badge-forbidden {
+    color: #b02a37;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: none;
+}
+
+.pi-facts {
+    margin: 4px 0 0;
+
+    div {
+        display: flex;
+        gap: 6px;
+    }
+
+    dt {
+        width: 16px;
+        color: #2a928a;
+        font-weight: normal;
+    }
+
+    dd {
+        margin: 0;
+    }
+}
+
+// « 1/2 applications déjà faites » ; en rouge quand le maximum est atteint
+.pi-done--reached {
+    color: #b02a37;
+
+    dt {
+        color: #b02a37 !important;
+    }
+}
+
+.pi-footer {
+    padding: 8px 12px 10px;
+    border-top: 1px solid #e6eceb;
+    background: #f7faf9;
+    border-radius: 0 0 10px 0;
+}
+
+.pi-note {
+    margin: 0;
+    font-size: 0.78rem;
+
+    & + & {
+        margin-top: 4px;
+    }
+
+    i {
+        margin-right: 4px;
+    }
+
+    &--warning { color: #b35400; }
+    &--bio { color: #1a9b5c; }
+}
+
+.pi-skeleton {
+    height: 12px;
+    margin: 6px 0;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #eef2f1 25%, #e1e8e6 50%, #eef2f1 75%);
+    background-size: 200% 100%;
+    animation: pi-shimmer 1.2s infinite;
+
+    &--short {
+        width: 60%;
+    }
+}
+
+@keyframes pi-shimmer {
+    to { background-position: -200% 0; }
+}

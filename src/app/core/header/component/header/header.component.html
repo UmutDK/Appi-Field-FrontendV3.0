@@ -48,9 +48,9 @@
       <span class="sidebar-link-label">Accueil</span>
     </a>
     @if(isConnect()) {
-      <a routerLink="/parcelles" routerLinkActive="active" class="sidebar-link" title="Parcelles">
+      <a routerLink="/parcelles" routerLinkActive="active" class="sidebar-link" title="Parcelles &amp; zones de traitement">
         <i class="bi bi-geo-alt sidebar-link-icon"></i>
-        <span class="sidebar-link-label">Parcelles</span>
+        <span class="sidebar-link-label sidebar-link-label--wrap">Parcelles &amp; zones de traitement</span>
       </a>
       <a routerLink="/registre" routerLinkActive="active" class="sidebar-link" title="Carnet de champ">
         <i class="bi bi-journal-richtext sidebar-link-icon"></i>
@@ -206,7 +206,7 @@
            class="mobile-nav-link"
            data-bs-dismiss="offcanvas">
           <i class="bi bi-geo-alt mobile-nav-icon"></i>
-          <span class="mobile-nav-label">Parcelles</span>
+          <span class="mobile-nav-label">Parcelles &amp; zones de traitement</span>
         </a>
         <a routerLink="/registre"
            routerLinkActive="active"

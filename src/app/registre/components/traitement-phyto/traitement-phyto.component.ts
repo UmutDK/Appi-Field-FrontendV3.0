@@ -12,6 +12,8 @@ import { CalculationConsolidationService } from '../../services/calculation-cons
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ProductInfoDirective } from '../product-info-popover/product-info.directive';
+import { PhytoProductInfoService } from '../../services/phyto-product-info.service';
 
 @Component({
   selector: 'app-traitement-phyto',
@@ -20,7 +22,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SharedModule,
     VirtualForDirective,
     NgSelectModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ProductInfoDirective
   ],
   templateUrl: './traitement-phyto.component.html',
   styleUrls: ['./traitement-phyto.component.scss'],
@@ -268,6 +271,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
   http = inject(RegistreService);
   calculationService = inject(CalculationConsolidationService);
   httpClient = inject(HttpClient);
+  private phytoProductInfo = inject(PhytoProductInfoService);
   formBuilder = inject(FormBuilder);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
@@ -3246,7 +3250,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     // Load autocomplete targets for cible field from distant server index/enemies.json
     
     try {
-      this.httpClient.get<any[]>(environment.apiRegistre + '/index/enemies').subscribe({
+      this.httpClient.get<any[]>(environment.apiPhytoweb + '/index/enemies').subscribe({
         next: (cibles) => {
           this.ciblesList = (cibles || []).map((c: any) => c?.targetName ?? c);
         },
@@ -4328,13 +4332,12 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       return this.cropAuthObservableCache.get(productId)!;
     }
 
-    const apiUrl = `${environment.apiRegistre}/index/crop_authorizations?idAct=${encodeURIComponent(productId)}`;
-    const obs = this.httpClient.get<any[]>(apiUrl).pipe(
+    // Cache HTTP partagé avec le popup d'info produit (survol des cartes), cf. PhytoProductInfoService.
+    const obs = this.phytoProductInfo.getCropAuthorizations(productId).pipe(
       map(rows => {
-        this.cropAuthCache.set(productId, rows || []);
-        return rows || [];
+        this.cropAuthCache.set(productId, rows);
+        return rows as any[];
       }),
-      catchError(() => of([])),
       shareReplay(1)
     );
     this.cropAuthObservableCache.set(productId, obs);
@@ -4371,7 +4374,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     // idAct plutôt que numAut. Il ne filtre que sur UNE culture à la fois : on récupère donc
     // toutes les doses du produit puis on filtre nous-mêmes sur l'ensemble des cultures du
     // draft, exactement comme le faisait l'ancien script PHP.
-    const apiUrl = `${environment.apiRegistre}/index/doseminmax?idAct=${encodeURIComponent(productId)}`;
+    const apiUrl = `${environment.apiPhytoweb}/index/doseminmax?idAct=${encodeURIComponent(productId)}`;
 
     // Appel API optimisé avec shareReplay pour éviter les requêtes multiples
     const dosesObservable = this.httpClient.get<any[]>(apiUrl).pipe(
@@ -4402,6 +4405,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
             target_rate_max: row.maxDose ?? '',
             target_rate_unit: row.doseUnit || '',
             crop_name: row.cropName || '',
+            max_app: row.maxApp || null,
             product_id: productId
           }));
         // Mise en cache locale des données
@@ -4437,6 +4441,38 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
     return draftCrops;
   }
 
+  // Mémorisé pour renvoyer la même référence tant que les cultures ne changent pas
+  // (évalué à chaque change detection par les cartes produits).
+  private draftPhytowebCropNames: string[] = [];
+
+  /** Noms Phytoweb (non normalisés) des cultures du draft, pour le popup d'info produit. */
+  getDraftPhytowebCropNames(): string[] {
+    const names = Array.from(new Set(
+      (this.currentTreatmentDraft?.parcels_concerned || [])
+        .map((parcel: any) => parcel.phytoweb_name || parcel.nomPhytoweb_crops_id)
+        .filter((name: any): name is string => !!name)
+    )) as string[];
+    if (names.join('|') !== this.draftPhytowebCropNames.join('|')) {
+      this.draftPhytowebCropNames = names;
+    }
+    return this.draftPhytowebCropNames;
+  }
+
+  // Même mémorisation que draftPhytowebCropNames (référence stable pour la change detection).
+  private draftCropRefs: { cropId: string; phytowebName: string }[] = [];
+
+  /** Cultures du draft (id Appi'Field + nom Phytoweb), pour le compte « applications déjà faites » du popup. */
+  getDraftCropRefs(): { cropId: string; phytowebName: string }[] {
+    const refs = (this.currentTreatmentDraft?.parcels_concerned || [])
+      .map((parcel: any) => ({ cropId: parcel.crop_id, phytowebName: parcel.phytoweb_name || parcel.nomPhytoweb_crops_id || '' }))
+      .filter((ref: any) => !!ref.cropId && !!ref.phytowebName);
+    const key = (list: { cropId: string; phytowebName: string }[]) => list.map(r => r.cropId + '=' + r.phytowebName).join('|');
+    if (key(refs) !== key(this.draftCropRefs)) {
+      this.draftCropRefs = refs;
+    }
+    return this.draftCropRefs;
+  }
+
   /**
    * 🧹 Nettoie le cache des doses pour un produit spécifique
    * Appelé quand l'utilisateur ferme le formulaire d'édition
@@ -4467,7 +4503,7 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
       return of(this.phytowebCropsCache);
     }
 
-    return this.httpClient.get<any[]>(`${environment.apiRegistre}/index/phytoweb_crops`).pipe(
+    return this.httpClient.get<any[]>(`${environment.apiPhytoweb}/index/phytoweb_crops`).pipe(
       map(data => {
         this.phytowebCropsCache = data;
         return data;
@@ -4633,6 +4669,13 @@ export class TraitementPhytoComponent implements OnInit, OnDestroy {
 
   toggleTargetDropdown(): void {
     this.isTargetDropdownOpen = !this.isTargetDropdownOpen;
+    if (this.isTargetDropdownOpen) {
+      // La liste s'ouvre vers le bas dans la zone défilante de la modale : sans ça, elle passe
+      // sous le pied de modale quand le formulaire est en bas. On fait défiler juste assez
+      // pour la montrer en entier (après le rendu du panneau par le @if).
+      setTimeout(() => document.querySelector('.target-dropdown-panel')
+        ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+    }
   }
 
   /** Sélectionne une cible depuis le dropdown puis le referme (selectTarget gère aussi '__free__') */

@@ -310,6 +310,14 @@ nav.sidebar-nav {
     }
 }
 
+// Libellé long d'un lien principal ("Parcelles & zones de traitement") : sur 2 lignes plutôt que "…",
+// comme les liens du bas ci-dessus.
+.sidebar-link .sidebar-link-label.sidebar-link-label--wrap {
+    white-space: normal;
+    line-height: 1.25;
+    padding-right: 10px; // place pour le point « page active »
+}
+
 .sidebar-user {
     display: flex;
     align-items: center;

@@ -487,7 +487,7 @@ export class RegistreService {
    * à un traitement, qui échoue avec "Produit non trouvé").
    */
   private preloadProducts(): void {
-    this.makeHttpRequest<any[]>(`${environment.apiRegistre}/index/phytoweb_products`).subscribe({
+    this.makeHttpRequest<any[]>(`${environment.apiPhytoweb}/index/phytoweb_products`).subscribe({
       next: (products) => {
         this.cachedProducts.set((products || []).map(productFromApi));
       }
@@ -1024,7 +1024,7 @@ export class RegistreService {
       return of(this.cachedProducts());
     }
 
-    return this.makeHttpRequest<any[]>(`${environment.apiRegistre}/index/phytoweb_products`).pipe(
+    return this.makeHttpRequest<any[]>(`${environment.apiPhytoweb}/index/phytoweb_products`).pipe(
       map(products => (products || []).map(productFromApi)),
       tap(products => this.cachedProducts.set(products))
     );

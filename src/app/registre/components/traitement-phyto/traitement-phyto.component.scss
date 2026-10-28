@@ -198,6 +198,37 @@ main .scrollable-content .body {
     
     // Éviter le reflow lors du hover
     contain: layout style;
+    position: relative;
+}
+
+// Icône ⓘ du popup d'info produit (cf. ProductInfoDirective) : seul déclencheur sur tactile,
+// le clic sur la carte ajoutant directement le produit.
+.product-info-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #2a928a;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(42, 146, 138, 0.12);
+    }
+}
+
+.volumeDeBouille .product-card-clickable {
+    padding-right: 28px;
 }
 
 main{

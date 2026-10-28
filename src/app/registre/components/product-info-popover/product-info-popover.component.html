@@ -1,0 +1,74 @@
+<div class="pi-card" role="tooltip">
+    <header class="pi-header">
+        <div class="pi-title">
+            <strong>{{ product()?.product_name }}</strong>
+            @if (product()?.product_numaut) {
+                <span class="pi-numaut">{{ product()?.product_numaut }}</span>
+            }
+        </div>
+        @if (statusLabel()) {
+            <span class="pi-status pi-status--{{ product()?.authorization_status }}">{{ statusLabel() }}</span>
+        }
+    </header>
+
+    <div class="pi-body">
+        @if (loading()) {
+            <div class="pi-skeleton"></div>
+            <div class="pi-skeleton pi-skeleton--short"></div>
+        } @else if (cropInfos().length === 0) {
+            <p class="pi-summary">
+                @if (authorizedCropCount() > 0) {
+                    Autorisé sur {{ authorizedCropCount() }} culture{{ authorizedCropCount() > 1 ? 's' : '' }}.
+                } @else {
+                    Aucune culture autorisée connue pour ce produit.
+                }
+            </p>
+            @if (authorizedCropCount() > 0) {
+                <p class="pi-hint"><i class="bi bi-info-circle"></i> Sélectionnez des parcelles pour voir le détail par culture.</p>
+            }
+        } @else {
+            <ul class="pi-crops">
+                @for (crop of cropInfos(); track crop.name) {
+                    <li class="pi-crop" [class.pi-crop--unauthorized]="!crop.authorized">
+                        <div class="pi-crop-name">
+                            {{ crop.name }}
+                            @if (!crop.authorized) {
+                                <span class="pi-badge-forbidden"><i class="bi bi-x-circle-fill"></i> Non autorisé</span>
+                            }
+                        </div>
+                        @if (crop.authorized) {
+                            <dl class="pi-facts">
+                                <div><dt><i class="bi bi-arrow-repeat"></i></dt><dd>{{ crop.maxApp || 'Nb d\'applications non renseigné' }}</dd></div>
+                                @if (crop.done) {
+                                    <div class="pi-done" [class.pi-done--reached]="crop.doneReached">
+                                        <dt><i class="bi" [class.bi-check2-circle]="!crop.doneReached" [class.bi-exclamation-octagon-fill]="crop.doneReached"></i></dt>
+                                        <dd>{{ crop.done }}@if (crop.doneReached) { — <strong>maximum atteint</strong>}</dd>
+                                    </div>
+                                }
+                                @if (crop.maxDose) {
+                                    <div><dt><i class="bi bi-droplet"></i></dt><dd>{{ crop.maxDose }}</dd></div>
+                                }
+                                @if (crop.stage) {
+                                    <div [title]="crop.stageFull"><dt><i class="bi bi-flower1"></i></dt><dd>Stade {{ crop.stage }}</dd></div>
+                                }                            </dl>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    @if (product()?.spe8_flag || (product()?.authorization_status === 'withdrawing' && product()?.use_tolerance_date) || product()?.bio) {
+        <footer class="pi-footer">
+            @if (product()?.authorization_status === 'withdrawing' && product()?.use_tolerance_date) {
+                <p class="pi-note pi-note--warning"><i class="bi bi-exclamation-triangle-fill"></i> Usage toléré jusqu'au {{ product()?.use_tolerance_date }}</p>
+            }
+            @if (product()?.spe8_flag) {
+                <p class="pi-note"><i class="bi bi-bug"></i> SPe8 : appliquer en dehors de la présence des abeilles</p>
+            }
+            @if (product()?.bio) {
+                <p class="pi-note pi-note--bio"><i class="bi bi-patch-check-fill"></i> Autorisé en agriculture biologique</p>
+            }
+        </footer>
+    }
+</div>

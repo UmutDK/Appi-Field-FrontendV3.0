@@ -283,6 +283,12 @@ textarea.form-control {
     }
 }
 
+// Popup d'info produit (ProductInfoDirective) ouvert depuis la modale de traitement :
+// le conteneur des overlays (z-index 1000) passe au-dessus de la modale tant qu'il l'affiche.
+.cdk-overlay-container:has(.product-info-pane) {
+    z-index: 1200;
+}
+
 // Assure que les overlays Angular Material utilisent les bons styles
 .cdk-overlay-container {
     .mat-mdc-autocomplete-panel {

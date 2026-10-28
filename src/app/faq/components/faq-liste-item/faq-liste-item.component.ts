@@ -42,19 +42,19 @@ export class FaqListeItemComponent {
     {
       id: 'collapseFour',
       question: 'Je n’arrive pas à encoder ou à localiser ma parcelle.',      
-      category: 'Parcelles',      
-      answer: 'Après vous être rendu sur l’onglet « Parcelles » et avoir cliqué sur le bouton « Ajouter » (situé en bas à droite), vous pourrez trouver différents outils mis à votre disposition afin de vous permettre de trouver vos parcelles.'
+      category: 'Parcelles & zones de traitement',      
+      answer: 'Après vous être rendu sur l’onglet « Parcelles & zones de traitement » et avoir cliqué sur le bouton « Ajouter » (situé en bas à droite), vous pourrez trouver différents outils mis à votre disposition afin de vous permettre de trouver vos parcelles.'
     },
     {
       id: 'collapseFive',
       question: 'Je n’arrive pas à importer mes données PAC',      
-      category: 'Parcelles',      
+      category: 'Parcelles & zones de traitement',      
       answer: 'Assurez-vous que votre fichier respecte bien le format .gml.'
     },
      {
       id: 'collapseSixb',
       question: 'Je ne peux pas exporter ma déclaration PAC au format .gml',      
-      category: 'Parcelles',      
+      category: 'Parcelles & zones de traitement',      
       answer: 'La fonctionnalité d’export au format .gml n\'est pas encore disponible pour tous les comptes. Elle le sera normalement d\'ici le mois d\'avril 2026'
     },
     {

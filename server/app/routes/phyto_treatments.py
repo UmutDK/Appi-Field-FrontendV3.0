@@ -135,6 +135,40 @@ def get_treatments(user_id):
     return jsonify(_attach_children(cur, events))
 
 
+@bp.get("/application_count")
+@require_auth
+def get_application_count(user_id):
+    """
+    Nombre d'applications déjà faites d'un produit sur des cultures de l'utilisateur, pour
+    le popup d'info produit ("1/2 applications déjà faites"). Lecture seule.
+    Une culture Appi'Field correspond à une saison (sowingDate/collection) : compter par
+    cropId revient donc à compter "cette saison". Un traitement qui touche plusieurs
+    parcelles de la même culture compte pour une seule application.
+    Query : ?productId=<idAct Phytoweb>&cropIds=<cropId>,<cropId>...
+            [&excludeEventId=<eventId>] (traitement en cours de modification, à ne pas compter).
+    Réponse : [{"cropId": str, "count": int}] — une entrée par cropId demandé (0 si aucun).
+    """
+    product_id = request.args.get("productId")
+    crop_ids = [c for c in (request.args.get("cropIds") or "").split(",") if c]
+    exclude_event_id = request.args.get("excludeEventId") or ""
+    if not product_id or not crop_ids:
+        return jsonify([])
+
+    placeholders = ", ".join(["%s"] * len(crop_ids))
+    cur = cursor_appifield()
+    cur.execute(
+        f"""SELECT p.cropId, COUNT(DISTINCT p.eventId) AS count
+            FROM phytoTreatmentsParcelsCrops p
+            JOIN phytoTreatmentsComposition c ON c.eventId = p.eventId AND c.userId = p.userId
+            WHERE p.userId = %s AND c.productId = %s AND p.cropId IN ({placeholders})
+              AND p.eventId <> %s
+            GROUP BY p.cropId""",
+        (user_id, product_id, *crop_ids, exclude_event_id),
+    )
+    counts = {row["cropId"]: int(row["count"]) for row in cur.fetchall()}
+    return jsonify([{"cropId": crop_id, "count": counts.get(crop_id, 0)} for crop_id in crop_ids])
+
+
 @bp.get("/<event_id>")
 @require_auth
 def get_treatment(user_id, event_id):
