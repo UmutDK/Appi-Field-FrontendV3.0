@@ -5,7 +5,7 @@
     <div class="row g-3">
       <!-- Sélection du produit -->
       <div class="col-lg-6">
-        <label class="simple-label">Produit<sup>*</sup></label>
+        <label class="simple-label">Produit<sup class="required-mark">*</sup></label>
         <div class="dropdown-container" [class.open]="isProductDropdownOpen">
           <button type="button" class="dropdown-btn" aria-label="Produit" (click)="toggleProductDropdown(); $event.stopPropagation()">
             <span class="dropdown-value">{{ selectedProductLabel }}</span>
@@ -27,7 +27,7 @@
 
       <!-- Type d'entrée PPNU/PPNV -->
       <div class="col-lg-6">
-        <label class="simple-label">Type d'entrée<sup>*</sup></label>
+        <label class="simple-label">Type d'entrée<sup class="required-mark">*</sup></label>
         <div class="dropdown-container" [class.open]="isTypeDropdownOpen">
           <button type="button" class="dropdown-btn" aria-label="Type d'entrée" (click)="toggleTypeDropdown(); $event.stopPropagation()">
             <span class="dropdown-value">{{ selectedTypeLabel }}</span>
@@ -49,7 +49,7 @@
 
       <!-- Date -->
       <div class="col-lg-6">
-        <label class="simple-label" for="ppnuDate">Date de la sortie<sup>*</sup></label>
+        <label class="simple-label" for="ppnuDate">Date de la sortie<sup class="required-mark">*</sup></label>
         <input
           type="date"
           class="form-control popup-text-input"
@@ -67,7 +67,7 @@
 
       <!-- Quantité -->
       <div class="col-lg-3">
-        <label class="simple-label" for="ppnuQuantity">Quantité<sup>*</sup></label>
+        <label class="simple-label" for="ppnuQuantity">Quantité<sup class="required-mark">*</sup></label>
         <input
           type="number"
           class="form-control popup-text-input"
@@ -87,7 +87,7 @@
 
       <!-- Unité -->
       <div class="col-lg-3">
-        <label class="simple-label">Unité<sup>*</sup></label>
+        <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
         <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
           <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
             <span class="dropdown-value">{{ selectedUnit }}</span>

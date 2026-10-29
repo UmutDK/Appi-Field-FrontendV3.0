@@ -38,7 +38,7 @@
       </div>
     } @else {
       <div class="popup-body archive-choice">
-        <label class="simple-label" for="renewSigec">Nouveau code SIGEC<sup>*</sup></label>
+        <label class="simple-label" for="renewSigec">Nouveau code SIGEC<sup class="required-mark">*</sup></label>
         <input id="renewSigec" type="text" class="form-control popup-text-input"
                [(ngModel)]="renewSigecCode" placeholder="Ex : 1234567"
                (keydown.enter)="archiveAndRenew()" autocomplete="off">

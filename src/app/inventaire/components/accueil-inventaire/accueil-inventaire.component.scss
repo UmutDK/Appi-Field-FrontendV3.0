@@ -700,6 +700,9 @@ a { text-decoration: none; }
     }
 
     .col-actions {
+        // Contient le libellé « Actions » (.visually-hidden, en position absolue) : sans ça il était
+        // placé par rapport à la page, dépassait en bas et ajoutait une 2e barre de défilement.
+        position: relative;
         width: 90px;
         text-align: right;
         white-space: nowrap;

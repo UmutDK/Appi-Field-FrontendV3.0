@@ -10,11 +10,11 @@
                 <h2 class="form-section-title">Ajouter un opérateur</h2>
                 <div class="add-operator-row">
                     <div class="auth-field">
-                        <label for="operatorName">Nom et prénom<sup>*</sup></label>
+                        <label for="operatorName">Nom et prénom<sup class="required-mark">*</sup></label>
                         <input id="operatorName" type="text" class="form-control" placeholder="Ex : Dupont Marie" formControlName="name" required>
                     </div>
                     <div class="auth-field">
-                        <label for="operatorPhytolicence">Numéro de phytolicence<sup>*</sup></label>
+                        <label for="operatorPhytolicence">Numéro de phytolicence<sup class="required-mark">*</sup></label>
                         <input id="operatorPhytolicence" type="text" class="form-control" placeholder="Ex : 23.2.00445" formControlName="phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)" required>
                     </div>
                     <button class="auth-btn auth-btn-secondary add-operator-btn" (click)="onInviter()" type="submit">

@@ -32,7 +32,7 @@
                 </article>
 
                 <article class="col-12 col-md-6">
-                    <p style="color: #0e103c;"><b>Nom</b><sup>*</sup></p>
+                    <p style="color: #0e103c;"><b>Nom</b><sup class="required-mark">*</sup></p>
                     <input type="text" class="form-control validate" placeholder="Votre nom" [(ngModel)]="user.Nom" required
                            (blur)="touched.nom = true" [class.input-error]="touched.nom && isEmpty(user.Nom)">
                     @if (touched.nom && isEmpty(user.Nom)) {
@@ -40,7 +40,7 @@
                     }
                 </article>
                 <article class="col-12 col-md-6">
-                    <p style="color: #0e103c;"><b>Prénom</b><sup>*</sup></p>
+                    <p style="color: #0e103c;"><b>Prénom</b><sup class="required-mark">*</sup></p>
                     <input type="text" class="form-control validate" placeholder="Votre prénom" [(ngModel)]="user.Prenom" required
                            (blur)="touched.prenom = true" [class.input-error]="touched.prenom && isEmpty(user.Prenom)">
                     @if (touched.prenom && isEmpty(user.Prenom)) {

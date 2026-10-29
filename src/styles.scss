@@ -289,6 +289,13 @@ textarea.form-control {
     z-index: 1200;
 }
 
+// Infobulles (matTooltip) : le conteneur des overlays (z-index 1000) restait sous les modales
+// (carnet de champ 1001, système de popups 9999…) — les infobulles s'affichaient derrière.
+// Tant qu'une infobulle est affichée, le conteneur passe au-dessus de tout.
+.cdk-overlay-container:has(.mat-mdc-tooltip-panel) {
+    z-index: 1000001;
+}
+
 // Assure que les overlays Angular Material utilisent les bons styles
 .cdk-overlay-container {
     .mat-mdc-autocomplete-panel {
@@ -1598,4 +1605,16 @@ app-traitement-phyto, app-travail-au-champ {
         .popup-header { border-radius: 14px 14px 0 0; }
         .popup-footer { border-radius: 0 0 14px 14px; }
     }
+}
+
+
+// Astérisque des champs obligatoires (<sup class="required-mark">*</sup>) : le <sup> par défaut
+// le réduisait à ~75 % de la taille du texte et le remontait trop haut, il était à peine visible.
+sup.required-mark {
+    margin-left: 1px;
+    font-size: 1.4em;
+    font-weight: 700;
+    line-height: 0;
+    color: #dc3545;
+    top: -0.05em;
 }

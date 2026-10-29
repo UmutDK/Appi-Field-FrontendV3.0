@@ -11,7 +11,7 @@
             <form [formGroup]="form">
                 <div class="auth-grid">
                     <div class="auth-field">
-                        <label for="prenom">Prénom<sup>*</sup></label>
+                        <label for="prenom">Prénom<sup class="required-mark">*</sup></label>
                         <input id="prenom" placeholder="Votre prénom" type="text" class="form-control" formControlName="Prenom" required
                             [ngClass]="{'input-error': form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')}">
                         @if (form.get('Prenom')?.touched && form.get('Prenom')?.hasError('required')) {
@@ -19,7 +19,7 @@
                         }
                     </div>
                     <div class="auth-field">
-                        <label for="nom">Nom de famille<sup>*</sup></label>
+                        <label for="nom">Nom de famille<sup class="required-mark">*</sup></label>
                         <input id="nom" placeholder="Votre nom de famille" type="text" class="form-control" formControlName="Nom" required
                             [ngClass]="{'input-error': form.get('Nom')?.touched && form.get('Nom')?.hasError('required')}">
                         @if (form.get('Nom')?.touched && form.get('Nom')?.hasError('required')) {
@@ -28,7 +28,7 @@
                     </div>
 
                     <div class="auth-field">
-                        <label for="mail">Adresse mail<sup>*</sup></label>
+                        <label for="mail">Adresse mail<sup class="required-mark">*</sup></label>
                         <input id="mail" placeholder="Votre adresse mail" type="email" class="form-control" formControlName="Mail" required
                             [ngClass]="{'input-error': form.get('Mail')?.touched && (form.get('Mail')?.hasError('pattern') || form.get('Mail')?.hasError('required'))}">
                         @if (form.get('Mail')?.touched && form.get('Mail')?.hasError('required')) {
@@ -38,7 +38,7 @@
                         }
                     </div>
                     <div class="auth-field">
-                        <label for="confirmationMail">Confirmez votre adresse mail<sup>*</sup></label>
+                        <label for="confirmationMail">Confirmez votre adresse mail<sup class="required-mark">*</sup></label>
                         <input id="confirmationMail" placeholder="Confirmez votre adresse mail" type="email" class="form-control" formControlName="Confirmation_Mail" required
                             [ngClass]="{'input-error': form.get('Confirmation_Mail')?.touched && (!emailMatch || form.get('Confirmation_Mail')?.hasError('required'))}">
                         @if (form.get('Confirmation_Mail')?.touched && form.get('Confirmation_Mail')?.hasError('required')) {
@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="auth-field">
-                        <label for="motDePasse">Mot de passe<sup>*</sup></label>
+                        <label for="motDePasse">Mot de passe<sup class="required-mark">*</sup></label>
                         <div class="password-container">
                             <!-- Bulle d'info conditions mot de passe -->
                             <div *ngIf="passwordTouched" class="password-hints">
@@ -86,7 +86,7 @@
                         }
                     </div>
                     <div class="auth-field">
-                        <label for="confirmationMotDePasse">Confirmez votre mot de passe<sup>*</sup></label>
+                        <label for="confirmationMotDePasse">Confirmez votre mot de passe<sup class="required-mark">*</sup></label>
                         <div class="password-container">
                             <input
                                 id="confirmationMotDePasse"
@@ -109,7 +109,7 @@
                     </div>
 
                     <div class="auth-field">
-                        <label for="dateNaissance">Date de naissance<sup>*</sup></label>
+                        <label for="dateNaissance">Date de naissance<sup class="required-mark">*</sup></label>
                         <input id="dateNaissance" type="date" class="form-control" formControlName="Date_De_Naissance" name="date" required
                             [max]="maxBirthDate"
                             [ngClass]="{'input-error': form.get('Date_De_Naissance')?.hasError('futureDate') || (form.get('Date_De_Naissance')?.touched && form.get('Date_De_Naissance')?.hasError('required'))}">
@@ -120,7 +120,7 @@
                         }
                     </div>
                     <div class="auth-field">
-                        <label for="sexe">Sexe<sup>*</sup></label>
+                        <label for="sexe">Sexe<sup class="required-mark">*</sup></label>
                         <div class="select-container">
                             <select id="sexe" class="form-control" formControlName="Sex" required>
                                 <option value="Non spécifié">Non spécifié</option>
@@ -145,7 +145,7 @@
                         </div>
                         <span class="acceptCGU-text">
                             En me créant un compte, je consens aux
-                            <a routerLink="/cgu" target="_blank" (click)="$event.stopPropagation()">conditions générales d'utilisation d'AppiField</a><sup>*</sup>
+                            <a routerLink="/cgu" target="_blank" (click)="$event.stopPropagation()">conditions générales d'utilisation d'AppiField</a><sup class="required-mark">*</sup>
                         </span>
                     </div>
                 </div>

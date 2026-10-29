@@ -15,7 +15,7 @@
                     <p class="step-intro">Mentionnez les informations sur votre traitement : </p>
                 }
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom: 5px;">
-                    <label class="simple-label" style="margin:0;">Type d'encodage<sup>*</sup></label>
+                    <label class="simple-label" style="margin:0;">Type d'encodage<sup class="required-mark">*</sup></label>
                     <i class="bi bi-info-circle-fill popup-tooltip-icon"
                        matTooltip="Choisissez un type de traitement. Le mode Surface permet d'encoder des traitements dont les doses sont exprimées en quantité/surface, et le mode Bouillie en quantité/100L ou /10L. Finalement, le mode quantité propose d'encoder des produits en fonction de leur quantité concentée."
                        matTooltipPosition="above">
@@ -112,7 +112,7 @@
 
                         <article class="col-lg-6">
                             <p></p>
-                            <label class="simple-label" for="traitementDate">Date de traitement<sup>*</sup></label>
+                            <label class="simple-label" for="traitementDate">Date de traitement<sup class="required-mark">*</sup></label>
                             <input type="date" id="traitementDate" name="date" class="form-control popup-text-input" formControlName="date"  >
                         </article>
 
@@ -512,11 +512,11 @@
                         <form [formGroup]="personalProductForm" (ngSubmit)="saveNewPersonalProduct()" class="personal-product-form">
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-5">
-                                    <label class="form-label form-label-sm" for="personalProductNameSurface">Nom du produit<sup>*</sup></label>
+                                    <label class="form-label form-label-sm" for="personalProductNameSurface">Nom du produit<sup class="required-mark">*</sup></label>
                                     <input type="text" id="personalProductNameSurface" formControlName="product_name" class="form-control form-control-sm popup-text-input" placeholder="Ex : Engrais NPK 12-12-17">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label form-label-sm" for="personalProductTypeSurface">Type<sup>*</sup></label>
+                                    <label class="form-label form-label-sm" for="personalProductTypeSurface">Type<sup class="required-mark">*</sup></label>
                                     <input type="text" id="personalProductTypeSurface" formControlName="product_type" class="form-control form-control-sm popup-text-input"
                                            placeholder="Engrais, Amendement..."
                                            (input)="onPersonalTypeInput($event)"
@@ -627,7 +627,7 @@
                                         <!-- Dose / Quantité -->
                                         <div class="field-col">
                                             <label class="field-label" for="doseSurfaceInput">
-                                                @if (getTreatmentType() === 'phyto_quantity_treatment') { Quantité } @else { Dose }<sup>*</sup>
+                                                @if (getTreatmentType() === 'phyto_quantity_treatment') { Quantité } @else { Dose }<sup class="required-mark">*</sup>
                                             </label>
                                             <input type="number" id="doseSurfaceInput" class="field-input" placeholder="0.00"
                                                    formControlName="dose" step="0.01" min="0"
@@ -636,7 +636,7 @@
 
                                         <!-- Unité -->
                                         <div class="field-col field-col-unit">
-                                            <label class="field-label" for="uniteSurfaceSelect">Unité<sup>*</sup></label>
+                                            <label class="field-label" for="uniteSurfaceSelect">Unité<sup class="required-mark">*</sup></label>
                                             <select id="uniteSurfaceSelect" class="field-select" formControlName="littre"
                                                     (change)="selectUnit(currentEditingProductId, $any($event.target).value, 'surface')">
                                                 @if (getTreatmentType() === 'phyto_quantity_treatment') {
@@ -679,7 +679,7 @@
 
                                         <!-- Cible -->
                                         <div class="field-col field-col-target">
-                                            <label class="field-label" id="cibleSurfaceLabel">Cible<sup>*</sup></label>
+                                            <label class="field-label" id="cibleSurfaceLabel">Cible<sup class="required-mark">*</sup></label>
                                             @if (!isTargetFreeText(currentEditingProductId)) {
                                                 <div class="dropdown-container target-dropdown" [class.open]="isTargetDropdownOpen">
                                                     <button type="button" class="dropdown-btn" aria-labelledby="cibleSurfaceLabel" (click)="toggleTargetDropdown(); $event.stopPropagation()">
@@ -1012,11 +1012,11 @@
                         <form [formGroup]="personalProductForm" (ngSubmit)="saveNewPersonalProduct()" class="personal-product-form">
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-5">
-                                    <label class="form-label form-label-sm" for="personalProductNameBouillie">Nom du produit<sup>*</sup></label>
+                                    <label class="form-label form-label-sm" for="personalProductNameBouillie">Nom du produit<sup class="required-mark">*</sup></label>
                                     <input type="text" id="personalProductNameBouillie" formControlName="product_name" class="form-control form-control-sm popup-text-input" placeholder="Ex : Engrais NPK 12-12-17">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label form-label-sm" for="personalProductTypeBouillie">Type<sup>*</sup></label>
+                                    <label class="form-label form-label-sm" for="personalProductTypeBouillie">Type<sup class="required-mark">*</sup></label>
                                     <input type="text" id="personalProductTypeBouillie" formControlName="product_type" class="form-control form-control-sm popup-text-input"
                                            placeholder="Engrais, Amendement..."
                                            (input)="onPersonalTypeInput($event)"
@@ -1120,7 +1120,7 @@
                                     <div class="encoding-row">
                                         <!-- Dose -->
                                         <div class="field-col">
-                                            <label class="field-label" for="doseBouillieInput">Dose<sup>*</sup></label>
+                                            <label class="field-label" for="doseBouillieInput">Dose<sup class="required-mark">*</sup></label>
                                             <input type="number" id="doseBouillieInput" class="field-input" placeholder="0.00"
                                                    formControlName="dose" step="0.01" min="0"
                                                    (input)="onDoseInputChange(currentEditingProductIdBouillie, $any($event.target).value)">
@@ -1128,7 +1128,7 @@
 
                                         <!-- Unité -->
                                         <div class="field-col field-col-unit">
-                                            <label class="field-label" for="uniteBouillieSelect">Unité<sup>*</sup></label>
+                                            <label class="field-label" for="uniteBouillieSelect">Unité<sup class="required-mark">*</sup></label>
                                             <select id="uniteBouillieSelect" class="field-select" formControlName="littre"
                                                     (change)="selectUnit(currentEditingProductIdBouillie, $any($event.target).value, 'bouillie')">
                                                 <optgroup label="Par 100L">
@@ -1160,7 +1160,7 @@
 
                                         <!-- Cible -->
                                         <div class="field-col field-col-target">
-                                            <label class="field-label" id="cibleBouillieLabel">Cible<sup>*</sup></label>
+                                            <label class="field-label" id="cibleBouillieLabel">Cible<sup class="required-mark">*</sup></label>
                                             @if (!isTargetFreeText(currentEditingProductIdBouillie)) {
                                                 <div class="dropdown-container target-dropdown" [class.open]="isTargetDropdownOpen">
                                                     <button type="button" class="dropdown-btn" aria-labelledby="cibleBouillieLabel" (click)="toggleTargetDropdown(); $event.stopPropagation()">

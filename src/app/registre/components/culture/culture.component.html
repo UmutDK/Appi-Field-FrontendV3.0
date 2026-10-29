@@ -31,9 +31,9 @@
                     <div class="label-with-info">
                         <label for="recherche-culture" class="search-label">
                             @if (cultureToModify) {
-                                Chercher une nouvelle catégorie Phytoweb<sup>*</sup>
+                                Chercher une nouvelle catégorie Phytoweb<sup class="required-mark">*</sup>
                             } @else {
-                                Chercher une catégorie Phytoweb<sup>*</sup>
+                                Chercher une catégorie Phytoweb<sup class="required-mark">*</sup>
                             }
                         </label>
                         <i class="bi bi-info-circle-fill crop-info-icon popup-tooltip-icon"
@@ -116,7 +116,7 @@
             <section class="row">
                 <article class="col-lg-12">
                     <div class="parcels-step-header">
-                        <label for="parcelles-selection" class="search-label">Sélectionner une ou plusieurs parcelle(s)<sup>*</sup></label>
+                        <label for="parcelles-selection" class="search-label">Sélectionner une ou plusieurs parcelle(s)<sup class="required-mark">*</sup></label>
                         @if (getSelectedParcelCount() > 0) {
                             <span class="selected-count-badge">
                                 {{ getSelectedParcelCount() }} sélectionnée{{ getSelectedParcelCount() > 1 ? 's' : '' }}
@@ -188,7 +188,7 @@
                 <div class="scrollable-content">
                     <section class="row culture-infos">
                         <article class="col-lg-12">
-                            <label class="simple-label" for="nomCulture">Nom de l'espèce et de la variété emblavée<sup>*</sup></label>
+                            <label class="simple-label" for="nomCulture">Nom de l'espèce et de la variété emblavée<sup class="required-mark">*</sup></label>
                             <input type="text" class="form-control popup-text-input" id="nomCulture" placeholder="Nom de l'espèce et de la variété emblavée" name="nomCulture" formControlName="nomCulture" autocomplete="off" required>
                         </article>
                         <article class="col-lg-6">

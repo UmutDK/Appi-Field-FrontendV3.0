@@ -174,7 +174,8 @@ export class BackOfficeComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadParcelsOnMap(): void {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<any[]>(`${environment.apiRegistre}/parcels`, { headers })
+    // Parcelles actives uniquement : GET /parcels renvoie aussi les archivées (updateToDo/07)
+    this.http.get<any[]>(`${environment.apiRegistre}/parcels?archived=0`, { headers })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (raw) => {

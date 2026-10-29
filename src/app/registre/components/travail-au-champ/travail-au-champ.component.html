@@ -100,7 +100,7 @@
       <form [formGroup]="formFertilisation">
         <div class="form-section">
           <div class="form-group">
-            <label class="simple-label" for="fertilisationDate">Date de fertilisation<sup>*</sup></label>
+            <label class="simple-label" for="fertilisationDate">Date de fertilisation<sup class="required-mark">*</sup></label>
             <input type="date"
                    id="fertilisationDate"
                    name="date"
@@ -110,7 +110,7 @@
           </div>
 
           <div class="form-group">
-            <label class="simple-label" for="fertilisationInformations">Informations sur les produits apportés<sup>*</sup></label>
+            <label class="simple-label" for="fertilisationInformations">Informations sur les produits apportés<sup class="required-mark">*</sup></label>
             <input type="text"
                    id="fertilisationInformations"
                    name="informations"
@@ -120,7 +120,7 @@
           </div>
 
           <div class="form-group">
-            <label class="simple-label" for="fertilisationTool">Outil de pilotage<sup>*</sup></label>
+            <label class="simple-label" for="fertilisationTool">Outil de pilotage<sup class="required-mark">*</sup></label>
             <input type="text"
                    id="fertilisationTool"
                    name="tool"
@@ -246,7 +246,7 @@
         <div class="form-section">
           <div class="encoding-row">
             <div class="field-col">
-              <label class="field-label" for="irrigationDate">Date d'irrigation<sup>*</sup></label>
+              <label class="field-label" for="irrigationDate">Date d'irrigation<sup class="required-mark">*</sup></label>
               <input type="date"
                      id="irrigationDate"
                      name="date"
@@ -255,7 +255,7 @@
             </div>
 
             <div class="field-col">
-              <label class="field-label" for="irrigationDose">Quantité<sup>*</sup></label>
+              <label class="field-label" for="irrigationDose">Quantité<sup class="required-mark">*</sup></label>
               <input type="number"
                      id="irrigationDose"
                      name="dose"
@@ -270,7 +270,7 @@
               }
             </div>
             <div class="field-col field-col-unit">
-              <label class="field-label">Unité<sup>*</sup></label>
+              <label class="field-label">Unité<sup class="required-mark">*</sup></label>
               <div class="dropdown-container dose-unit-dropdown" [class.open]="isDoseUnitDropdownOpen">
                 <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleDoseUnitDropdown(); $event.stopPropagation()">
                   <span class="dropdown-value">{{ irrigation.value.dose_unit }}</span>
@@ -406,7 +406,7 @@
       <form [formGroup]="recolte">
         <div class="form-section">
           <div class="form-group">
-            <label class="simple-label" for="recolteHarvestDate">Date de récolte<sup>*</sup></label>
+            <label class="simple-label" for="recolteHarvestDate">Date de récolte<sup class="required-mark">*</sup></label>
             <input type="date"
                    id="recolteHarvestDate"
                    name="harvest_date"
@@ -415,7 +415,7 @@
           </div>
 
           <div class="form-group">
-            <label class="simple-label" for="recolteRendement">Rendement<sup>*</sup></label>
+            <label class="simple-label" for="recolteRendement">Rendement<sup class="required-mark">*</sup></label>
             <textarea id="recolteRendement"
                       name="Rendement"
                       formControlName="Rendement"
@@ -532,7 +532,7 @@
       <form [formGroup]="observation">
         <div class="form-section">
           <div class="form-group">
-            <label class="simple-label" for="observationDate">Date de l'observation<sup>*</sup></label>
+            <label class="simple-label" for="observationDate">Date de l'observation<sup class="required-mark">*</sup></label>
             <input type="date"
                    id="observationDate"
                    name="dateDeLobservation"
@@ -541,7 +541,7 @@
           </div>
 
           <div class="form-group">
-            <label class="simple-label" for="observationText">Observation<sup>*</sup></label>
+            <label class="simple-label" for="observationText">Observation<sup class="required-mark">*</sup></label>
             <textarea id="observationText"
                       name="Observation"
                       formControlName="Observation"
@@ -653,7 +653,7 @@
       <form [formGroup]="travailDuSol">
         <div class="form-section">
           <div class="form-group">
-            <label class="simple-label" for="travailDuSolDate">Date du travail<sup>*</sup></label>
+            <label class="simple-label" for="travailDuSolDate">Date du travail<sup class="required-mark">*</sup></label>
             <input type="date"
                    id="travailDuSolDate"
                    name="date"
@@ -663,7 +663,7 @@
           </div>
 
           <div class="form-group">
-            <label class="simple-label" for="travailDuSolType">Type de travail<sup>*</sup></label>
+            <label class="simple-label" for="travailDuSolType">Type de travail<sup class="required-mark">*</sup></label>
             <input type="text"
                    id="travailDuSolType"
                    name="field_work_type"

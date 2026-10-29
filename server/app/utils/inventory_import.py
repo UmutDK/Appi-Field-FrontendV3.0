@@ -23,7 +23,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 from app.db import cursor_appifield, cursor_phytoweb
 
-TEMPLATE_HEADERS = ["Numéro d'autorisation", "Nom du produit", "Quantité", "Unité", "Date d'achat"]
+# Titres explicites : « Unité » seul faisait croire qu'il fallait indiquer un nombre de bidons.
+TEMPLATE_HEADERS = ["Numéro d'autorisation", "Nom du produit", "Quantité totale achetée", "Unité (L ou Kg)", "Date d'achat"]
 _FIELDS = ("numAut", "productName", "quantity", "unit", "date")
 MAX_ROWS = 500
 MAX_FILE_SIZE = 2 * 1024 * 1024
@@ -51,7 +52,7 @@ def build_template() -> BytesIO:
         cell.font = Font(bold=True)
         cell.fill = header_fill
         cell.alignment = Alignment(horizontal="center")
-    for col, width in zip("ABCDE", (24, 32, 12, 10, 16)):
+    for col, width in zip("ABCDE", (24, 32, 24, 17, 16)):
         sheet.column_dimensions[col].width = width
     sheet.freeze_panes = "A2"
 
@@ -71,8 +72,8 @@ def build_template() -> BytesIO:
         ("", False),
         ("Numéro d'autorisation : obligatoire, tel qu'indiqué sur l'étiquette (ex. 10992P/B).", False),
         ("Nom du produit : facultatif, pour votre repère uniquement (le nom officiel Phytoweb est utilisé).", False),
-        ("Quantité : obligatoire, nombre supérieur à 0 (ex. 12,5).", False),
-        ("Unité : obligatoire, L ou kg.", False),
+        ("Quantité totale achetée : obligatoire, volume ou poids total acheté, nombre supérieur à 0 (ex. 12,5 pour deux bidons de 5 L et un de 2,5 L).", False),
+        ("Unité (L ou Kg) : obligatoire, l'unité de la quantité totale : L (litres) ou kg (kilogrammes).", False),
         ("Date d'achat : obligatoire, au format JJ/MM/AAAA (ex. 15/03/2026).", False),
         ("", False),
         ("Exemple :", True),
@@ -102,8 +103,8 @@ _HEADER_TO_FIELD = {
     "numerodautorisation": "numAut", "numeroautorisation": "numAut", "numaut": "numAut",
     "nautorisation": "numAut", "autorisation": "numAut",
     "nomduproduit": "productName", "nomproduit": "productName", "produit": "productName",
-    "quantite": "quantity", "qte": "quantity",
-    "unite": "unit",
+    "quantite": "quantity", "qte": "quantity", "quantitetotaleachetee": "quantity", "quantitetotale": "quantity",
+    "unite": "unit", "uniteloukg": "unit", "unitelkg": "unit",  # anciens et nouveaux titres du modèle
     "datedachat": "date", "dateachat": "date", "date": "date",
 }
 

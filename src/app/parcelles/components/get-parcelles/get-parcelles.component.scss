@@ -2009,3 +2009,16 @@ input.input-error {
 @media (max-width: 480px) {
     .popup-footer .popup-required-hint { order: 10; margin: 0 0 4px; }
 }
+
+
+// Liste « Ajouter une parcelle » : le panneau (overflow:hidden pour le défilement de la liste)
+// la coupait, et la carte voisine passait par-dessus. Pendant que la liste est ouverte seulement,
+// le panneau laisse déborder son contenu et passe au-dessus de la carte.
+main .container-fluid .col-lg-3:has(.add-menu-desktop.open) {
+    position: relative;
+    z-index: 1200;
+
+    .parcelles {
+        overflow: visible;
+    }
+}

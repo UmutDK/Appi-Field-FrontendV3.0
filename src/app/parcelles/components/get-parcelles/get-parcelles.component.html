@@ -376,7 +376,7 @@
                         <form [formGroup]="form" *ngIf="form">
                             <div class="row g-3">
                             <div class="col-12">
-                                <label class="simple-label" for="parcel_name">Nom de la parcelle<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_name">Nom de la parcelle<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     class="form-control popup-text-input"
@@ -392,7 +392,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label" for="parcel_area">Superficie<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_area">Superficie<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     inputmode="decimal"
@@ -410,7 +410,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
                                 <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
                                     <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
                                         <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
@@ -436,7 +436,7 @@
                                  selectedParcelForEdit?.record_type !== 'Point_parcel' &&
                                  selectedParcelForEdit?.record_type !== 'PAC_parcel')) {
                                 <div class="col-lg-12">
-                                    <label class="simple-label" for="parcel_address">Adresse de la parcelle<sup>*</sup></label>
+                                    <label class="simple-label" for="parcel_address">Adresse de la parcelle<sup class="required-mark">*</sup></label>
                                     <div class="address-field-wrapper" [class.has-suggestions]="showSuggestions && addressSuggestions.length > 0">
                                         <input
                                             type="text"
@@ -494,7 +494,7 @@
                             
                             <div class="col-lg-12">
                                 <div class="category-section">
-                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <label class="simple-label">Catégorie de parcelle<sup class="required-mark">*</sup></label>
                                     <div class="category-options">
                                         @for (cat of availableParcelCategories(); track cat) {
                                             <div class="form-check">
@@ -601,7 +601,7 @@
                         <form [formGroup]="form" *ngIf="form">
                             <div class="row g-3">
                             <div class="col-12">
-                                <label class="simple-label" for="parcel_name_point">Nom de la parcelle<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_name_point">Nom de la parcelle<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     class="form-control popup-text-input"
@@ -617,7 +617,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label" for="parcel_area_point">Superficie<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_area_point">Superficie<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     inputmode="decimal"
@@ -635,7 +635,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
                                 <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
                                     <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
                                         <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
@@ -669,7 +669,7 @@
                             
                             <div class="col-lg-12">
                                 <div class="category-section">
-                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <label class="simple-label">Catégorie de parcelle<sup class="required-mark">*</sup></label>
                                     <div class="category-options">
                                         @for (cat of availableParcelCategories(); track cat) {
                                             <div class="form-check">
@@ -745,7 +745,7 @@
                         <form #send = "ngForm" (ngSubmit)="onSendPointForm(send)">
                             <div class="row g-3">
                             <div class="col-12">
-                                <label class="simple-label" for="parcel_name_pac">Nom de la parcelle<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_name_pac">Nom de la parcelle<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     class="form-control popup-text-input"
@@ -758,7 +758,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label" for="parcel_area_pac">Superficie<sup>*</sup></label>
+                                <label class="simple-label" for="parcel_area_pac">Superficie<sup class="required-mark">*</sup></label>
                                 <input
                                     type="text"
                                     inputmode="decimal"
@@ -773,7 +773,7 @@
                             </div>
 
                             <div class="col-6">
-                                <label class="simple-label">Unité<sup>*</sup></label>
+                                <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
                                 <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
                                     <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
                                         <span class="dropdown-value">{{ getAreaUnitLabel(parcel_area_unit_fr) }}</span>
@@ -856,7 +856,7 @@
 
                             <div class="col-lg-12">
                                 <div class="category-section">
-                                    <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                    <label class="simple-label">Catégorie de parcelle<sup class="required-mark">*</sup></label>
                                     <div class="category-options">
                                         @for (cat of availableParcelCategories(); track cat) {
                                             <div class="form-check">
@@ -919,7 +919,7 @@
                             <div class="row g-3">
 
                                 <div class="col-12">
-                                    <label class="simple-label" for="parcel_name_polygon">Nom de la parcelle<sup>*</sup></label>
+                                    <label class="simple-label" for="parcel_name_polygon">Nom de la parcelle<sup class="required-mark">*</sup></label>
                                     <input
                                         type="text"
                                         class="form-control popup-text-input"
@@ -935,7 +935,7 @@
                                 </div>
 
                                 <div class="col-6">
-                                    <label class="simple-label" for="parcel_area_polygon">Superficie<sup>*</sup></label>
+                                    <label class="simple-label" for="parcel_area_polygon">Superficie<sup class="required-mark">*</sup></label>
                                     <input
                                         type="text"
                                         inputmode="decimal"
@@ -953,7 +953,7 @@
                                 </div>
 
                                 <div class="col-6">
-                                    <label class="simple-label">Unité<sup>*</sup></label>
+                                    <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
                                     <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
                                         <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
                                             <span class="dropdown-value">{{ getAreaUnitLabel(form.get('parcel_area_unit_fr')?.value) }}</span>
@@ -988,7 +988,7 @@
                                 <!-- Catégorie -->
                                 <div class="col-lg-12">
                                     <div class="category-section">
-                                        <label class="simple-label">Catégorie de parcelle<sup>*</sup></label>
+                                        <label class="simple-label">Catégorie de parcelle<sup class="required-mark">*</sup></label>
                                         <div class="category-options">
                                             @for (cat of availableParcelCategories(); track cat) {
                                                 <div class="form-check">

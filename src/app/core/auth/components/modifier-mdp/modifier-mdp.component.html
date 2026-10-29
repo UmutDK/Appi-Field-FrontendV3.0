@@ -9,7 +9,7 @@
                 <div class="auth-stack">
                     <!-- Nouveau mot de passe -->
                     <div class="auth-field">
-                        <label for="nouveauMdp">Nouveau mot de passe<sup>*</sup></label>
+                        <label for="nouveauMdp">Nouveau mot de passe<sup class="required-mark">*</sup></label>
                         <div class="password-container">
                             <div *ngIf="passwordTouched" class="password-hints">
                                 <div class="password-hint" [style.color]="passwordHasLength ? '#28a745' : '#dc3545'">
@@ -43,7 +43,7 @@
 
                     <!-- Confirmer mot de passe -->
                     <div class="auth-field">
-                        <label for="confirmationMdp">Confirmer le mot de passe<sup>*</sup></label>
+                        <label for="confirmationMdp">Confirmer le mot de passe<sup class="required-mark">*</sup></label>
                         <div class="password-container">
                             <input
                                 id="confirmationMdp"

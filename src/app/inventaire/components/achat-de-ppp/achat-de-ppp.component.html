@@ -17,7 +17,7 @@
   @if (productMode === 'phyto') {
   <form [formGroup]="searchForm" class="product-search-section">
     <div class="search-block">
-      <label class="simple-label" for="searchTerm">Produit phytoweb<sup>*</sup></label>
+      <label class="simple-label" for="searchTerm">Produit phytoweb<sup class="required-mark">*</sup></label>
 
       @if (selectedProduct) {
         <!-- Produit phyto sélectionné -->
@@ -94,7 +94,7 @@
   <!-- ===== MODE PERSONNEL ===== -->
   @if (productMode === 'personal') {
   <div class="search-block">
-    <label class="simple-label" for="personalSearchTerm">Produit personnel<sup>*</sup></label>
+    <label class="simple-label" for="personalSearchTerm">Produit personnel<sup class="required-mark">*</sup></label>
 
     @if (selectedPersonalProduct) {
       <!-- Produit sélectionné -->
@@ -162,7 +162,7 @@
     </h4>
 
     <div class="form-group full-width">
-      <label class="simple-label" for="newProductName">Nom du produit<sup>*</sup></label>
+      <label class="simple-label" for="newProductName">Nom du produit<sup class="required-mark">*</sup></label>
       <input
         type="text"
         id="newProductName"
@@ -173,7 +173,7 @@
     </div>
 
     <div class="form-group full-width">
-      <label class="simple-label" for="newProductType">Type<sup>*</sup></label>
+      <label class="simple-label" for="newProductType">Type<sup class="required-mark">*</sup></label>
       <div class="address-field-wrapper" [class.has-suggestions]="showTypeSuggestions && filteredTypeOptions.length > 0">
         <input
           type="text"
@@ -223,7 +223,7 @@
 
     <div class="row g-3">
       <div class="col-lg-12">
-        <label class="simple-label" for="adding_date">Date d'achat du produit<sup>*</sup></label>
+        <label class="simple-label" for="adding_date">Date d'achat du produit<sup class="required-mark">*</sup></label>
         <input
           type="date"
           class="form-control popup-text-input"
@@ -237,7 +237,7 @@
       </div>
 
       <div class="col-lg-6">
-        <label class="simple-label" for="quantity">Quantité achetée<sup>*</sup></label>
+        <label class="simple-label" for="quantity">Quantité achetée<sup class="required-mark">*</sup></label>
         <input
           type="number"
           step="0.001"
@@ -256,7 +256,7 @@
       </div>
 
       <div class="col-lg-6">
-        <label class="simple-label">Unité<sup>*</sup></label>
+        <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
         <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
           <button type="button" class="dropdown-btn" aria-label="Unité" (click)="toggleUnitDropdown(); $event.stopPropagation()">
             <span class="dropdown-value">{{ selectedUnitLabel }}</span>

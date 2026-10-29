@@ -39,7 +39,7 @@
                 <h2 class="form-section-title">Informations de l'entreprise</h2>
                 <div class="auth-grid">
                     <div class="auth-field">
-                        <label for="adress">Adresse (rue et localité)<sup>*</sup></label>
+                        <label for="adress">Adresse (rue et localité)<sup class="required-mark">*</sup></label>
                         <input id="adress" placeholder="Rue et localité" type="text" class="form-control" formControlName="adress" [disabled]="isLoading" required
                             [class.input-error]="showError('adress')">
                         @if (showError('adress')) {
@@ -47,7 +47,7 @@
                         }
                     </div>
                     <div class="auth-field">
-                        <label for="postal">Code postal<sup>*</sup></label>
+                        <label for="postal">Code postal<sup class="required-mark">*</sup></label>
                         <input id="postal" placeholder="Ex : 7000" type="text" inputmode="numeric" maxlength="4" class="form-control" formControlName="postal" [disabled]="isLoading" required
                             (input)="onPostalCodeInput($event)" [class.input-error]="showError('postal')">
                         @if (showError('postal')) {
@@ -59,7 +59,7 @@
                         <input id="tva" placeholder="BE 0000.000.000" type="text" class="form-control" formControlName="tva" maxlength="15" (input)="onNumeroTVAInput($event)" [disabled]="isLoading">
                     </div>
                     <div class="auth-field">
-                        <label for="name">Nom de mon exploitation<sup>*</sup></label>
+                        <label for="name">Nom de mon exploitation<sup class="required-mark">*</sup></label>
                         <input id="name" placeholder="Nom de mon exploitation" type="text" class="form-control" formControlName="name" [disabled]="isLoading" required
                             [class.input-error]="showError('name')">
                         @if (showError('name')) {
