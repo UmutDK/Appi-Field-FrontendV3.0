@@ -7,12 +7,13 @@ pour qu'une simple lecture n'écrive jamais en base.
 """
 from app.db import cursor_appifield
 
-BOOL_FIELDS = ("erRiWarningFlag", "spe8HourWarningFlag", "bbchWarningFlag")
+BOOL_FIELDS = ("erRiWarningFlag", "spe8HourWarningFlag", "bbchWarningFlag", "pacDeclarationFlag")
 
 DEFAULTS = {
     "erRiWarningFlag": False,
     "spe8HourWarningFlag": True,
     "bbchWarningFlag": True,
+    "pacDeclarationFlag": True,
     "defaultTreatmentType": "surface",
 }
 

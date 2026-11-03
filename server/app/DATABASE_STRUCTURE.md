@@ -200,6 +200,7 @@ Convention générale : toutes les tables applicatives ont une PK `<entité>Id` 
 | `erRiWarningFlag` | BOOLEAN NOT NULL DEFAULT 0 | Respecte la campagne Eco-régime réduction d'intrants → avertir sur les produits `general.erRiFlag = 1` |
 | `spe8HourWarningFlag` | BOOLEAN NOT NULL DEFAULT 1 | Afficher les avertissements horaires (`general.spe8FlagHoraire`) |
 | `bbchWarningFlag` | BOOLEAN NOT NULL DEFAULT 1 | Afficher les avertissements BBCH (`crops.bbchFlag`, corderPhytoweb) |
+| `pacDeclarationFlag` | BOOLEAN NOT NULL DEFAULT 1 | Déclare ses parcelles à la PAC : champ « Code SIGEC » et « Archiver et renouveler » affichés (migration 017) |
 | `defaultTreatmentType` | VARCHAR(20) NOT NULL DEFAULT 'surface' | Mode d'encodage présélectionné : `surface` / `porridge` / `quantity` |
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
 

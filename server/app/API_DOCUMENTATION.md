@@ -549,6 +549,7 @@ Table `userPreferences` (une ligne par utilisateur). Menu Réglages > Préféren
 | `erRiWarningFlag` | `boolean` | `false` | Respecte la campagne Eco-régime réduction d'intrants |
 | `spe8HourWarningFlag` | `boolean` | `true` | Afficher les avertissements horaires |
 | `bbchWarningFlag` | `boolean` | `true` | Afficher les avertissements BBCH |
+| `pacDeclarationFlag` | `boolean` | `true` | Déclare ses parcelles à la PAC : champ « Code SIGEC » et « Archiver et renouveler » affichés (règle d'affichage appliquée par le frontend) |
 | `defaultTreatmentType` | `"surface"` \| `"porridge"` \| `"quantity"` | `"surface"` | Mode d'encodage présélectionné |
 | `defaultEventType` | `string` (lecture seule) | | `eventType` correspondant (`phyto_surface_treatment`…) |
 

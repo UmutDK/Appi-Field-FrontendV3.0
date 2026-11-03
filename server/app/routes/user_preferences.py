@@ -25,8 +25,9 @@ def get_preferences(user_id):
 def update_preferences(user_id):
     """
     Met à jour les préférences (upsert). Body : { erRiWarningFlag?, spe8HourWarningFlag?,
-    bbchWarningFlag?, defaultTreatmentType? } — champs optionnels, ceux omis conservent leur
-    valeur actuelle (ou la valeur par défaut). Retourne les préférences complètes à jour.
+    bbchWarningFlag?, pacDeclarationFlag?, defaultTreatmentType? } — champs optionnels, ceux
+    omis conservent leur valeur actuelle (ou la valeur par défaut). Retourne les préférences
+    complètes à jour.
     """
     data = request.get_json(force=True) or {}
 
@@ -47,7 +48,7 @@ def update_preferences(user_id):
     cur = cursor_appifield()
     cur.execute(
         f"""INSERT INTO userPreferences (idUser, {', '.join(BOOL_FIELDS)}, defaultTreatmentType)
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (%s, {', '.join(['%s'] * len(BOOL_FIELDS))}, %s)
             ON DUPLICATE KEY UPDATE
                 {', '.join(f'{field} = VALUES({field})' for field in BOOL_FIELDS)},
                 defaultTreatmentType = VALUES(defaultTreatmentType)""",
