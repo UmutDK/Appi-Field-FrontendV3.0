@@ -11,7 +11,7 @@
         </span>
       }
     </div>
-    <p class="preferences-intro">Ces réglages s'appliquent à l'encodage de vos traitements. Ils sont enregistrés automatiquement.</p>
+    <p class="preferences-intro">Ces réglages s'appliquent à l'encodage de vos traitements et de vos parcelles. Ils sont enregistrés automatiquement.</p>
 
     @if (isLoading()) {
       <div class="text-center py-3">
@@ -70,6 +70,21 @@
             </button>
           }
         </div>
+      </div>
+
+      <div class="preferences-group">
+        <h3 class="preferences-group__title">Encodage des parcelles</h3>
+
+        <label class="preferences-check" for="prefPac">
+          <input type="checkbox" id="prefPac"
+                 [checked]="prefs().pacDeclarationFlag"
+                 [disabled]="saving()"
+                 (change)="save('pacDeclarationFlag', $any($event.target).checked)">
+          <div class="preferences-check__text">Je déclare mes parcelles à la PAC</div>
+          <i class="bi bi-info-circle-fill popup-tooltip-icon"
+             matTooltip="Si vous décochez cette case, le code SIGEC et l'option « Archiver et renouveler » ne sont plus proposés pour vos parcelles."
+             matTooltipPosition="above"></i>
+        </label>
       </div>
     }
   </div>

@@ -5,6 +5,7 @@ import * as L from 'leaflet';
 import { SharedModule } from '../../../shared/shared.module';
 import { ParcellesService, Parcelle } from '../../services/parcelles-server.service';
 import { RegistreService } from '../../../registre/services/registre.service';
+import { UserPreferencesService } from '../../../reglage/services/user-preferences.service';
 import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -34,6 +35,9 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
   // Inject central RegistreService to refresh global cache when parcels change
   private registreService: RegistreService = inject(RegistreService);
   private cdr = inject(ChangeDetectorRef);
+  private userPreferencesService = inject(UserPreferencesService);
+  /** Préférence « Je déclare mes parcelles à la PAC » : affiche le code SIGEC et « Archiver et renouveler ». */
+  declaresToPac = true;
   
   // Utiliser un signal Angular pour réactivité
   parcellesSignal = signal<any[]>([]);
@@ -619,6 +623,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   ngOnInit(): void {
+    this.userPreferencesService.declaresToPac().subscribe(value => this.declaresToPac = value);
     // Charger les parcelles et les afficher
     this.loadParcelles();
 

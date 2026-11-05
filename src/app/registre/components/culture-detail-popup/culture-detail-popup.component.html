@@ -105,13 +105,17 @@
         <!-- Lignes -->
         @for (intervention of culture.interventions; track $index) {
           <div class="ht-row" [class.ht-row-traitement]="intervention.type?.toLowerCase() === 'traitement'">
-            <span class="ht-col ht-date">{{ formatDate(intervention.date) }}</span>
+            <span class="ht-col ht-date">
+              @if (intervention.originalData?.third_part_flag) {
+                <span class="dot-tiers"
+                      title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire"
+                      aria-label="Traitement effectué par un tiers"></span>
+              }
+              {{ formatDate(intervention.date) }}
+            </span>
             <span class="ht-col ht-parcelle">{{ intervention.parcelle }}</span>
             <span class="ht-col ht-type">
               <span class="ht-type-badge">{{ intervention.type }}</span>
-              @if (intervention.originalData?.third_part_flag) {
-                <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>
-              }
             </span>
             <span class="ht-col ht-bbch">{{ getBBCH(intervention) || '–' }}</span>
             <span class="ht-col ht-cible">{{ getCibles(intervention) || '–' }}</span>

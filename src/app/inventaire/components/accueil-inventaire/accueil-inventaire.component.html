@@ -19,7 +19,7 @@
             </button>
 
             <button type="button" class="btn-export" (click)="onImportAchats()">
-                <i class="bi bi-file-earmark-arrow-up"></i> Importer des achats
+                <i class="bi bi-file-earmark-arrow-up"></i> Importer des produits
             </button>
 
             <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
@@ -55,7 +55,7 @@
                         <button type="button" class="add-menu-item" role="menuitem" (click)="onImportAchats(); closeFab()">
                             <span class="add-menu-icon"><i class="bi bi-file-earmark-arrow-up"></i></span>
                             <span class="add-menu-text">
-                                <span class="add-menu-title">Importer des achats</span>
+                                <span class="add-menu-title">Importer des produits</span>
                                 <span class="add-menu-desc">Depuis un fichier Excel, plusieurs achats en une fois.</span>
                             </span>
                         </button>
@@ -668,7 +668,7 @@
                             <div class="popup-header">
                                 <div class="header-title">
                                     <i class="bi bi-file-earmark-arrow-up"></i>
-                                    <h3>Importer des achats</h3>
+                                    <h3>Importer des produits</h3>
                                 </div>
                                 <button type="button" class="btn-close-popup" (click)="onClose()"><i class="bi bi-x-lg"></i></button>
                             </div>

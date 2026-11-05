@@ -1549,21 +1549,16 @@ app-traitement-phyto, app-travail-au-champ {
 }
 
 
-// Badge « Tiers » : traitement effectué par un tiers (thirdPartFlag), non déduit de l'inventaire.
-// Affiché dans le carnet (cartes des cultures, détail d'une culture, vue globale).
-.badge-tiers {
+// Point jaune : traitement effectué par un tiers (thirdPartFlag), non déduit de l'inventaire.
+// Affiché à gauche de la date dans le carnet (cartes des cultures, détail d'une culture, vue globale).
+.dot-tiers {
     display: inline-block;
-    margin-left: 6px;
-    padding: 1px 7px;
-    border-radius: 999px;
-    background: #fff4e0;
-    color: #8a5300;
-    border: 1px solid #f3d9a8;
-    font-size: 0.72rem;
-    font-weight: 600;
-    line-height: 1.5;
+    width: 9px;
+    height: 9px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #f5b301;
     vertical-align: middle;
-    white-space: nowrap;
     cursor: help;
 }
 

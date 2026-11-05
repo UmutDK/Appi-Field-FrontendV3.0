@@ -93,23 +93,6 @@
                             </article>
                         }
 
-                        <!-- Traitement effectué par un tiers : visible en création ET en modification (modifiable après coup) -->
-                        <article class="col-lg-12">
-                            <div class="form-check third-part-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       id="thirdPartFlag"
-                                       formControlName="third_part_flag">
-                                <label class="form-check-label simple-label" for="thirdPartFlag">
-                                    Traitement effectué par un tiers
-                                </label>
-                                <i class="bi bi-info-circle-fill popup-tooltip-icon"
-                                   matTooltip="Cochez cette case si le traitement a été réalisé par un tiers (entrepreneur, voisin…) avec ses propres produits. Les quantités de produits de ce traitement ne seront pas déduites de votre inventaire. Le traitement reste enregistré normalement dans votre registre."
-                                   matTooltipPosition="above">
-                                </i>
-                            </div>
-                        </article>
-
                         <article class="col-lg-6">
                             <p></p>
                             <label class="simple-label" for="traitementDate">Date de traitement<sup class="required-mark">*</sup></label>
@@ -305,6 +288,29 @@
                                 </label>
                                 <input type="radio" id="localized-non" value="Non" name="localized_treatment" formControlName="localized_treatment" />
                                 <label for="localized-non" [class.active]="formTraitement.value.localized_treatment === 'Non'">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </article>
+
+                        <!-- Valeurs booléennes (pas « Oui »/« Non ») : le code convertit ce champ avec !! -->
+                        <article class="col-lg-6">
+                            <p></p>
+                            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                                <label class="simple-label" style="margin:0;">Traitement effectué par un tiers</label>
+                                <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                                   matTooltip="Choisissez Oui si le traitement a été réalisé par un tiers (entrepreneur, voisin…) avec ses propres produits. Les quantités de produits de ce traitement ne seront pas déduites de votre inventaire. Le traitement reste enregistré normalement dans votre registre."
+                                   matTooltipPosition="above"></i>
+                            </div>
+                            <div class="yes-no-toggle">
+                                <input type="radio" id="third-part-oui" [value]="true" name="third_part_flag" formControlName="third_part_flag" />
+                                <label for="third-part-oui" [class.active]="formTraitement.value.third_part_flag === true">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Oui</span>
+                                </label>
+                                <input type="radio" id="third-part-non" [value]="false" name="third_part_flag" formControlName="third_part_flag" />
+                                <label for="third-part-non" [class.active]="formTraitement.value.third_part_flag === false">
                                     <i class="bi bi-x-circle-fill"></i>
                                     <span>Non</span>
                                 </label>

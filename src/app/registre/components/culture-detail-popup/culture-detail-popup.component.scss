@@ -322,7 +322,7 @@
   .ht-head,
   .ht-row {
     display: grid;
-    grid-template-columns: 90px 1fr 110px 72px minmax(80px, 1fr) minmax(120px, 2fr) 40px;
+    grid-template-columns: 120px 1fr 110px 72px minmax(80px, 1fr) minmax(120px, 2fr) 40px;
     align-items: center;
     width: 100%;
   }
@@ -386,17 +386,6 @@
       white-space: nowrap;
     }
 
-    // Badge « Tiers » sous le type : la colonne (110px) coupe sinon tout ce qui dépasse
-    .ht-type:has(.badge-tiers) {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 3px;
-      white-space: normal;
-
-      .badge-tiers { margin-left: 0; }
-    }
-
     &.ht-row-traitement .ht-type-badge {
       background: #ece7fb;
       color: #4c3d99;
@@ -450,21 +439,21 @@
   // ── Responsive : masquage progressif des colonnes (inchangé) ──────────────
   @media (max-width: 580px) {
     .ht-head, .ht-row {
-      grid-template-columns: 82px 1fr 90px minmax(80px, 1fr) minmax(120px, 2fr) 36px;
+      grid-template-columns: 98px 1fr 90px minmax(80px, 1fr) minmax(120px, 2fr) 36px;
     }
     .ht-bbch { display: none; }
   }
 
   @media (max-width: 460px) {
     .ht-head, .ht-row {
-      grid-template-columns: 82px 1fr 90px minmax(120px, 2fr) 36px;
+      grid-template-columns: 98px 1fr 90px minmax(120px, 2fr) 36px;
     }
     .ht-cible { display: none; }
   }
 
   @media (max-width: 360px) {
     .ht-head, .ht-row {
-      grid-template-columns: 82px 1fr minmax(120px, 2fr) 36px;
+      grid-template-columns: 98px 1fr minmax(120px, 2fr) 36px;
     }
     .ht-type { display: none; }
   }

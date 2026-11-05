@@ -54,6 +54,11 @@
                                                 @for (event of filteredEvents; track event.originalData.event_id || event.originalData.travaux_aux_champs_id; let i = $index) {
                                                     <tr [class]="event.eventType === 'traitement' ? 'table-row-traitement' : 'table-row-travail'">
                                                         <td>
+                                                            @if (event.eventType === 'traitement' && event.originalData?.third_part_flag) {
+                                                                <span class="dot-tiers"
+                                                                      title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire"
+                                                                      aria-label="Traitement effectué par un tiers"></span>
+                                                            }
                                                             {{event.date}}
                                                         </td>
                                                         <td>{{event.culture}}</td>
@@ -67,9 +72,6 @@
                                                                    [class]="event.eventType === 'traitement' ? 'bi-droplet-fill' : 'bi-tools'"></i>
                                                                 {{event.type}}
                                                             </span>
-                                                            @if (event.eventType === 'traitement' && event.originalData?.third_part_flag) {
-                                                                <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>
-                                                            }
                                                         </td>
                                                         <td>{{event.cible}}</td>
                                                         <td>{{event.operateur}}</td>

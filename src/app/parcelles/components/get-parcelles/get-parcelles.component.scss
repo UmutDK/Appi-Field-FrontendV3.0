@@ -20,9 +20,13 @@
     }
 }
 
-// Le panneau est collé au bord gauche de l'écran et le bouton passe souvent sous le titre :
+// Le bouton est sous le titre, dans le panneau collé au bord gauche de l'écran :
 // la liste s'ouvre donc vers la droite (alignée sur le bord gauche du bouton) au lieu de
 // s'aligner à droite et de déborder hors de l'écran.
+.add-menu-desktop {
+    margin-bottom: 0.75rem;
+}
+
 .add-menu-desktop .add-menu-list {
     left: 0;
     right: auto;

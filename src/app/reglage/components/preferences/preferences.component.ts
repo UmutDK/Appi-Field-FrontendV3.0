@@ -31,6 +31,7 @@ export class PreferencesComponent implements OnInit {
     erRiWarningFlag: false,
     spe8HourWarningFlag: true,
     bbchWarningFlag: true,
+    pacDeclarationFlag: true,
     defaultTreatmentType: 'surface',
   });
   /** Message bref après un enregistrement (« Préférences enregistrées ») ou une erreur. */

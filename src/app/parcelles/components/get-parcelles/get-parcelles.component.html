@@ -15,75 +15,75 @@
                 <div class="parcelles">
                     <!-- Header fixe -->
                     <div class="parcelles-header">
-                        <!-- Titre + bouton "Ajouter une parcelle" (liste déroulante) en haut à droite -->
                         <div class="panel-title-row">
                             <h1 class="principal">Ma carte</h1>
-                            <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
-                                <button type="button" class="add-menu-btn" (click)="toggleFab()"
-                                        aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
-                                    <i class="bi bi-plus-lg"></i>
-                                    <span>Ajouter une parcelle</span>
-                                    <i class="bi bi-chevron-down add-menu-chevron"></i>
-                                </button>
-                                @if (isFabOpen) {
-                                    <div class="add-menu-list" role="menu">
-                                        <button type="button" class="add-menu-item" role="menuitem" (click)="startDrawPolygon(); closeFab()">
-                                            <span class="add-menu-icon"><i class="bi bi-pentagon"></i></span>
-                                            <span class="add-menu-text">
-                                                <span class="add-menu-title">Tracer un polygone</span>
-                                                <span class="add-menu-desc">Dessinez le contour de la parcelle point par point.</span>
-                                            </span>
-                                        </button>
-                                        <button type="button" class="add-menu-item" role="menuitem" (click)="addClickMarqueur(); closeFab()">
-                                            <span class="add-menu-icon"><i class="bi bi-pin-map"></i></span>
-                                            <span class="add-menu-text">
-                                                <span class="add-menu-title">Placer un point sur la carte</span>
-                                                <span class="add-menu-desc">Cliquez à l'emplacement de la parcelle.</span>
-                                            </span>
-                                        </button>
-                                        <button type="button" class="add-menu-item" role="menuitem" (click)="afficher(); closeFab()">
-                                            <span class="add-menu-icon"><i class="bi bi-house-add"></i></span>
-                                            <span class="add-menu-text">
-                                                <span class="add-menu-title">Par adresse</span>
-                                                <span class="add-menu-desc">Localisez la parcelle à partir de son adresse.</span>
-                                            </span>
-                                        </button>
-                                        <button type="button" class="add-menu-item" role="menuitem"
-                                                (click)="onParcellaire(); closeFab()"
-                                                [disabled]="!isZoomSufficient || isLoadingParcellaire">
-                                            <span class="add-menu-icon">
+                        </div>
+
+                        <div class="add-menu add-menu-desktop" [class.open]="isFabOpen" (click)="$event.stopPropagation()">
+                            <button type="button" class="add-menu-btn" (click)="toggleFab()"
+                                    aria-haspopup="menu" [attr.aria-expanded]="isFabOpen">
+                                <i class="bi bi-plus-lg"></i>
+                                <span>Ajouter une parcelle</span>
+                                <i class="bi bi-chevron-down add-menu-chevron"></i>
+                            </button>
+                            @if (isFabOpen) {
+                                <div class="add-menu-list" role="menu">
+                                    <button type="button" class="add-menu-item" role="menuitem" (click)="startDrawPolygon(); closeFab()">
+                                        <span class="add-menu-icon"><i class="bi bi-pentagon"></i></span>
+                                        <span class="add-menu-text">
+                                            <span class="add-menu-title">Tracer un polygone</span>
+                                            <span class="add-menu-desc">Dessinez le contour de la parcelle point par point.</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="add-menu-item" role="menuitem" (click)="addClickMarqueur(); closeFab()">
+                                        <span class="add-menu-icon"><i class="bi bi-pin-map"></i></span>
+                                        <span class="add-menu-text">
+                                            <span class="add-menu-title">Placer un point sur la carte</span>
+                                            <span class="add-menu-desc">Cliquez à l'emplacement de la parcelle.</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="add-menu-item" role="menuitem" (click)="afficher(); closeFab()">
+                                        <span class="add-menu-icon"><i class="bi bi-house-add"></i></span>
+                                        <span class="add-menu-text">
+                                            <span class="add-menu-title">Par adresse</span>
+                                            <span class="add-menu-desc">Localisez la parcelle à partir de son adresse.</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="add-menu-item" role="menuitem"
+                                            (click)="onParcellaire(); closeFab()"
+                                            [disabled]="!isZoomSufficient || isLoadingParcellaire">
+                                        <span class="add-menu-icon">
+                                            @if (isLoadingParcellaire) {
+                                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                                            } @else {
+                                                <i class="bi bi-grid-3x3"></i>
+                                            }
+                                        </span>
+                                        <span class="add-menu-text">
+                                            <span class="add-menu-title">Le parcellaire (PAC on Web)</span>
+                                            <span class="add-menu-desc">
                                                 @if (isLoadingParcellaire) {
-                                                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                                                    Chargement...
+                                                } @else if (isZoomSufficient) {
+                                                    Charge les parcelles officielles de la zone affichée.
                                                 } @else {
-                                                    <i class="bi bi-grid-3x3"></i>
+                                                    {{ zoomMessage || 'Zoomez davantage sur la carte pour l\'activer.' }}
                                                 }
                                             </span>
+                                        </span>
+                                    </button>
+                                    @if (tilesDisplayed) {
+                                        <div class="add-menu-separator"></div>
+                                        <button type="button" class="add-menu-item add-menu-item--danger" role="menuitem" (click)="onRemoveTiles(); closeFab()">
+                                            <span class="add-menu-icon"><i class="bi bi-trash3"></i></span>
                                             <span class="add-menu-text">
-                                                <span class="add-menu-title">Le parcellaire (PAC on Web)</span>
-                                                <span class="add-menu-desc">
-                                                    @if (isLoadingParcellaire) {
-                                                        Chargement...
-                                                    } @else if (isZoomSufficient) {
-                                                        Charge les parcelles officielles de la zone affichée.
-                                                    } @else {
-                                                        {{ zoomMessage || 'Zoomez davantage sur la carte pour l\'activer.' }}
-                                                    }
-                                                </span>
+                                                <span class="add-menu-title">Retirer les tuiles du parcellaire</span>
+                                                <span class="add-menu-desc">Masque les parcelles PAC affichées sur la carte.</span>
                                             </span>
                                         </button>
-                                        @if (tilesDisplayed) {
-                                            <div class="add-menu-separator"></div>
-                                            <button type="button" class="add-menu-item add-menu-item--danger" role="menuitem" (click)="onRemoveTiles(); closeFab()">
-                                                <span class="add-menu-icon"><i class="bi bi-trash3"></i></span>
-                                                <span class="add-menu-text">
-                                                    <span class="add-menu-title">Retirer les tuiles du parcellaire</span>
-                                                    <span class="add-menu-desc">Masque les parcelles PAC affichées sur la carte.</span>
-                                                </span>
-                                            </button>
-                                        }
-                                    </div>
-                                }
-                            </div>
+                                    }
+                                </div>
+                            }
                         </div>
 
                         <!-- Boutons de contrôle du mode carte -->
@@ -479,17 +479,18 @@
                                 </div>
                             }
 
-                            <!-- Champ Code SIGEC - toujours visible -->
-                            <div class="col-lg-12">
-                                <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
-                                <input
-                                    type="text"
-                                    class="form-control popup-text-input"
-                                    id="sigec_code"
-                                    placeholder="Ex : 12345A"
-                                    formControlName="sigec_code"
-                                >
-                            </div>
+                            @if (declaresToPac) {
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="sigec_code"
+                                        placeholder="Ex : 12345A"
+                                        formControlName="sigec_code"
+                                    >
+                                </div>
+                            }
                             
                             
                             <div class="col-lg-12">
@@ -533,6 +534,23 @@
                             </span>
                         </p>
                     }
+                    @if (editMode) {
+                        <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
+                            <i class="bi bi-archive"></i>
+                            Archiver la parcelle
+                        </button>
+                    }
+                    @if (editMode && selectedParcelForEdit?.polygone) {
+                        <button
+                            type="button"
+                            class="btn-secondary"
+                            (click)="startEditPolygon()"
+                            title="Redessiner le tracé du polygone"
+                        >
+                            <i class="bi bi-pencil-square"></i>
+                            Modifier le tracé
+                        </button>
+                    }
                     <button
                         type="button"
                         class="btn-primary"
@@ -547,22 +565,7 @@
                             Enregistrer
                         }
                     </button>
-                    @if (editMode && selectedParcelForEdit?.polygone) {
-                        <button
-                            type="button"
-                            class="btn-secondary"
-                            (click)="startEditPolygon()"
-                            title="Redessiner le tracé du polygone"
-                        >
-                            <i class="bi bi-pencil-square"></i>
-                            Modifier le tracé
-                        </button>
-                    }
                     @if (editMode) {
-                        <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
-                            <i class="bi bi-archive"></i>
-                            Archiver la parcelle
-                        </button>
                         <button
                             type="button"
                             class="btn-primary danger"
@@ -655,17 +658,18 @@
                                 </div>
                             </div>
 
-                            <!-- Champ Code SIGEC -->
-                            <div class="col-lg-12">
-                                <label class="simple-label" for="sigec_code_point">Code SIGEC de la parcelle</label>
-                                <input
-                                    type="text"
-                                    class="form-control popup-text-input"
-                                    id="sigec_code_point"
-                                    placeholder="Ex : 12345A"
-                                    formControlName="sigec_code"
-                                >
-                            </div>
+                            @if (declaresToPac) {
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="sigec_code_point">Code SIGEC de la parcelle</label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="sigec_code_point"
+                                        placeholder="Ex : 12345A"
+                                        formControlName="sigec_code"
+                                    >
+                                </div>
+                            }
                             
                             <div class="col-lg-12">
                                 <div class="category-section">
@@ -841,18 +845,19 @@
                                 <input type="hidden" [(ngModel)]="lon" name="lon">
                             }
                             
-                            <!-- Champ Code SIGEC -->
-                            <div class="col-lg-12">
-                                <label class="simple-label" for="sigec_code_pac">Code SIGEC de la parcelle</label>
-                                <input
-                                    type="text"
-                                    class="form-control popup-text-input"
-                                    id="sigec_code_pac"
-                                    placeholder="Ex : 12345A"
-                                    [(ngModel)]="sigec_code"
-                                    name="sigec_code"
-                                >
-                            </div>
+                            @if (declaresToPac) {
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="sigec_code_pac">Code SIGEC de la parcelle</label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="sigec_code_pac"
+                                        placeholder="Ex : 12345A"
+                                        [(ngModel)]="sigec_code"
+                                        name="sigec_code"
+                                    >
+                                </div>
+                            }
 
                             <div class="col-lg-12">
                                 <div class="category-section">
@@ -973,17 +978,18 @@
                                     </div>
                                 </div>
 
-                                <!-- Code SIGEC -->
-                                <div class="col-lg-12">
-                                    <label class="simple-label" for="sigec_code_polygon">Code SIGEC de la parcelle</label>
-                                    <input
-                                        type="text"
-                                        class="form-control popup-text-input"
-                                        id="sigec_code_polygon"
-                                        placeholder="Ex : 12345A"
-                                        formControlName="sigec_code"
-                                    >
-                                </div>
+                                @if (declaresToPac) {
+                                    <div class="col-lg-12">
+                                        <label class="simple-label" for="sigec_code_polygon">Code SIGEC de la parcelle</label>
+                                        <input
+                                            type="text"
+                                            class="form-control popup-text-input"
+                                            id="sigec_code_polygon"
+                                            placeholder="Ex : 12345A"
+                                            formControlName="sigec_code"
+                                        >
+                                    </div>
+                                }
 
                                 <!-- Catégorie -->
                                 <div class="col-lg-12">
@@ -1227,6 +1233,6 @@
     </footer>
 
     @if (showArchiveChoice && selectedParcelForEdit) {
-        <app-parcel-archive-choice [parcel]="selectedParcelForEdit"
+        <app-parcel-archive-choice [parcel]="selectedParcelForEdit" [canRenew]="declaresToPac"
             (done)="onArchiveDone($event)" (closed)="showArchiveChoice = false"></app-parcel-archive-choice>
     }

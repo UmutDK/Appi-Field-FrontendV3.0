@@ -17,18 +17,20 @@
             <span class="archive-choice__desc">La parcelle est retirée de vos listes et retrouvée dans Mes archives.</span>
           </span>
         </button>
-        <button type="button" class="archive-choice__option" (click)="showRenewStep = true; errorMessage = ''" [disabled]="isArchiving">
-          <i class="bi bi-arrow-repeat archive-choice__icon"></i>
-          <span class="archive-choice__text">
-            <span class="archive-choice__title">
-              Archiver et renouveler
-              <i class="bi bi-info-circle-fill popup-tooltip-icon"
-                 matTooltip="La même parcelle avec un nouveau numéro PAC" matTooltipPosition="above"
-                 (click)="$event.stopPropagation()"></i>
+        @if (canRenew) {
+          <button type="button" class="archive-choice__option" (click)="showRenewStep = true; errorMessage = ''" [disabled]="isArchiving">
+            <i class="bi bi-arrow-repeat archive-choice__icon"></i>
+            <span class="archive-choice__text">
+              <span class="archive-choice__title">
+                Archiver et renouveler
+                <i class="bi bi-info-circle-fill popup-tooltip-icon"
+                   matTooltip="La même parcelle avec un nouveau numéro PAC" matTooltipPosition="above"
+                   (click)="$event.stopPropagation()"></i>
+              </span>
+              <span class="archive-choice__desc">Une copie active est créée avec un nouveau code SIGEC.</span>
             </span>
-            <span class="archive-choice__desc">Une copie active est créée avec un nouveau code SIGEC.</span>
-          </span>
-        </button>
+          </button>
+        }
         @if (isArchiving) {
           <p class="archive-choice__status"><span class="spinner-border spinner-border-sm"></span> Archivage en cours...</p>
         }

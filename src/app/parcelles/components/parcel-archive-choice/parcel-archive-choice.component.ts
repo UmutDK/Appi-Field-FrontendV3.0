@@ -17,6 +17,8 @@ import { Parcelle, ParcellesService } from '../../services/parcelles-server.serv
 })
 export class ParcelArchiveChoiceComponent {
   @Input({ required: true }) parcel!: Parcelle;
+  /** false si l'utilisateur ne déclare pas ses parcelles à la PAC : seul « Archiver » est proposé. */
+  @Input() canRenew = true;
   /** Archivage ou renouvellement réussi : le parent ferme son formulaire et recharge sa liste. */
   @Output() done = new EventEmitter<'archived' | 'renewed'>();
   @Output() closed = new EventEmitter<void>();

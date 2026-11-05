@@ -257,10 +257,19 @@ a { text-decoration: none; }
         font-size: 0.85rem;
     }
 
+    // Colonne fixée à droite : le crayon reste visible quand le tableau défile (fond repris pour masquer les autres colonnes)
     .action-col {
         width: 56px;
         text-align: right;
+        position: sticky;
+        right: 0;
+        z-index: 1;
+        background: #ffffff;
     }
+
+    thead th.action-col { background: #f8f9fa; }
+    tbody tr:hover .action-col { background: #f8fbfb; }
+    tbody tr.selected-row .action-col { background: #f0faf9; }
 }
 
 // En-têtes triables

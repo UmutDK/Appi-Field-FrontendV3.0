@@ -57,36 +57,32 @@
                                             {{ culture.phytoweb_name || culture.nomPhytoweb_crops_id || 'Catégorie non définie' }}
                                         </div>
                                     </div>
+                                    <div class="section3">
+                                        <div class="parcelles-container" (click)="toggleParcellesTooltip(culture.crop_id, $event)">
+                                            <div class="parcelles">
+                                                <div class="icon"><i class="material-icons">location_on</i></div>
+                                                <div class="text">
+                                                    {{ getParcelCount(culture.parcels_id) }} parcelle{{ getParcelCount(culture.parcels_id) > 1 ? 's' : '' }}
+                                                </div>
+                                            </div>
+                                            <div class="parcelles-tooltip" [class.show]="openParcellesTooltipId === culture.crop_id">
+                                                <div class="tooltip-header">Parcelles associées</div>
+                                                <div class="tooltip-list">
+                                                    @for (parcel of getParcelList(culture.parcels_id); track $index) {
+                                                        <div class="tooltip-item">
+                                                            <i class="material-icons">arrow_right</i>
+                                                            {{ parcel }}
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="eppo-code" *ngIf="culture.eppo || culture.EPPOCode">
                                         <i class="material-icons">tag</i>
                                         <span>{{ culture.eppo || culture.EPPOCode }}</span>
                                     </div>
                                 </div>
-                            </article>
-                        </section>
-                        <section class="row">
-                            <article class="col-lg-12">
-                            <div class="section3">
-                                <div class="parcelles-container" (click)="toggleParcellesTooltip(culture.crop_id, $event)">
-                                    <div class="parcelles">
-                                        <div class="icon"><i class="material-icons">location_on</i></div>
-                                        <div class="text">
-                                            {{ getParcelCount(culture.parcels_id) }} parcelle{{ getParcelCount(culture.parcels_id) > 1 ? 's' : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="parcelles-tooltip" [class.show]="openParcellesTooltipId === culture.crop_id">
-                                        <div class="tooltip-header">Parcelles associées</div>
-                                        <div class="tooltip-list">
-                                            @for (parcel of getParcelList(culture.parcels_id); track $index) {
-                                                <div class="tooltip-item">
-                                                    <i class="material-icons">arrow_right</i>
-                                                    {{ parcel }}
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             </article>
                         </section>
                         <section class="row">
@@ -104,9 +100,16 @@
                                 <tbody>
                                     @for (ligne of getPaginatedInterventions(culture); track $index) {
                                         <tr [class.row-alternate]="$index % 2 === 1">
-                                        <td>{{ formatDateShort(ligne.date) }}</td>
+                                        <td>
+                                            @if (ligne.originalData?.third_part_flag) {
+                                                <span class="dot-tiers"
+                                                      title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire"
+                                                      aria-label="Traitement effectué par un tiers"></span>
+                                            }
+                                            {{ formatDateShort(ligne.date) }}
+                                        </td>
                                         <td>{{ ligne.parcelle }}</td>
-                                        <td>{{ ligne.type }}@if (ligne.originalData?.third_part_flag) { <span class="badge-tiers" title="Traitement effectué par un tiers : ses produits ne sont pas déduits de votre inventaire">Tiers</span>}</td>
+                                        <td>{{ ligne.type }}</td>
                                         <td>{{ ligne.details }}</td>
                                         </tr>
                                     }

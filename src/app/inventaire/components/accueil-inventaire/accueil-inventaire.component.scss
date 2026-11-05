@@ -471,11 +471,15 @@ a { text-decoration: none; }
 .inventory-body {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 24px;
 
     @media (max-width: 575.98px) {
         flex-direction: column;
         align-items: stretch;
+
+        // En colonne, la base de 220px s'appliquerait à la hauteur
+        .stats-container { flex-basis: auto; }
     }
 }
 
@@ -493,7 +497,7 @@ a { text-decoration: none; }
 }
 
 .stats-container {
-    flex: 1;
+    flex: 1 1 220px;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -504,6 +508,7 @@ a { text-decoration: none; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
     padding: 8px 0;
 
@@ -529,6 +534,7 @@ a { text-decoration: none; }
         font-weight: 700;
         font-size: 1rem;
         white-space: nowrap;
+        margin-left: auto;
     }
 
     &--main .stat-value { font-size: 1.2rem; }

@@ -34,7 +34,7 @@
                         <a class="add-menu-item" role="menuitem" routerLink="/parcelles/voir-parcelles" (click)="closeAddMenu()">
                             <span class="add-menu-icon"><i class="bi bi-map"></i></span>
                             <span class="add-menu-text">
-                                <span class="add-menu-title">Dessiner sur ma carte</span>
+                                <span class="add-menu-title">Sur ma carte</span>
                                 <span class="add-menu-desc">Tracez le contour de la parcelle sur la carte.</span>
                             </span>
                         </a>
@@ -503,17 +503,18 @@
                                             </div>
                                         }
 
-                                        <!-- Champ Code SIGEC - toujours visible -->
-                                        <div class="col-lg-12">
-                                            <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
-                                            <input
-                                                type="text"
-                                                class="form-control popup-text-input"
-                                                id="sigec_code"
-                                                placeholder="Ex : 12345A"
-                                                formControlName="sigec_code"
-                                            >
-                                        </div>
+                                        @if (declaresToPac) {
+                                            <div class="col-lg-12">
+                                                <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control popup-text-input"
+                                                    id="sigec_code"
+                                                    placeholder="Ex : 12345A"
+                                                    formControlName="sigec_code"
+                                                >
+                                            </div>
+                                        }
                                         <div class="col-lg-12">
                                             <div class="category-section">
                                                 <label class="simple-label">Catégorie de parcelle<sup class="required-mark">*</sup></label>
@@ -555,23 +556,22 @@
                                         </span>
                                     </p>
                                 }
+                                @if (editMode) {
+                                    <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
+                                        <i class="bi bi-archive"></i>
+                                        Archiver la parcelle
+                                    </button>
+                                }
                                 <button type="submit" class="btn-primary" (click)="onSubmit()" [disabled]="!form.valid || isSaving">
                                     @if (isSaving) {
                                         <span class="spinner-border spinner-border-sm me-1" role="status"></span>
                                         Enregistrement...
-                                    } @else if (editMode) {
-                                        <i class="bi bi-arrow-up-circle"></i>
-                                        Mettre à jour
                                     } @else {
                                         <i class="bi bi-check-circle"></i>
                                         Enregistrer
                                     }
                                 </button>
                                 @if (editMode) {
-                                    <button type="button" class="btn-secondary" (click)="openArchiveChoice()">
-                                        <i class="bi bi-archive"></i>
-                                        Archiver la parcelle
-                                    </button>
                                     <button type="button" class="btn-primary danger" (click)="deleteEditedParcel()" [disabled]="isDeleting">
                                         @if (isDeleting) {
                                             <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -589,7 +589,7 @@
     </div>
 
     @if (showArchiveChoice && selectedParcelForEdit) {
-        <app-parcel-archive-choice [parcel]="selectedParcelForEdit"
+        <app-parcel-archive-choice [parcel]="selectedParcelForEdit" [canRenew]="declaresToPac"
             (done)="onArchiveDone($event)" (closed)="showArchiveChoice = false"></app-parcel-archive-choice>
     }
 </main>

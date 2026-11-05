@@ -23,7 +23,7 @@ interface ReviewRow extends ImportPreviewRow {
 }
 
 /**
- * Popup « Importer des achats » (updateToDo/08) : 1. fichier → 2. vérification et correction
+ * Popup « Importer des produits » (updateToDo/08) : 1. fichier → 2. vérification et correction
  * des lignes → 3. import en une fois. Les corrections sont faites en local (pas de nouvel appel
  * à /preview) ; seules les lignes incluses ET valides sont envoyées à /confirm.
  */
