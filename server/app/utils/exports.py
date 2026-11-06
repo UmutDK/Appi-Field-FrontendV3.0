@@ -271,7 +271,7 @@ def build_inventaire_excel(user_id: str) -> BytesIO:
     _write_sheet(wb.active, summary_headers, summary_rows)
     wb.active.title = "Inventaire"
 
-    detail_headers = ["Produit (id)", "Type", "Date", "Quantité", "Unité", "Traitement source"]
+    detail_headers = ["Produit (id)", "Type", "Date", "Quantité", "Unité", "Traitement source", "Remarque"]
     detail_rows = [
         [
             entry["productId"],
@@ -281,6 +281,7 @@ def build_inventaire_excel(user_id: str) -> BytesIO:
             op.get("quantity"),
             find_unit_name_by_id(op.get("quantityUnitId")),
             op.get("sourceEventId") or "",
+            op.get("remarks") or "",
         ]
         for entry in stock
         for op in entry["operations"]

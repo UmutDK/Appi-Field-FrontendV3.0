@@ -418,6 +418,7 @@ CREATE TABLE IF NOT EXISTS inventoriesOperations (
     quantityUnitId VARCHAR(255),
     standardQuantity DOUBLE,
     correctionMode VARCHAR(10) NULL,
+    remarks TEXT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_invops_user (userId),
@@ -487,7 +488,6 @@ CREATE TABLE IF NOT EXISTS userPreferences (
     erRiWarningFlag BOOLEAN NOT NULL DEFAULT 0,
     spe8HourWarningFlag BOOLEAN NOT NULL DEFAULT 1,
     bbchWarningFlag BOOLEAN NOT NULL DEFAULT 1,
-    pacDeclarationFlag BOOLEAN NOT NULL DEFAULT 1,
     defaultTreatmentType VARCHAR(20) NOT NULL DEFAULT 'surface',
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

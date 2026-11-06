@@ -48,8 +48,16 @@ def _validate_operation(operation_type, quantity, correction_mode):
     return correction_mode, None
 
 
+def _clean_remarks(value):
+    """Remarque libre : texte sans espaces superflus, ou None si vide."""
+    if value is None:
+        return None
+    value = str(value).strip()
+    return value or None
+
+
 def _insert_operation(user_id, product_id, operation_type, operation_date,
-                      quantity, unit_name, correction_mode=None) -> str:
+                      quantity, unit_name, correction_mode=None, remarks=None) -> str:
     """Insère un mouvement (sans commit) et retourne son id. Partagé par POST /inventories et l'import."""
     unit_id, standard_qty = resolve_and_standardize(quantity, unit_name)
     operation_id = str(uuid.uuid4())
@@ -57,12 +65,12 @@ def _insert_operation(user_id, product_id, operation_type, operation_date,
     cur.execute(
         """INSERT INTO inventoriesOperations
             (inventoryOperationId, userId, productId, operationType,
-             operationDate, quantity, quantityUnitId, standardQuantity, correctionMode)
-           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+             operationDate, quantity, quantityUnitId, standardQuantity, correctionMode, remarks)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
             operation_id, user_id, product_id,
             operation_type, operation_date, quantity, unit_id, standard_qty,
-            correction_mode,
+            correction_mode, _clean_remarks(remarks),
         ),
     )
     return operation_id
@@ -81,8 +89,9 @@ def add_inventory_operation(user_id):
     """
     Ajoute un mouvement de stock.
     Body attendu : { productId, operationType, operationDate, quantity, quantityUnit,
-                     correctionMode? } — correctionMode ('plus'/'minus') requis si
-    operationType = 'correction', ignoré sinon. quantity toujours > 0.
+                     correctionMode?, remarks? } — correctionMode ('plus'/'minus') requis si
+    operationType = 'correction', ignoré sinon. quantity toujours > 0. remarks : texte libre
+    optionnel (champ « Remarque » des corrections), NULL si vide.
     """
     data = request.get_json(force=True)
     product_id = data.get("productId")
@@ -97,7 +106,7 @@ def add_inventory_operation(user_id):
 
     operation_id = _insert_operation(
         user_id, product_id, operation_type, data.get("operationDate"),
-        quantity, data.get("quantityUnit"), correction_mode,
+        quantity, data.get("quantityUnit"), correction_mode, data.get("remarks"),
     )
     commit_appifield()
     return jsonify({"success": True, "inventoryOperationId": operation_id}), 201
@@ -163,8 +172,9 @@ def update_inventory_operation(user_id, operation_id):
     """
     Modifie un mouvement de stock existant.
     Body attendu : { productId?, operationType?, operationDate?, quantity?, quantityUnit?,
-                     correctionMode? }
-    — mêmes champs que POST, tous optionnels (les champs omis conservent leur valeur actuelle).
+                     correctionMode?, remarks? }
+    — mêmes champs que POST, tous optionnels (les champs omis conservent leur valeur actuelle ;
+    remarks vide ou null efface la remarque).
     Le mouvement fusionné est revalidé comme en POST (correctionMode remis à NULL si le
     type n'est plus 'correction').
     """
@@ -200,13 +210,16 @@ def update_inventory_operation(user_id, operation_id):
     else:
         unit_id, standard_qty = existing["quantityUnitId"], existing["standardQuantity"]
 
+    remarks = _clean_remarks(data["remarks"]) if "remarks" in data else existing.get("remarks")
+
     cur.execute(
         """UPDATE inventoriesOperations
            SET productId = %s, operationType = %s, operationDate = %s,
-               quantity = %s, quantityUnitId = %s, standardQuantity = %s, correctionMode = %s
+               quantity = %s, quantityUnitId = %s, standardQuantity = %s, correctionMode = %s,
+               remarks = %s
            WHERE inventoryOperationId = %s AND userId = %s""",
         (product_id, operation_type, operation_date,
-         quantity, unit_id, standard_qty, correction_mode, operation_id, user_id),
+         quantity, unit_id, standard_qty, correction_mode, remarks, operation_id, user_id),
     )
     commit_appifield()
     return jsonify({"success": True})

@@ -159,7 +159,7 @@ Parcelles archivées uniquement (équivalent de `/crops/archive`).
 Archive / restaure une parcelle. `404` si elle n'existe pas. Les cultures, traitements et travaux déjà liés restent liés.
 
 ### `POST /parcels/<parcelId>/renew` 🔒
-« Archiver et renouveler » (même parcelle, nouveau numéro PAC). Body : `{ "sigecCode": "..." }` (obligatoire, `400` sinon). Archive la parcelle et crée une copie active (surface, géométrie, catégorie, adresse, type identiques) nommée `"<nom> (1)"`, avec le nouveau `sigecCode` et `prevParcelId` = id de la parcelle archivée. `404` si introuvable, `409` si déjà archivée.
+« Archiver et renouveler » (même parcelle, nouveau numéro PAC). Body : `{ "sigecCode": "...", "parcelName"?: "...", "parcelArea"?: 2.5, "parcelAreaUnit"?: "ha" }`. `sigecCode` est obligatoire (`400` sinon). Archive la parcelle et crée une copie active (géométrie, catégorie, adresse, type identiques) avec le nouveau `sigecCode` et `prevParcelId` = id de la parcelle archivée. Nom, surface et unité sont ceux envoyés ; un champ omis reprend la valeur de l'ancienne parcelle (nom : `"<nom> (1)"`). `400` si `parcelName` ou `parcelAreaUnit` est vide, ou si `parcelArea` n'est pas un nombre > 0. `404` si introuvable, `409` si déjà archivée.
 
 **Réponse 201** : `{ "success": true, "parcelId": "<nouvelle>", "archivedParcelId": "<ancienne>" }`
 
@@ -482,6 +482,7 @@ Le stock courant n'est pas stocké : il est **recalculé à la volée** à chaqu
 | `quantityUnitId` | `string` \| `null` | Unité résolue |
 | `standardQuantity` | `number` \| `null` | Quantité standardisée (calculée, utilisée pour le calcul du stock) |
 | `correctionMode` | `"plus"` \| `"minus"` \| `null` | Uniquement pour `"correction"` : `"plus"` ajoute la quantité au stock, `"minus"` la retire. `null` pour les autres types |
+| `remarks` | `string` \| `null` | Remarque libre (champ « Remarque » des corrections), acceptée pour tous les types ; `null` si vide. En `PUT`, omise = conservée, vide = effacée |
 | `sourceEventId` | `string` \| `null` | `eventId` du traitement source, uniquement pour `"treatment"` |
 
 ### `GET /inventories` 🔒
@@ -549,7 +550,6 @@ Table `userPreferences` (une ligne par utilisateur). Menu Réglages > Préféren
 | `erRiWarningFlag` | `boolean` | `false` | Respecte la campagne Eco-régime réduction d'intrants |
 | `spe8HourWarningFlag` | `boolean` | `true` | Afficher les avertissements horaires |
 | `bbchWarningFlag` | `boolean` | `true` | Afficher les avertissements BBCH |
-| `pacDeclarationFlag` | `boolean` | `true` | Déclare ses parcelles à la PAC : champ « Code SIGEC » et « Archiver et renouveler » affichés (règle d'affichage appliquée par le frontend) |
 | `defaultTreatmentType` | `"surface"` \| `"porridge"` \| `"quantity"` | `"surface"` | Mode d'encodage présélectionné |
 | `defaultEventType` | `string` (lecture seule) | | `eventType` correspondant (`phyto_surface_treatment`…) |
 

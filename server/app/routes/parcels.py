@@ -229,15 +229,36 @@ def unarchive_parcel(user_id, parcel_id):
 def renew_parcel(user_id, parcel_id):
     """
     « Archiver et renouveler » : même parcelle, nouveau numéro PAC.
-    Body : { sigecCode } (obligatoire). Archive la parcelle et en crée une copie active
-    (mêmes surface, géométrie, catégorie, adresse, type) nommée « <nom> (1) », avec le
-    nouveau code SIGEC et prevParcelId = id de la parcelle archivée. Les cultures/traitements/
-    travaux existants restent liés à l'ancienne parcelle.
+    Body : { sigecCode (obligatoire), parcelName?, parcelArea?, parcelAreaUnit? }.
+    Archive la parcelle et en crée une copie active (géométrie, catégorie, adresse, type
+    identiques) avec le nouveau code SIGEC et prevParcelId = id de la parcelle archivée.
+    Nom, surface et unité sont ceux envoyés ; champ omis = valeur de l'ancienne parcelle
+    (nom : « <nom> (1) »). Les cultures/traitements/travaux existants restent liés à
+    l'ancienne parcelle.
     """
     data = request.get_json(force=True) or {}
     sigec_code = _clean_sigec(data.get("sigecCode"))
     if not sigec_code:
         return jsonify({"error": "sigecCode requis"}), 400
+
+    new_name = None
+    if "parcelName" in data:
+        new_name = str(data.get("parcelName") or "").strip()
+        if not new_name:
+            return jsonify({"error": "parcelName ne peut pas être vide"}), 400
+    new_area = None
+    if "parcelArea" in data:
+        try:
+            new_area = float(data.get("parcelArea"))
+        except (TypeError, ValueError):
+            return jsonify({"error": "parcelArea doit être un nombre"}), 400
+        if new_area <= 0:
+            return jsonify({"error": "parcelArea doit être supérieure à 0"}), 400
+    new_unit = None
+    if "parcelAreaUnit" in data:
+        new_unit = str(data.get("parcelAreaUnit") or "").strip()
+        if not new_unit:
+            return jsonify({"error": "parcelAreaUnit ne peut pas être vide"}), 400
 
     cur = cursor_appifield()
     cur.execute("SELECT * FROM parcels WHERE parcelId = %s AND userId = %s", (parcel_id, user_id))
@@ -248,9 +269,9 @@ def renew_parcel(user_id, parcel_id):
         return jsonify({"error": "Parcelle déjà archivée"}), 409
 
     new_id = _insert_parcel(user_id, {
-        "parcelName": f"{old.get('parcelName') or ''} (1)",
-        "parcelArea": old.get("parcelArea"),
-        "parcelAreaUnit": find_unit_name_by_id(old.get("parcelAreaUnitId")),
+        "parcelName": new_name or f"{old.get('parcelName') or ''} (1)",
+        "parcelArea": new_area if new_area is not None else old.get("parcelArea"),
+        "parcelAreaUnit": new_unit or find_unit_name_by_id(old.get("parcelAreaUnitId")),
         "latitude": old.get("latitude"),
         "longitude": old.get("longitude"),
         "polygon": old.get("polygon"),
