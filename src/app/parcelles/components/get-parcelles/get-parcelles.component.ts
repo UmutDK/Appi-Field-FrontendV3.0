@@ -97,7 +97,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Liste fixe des catégories proposées dans tous les formulaires d'ajout/édition de
   // parcelle : plus de création de catégorie personnalisée, uniquement ces 3 choix.
-  availableParcelCategories = computed(() => ['Plein air', 'Sous-protection', 'Traitement de semences']);
+  availableParcelCategories = computed(() => ['Plein air', 'Sous protection', 'Traitement de semences']);
 
   // Properties for map layer management
   satelliteLayerActive: boolean = false;
@@ -141,9 +141,9 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Dropdown personnalisé pour l'unité de superficie (partagé, un seul popup visible à la fois)
   isUnitDropdownOpen: boolean = false;
   readonly areaUnitOptions: { value: string; label: string }[] = [
-    { value: 'ha', label: 'Ha' },
-    { value: 'a', label: 'A' },
-    { value: 'm2', label: 'M²' },
+    { value: 'ha', label: 'ha' },
+    { value: 'a', label: 'a' },
+    { value: 'm2', label: 'm²' },
   ];
   drawnPolygonLatLngs: L.LatLng[] = [];
   private boundPolygonClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null;
@@ -473,7 +473,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!nature) return 'Plein air';
     const natureLower = nature.toLowerCase();
     if (natureLower.includes('serre')) return 'serre';
-    if (natureLower.includes('abri') || natureLower.includes('tunnel')) return 'Sous-protection';
+    if (natureLower.includes('abri') || natureLower.includes('tunnel')) return 'Sous protection';
     return 'Plein air';
   }
 
@@ -2344,7 +2344,7 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getAreaUnitLabel(unit: string | null | undefined): string {
-    return this.areaUnitOptions.find(o => o.value === unit)?.label || 'Ha';
+    return this.areaUnitOptions.find(o => o.value === unit)?.label || 'ha';
   }
 
   selectAreaUnitAddress(unit: string): void {

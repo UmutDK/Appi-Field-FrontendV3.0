@@ -6,6 +6,7 @@ import { CreationCompteService } from '../../services/creation-compte.service';
 import { BanniereComponent } from "../../../accueil/components/banniere/banniere.component";
 import { map, tap } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { formatPhytolicence, PHYTOLICENCE_ERROR, PHYTOLICENCE_PATTERN } from '../../../shared/utils/phytolicence.util';
 
 @Component({
   selector: 'app-creation-compte-form',
@@ -19,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './creation-compte-form.component.scss'
 })
 export class CreationCompteFormComponent implements OnInit{
+  readonly phytolicenceError = PHYTOLICENCE_ERROR;
 
   form!: FormGroup;
   isLoading = false;
@@ -42,7 +44,7 @@ export class CreationCompteFormComponent implements OnInit{
     // Créer d'abord le formulaire avec id_user vide
     this.form = this.formBluider.group({
       id_user : [null],
-      phytolicence : [null, []],
+      phytolicence : [null, [Validators.pattern(PHYTOLICENCE_PATTERN)]],
       exploiting_number : [null],
       adress : [null, [Validators.required]],
       postal : [null, [Validators.required, Validators.pattern(/^\d{4}$/)]],
@@ -162,13 +164,8 @@ export class CreationCompteFormComponent implements OnInit{
 
   onPhytolicenceInput(event: Event) {
   const input = event.target as HTMLInputElement;
-  let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // garde uniquement lettres et chiffres
-
-  // Ajoute les points en suivant le pattern XX.X.XXXX
-  if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-  if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-
-  input.value = value;
+  input.value = formatPhytolicence(input.value);
+  this.form.get('phytolicence')?.setValue(input.value);
 }
 
 onNumeroTVAInput(event: Event) {

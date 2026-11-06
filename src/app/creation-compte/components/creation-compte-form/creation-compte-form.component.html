@@ -23,6 +23,9 @@
                             </i>
                         </label>
                         <input id="phytolicence" placeholder="Ex : 23.2.00445" type="text" class="form-control" formControlName="phytolicence" maxlength="10" (input)="onPhytolicenceInput($event)" [disabled]="isLoading">
+                        @if (form.get('phytolicence')?.touched && form.get('phytolicence')?.errors?.['pattern']) {
+                            <p class="field-error"><i class="bi bi-exclamation-circle"></i> {{ phytolicenceError }}</p>
+                        }
                     </div>
                     <div class="auth-field">
                         <label for="exploitingNumber" class="label-with-help">

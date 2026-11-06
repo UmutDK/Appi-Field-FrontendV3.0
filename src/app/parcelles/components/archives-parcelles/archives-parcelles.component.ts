@@ -145,7 +145,7 @@ export class ArchivesParcellesComponent implements OnInit {
 
   formatArea(p: Parcelle): string {
     const n = parseFloat(p.parcel_area);
-    return isNaN(n) ? '-' : `${n.toLocaleString('fr-BE', { maximumFractionDigits: 2 })} ${p.parcel_area_unit_fr || 'ha'}`;
+    return isNaN(n) ? '-' : `${n.toLocaleString('fr-BE', { maximumFractionDigits: 2 })} ${(p.parcel_area_unit_fr || 'ha').replace('m2', 'm²')}`;
   }
 
   async restoreParcel(parcel: ArchivedParcelRow): Promise<void> {

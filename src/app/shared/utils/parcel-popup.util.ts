@@ -43,7 +43,7 @@ export function buildParcelPopupHtml(parcelle: any, options: ParcelPopupOptions 
   const name = parcelle?.parcel_name || parcelle?.name || 'Parcelle sans nom';
   const category = parcelle?.parcel_category;
   const area = parcelle?.parcel_area;
-  const unit = parcelle?.parcel_area_unit_fr || '';
+  const unit = (parcelle?.parcel_area_unit_fr || '').replace('m2', 'm²');
   const address = parcelle?.parcel_address;
   const lat = parcelle?.lat;
   const lon = parcelle?.lon;

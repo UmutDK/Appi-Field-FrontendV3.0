@@ -61,7 +61,7 @@ export function fromApi(p: any): Parcelle {
     parcel_area: p.parcelArea != null ? String(p.parcelArea) : '',
     parcel_area_unit_fr: p.parcelAreaUnit || 'ha',
     parcel_address: p.parcelAddress || '',
-    parcel_category: p.parcelCategory || '',
+    parcel_category: (p.parcelCategory || '').replace('Sous-protection', 'Sous protection'), // ancienne valeur en base
     polygone: typeof p.polygon === 'string' ? p.polygon : (p.polygon ? JSON.stringify(p.polygon) : undefined),
     imported_from_gml: p.recordType === 'gml_import',
     record_type: p.recordType,

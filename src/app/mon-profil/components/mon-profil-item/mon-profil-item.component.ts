@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { ExploitationService } from '../../services/exploitation.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { formatPhytolicence } from '../../../shared/utils/phytolicence.util';
 
 @Component({
   selector: 'app-mon-profil-item',
@@ -22,13 +23,8 @@ import { HttpClient } from '@angular/common/http';
 export class MonProfilItemComponent implements OnInit{
   onPhytolicenceInput(event: Event) {
   const input = event.target as HTMLInputElement;
-  let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // garde uniquement lettres et chiffres
-
-  // Ajoute les points en suivant le pattern XX.X.XXXX
-  if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-  if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-
-  input.value = value;
+  input.value = formatPhytolicence(input.value);
+  this.userInfos.phytolicence = input.value;
 }
 
   userInfos: any = {

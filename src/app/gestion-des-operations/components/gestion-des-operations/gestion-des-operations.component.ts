@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GestionDesOperationsService } from '../../services/gestion-des-operations.service';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
+import { formatPhytolicence, PHYTOLICENCE_PATTERN } from '../../../shared/utils/phytolicence.util';
  
 declare var M: any; // Import Materialize CSS
  
@@ -31,7 +32,7 @@ export class GestionDesOperationsComponent implements OnInit, AfterViewInit{
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       name:[null, [Validators.required]],
-      phytolicence:[null, [Validators.required]]
+      phytolicence:[null, [Validators.required, Validators.pattern(PHYTOLICENCE_PATTERN)]]
     });
     this.signalHttp.onGet().pipe(
       tap(r =>{
@@ -66,13 +67,8 @@ export class GestionDesOperationsComponent implements OnInit, AfterViewInit{
  
  onPhytolicenceInput(event: Event) {
   const input = event.target as HTMLInputElement;
-  let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // garde uniquement lettres et chiffres
-
-  // Ajoute les points en suivant le pattern XX.X.XXXX
-  if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-  if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-
-  input.value = value;
+  input.value = formatPhytolicence(input.value);
+  this.form.get('phytolicence')?.setValue(input.value);
 }
 }
 

@@ -194,7 +194,7 @@
                                                     <span class="category-badge category-badge--none">Non définie</span>
                                                 }
                                                 <span class="area-badge">
-                                                    {{parcelle.parcel_area}} {{parcelle.parcel_area_unit_fr}}
+                                                    {{parcelle.parcel_area}} {{parcelle.parcel_area_unit_fr?.replace('m2', 'm²')}}
                                                 </span>
                                             </div>
                                         </div>
@@ -1075,8 +1075,8 @@
                                         <div class="ha">
                                             <div class="text">
                                                 <select [(ngModel)]="parcel_area_unit_fr" name="parcel_area_unit_fr">
-                                                    <option value="ha">Ha</option>
-                                                    <option value="a">A</option>
+                                                    <option value="ha">ha</option>
+                                                    <option value="a">a</option>
                                                     <option value="m2">M 2</option>
                                                 </select>  
                                             </div>
@@ -1125,8 +1125,8 @@
                                                         </article>
                                                         <article class="col-lg-3">
                                                             <label>
-                                                                <input  type="radio"  [(ngModel)]="parcel_category" value="Sous-protection" name="parcel_category" />
-                                                                <span>Sous-protection</span>
+                                                                <input  type="radio"  [(ngModel)]="parcel_category" value="Sous protection" name="parcel_category" />
+                                                                <span>Sous protection</span>
                                                             </label>
                                                         </article>
                                                         <article class="col-lg-3">

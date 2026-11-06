@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { fromApi as parcelFromApi } from '../../../parcelles/services/parcelles-server.service';
 import { RegistreService } from '../../../registre/services/registre.service';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
+import { formatPhytolicence, isPhytolicenceValid, PHYTOLICENCE_ERROR } from '../../../shared/utils/phytolicence.util';
 
 interface Formation {
   day: string;
@@ -347,6 +348,10 @@ export class BackOfficeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.operateurError = 'Le nom et prénom est obligatoire.';
       return;
     }
+    if (!isPhytolicenceValid(this.operateurForm.phytolicence)) {
+      this.operateurError = PHYTOLICENCE_ERROR;
+      return;
+    }
     this.operateurSaving = true;
     this.operateurError = '';
 
@@ -382,11 +387,8 @@ export class BackOfficeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onPhytolicenceInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-    if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-    input.value = value;
-    this.operateurForm.phytolicence = value;
+    input.value = formatPhytolicence(input.value);
+    this.operateurForm.phytolicence = input.value;
   }
 
   deleteOperateur(op: any): void {

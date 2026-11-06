@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SharedModule } from '../../../shared/shared.module';
 import { ReglageService } from '../../services/reglage.service';
+import { formatPhytolicence, isPhytolicenceValid, PHYTOLICENCE_ERROR } from '../../../shared/utils/phytolicence.util';
 
 
 @Component({
@@ -65,6 +66,10 @@ export class CreateUserComponent implements OnInit {
       this.operateurError = 'Le nom et prénom est obligatoire.';
       return;
     }
+    if (!isPhytolicenceValid(this.operateurForm.phytolicence)) {
+      this.operateurError = PHYTOLICENCE_ERROR;
+      return;
+    }
     this.operateurSaving = true;
     this.operateurError = '';
 
@@ -93,13 +98,8 @@ export class CreateUserComponent implements OnInit {
 
   onPhytolicenceInput(event: Event) {
     const input = event.target as HTMLInputElement;
-    let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
-    if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-    if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-
-    input.value = value;
-    this.operateurForm.phytolicence = value;
+    input.value = formatPhytolicence(input.value);
+    this.operateurForm.phytolicence = input.value;
   }
 
 }

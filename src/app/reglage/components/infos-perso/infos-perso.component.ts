@@ -4,6 +4,7 @@ import { MonProfilService } from '../../../mon-profil/services/mon-profil.servic
 import { MonProfilInfosService } from '../../../mon-profil/services/mon-profil-infos.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { formatPhytolicence, isPhytolicenceValid, PHYTOLICENCE_ERROR } from '../../../shared/utils/phytolicence.util';
 
 @Component({
   selector: 'app-infos-perso',
@@ -45,11 +46,8 @@ export class InfosPersoComponent implements OnInit {
 
   onPhytolicenceInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (value.length > 2) value = value.slice(0, 2) + '.' + value.slice(2);
-    if (value.length > 4) value = value.slice(0, 4) + '.' + value.slice(4);
-    input.value = value;
-    this.userInfos.phytolicence = value;
+    input.value = formatPhytolicence(input.value);
+    this.userInfos.phytolicence = input.value;
   }
 
   isEmpty(value: string | null | undefined): boolean {
@@ -67,6 +65,10 @@ export class InfosPersoComponent implements OnInit {
     if (!this.canSave()) {
       this.touched = { nom: true, prenom: true };
       this.errorMsg = 'Le nom et le prénom sont obligatoires.';
+      return;
+    }
+    if (!isPhytolicenceValid(this.userInfos.phytolicence)) {
+      this.errorMsg = PHYTOLICENCE_ERROR;
       return;
     }
     this.saving = true;

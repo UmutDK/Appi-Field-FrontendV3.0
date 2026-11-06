@@ -16,7 +16,7 @@ function parcelFromApi(p: any): any {
     parcel_area: p.parcelArea != null ? String(p.parcelArea) : '',
     parcel_area_unit_fr: p.parcelAreaUnit || 'ha',
     parcel_address: p.parcelAddress || '',
-    parcel_category: p.parcelCategory || '',
+    parcel_category: (p.parcelCategory || '').replace('Sous-protection', 'Sous protection'), // ancienne valeur en base
     lat: p.latitude != null ? String(p.latitude) : '',
     lon: p.longitude != null ? String(p.longitude) : '',
     polygone: typeof p.polygon === 'string' ? p.polygon : (p.polygon ? JSON.stringify(p.polygon) : undefined),

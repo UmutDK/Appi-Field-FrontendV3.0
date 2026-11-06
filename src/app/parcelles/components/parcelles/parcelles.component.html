@@ -230,7 +230,7 @@
                                             </td>
                                             <td class="area-col">
                                                 @if (item.parcel_area && item.parcel_area !== '' && item.parcel_area !== 'null') {
-                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr : '' }}
+                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr.replace('m2', 'm²') : '' }}
                                                 } @else {
                                                     <span class="muted">N/A</span>
                                                 }
@@ -318,7 +318,7 @@
                                             }
                                             <span class="pci-area">
                                                 @if (item.parcel_area && item.parcel_area !== '' && item.parcel_area !== 'null') {
-                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr : '' }}
+                                                    {{ item.parcel_area }}{{ item.parcel_area_unit_fr ? ' ' + item.parcel_area_unit_fr.replace('m2', 'm²') : '' }}
                                                 } @else {
                                                     <span class="muted">N/A</span>
                                                 }

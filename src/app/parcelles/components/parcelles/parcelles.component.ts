@@ -74,9 +74,9 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
   // Dropdown personnalisé pour l'unité de superficie
   isUnitDropdownOpen: boolean = false;
   readonly areaUnitOptions: { value: string; label: string }[] = [
-    { value: 'ha', label: 'Ha' },
-    { value: 'a', label: 'A' },
-    { value: 'm2', label: 'M²' },
+    { value: 'ha', label: 'ha' },
+    { value: 'a', label: 'a' },
+    { value: 'm2', label: 'm²' },
   ];
 
   parcel_name!:string;  
@@ -105,7 +105,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
 
   // Liste fixe des catégories proposées dans les formulaires d'ajout/édition : plus de
   // création de catégorie personnalisée, uniquement ces 3 choix.
-  availableParcelCategories = computed(() => ['Plein air', 'Sous-protection', 'Traitement de semences']);
+  availableParcelCategories = computed(() => ['Plein air', 'Sous protection', 'Traitement de semences']);
 
   // Propriétés pour la pagination
   currentPage: number = 1;
@@ -973,7 +973,7 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
 
   getAreaUnitLabel(): string {
     const current = this.form?.get('parcel_area_unit_fr')?.value;
-    return this.areaUnitOptions.find(o => o.value === current)?.label || 'Ha';
+    return this.areaUnitOptions.find(o => o.value === current)?.label || 'ha';
   }
 
   /**
