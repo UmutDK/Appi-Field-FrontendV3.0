@@ -6,7 +6,6 @@ import * as L from 'leaflet';
 import 'leaflet-draw';
 import { ParcellesService, Parcelle, fromApi } from '../../services/parcelles-server.service';
 import { RegistreService } from '../../../registre/services/registre.service';
-import { UserPreferencesService } from '../../../reglage/services/user-preferences.service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { map, Observable, tap, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -43,9 +42,6 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
   private parcellesService: ParcellesService = inject(ParcellesService);
   private httpClient = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
-  private userPreferencesService = inject(UserPreferencesService);
-  /** Préférence « Je déclare mes parcelles à la PAC » : affiche le code SIGEC et « Archiver et renouveler ». */
-  declaresToPac = true;
   private router = inject(Router);
   // inject central registre to refresh global parcels cache
   private registreService: RegistreService = inject(RegistreService);
@@ -229,7 +225,6 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userPreferencesService.declaresToPac().subscribe(value => this.declaresToPac = value);
     //  Initialisation des coordonnées à 0 au démarrage uniquement
     this.lat = 0;
     this.lon = 0;

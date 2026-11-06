@@ -19,6 +19,7 @@ export interface RealInventoryData {
 export interface EventHistory {
   event_id: string;
   event_type: 'treatment' | 'purchase' | 'ppnu_entry' | 'ppnv_entry' | 'correction'; // Type d'événement : treatment, purchase, ppnu_entry, ppnv_entry ou correction
+  remarks?: string; // Remarque libre d'une correction de stock
   correction_mode?: 'plus' | 'minus'; // Sens de la correction (quantité toujours positive)
   event_date: string;
   event_crop: string;
@@ -193,6 +194,7 @@ export class InventaireService {
           quantity_used: op.quantity,
           quantity_used_unit: normalizeQuantityUnit(op.quantityUnit),
           correction_mode: op.correctionMode || undefined,
+          remarks: op.remarks || undefined,
         });
 
         if (op.operationType === 'purchase') {
@@ -342,6 +344,7 @@ export class InventaireService {
       operationDate: entry.date,
       quantity: entry.quantity,
       quantityUnit: entry.unit,
+      remarks: entry.remarks ?? '',
     }).pipe(
       tap(() => this.getRealInventoryData().subscribe()),
       catchError((error: any) => { throw error; })
@@ -356,6 +359,7 @@ export class InventaireService {
       operationDate: entry.date,
       quantity: entry.quantity,
       quantityUnit: entry.unit,
+      remarks: entry.remarks ?? '',
     }).pipe(
       tap(() => this.getRealInventoryData().subscribe()),
       catchError((error: any) => { throw error; })

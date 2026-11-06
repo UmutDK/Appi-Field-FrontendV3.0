@@ -36,6 +36,7 @@ export class CorrectionStockComponent implements OnInit, AfterViewInit, OnDestro
   selectedDate: string = '';
   quantity: number | null = 0;
   selectedUnit: string = 'L';
+  remarks: string = '';
 
   // État du formulaire
   isSubmitting: boolean = false;
@@ -158,6 +159,7 @@ export class CorrectionStockComponent implements OnInit, AfterViewInit, OnDestro
     // Valeurs enregistrées, jamais les valeurs par défaut
     this.selectedProductId = editing.productId;
     this.selectedMode = editing.entry.mode;
+    this.remarks = editing.entry.remarks || '';
     this.selectedDate = editing.entry.date;
     this.quantity = editing.entry.quantity;
     this.selectedUnit = editing.entry.unit || 'L';
@@ -245,6 +247,7 @@ export class CorrectionStockComponent implements OnInit, AfterViewInit, OnDestro
       mode: this.selectedMode,
       quantity: this.quantity || 0,
       unit: this.selectedUnit,
+      remarks: this.remarks.trim(),
     };
 
     const request$ = this.isEditMode
@@ -270,6 +273,7 @@ export class CorrectionStockComponent implements OnInit, AfterViewInit, OnDestro
     this.selectedDate = new Date().toISOString().split('T')[0];
     this.quantity = 0;
     this.selectedUnit = 'L';
+    this.remarks = '';
     this.isSubmitting = false;
     this.isEditMode = false;
     this.editingEventId = '';

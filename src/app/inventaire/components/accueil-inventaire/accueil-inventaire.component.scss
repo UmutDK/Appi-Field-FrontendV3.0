@@ -1172,3 +1172,11 @@ a { text-decoration: none; }
     from { opacity: 0; transform: translate(-50%, 8px); }
     to { opacity: 1; transform: translate(-50%, 0); }
 }
+
+// Remarque d'une correction de stock dans l'historique (texte complet au survol)
+.correction-remark {
+    color: #374151;
+    cursor: help;
+
+    i { color: #6b7280; }
+}

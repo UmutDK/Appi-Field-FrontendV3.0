@@ -3,6 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { RegistreService } from '../../registre/services/registre.service';
 
+export interface RenewParcelData {
+  sigecCode: string;
+  parcelName: string;
+  parcelArea: number;
+  parcelAreaUnit: string; // 'ha' | 'a' | 'm2'
+}
+
 export interface Parcelle {
   id_parcel: string;
   licence: string;
@@ -152,9 +159,9 @@ export class ParcellesService {
     await this.afterArchiveChange();
   }
 
-  /** Archive la parcelle et crée sa copie active « <nom> (1) » avec le nouveau code SIGEC (obligatoire). */
-  async renewParcelle(id: string, sigecCode: string): Promise<{ parcelId: string; archivedParcelId: string }> {
-    const res = await this.http.post<any>(`${this.apiUrl}/${id}/renew`, { sigecCode }).toPromise();
+  /** Archive la parcelle et crée sa copie active avec les valeurs saisies (SIGEC obligatoire). */
+  async renewParcelle(id: string, data: RenewParcelData): Promise<{ parcelId: string; archivedParcelId: string }> {
+    const res = await this.http.post<any>(`${this.apiUrl}/${id}/renew`, data).toPromise();
     await this.afterArchiveChange();
     return res;
   }

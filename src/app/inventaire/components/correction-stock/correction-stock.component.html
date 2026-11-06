@@ -107,6 +107,18 @@
         </div>
       </div>
 
+      <!-- Remarque (facultative) -->
+      <div class="col-lg-12">
+        <label class="simple-label" for="correctionRemarks">Remarque</label>
+        <textarea id="correctionRemarks"
+                  class="form-control popup-text-input"
+                  name="remarks"
+                  [(ngModel)]="remarks"
+                  maxlength="500"
+                  rows="2"
+                  placeholder="Ex : bidon endommagé, erreur d'encodage, inventaire physique…"></textarea>
+      </div>
+
       @if (isAlreadyZero) {
         <div class="col-lg-12">
           <div class="form-text correction-info">

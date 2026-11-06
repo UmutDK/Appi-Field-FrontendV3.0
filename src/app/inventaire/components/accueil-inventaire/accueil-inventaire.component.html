@@ -480,7 +480,15 @@
                                                     @if (usage.event_type === 'correction') {
                                                         <td><span class="tag tag--correction">Correction {{ usage.correction_mode === 'plus' ? '+' : '−' }}</span></td>
                                                         <td>{{ usage.event_date | date:'dd/MM/yyyy' }}</td>
-                                                        <td>—</td>
+                                                        <td>
+                                                            @if (usage.remarks) {
+                                                                <span class="correction-remark" [title]="usage.remarks">
+                                                                    <i class="bi bi-chat-left-text"></i> {{ usage.remarks.length > 40 ? (usage.remarks | slice:0:40) + '…' : usage.remarks }}
+                                                                </span>
+                                                            } @else {
+                                                                —
+                                                            }
+                                                        </td>
                                                         <td>
                                                             <span [class]="usage.correction_mode === 'plus' ? 'qty qty--in' : 'qty qty--out'">
                                                                 {{ usage.correction_mode === 'plus' ? '+' : '−' }}{{ usage.quantity_used | number:'1.2-2' }} {{ selectedProduct?.quantity_unit }}
