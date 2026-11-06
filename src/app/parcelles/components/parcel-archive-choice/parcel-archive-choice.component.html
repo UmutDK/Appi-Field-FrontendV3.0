@@ -17,20 +17,18 @@
             <span class="archive-choice__desc">La parcelle est retirée de vos listes et retrouvée dans Mes archives.</span>
           </span>
         </button>
-        @if (canRenew) {
-          <button type="button" class="archive-choice__option" (click)="showRenewStep = true; errorMessage = ''" [disabled]="isArchiving">
-            <i class="bi bi-arrow-repeat archive-choice__icon"></i>
-            <span class="archive-choice__text">
-              <span class="archive-choice__title">
-                Archiver et renouveler
-                <i class="bi bi-info-circle-fill popup-tooltip-icon"
-                   matTooltip="La même parcelle avec un nouveau numéro PAC" matTooltipPosition="above"
-                   (click)="$event.stopPropagation()"></i>
-              </span>
-              <span class="archive-choice__desc">Une copie active est créée avec un nouveau code SIGEC.</span>
-            </span>
-          </button>
-        }
+      <button type="button" class="archive-choice__option" (click)="openRenewStep()" [disabled]="isArchiving">
+        <i class="bi bi-arrow-repeat archive-choice__icon"></i>
+        <span class="archive-choice__text">
+          <span class="archive-choice__title">
+            Archiver et renouveler
+            <i class="bi bi-info-circle-fill popup-tooltip-icon"
+               matTooltip="La même parcelle avec un nouveau numéro PAC" matTooltipPosition="above"
+               (click)="$event.stopPropagation()"></i>
+          </span>
+          <span class="archive-choice__desc">Une copie active est créée avec un nouveau code SIGEC, un nom et une superficie modifiables.</span>
+        </span>
+      </button>
         @if (isArchiving) {
           <p class="archive-choice__status"><span class="spinner-border spinner-border-sm"></span> Archivage en cours...</p>
         }
@@ -40,12 +38,40 @@
       </div>
     } @else {
       <div class="popup-body archive-choice">
+        <label class="simple-label" for="renewName">Nom de la nouvelle parcelle<sup class="required-mark">*</sup></label>
+        <input id="renewName" type="text" class="form-control popup-text-input" [(ngModel)]="renewName" autocomplete="off">
+
+        <div class="archive-choice__area">
+          <div>
+            <label class="simple-label" for="renewArea">Superficie<sup class="required-mark">*</sup></label>
+            <input id="renewArea" type="number" min="0" step="0.0001" class="form-control popup-text-input" [(ngModel)]="renewArea">
+          </div>
+          <div>
+            <label class="simple-label">Unité<sup class="required-mark">*</sup></label>
+            <div class="dropdown-container unit-dropdown" [class.open]="isUnitDropdownOpen">
+              <button type="button" class="dropdown-btn" aria-label="Unité" (click)="isUnitDropdownOpen = !isUnitDropdownOpen; $event.stopPropagation()">
+                <span class="dropdown-value">{{ renewUnitLabel }}</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+              </button>
+              @if (isUnitDropdownOpen) {
+                <div class="dropdown-panel" (click)="$event.stopPropagation()">
+                  <div class="dropdown-list">
+                    @for (opt of areaUnitOptions; track opt.value) {
+                      <div class="dropdown-list-item" (click)="selectRenewUnit(opt.value)">{{ opt.label }}</div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
         <label class="simple-label" for="renewSigec">Nouveau code SIGEC<sup class="required-mark">*</sup></label>
         <input id="renewSigec" type="text" class="form-control popup-text-input"
                [(ngModel)]="renewSigecCode" placeholder="Ex : 1234567"
                (keydown.enter)="archiveAndRenew()" autocomplete="off">
         <p class="archive-choice__hint">
-          Une nouvelle parcelle « {{ parcel.parcel_name }} (1) » sera créée, l'actuelle sera archivée.
+          Une nouvelle parcelle « {{ renewName || '…' }} » sera créée avec la même géométrie, l'actuelle sera archivée.
           Les cultures, traitements et travaux déjà encodés restent liés à l'ancienne parcelle.
         </p>
         @if (errorMessage) {
@@ -55,7 +81,7 @@
       <div class="popup-footer">
         <button type="button" class="btn-secondary" (click)="showRenewStep = false; errorMessage = ''" [disabled]="isArchiving">Retour</button>
         <button type="button" class="btn-primary" (click)="archiveAndRenew()"
-                [disabled]="!renewSigecCode.trim() || isArchiving">
+                [disabled]="!canSubmitRenew || isArchiving">
           @if (isArchiving) {
             <span class="spinner-border spinner-border-sm me-1"></span> Renouvellement...
           } @else {

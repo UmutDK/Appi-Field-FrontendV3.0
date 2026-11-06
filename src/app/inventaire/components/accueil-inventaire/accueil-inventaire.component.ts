@@ -697,6 +697,7 @@ export class AccueilInventaireComponent implements OnInit, AfterViewInit, OnDest
       mode: event.correction_mode === 'plus' ? 'plus' : 'minus',
       quantity: event.quantity_used,
       unit: event.quantity_used_unit || this.selectedProduct.quantity_unit,
+      remarks: event.remarks || '',
     }, event.event_id, this.selectedProduct.product_id);
     this.popupPreselectedProductId = null;
     this.popInventaire = "Correction";

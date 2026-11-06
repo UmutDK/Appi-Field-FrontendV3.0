@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Parcelle, ParcellesService } from '../../services/parcelles-server.service';
@@ -17,16 +17,24 @@ import { Parcelle, ParcellesService } from '../../services/parcelles-server.serv
 })
 export class ParcelArchiveChoiceComponent {
   @Input({ required: true }) parcel!: Parcelle;
-  /** false si l'utilisateur ne déclare pas ses parcelles à la PAC : seul « Archiver » est proposé. */
-  @Input() canRenew = true;
   /** Archivage ou renouvellement réussi : le parent ferme son formulaire et recharge sa liste. */
   @Output() done = new EventEmitter<'archived' | 'renewed'>();
   @Output() closed = new EventEmitter<void>();
 
   private parcellesService = inject(ParcellesService);
 
+  readonly areaUnitOptions = [
+    { value: 'ha', label: 'ha' },
+    { value: 'a', label: 'a' },
+    { value: 'm2', label: 'm²' },
+  ]; // mêmes options que le formulaire de parcelle
+
   showRenewStep = false;
+  renewName = '';
+  renewArea: number | null = null;
+  renewUnit = 'ha';
   renewSigecCode = '';
+  isUnitDropdownOpen = false;
   isArchiving = false;
   errorMessage = '';
 
@@ -34,14 +42,48 @@ export class ParcelArchiveChoiceComponent {
     if (!this.isArchiving) this.closed.emit();
   }
 
+  @HostListener('document:click')
+  closeUnitDropdown(): void {
+    this.isUnitDropdownOpen = false;
+  }
+
+  /** Étape « renouveler » : préremplie à partir de la parcelle, sauf le code SIGEC. */
+  openRenewStep(): void {
+    this.renewName = `${this.parcel.parcel_name || ''} (1)`;
+    const area = parseFloat(String(this.parcel.parcel_area ?? '').replace(',', '.'));
+    this.renewArea = isNaN(area) ? null : area;
+    const unit = String(this.parcel.parcel_area_unit_fr || 'ha').toLowerCase().replace('m²', 'm2');
+    this.renewUnit = this.areaUnitOptions.some(o => o.value === unit) ? unit : 'ha';
+    this.renewSigecCode = '';
+    this.errorMessage = '';
+    this.showRenewStep = true;
+  }
+
+  get renewUnitLabel(): string {
+    return this.areaUnitOptions.find(o => o.value === this.renewUnit)?.label || 'ha';
+  }
+
+  selectRenewUnit(value: string): void {
+    this.renewUnit = value;
+    this.isUnitDropdownOpen = false;
+  }
+
+  get canSubmitRenew(): boolean {
+    return !!this.renewName.trim() && (this.renewArea ?? 0) > 0 && !!this.renewUnit && !!this.renewSigecCode.trim();
+  }
+
   async archiveOnly(): Promise<void> {
     await this.run('archived', () => this.parcellesService.archiveParcelle(this.parcel.id_parcel));
   }
 
   async archiveAndRenew(): Promise<void> {
-    const code = this.renewSigecCode.trim();
-    if (!code) return;
-    await this.run('renewed', () => this.parcellesService.renewParcelle(this.parcel.id_parcel, code));
+    if (!this.canSubmitRenew) return;
+    await this.run('renewed', () => this.parcellesService.renewParcelle(this.parcel.id_parcel, {
+      sigecCode: this.renewSigecCode.trim(),
+      parcelName: this.renewName.trim(),
+      parcelArea: this.renewArea!,
+      parcelAreaUnit: this.renewUnit,
+    }));
   }
 
   private async run(kind: 'archived' | 'renewed', action: () => Promise<unknown>): Promise<void> {

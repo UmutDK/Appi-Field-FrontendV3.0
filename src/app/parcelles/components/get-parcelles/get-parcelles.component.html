@@ -479,18 +479,16 @@
                                 </div>
                             }
 
-                            @if (declaresToPac) {
-                                <div class="col-lg-12">
-                                    <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
-                                    <input
-                                        type="text"
-                                        class="form-control popup-text-input"
-                                        id="sigec_code"
-                                        placeholder="Ex : 12345A"
-                                        formControlName="sigec_code"
-                                    >
-                                </div>
-                            }
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code"
+                                    placeholder="Ex : 12345A"
+                                    formControlName="sigec_code"
+                                >
+                            </div>
                             
                             
                             <div class="col-lg-12">
@@ -658,18 +656,16 @@
                                 </div>
                             </div>
 
-                            @if (declaresToPac) {
-                                <div class="col-lg-12">
-                                    <label class="simple-label" for="sigec_code_point">Code SIGEC de la parcelle</label>
-                                    <input
-                                        type="text"
-                                        class="form-control popup-text-input"
-                                        id="sigec_code_point"
-                                        placeholder="Ex : 12345A"
-                                        formControlName="sigec_code"
-                                    >
-                                </div>
-                            }
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code_point">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code_point"
+                                    placeholder="Ex : 12345A"
+                                    formControlName="sigec_code"
+                                >
+                            </div>
                             
                             <div class="col-lg-12">
                                 <div class="category-section">
@@ -845,19 +841,17 @@
                                 <input type="hidden" [(ngModel)]="lon" name="lon">
                             }
                             
-                            @if (declaresToPac) {
-                                <div class="col-lg-12">
-                                    <label class="simple-label" for="sigec_code_pac">Code SIGEC de la parcelle</label>
-                                    <input
-                                        type="text"
-                                        class="form-control popup-text-input"
-                                        id="sigec_code_pac"
-                                        placeholder="Ex : 12345A"
-                                        [(ngModel)]="sigec_code"
-                                        name="sigec_code"
-                                    >
-                                </div>
-                            }
+                            <div class="col-lg-12">
+                                <label class="simple-label" for="sigec_code_pac">Code SIGEC de la parcelle</label>
+                                <input
+                                    type="text"
+                                    class="form-control popup-text-input"
+                                    id="sigec_code_pac"
+                                    placeholder="Ex : 12345A"
+                                    [(ngModel)]="sigec_code"
+                                    name="sigec_code"
+                                >
+                            </div>
 
                             <div class="col-lg-12">
                                 <div class="category-section">
@@ -978,18 +972,16 @@
                                     </div>
                                 </div>
 
-                                @if (declaresToPac) {
-                                    <div class="col-lg-12">
-                                        <label class="simple-label" for="sigec_code_polygon">Code SIGEC de la parcelle</label>
-                                        <input
-                                            type="text"
-                                            class="form-control popup-text-input"
-                                            id="sigec_code_polygon"
-                                            placeholder="Ex : 12345A"
-                                            formControlName="sigec_code"
-                                        >
-                                    </div>
-                                }
+                                <div class="col-lg-12">
+                                    <label class="simple-label" for="sigec_code_polygon">Code SIGEC de la parcelle</label>
+                                    <input
+                                        type="text"
+                                        class="form-control popup-text-input"
+                                        id="sigec_code_polygon"
+                                        placeholder="Ex : 12345A"
+                                        formControlName="sigec_code"
+                                    >
+                                </div>
 
                                 <!-- Catégorie -->
                                 <div class="col-lg-12">
@@ -1233,6 +1225,6 @@
     </footer>
 
     @if (showArchiveChoice && selectedParcelForEdit) {
-        <app-parcel-archive-choice [parcel]="selectedParcelForEdit" [canRenew]="declaresToPac"
+        <app-parcel-archive-choice [parcel]="selectedParcelForEdit"
             (done)="onArchiveDone($event)" (closed)="showArchiveChoice = false"></app-parcel-archive-choice>
     }
