@@ -226,7 +226,7 @@ export class RegistreGetComponent implements OnInit, OnChanges {
                   details: `${prod.component_name} (${prod.component_numaut}) - ${this.formatDoseValue(prod.component_dose)}${prod.component_dose_unit}`,
                   // Données supplémentaires pour la popup détaillée
                   operateur: t.operateur || '[BT_Laune]',
-                  bbch: t.bbch_target || 'Non spécifié',
+                  bbch: t.bbch || 'Non spécifié',
                   cibles: (t.target ?? t.ciblee) ? (Array.isArray(t.target ?? t.ciblee) ? (t.target ?? t.ciblee).join(', ') : (t.target ?? t.ciblee)) : 'Non spécifiée',
                   originalData: t // Garder référence aux données complètes
                 });

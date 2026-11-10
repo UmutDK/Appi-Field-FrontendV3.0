@@ -9,10 +9,9 @@ champs sont sur deux feuilles/tables séparées plutôt que fusionnés dans une 
 feuille "cahier des charges" — les deux registres sont déjà distincts dans le nouveau
 schéma (phytoTreatments / fieldWorks), les mélanger artificiellement n'apportait rien.
 
-Limites connues (à combler si besoin) : le "Stade phénologique" (BBCH) n'est plus
-capturé par le nouveau schéma ; l'unité de `treatmentTotalQuantity` et de
-`surfaceTreated` n'est pas non plus stockée (seule la valeur standardisée l'est) —
-ces cellules sont laissées vides plutôt que de deviner une unité.
+Limites connues (à combler si besoin) : l'unité de `treatmentTotalQuantity` et de
+`surfaceTreated` n'est pas reprise (cellules laissées vides plutôt que de deviner une
+unité). Le "Stade phénologique" vient de phytoTreatments.bbch (migration 020).
 """
 from io import BytesIO
 
@@ -65,7 +64,7 @@ def _fetch_treatment_rows(user_id: str) -> list[dict]:
     cur.execute(
         """SELECT
             t.eventDate, t.eventTime, t.eventType, t.surfaceTreated, t.treatmentTotalQuantity,
-            t.remarks AS treatmentRemarks, t.cleanFlag, t.localizedTreatment, t.treatmentType,
+            t.remarks AS treatmentRemarks, t.cleanFlag, t.localizedTreatment, t.treatmentType, t.bbch,
             pc.parcelName, pc.cropId, pc.cropName, pc.phytowebCropName,
             comp.productName, comp.productNumAut, comp.productDose, comp.productDoseUnitId,
             comp.productQuantity, comp.productQuantityUnitId, comp.productTarget,
@@ -141,7 +140,7 @@ def _registre_row_values(row: dict, profile: dict) -> list:
         row.get("eventDate"),
         row.get("cropName") or "",
         row.get("phytowebCropName") or "",
-        "",  # Stade phénologique (BBCH) : non modélisé dans le nouveau schéma
+        row.get("bbch") or "",  # Stade phénologique (BBCH)
         row.get("sowingDate") or "",
         row.get("cropRemarks") or "",
         "Vrai" if row.get("isArchived") else "Faux",

@@ -2,7 +2,7 @@
 
 Ce document décrit le schéma de la base applicative `c2544857c_appifield` utilisé par l'API (`app/routes/*.py`), son évolution ([`server/migrations/`](../migrations/)) et les différences avec l'ancien système (API PHP + fichiers JSON plats, conservés dans `previousServer/`).
 
-> **Schéma vérifié sur la base de production le 04/11/2026** (migrations 001 à 017 appliquées, 23 tables), puis mis à jour pour les migrations 018 et 019. En cas de doute, c'est la production qui fait foi : [`000_local_dev_schema.sql`](../migrations/000_local_dev_schema.sql) reproduit la structure pour le développement local, mais diffère sur certains types (`VARCHAR` au lieu de `TEXT`, `NOT NULL` sur `userId`) et ne contient pas les tables de sauvegarde.
+> **Schéma vérifié sur la base de production le 04/11/2026** (migrations 001 à 017 appliquées, 23 tables), puis mis à jour pour les migrations 018 à 020. En cas de doute, c'est la production qui fait foi : [`000_local_dev_schema.sql`](../migrations/000_local_dev_schema.sql) reproduit la structure pour le développement local, mais diffère sur certains types (`VARCHAR` au lieu de `TEXT`, `NOT NULL` sur `userId`) et ne contient pas les tables de sauvegarde.
 
 ## Sommaire
 
@@ -122,6 +122,7 @@ Deux bases MySQL distinctes :
 | `decisionBase`, `effectiveness` | TEXT | |
 | `thirdPartFlag` | TINYINT(1) NOT NULL DEFAULT 0 | Traitement effectué par un tiers : à 1, sa composition est exclue du calcul d'inventaire (migration 012) |
 | `treatmentType` | VARCHAR(50) NOT NULL DEFAULT 'pulvérisation' | Méthode d'application (pulvérisation, traitement de semences, microgranulé, arrosage, irrigation, badigeonnage, injection, trempage), validée par l'API (migration 013) |
+| `bbch` | VARCHAR(255) | Stade phénologique saisi librement (ex. « BBCH 31 »), repris dans l'export du registre (migration 020) |
 | `createdAt`, `modifiedAt` | TIMESTAMP | |
 
 ### `phytoTreatmentsParcelsCrops` (parcelles/cultures concernées par un traitement)
@@ -354,6 +355,7 @@ L'ancien système (`previousServer/`) stockait tout en **fichiers JSON plats** s
 | 017 | `userPreferences.pacDeclarationFlag` (supprimée par la 019) |
 | 018 | `inventoriesOperations.remarks` |
 | 019 | Suppression de `userPreferences.pacDeclarationFlag` |
+| 020 | `phytoTreatments.bbch` |
 
 **Avant les migrations.** Le schéma a connu plusieurs phases, utiles à connaître si d'anciens scripts ou d'anciennes données réapparaissent. Les scripts et documents cités ici (`database/init_first_db.py`, `generate_first_db.py`, `unit*.py`, `json_db/`, `MIGRATION_PLAN.md`) **ne sont pas présents dans ce dépôt** :
 
@@ -372,7 +374,7 @@ L'ancien système (`previousServer/`) stockait tout en **fichiers JSON plats** s
 - **Identifiants de produits `ppp-...`** : au 04/11/2026, 1 976 mouvements d'`inventoriesOperations` et 2 036 lignes de `phytoTreatmentsComposition` portent un `productId` `ppp-...`, l'ancien format. **Aucun n'existe dans `general.idAct`**, qui n'utilise que `act_...`, et les nouvelles saisies utilisent `act_...`. Conséquences : un même produit peut avoir deux identifiants, donc deux entrées d'inventaire et deux stocks distincts ; aucun avertissement Phytoweb n'est calculé pour un `ppp-...` ; la détection de doublons de l'import d'achats ne compare pas les `ppp-...` aux `act_...`. `phytoTreatmentsComposition` conserve `productName` et `productNumAut`, ce qui permet de retrouver le produit. `inventoriesOperations` ne contient que `productId`.
 - **`crops.phytowebId` au format `pwc-...`** : la grande majorité des cultures portent un identifiant de l'ancien référentiel (`pwc-<uuid>`), absent d'`indexCrop` (`pwc_<uuid>`). `app/utils/phytoweb_crops.py` les rattache par leur nom, via `app/data/legacy_phytoweb_crop_names.json`. Les catégories génériques (« céréales », « grandes cultures »…) ne peuvent pas être rattachées.
 - **`cropsArchive.json` n'a été importé par aucun script** (`generate_first_db.py` ne lisait que `crops.json`) : à vérifier si des cultures archivées manquent en base suite à la migration historique.
-- **Champs de l'ancien système sans équivalent** dans le nouveau schéma, donc définitivement perdus si non re-capturés côté client : `imported_from_gml` (parcelles, déduit aujourd'hui de `recordType`), `component_type`/catégorie de produit, `harvest_date`/`bbch`/métadonnées techniques (traitements), `observation` (travaux aux champs). Le `sigec_code` a retrouvé une colonne `sigecCode` avec la migration 016, mais les codes de l'ancien système n'ont pas été repris.
+- **Champs de l'ancien système sans équivalent** dans le nouveau schéma, donc définitivement perdus si non re-capturés côté client : `imported_from_gml` (parcelles, déduit aujourd'hui de `recordType`), `component_type`/catégorie de produit, `harvest_date`/métadonnées techniques (traitements), `observation` (travaux aux champs). Le `sigec_code` (migration 016) et le `bbch` des traitements (migration 020) ont retrouvé une colonne, mais les valeurs de l'ancien système n'ont pas été reprises.
 - **`responsibleName`/`responsibleMail`/`responsiblePhytolicence`/`exploitationPhytolicence`** étaient toujours `NULL` après l'import batch historique (clés JSON sources inexistantes). Cela ne concerne pas les nouveaux enregistrements créés via l'API.
 - **Aucune contrainte `FOREIGN KEY` ni `UNIQUE`** en base (seulement les clés primaires et 4 index simples sur `mandates` et `phytowebCategoryOverrides`) : l'intégrité référentielle (`userId`, `parcelId`...) est garantie uniquement par le code applicatif. Les colonnes `userId` et `parcelId` ne sont pas indexées en production.
 - **Base partagée entre production et développement** : aujourd'hui, un poste de développement configuré sur cette base travaille sur les vraies données. Activer `READONLY_MODE=true` dans `server/.env.local` bloque les écritures passant par l'API.

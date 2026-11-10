@@ -175,6 +175,7 @@ export function treatmentToApi(t: any): any {
     treatmentTotalQuantityUsed: t.treatment_total_quantity_used || undefined,
     treatmentTotalQuantityUsedUnit: 'L',
     remarks: t.remark,
+    bbch: t.bbch,
     cleanFlag: t.clean_flag === 'Oui',
     // Traitement effectué par un tiers : vrai booléen (« Non » serait lu comme vrai par le serveur)
     thirdPartFlag: !!t.third_part_flag,
@@ -197,6 +198,7 @@ export function treatmentFromApi(t: any): any {
     event_hour: t.eventTime,
     operator_id: t.operatorId,
     remark: t.remarks,
+    bbch: t.bbch || '',
     clean_flag: t.cleanFlag ? 'Oui' : 'Non',
     third_part_flag: !!t.thirdPartFlag,   // le serveur renvoie 0/1
     localized_treatment: t.localizedTreatment ? 'Oui' : 'Non',

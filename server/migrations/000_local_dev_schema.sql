@@ -286,6 +286,7 @@ CREATE TABLE IF NOT EXISTS phytoTreatments (
     effectiveness VARCHAR(255),
     thirdPartFlag BOOLEAN NOT NULL DEFAULT 0,
     treatmentType VARCHAR(50) NOT NULL DEFAULT 'pulvérisation',
+    bbch VARCHAR(255) NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_phytotreatments_user (userId),

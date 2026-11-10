@@ -294,6 +294,7 @@ Après chaque `POST`/`PUT`/`DELETE`, les mouvements d'inventaire correspondant �
 | `effectiveness` | `string` \| `null` | Efficacité perçue |
 | `thirdPartFlag` | `0` \| `1` (booléen en écriture) | Traitement effectué par un tiers. À `1`, les quantités de produits de ce traitement ne sont **pas déduites** de l'inventaire et n'apparaissent pas dans son historique. Défaut `0` à la création ; **conservé** s'il est omis d'un `PUT` |
 | `treatmentType` | `string` | Méthode d'application (≠ `eventType`, le mode d'encodage). Valeurs autorisées : `"pulvérisation"`, `"traitement de semences"`, `"microgranulé"`, `"arrosage"`, `"irrigation"`, `"badigeonnage"`, `"injection"`, `"trempage"` — sinon `400`. Défaut `"pulvérisation"` à la création ; **conservé** s'il est omis d'un `PUT` |
+| `bbch` | `string` \| `null` | Stade phénologique saisi librement (ex. `"BBCH 31"`, 255 caractères max). Vide = `null`. **Conservé** s'il est omis d'un `PUT` ; `""` ou `null` l'efface. Repris dans la colonne « Stade phénologique » de l'export du registre |
 | `parcelsConcerned` | `array<PhytoTreatmentParcel>` | Parcelles/cultures concernées (ajouté à la réponse) |
 | `treatmentComposition` | `array<PhytoTreatmentComposition>` | Produits appliqués (ajouté à la réponse) |
 | `createdAt` / `modifiedAt` | `string` (datetime) | Horodatage |

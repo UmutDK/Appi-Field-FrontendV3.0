@@ -13,6 +13,7 @@ thirdPartFlag (0/1) : traitement effectué par un tiers — ses quantités ne so
 déduites de l'inventaire (filtrées dans app/utils/inventory_stock.py).
 treatmentType : méthode d'application (pulvérisation, traitement de semences...), à ne
 pas confondre avec eventType (mode d'encodage Surface/Bouillie/Quantité).
+bbch : stade phénologique saisi librement (migration 020), conservé s'il est omis d'un PUT.
 """
 import uuid
 from flask import Blueprint, jsonify, request
@@ -36,6 +37,17 @@ def _treatment_type_error(value):
     if value not in TREATMENT_TYPES:
         return jsonify({"error": f"treatmentType invalide (attendu : {', '.join(TREATMENT_TYPES)})"}), 400
     return None
+
+
+BBCH_MAX_LENGTH = 255  # VARCHAR(255), migration 020
+
+
+def _clean_bbch(value):
+    """Stade phénologique (texte libre, ex. « BBCH 31 ») : sans espaces superflus, None si vide."""
+    if value is None:
+        return None
+    value = str(value).strip()
+    return value[:BBCH_MAX_LENGTH] or None
 
 
 def _attach_children(cur, events: list) -> list:
@@ -337,8 +349,8 @@ def create_treatment(user_id):
              treatmentTotalQuantityUsed, treatmentTotalQuantityUsedUnitId, standardTreatmentTotalQuantityUsed,
              surfaceTreated, standardSurfaceTreated,
              remarks, cleanFlag, localizedTreatment, decisionBase, effectiveness, thirdPartFlag,
-             treatmentType)
-           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+             treatmentType, bbch)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
             event_id, user_id, data.get("eventType"),
             data.get("eventDate"), data.get("eventTime"), data.get("operatorId"),
@@ -349,7 +361,7 @@ def create_treatment(user_id):
             treatment_fields["surfaceTreated"], treatment_fields["standardSurfaceTreated"],
             data.get("remarks"), bool(data.get("cleanFlag")), bool(data.get("localizedTreatment")),
             data.get("decisionBase"), data.get("effectiveness"), bool(data.get("thirdPartFlag")),
-            treatment_type,
+            treatment_type, _clean_bbch(data.get("bbch")),
         ),
     )
     _insert_parcels(cur, event_id, user_id, parcels_out)
@@ -373,7 +385,7 @@ def update_treatment(user_id, event_id):
     composition_in = data["treatmentComposition"] if "treatmentComposition" in data else _load_existing_composition(cur, event_id, user_id)
 
     cur.execute(
-        "SELECT eventType, thirdPartFlag, treatmentType FROM phytoTreatments WHERE eventId = %s AND userId = %s",
+        "SELECT eventType, thirdPartFlag, treatmentType, bbch FROM phytoTreatments WHERE eventId = %s AND userId = %s",
         (event_id, user_id),
     )
     existing = cur.fetchone() or {}
@@ -385,6 +397,8 @@ def update_treatment(user_id, event_id):
     error = _treatment_type_error(treatment_type)
     if error:
         return error
+    # Omis -> conservé (sauvegardes partielles) ; chaîne vide ou null -> effacé.
+    bbch = _clean_bbch(data["bbch"]) if "bbch" in data else existing.get("bbch")
 
     treatment_fields, parcels_out, composition_out = treatment_calc.compute(
         event_type, cur, user_id, data, parcels_in, composition_in,
@@ -397,7 +411,7 @@ def update_treatment(user_id, event_id):
            treatmentTotalQuantityUsed = %s, treatmentTotalQuantityUsedUnitId = %s, standardTreatmentTotalQuantityUsed = %s,
            surfaceTreated = %s, standardSurfaceTreated = %s,
            remarks = %s, cleanFlag = %s, localizedTreatment = %s, decisionBase = %s, effectiveness = %s,
-           thirdPartFlag = %s, treatmentType = %s
+           thirdPartFlag = %s, treatmentType = %s, bbch = %s
            WHERE eventId = %s AND userId = %s""",
         (
             event_type, data.get("eventDate"), data.get("eventTime"), data.get("operatorId"),
@@ -407,7 +421,7 @@ def update_treatment(user_id, event_id):
             treatment_fields["standardTreatmentTotalQuantityUsed"],
             treatment_fields["surfaceTreated"], treatment_fields["standardSurfaceTreated"],
             data.get("remarks"), bool(data.get("cleanFlag")), bool(data.get("localizedTreatment")),
-            data.get("decisionBase"), data.get("effectiveness"), third_part_flag, treatment_type,
+            data.get("decisionBase"), data.get("effectiveness"), third_part_flag, treatment_type, bbch,
             event_id, user_id,
         ),
     )
