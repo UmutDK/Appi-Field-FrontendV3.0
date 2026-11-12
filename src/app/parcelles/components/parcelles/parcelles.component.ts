@@ -3,7 +3,7 @@ import { parsePolygoneToLatLngs as parseLatlngs } from '../../../shared/utils/la
 import { buildParcelPopupHtml } from '../../../shared/utils/parcel-popup.util';
 import * as L from 'leaflet';
 import { SharedModule } from '../../../shared/shared.module';
-import { ParcellesService, Parcelle } from '../../services/parcelles-server.service';
+import { ParcellesService, Parcelle, ParcelInUseError, describeParcelUsage } from '../../services/parcelles-server.service';
 import { RegistreService } from '../../../registre/services/registre.service';
 import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
@@ -470,11 +470,21 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
     try {
       const idsToDelete = Array.from(this.selectedParcelles);
       let successCount = 0;
+      // Parcelles utilisées (cultures, traitements, travaux) : refusées par le serveur
+      const inUse: ParcelInUseError[] = [];
 
       for (const id of idsToDelete) {
-        const success = await this.parcellesService.deleteParcelle(id);
-        if (success) {
-          successCount++;
+        try {
+          const success = await this.parcellesService.deleteParcelle(id);
+          if (success) {
+            successCount++;
+          }
+        } catch (error) {
+          if (error instanceof ParcelInUseError) {
+            inUse.push(error);
+          } else {
+            throw error;
+          }
         }
       }
 
@@ -482,11 +492,34 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
       this.selectedParcelles.clear();
       this.selectAll = false;
 
+      let archivedCount = 0;
+      if (inUse.length > 0) {
+        const details = inUse
+          .map(e => `• ${e.parcelName || 'Parcelle sans nom'} : ${describeParcelUsage(e.usage)}`)
+          .join('\n');
+        const archive = confirm(
+          `${inUse.length} parcelle${inUse.length > 1 ? 's ne peuvent' : ' ne peut'} pas être supprimée${inUse.length > 1 ? 's' : ''} car ${inUse.length > 1 ? 'elles sont utilisées' : 'elle est utilisée'} :\n\n${details}\n\n` +
+          `Voulez-vous ${inUse.length > 1 ? 'les ' : "l'"}archiver à la place ? ${inUse.length > 1 ? 'Elles' : 'Elle'} ne ser${inUse.length > 1 ? 'ont' : 'a'} plus proposée${inUse.length > 1 ? 's' : ''} dans les saisies, ` +
+          `mais l'historique (registre, export) reste complet.`
+        );
+        if (archive) {
+          for (const e of inUse) {
+            await this.parcellesService.archiveParcelle(e.parcelId);
+            archivedCount++;
+          }
+        }
+      }
+
       // Recharger les données
       await this.loadParcelles(true);
 
-      if (successCount < count) {
+      if (successCount + archivedCount < count) {
         alert(`${successCount} parcelle${successCount > 1 ? 's' : ''} supprimée${successCount > 1 ? 's' : ''} sur ${count}.`);
+      } else if (archivedCount > 0) {
+        this.successMessageText = `${successCount} parcelle${successCount > 1 ? 's' : ''} supprimée${successCount > 1 ? 's' : ''}, ` +
+          `${archivedCount} archivée${archivedCount > 1 ? 's' : ''} (Mes archives).`;
+        this.showSuccessMessage.set(true);
+        setTimeout(() => this.showSuccessMessage.set(false), 4000);
       }
     } catch (error) {
       alert('Erreur lors de la suppression des parcelles. Vérifiez la console pour plus de détails.');
@@ -1052,13 +1085,23 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
 
     this.isDeleting = true;
     try {
-      await this.parcellesService.deleteParcelle(this.selectedParcelForEdit.id_parcel);
+      // Parcelle utilisée (cultures, traitements, travaux) : propose de l'archiver à la place
+      const result = await this.parcellesService.deleteOrArchiveParcelle(this.selectedParcelForEdit.id_parcel, parcelName);
+      if (result === 'cancelled') {
+        return;
+      }
 
       // Recharger la liste des parcelles pour mettre à jour le tableau et la carte
       await this.loadParcelles(true);
 
       // Fermer le formulaire d'édition
       this.closeEditParcel();
+
+      if (result === 'archived') {
+        this.successMessageText = `« ${parcelName} » a été archivée. Vous la retrouverez dans Mes archives.`;
+        this.showSuccessMessage.set(true);
+        setTimeout(() => this.showSuccessMessage.set(false), 3000);
+      }
     } catch (error) {
       alert('Erreur lors de la suppression de la parcelle. Vérifiez la console pour plus de détails.');
       document.body.classList.remove('no-scroll');
@@ -1117,10 +1160,10 @@ export class ParcellesComponent implements OnInit, AfterViewInit, OnDestroy{
         return;
       }
       
-      // Effectuer la suppression
-      const success = await this.parcellesService.deleteParcelle(id);
-      
-      if (success) {
+      // Effectuer la suppression (parcelle utilisée : propose de l'archiver à la place)
+      const result = await this.parcellesService.deleteOrArchiveParcelle(String(id));
+
+      if (result !== 'cancelled') {
         
         // Recharger les données dans l'interface pour mettre à jour le tableau et la carte
         await this.loadParcelles(true); // Force le rechargement

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { RegistreService } from '../../registre/services/registre.service';
 
@@ -40,6 +40,32 @@ export interface Parcelle {
   is_archived?: boolean;          // lecture seule (archive / unarchive / renew)
   prev_parcel_id?: string | null; // parcelle archivée remplacée par celle-ci (renouvellement)
   sigec_code?: string;
+}
+
+export interface ParcelUsage {
+  crops: number;
+  phytoTreatments: number;
+  fieldWorks: number;
+}
+
+/**
+ * Levée par deleteParcelle quand le serveur refuse la suppression (409 PARCEL_IN_USE) :
+ * la parcelle est utilisée par des cultures, traitements ou travaux. Il faut l'archiver.
+ */
+export class ParcelInUseError extends Error {
+  constructor(public parcelId: string, public parcelName: string, public usage: ParcelUsage) {
+    super(`Parcelle utilisée (${describeParcelUsage(usage)})`);
+  }
+}
+
+/** « 2 cultures, 5 traitements phyto et 1 travail aux champs » */
+export function describeParcelUsage(usage: ParcelUsage): string {
+  const parts: string[] = [];
+  const add = (n: number, one: string, many: string) => { if (n > 0) parts.push(`${n} ${n > 1 ? many : one}`); };
+  add(usage.crops, 'culture', 'cultures');
+  add(usage.phytoTreatments, 'traitement phyto', 'traitements phyto');
+  add(usage.fieldWorks, 'travail aux champs', 'travaux aux champs');
+  return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}` : parts.join('');
 }
 
 export interface ParcellesData {
@@ -177,17 +203,48 @@ export class ParcellesService {
     this.parcelles = [];
   }
 
+  /**
+   * Supprime définitivement une parcelle. Lève ParcelInUseError si elle est utilisée
+   * (cultures, traitements, travaux) : le serveur refuse, il faut l'archiver.
+   */
   async deleteParcelle(id_parcel: string | number): Promise<boolean> {
     try {
-
       await this.http.delete(`${this.apiUrl}/${id_parcel}`).toPromise();
-
-      this.isLoaded = false;
-      await this.loadParcelles();
-
-      return true;
     } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 409 && error.error?.code === 'PARCEL_IN_USE') {
+        throw new ParcelInUseError(String(id_parcel), error.error.parcelName || '', error.error.usage);
+      }
       throw error;
+    }
+
+    this.isLoaded = false;
+    await this.loadParcelles();
+    return true;
+  }
+
+  /**
+   * Suppression d'une parcelle depuis l'interface : si elle est utilisée, propose de
+   * l'archiver à la place. Retourne ce qui a été fait.
+   */
+  async deleteOrArchiveParcelle(id_parcel: string, parcelName?: string): Promise<'deleted' | 'archived' | 'cancelled'> {
+    try {
+      await this.deleteParcelle(id_parcel);
+      return 'deleted';
+    } catch (error) {
+      if (!(error instanceof ParcelInUseError)) {
+        throw error;
+      }
+      const name = parcelName || error.parcelName || 'Cette parcelle';
+      const archive = confirm(
+        `« ${name} » ne peut pas être supprimée : elle est utilisée par ${describeParcelUsage(error.usage)}.\n\n` +
+        `Voulez-vous l'archiver à la place ? Elle ne sera plus proposée dans les saisies, ` +
+        `mais l'historique (registre, export) reste complet. Vous la retrouverez dans Mes archives.`
+      );
+      if (!archive) {
+        return 'cancelled';
+      }
+      await this.archiveParcelle(id_parcel);
+      return 'archived';
     }
   }
 

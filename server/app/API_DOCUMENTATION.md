@@ -187,6 +187,24 @@ Archive / restaure une parcelle. `404` si elle n'existe pas. Les cultures, trait
 Mêmes champs que le `POST` (remplacement complet), sauf `sigecCode` qui n'est modifié que s'il est présent dans le body. `isArchived` et `prevParcelId` sont ignorés.
 
 ### `DELETE /parcels/<parcelId>` 🔒
+Suppression définitive, **uniquement si la parcelle n'est utilisée nulle part**. Une parcelle utilisée s'archive (`POST /parcels/<parcelId>/archive`).
+
+| Cas | Réponse |
+|---|---|
+| Parcelle supprimée | **200** `{ "success": true }` |
+| Parcelle inexistante | **404** `{ "error": "Parcelle non trouvée" }` |
+| Parcelle utilisée par au moins une culture (`cropsParcels`), un traitement phyto ou un travail aux champs | **409**, rien n'est supprimé (voir ci-dessous) |
+
+```json
+{
+  "error": "Parcelle utilisée : elle ne peut pas être supprimée, archivez-la plutôt",
+  "code": "PARCEL_IN_USE",
+  "parcelId": "...",
+  "parcelName": "Parcelle Nord",
+  "usage": { "crops": 1, "phytoTreatments": 2, "fieldWorks": 1 }
+}
+```
+`usage` compte les cultures, traitements et travaux distincts liés à la parcelle. Raison : sans clé étrangère en base, supprimer une parcelle utilisée laissait des liens morts (`cropsParcels`), vidait l'adresse et les coordonnées dans l'export du registre et faisait perdre la surface au recalcul d'un ancien traitement.
 
 ---
 

@@ -356,6 +356,7 @@ L'ancien système (`previousServer/`) stockait tout en **fichiers JSON plats** s
 | 018 | `inventoriesOperations.remarks` |
 | 019 | Suppression de `userPreferences.pacDeclarationFlag` |
 | 020 | `phytoTreatments.bbch` |
+| 021 | Nettoyage de `cropsParcels` : suppression des liens dont `parcelId` est NULL, vide ou ne correspond à aucune parcelle (sauvegardés dans `cropsParcelsBackup021`) |
 
 **Avant les migrations.** Le schéma a connu plusieurs phases, utiles à connaître si d'anciens scripts ou d'anciennes données réapparaissent. Les scripts et documents cités ici (`database/init_first_db.py`, `generate_first_db.py`, `unit*.py`, `json_db/`, `MIGRATION_PLAN.md`) **ne sont pas présents dans ce dépôt** :
 

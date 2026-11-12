@@ -1718,7 +1718,11 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isDeleting = true;
     try {
-      await this.parcellesService.deleteParcelle(this.selectedParcelForEdit.id_parcel);
+      // Parcelle utilisée (cultures, traitements, travaux) : propose de l'archiver à la place
+      const result = await this.parcellesService.deleteOrArchiveParcelle(this.selectedParcelForEdit.id_parcel, parcelName);
+      if (result === 'cancelled') {
+        return;
+      }
 
       // Recharger les parcelles pour refléter la suppression
       this.loadParcelles();
@@ -1726,6 +1730,12 @@ export class GetParcellesComponent implements OnInit, AfterViewInit, OnDestroy {
       // Fermer le formulaire d'édition
       this.closeEditParcel();
       this.resetFormAndCoordinates();
+
+      if (result === 'archived') {
+        this.successMessageText = `« ${parcelName} » a été archivée. Vous la retrouverez dans Mes archives.`;
+        this.showSuccessMessage.set(true);
+        setTimeout(() => this.showSuccessMessage.set(false), 3000);
+      }
     } catch (error) {
       alert('Erreur lors de la suppression de la parcelle. Vérifiez la console pour plus de détails.');
     } finally {

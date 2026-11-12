@@ -10,6 +10,7 @@ calculée à l'écriture, comme le faisait auparavant le script batch unitParcel
 Archivage (migration 016) : isArchived ne se modifie que via /archive, /unarchive et
 /renew (jamais via PUT). Une parcelle archivée reste liée à ses cultures/traitements/
 travaux existants : c'est au frontend de ne plus la proposer pour de nouvelles saisies.
+Suppression : refusée (409 PARCEL_IN_USE) si la parcelle est utilisée ; il faut l'archiver.
 """
 import json
 import uuid
@@ -287,10 +288,47 @@ def renew_parcel(user_id, parcel_id):
     return jsonify({"success": True, "parcelId": new_id, "archivedParcelId": parcel_id}), 201
 
 
+def _parcel_usage(cur, user_id, parcel_id) -> dict:
+    """Nombre de cultures, traitements phyto et travaux aux champs liés à la parcelle."""
+    usage = {}
+    for key, sql in (
+        ("crops", "SELECT COUNT(DISTINCT cropId) n FROM cropsParcels WHERE parcelId = %s AND userId = %s"),
+        ("phytoTreatments",
+         "SELECT COUNT(DISTINCT eventId) n FROM phytoTreatmentsParcelsCrops WHERE parcelId = %s AND userId = %s"),
+        ("fieldWorks",
+         "SELECT COUNT(DISTINCT eventId) n FROM fieldWorksParcelsCrops WHERE parcelId = %s AND userId = %s"),
+    ):
+        cur.execute(sql, (parcel_id, user_id))
+        usage[key] = int(cur.fetchone()["n"] or 0)
+    return usage
+
+
 @bp.delete("/<parcel_id>")
 @require_auth
 def delete_parcel(user_id, parcel_id):
+    """
+    Suppression définitive, refusée (409) si la parcelle est utilisée par une culture, un
+    traitement phyto ou un travail aux champs : aucune clé étrangère en base, la supprimer
+    laisserait ces lignes orphelines (liens cultures morts, adresse/coordonnées vides dans
+    l'export du registre, surface perdue au recalcul d'un ancien traitement). Une parcelle
+    utilisée s'archive (POST /parcels/<id>/archive).
+    """
     cur = cursor_appifield()
+    cur.execute("SELECT parcelName FROM parcels WHERE parcelId = %s AND userId = %s", (parcel_id, user_id))
+    parcel = cur.fetchone()
+    if not parcel:
+        return jsonify({"error": "Parcelle non trouvée"}), 404
+
+    usage = _parcel_usage(cur, user_id, parcel_id)
+    if any(usage.values()):
+        return jsonify({
+            "error": "Parcelle utilisée : elle ne peut pas être supprimée, archivez-la plutôt",
+            "code": "PARCEL_IN_USE",
+            "parcelId": parcel_id,
+            "parcelName": parcel["parcelName"],
+            "usage": usage,
+        }), 409
+
     cur.execute("DELETE FROM parcels WHERE parcelId = %s AND userId = %s", (parcel_id, user_id))
     commit_appifield()
     return jsonify({"success": True})
