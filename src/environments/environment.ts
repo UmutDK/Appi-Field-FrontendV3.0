@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
     apiUrl: 'https://userkey.corderapp.be',
-    apiRegistre: 'https://corderapp.be/appifieldapi',
-    apiPhytoweb: 'https://corderapp.be/appifieldapi',
+    apiRegistre: 'https://serverv1.appifield.be',
+    apiPhytoweb: 'https://serverv1.appifield.be',
 };

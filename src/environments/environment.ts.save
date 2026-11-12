@@ -1,0 +1,8 @@
+// sauvegarde avant de passer à la version 3.0 et le nouveau système de données (prévu le 17/11/26)
+
+export const environment = {
+    production: false,
+    apiUrl: 'https://userkey.corderapp.be',
+    apiRegistre: 'https://corderapp.be/appifieldapi',
+    apiPhytoweb: 'https://corderapp.be/appifieldapi',
+};
